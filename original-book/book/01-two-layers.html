@@ -1,0 +1,345 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>第 1 章 · 两种驾驭工程 —— 先把界划清 - 驾驭工程：原始完整书稿</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-56debc41.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-96099ef7.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">驾驭工程：原始完整书稿</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="第-1-章--两种驾驭工程"><a class="header" href="#第-1-章--两种驾驭工程">第 1 章 · 两种驾驭工程</a></h1>
+<blockquote>
+<p>你在读的这本书,<strong>同时在讲两件事</strong>。
+如果你把它们当成一件,后面十三章每一页都会让你有地方对不上。
+但它们本来就不是一件。</p>
+</blockquote>
+<h2 id="一个读者在第三章会遇到的困惑"><a class="header" href="#一个读者在第三章会遇到的困惑">一个读者在第三章会遇到的困惑</a></h2>
+<p>翻到这本书第三章的时候,你大概会卡在一个地方。那章里,OpenAI 的工程师讲他们<strong>1M LOC / 1500 PR / 0 human code</strong> 的故事,说他们做的工作是 “designing environments, specifying intent” —— 然后下一节立刻转到 Anthropic Managed Agents 的三抽象 <code>session / harness / sandbox</code>。这一跳是怎么跳的?</p>
+<p>这两件事确实都叫 “harness engineering”。它们都在 2026 年的同一季度被命名。它们用的词互相引用。但如果你是那位 OpenAI 工程师,你每天想的问题和做 Managed Agents 的 Lance Martin 团队每天想的问题 —— <strong>根本不是同一件事</strong>。</p>
+<ul>
+<li>OpenAI 工程师想的是:<strong>怎么让 Codex 写的代码能合规上线,让我们三个人干三十个人的活</strong>。</li>
+<li>Managed Agents 团队想的是:<strong>怎么让我们的 agent 产品在客户的 VPC 里跑,崩了能 resume,出事能审计,合规能签字</strong>。</li>
+</ul>
+<p>两件事都是工程。都很难。但它们在<strong>对象、客户、产出、合规要求、技术栈、甚至时间尺度</strong>上都不一样。把它们放在同一本书里讲可以,把它们当成同一件事讲就错了。</p>
+<p>本书的一件基础动作,是先把这两层<strong>钉开</strong>。</p>
+<h2 id="layer-1ai-coding-过程的驾驭工程"><a class="header" href="#layer-1ai-coding-过程的驾驭工程">Layer 1:AI Coding 过程的驾驭工程</a></h2>
+<p>把视线放在第一层。你的团队是一家公司里的软件团队。你们要交付一个产品或服务。<strong>AI(Codex / Claude Code / Cursor)是你们的生产工具</strong>,像 IDE、像 CI、像 code review bot 的升级版。它写代码,你们审查、集成、上线。</p>
+<p>这一层的“驾驭工程“问一个<strong>单一的问题</strong>:<strong>在 AI 大量生成代码的时代,怎么确保交付的工程质量</strong>?</p>
+<p>具体落到地面,这变成若干子问题:</p>
+<ul>
+<li>AI 写的代码怎么通过 review?是每行都人看一遍,还是用 test infra + CI 自动拦截?</li>
+<li>组织的隐性知识怎么让 AI 读得到?是塞进 system prompt,还是分层(AGENTS.md 是目录,docs/ 是系统记录)?</li>
+<li>意图怎么从口头变成 spec,从 spec 变成 property test,从 property test 变成 audit trail?</li>
+<li>“0% human review“这件事在哪些场景成立,在哪些场景不成立?</li>
+</ul>
+<p>这些问题加起来,就是 Martin Fowler 在 <em>Harness engineering for coding agent users</em> 里说的那个学科,也是 OpenAI 那组数字的真实内容。<strong>它是软件工程这门老学科,面向 AI 时代的又一次进化</strong> —— 像十年前从瀑布到敏捷、从单体到微服务、从人肉部署到 CI/CD。基础问题没变(“怎么交付可靠的软件”),工具变了,工作层也随之移动。</p>
+<p>这一层里,<strong>“agent” 是人的工具</strong>。它可能很聪明、可能有记忆,但它不是产品本身。产品是它帮你产出的那 1M LOC。</p>
+<h2 id="layer-2ai-agent-自身的-harness-工程"><a class="header" href="#layer-2ai-agent-自身的-harness-工程">Layer 2:AI Agent 自身的 Harness 工程</a></h2>
+<p>把视线放在第二层。你的团队要做一个 <strong>agent 产品</strong> —— 可能是一个编程助手、一个研究助手、一个客服 agent、一个合规审计 agent。你要卖的不是代码,是<strong>agent 的行为本身</strong>。用户打开你的产品,它帮他们完成任务。</p>
+<p>这一层的“驾驭工程“问<strong>另一个完全不同的问题</strong>:<strong>怎么把一个 LLM 套进一个可恢复、可审计、可替换、可合规的运行时基础里,让它能跑几小时、跑几天、能被放进医疗/金融/基础设施的真实场景</strong>?</p>
+<p>具体落到地面,这变成:</p>
+<ul>
+<li>Session 是不是场外的、append-only 的事实流?还是 context window 的镜像?</li>
+<li>Harness 是不是无状态的、可 <code>wake()</code> 重启的?还是一挂掉就全丢?</li>
+<li>Tool vocabulary 是正交的吗?credentials 物理上进不进 sandbox?</li>
+<li>Verification 层的 actor 和 generator 是不同的吗?agent 自己打自己分算不算?</li>
+</ul>
+<p>这一层里,<strong>“agent” 不是工具,是产品本身</strong>。你的合规压力是 EU AI Act、FDA SaMD、SEC AI disclosure 那一档的;你的运维压力不是“让团队更高效“,是“让 agent 七乘二十四小时不出事“。</p>
+<p>Anthropic Managed Agents、AIOS Foundation、Neo4j 的 context engineering、Milvus 的 execution layer、Karpathy 的 LLM wiki —— 这五份文献讲的是<strong>同一层的事情</strong>,这一层。</p>
+<h2 id="两层的关系正交不是嵌套"><a class="header" href="#两层的关系正交不是嵌套">两层的关系:正交,不是嵌套</a></h2>
+<p>这件事重要到要在本章第一次展开的地方讲透:<strong>Layer 1 和 Layer 2 不是父子关系,它们正交</strong>。</p>
+<p>一家公司可以<strong>只在 Layer 1</strong>:他们用 Codex 写自己的 SaaS 产品,但他们的产品里没有任何 agent —— 卖的是传统 web 应用。AI 在幕后,用户看不到。对他们而言,Layer 2 不存在。</p>
+<p>一家公司可以<strong>只在 Layer 2</strong>:他们做一个 agent 产品,但他们自己的开发过程很传统 —— 工程师手写代码,AI 只帮他们查 API。对他们而言,Layer 1 不是核心工作。</p>
+<p>一家公司也可以<strong>两层都在</strong>:他们既用 AI 写自己的代码(Layer 1),做出来的产品又是一个 agent(Layer 2)。这种公司最容易把两层混起来,因为同一个词(“harness engineering”)同时在两层使用。</p>
+<p>更深的一件事是:<strong>两层的工程纪律高度相似,但解决的问题不同</strong>。两层都讲 session、都讲 tool、都讲 verification、都讲 spec → test → audit trail。但 Layer 1 的 session 是“你的工程团队和 Codex 之间的对话历史“,Layer 2 的 session 是“你的 agent 和终端用户之间的事实流“。两层的 tool 都是“动作词汇表“,但 Layer 1 的词汇表是 <code>git diff / run tests / open PR</code>,Layer 2 的词汇表是 <code>read_file / search_web / call_payment_api</code>。</p>
+<p><strong>同样的 engineering primitives,在两层上以不同的粒度和治理节奏出现</strong>。你得先知道自己站在哪一层,才能判断哪段文献直接适用、哪段需要翻译。</p>
+<h2 id="三个问题帮你定位自己在哪一层"><a class="header" href="#三个问题帮你定位自己在哪一层">三个问题帮你定位自己在哪一层</a></h2>
+<p>接下来的十三章,有的关于 Layer 1,有的关于 Layer 2,有的两层都适用。<strong>读之前先给自己三个问题自测</strong>:</p>
+<p><strong>问题一:你卖给用户的东西里,agent 是可见的还是不可见的?</strong></p>
+<p>可见 —— 用户知道他们在跟一个 agent 交互、依赖这个 agent 的判断 —— 你在 Layer 2。
+不可见 —— 用户看到的是一个传统产品(web、移动 app、API),agent 只在你们的开发过程中 —— 你在 Layer 1。
+两者都有 —— 你两层都在,但<strong>本书建议先分清楚再读</strong>,不要把两层的问题混到同一次讨论里。</p>
+<p><strong>问题二:你的合规压力来自哪里?</strong></p>
+<p>“确保交付的软件不泄露数据、不被攻破、符合业界标准” —— Layer 1,传统软件工程合规。
+“确保 agent 的行为符合 FDA / SEC / EU AI Act / GDPR 对 AI 系统的要求” —— Layer 2,AI 专属合规。
+两种都有 —— 你两层都在。</p>
+<p><strong>问题三:模型升级一代,你团队的工作量怎么变?</strong></p>
+<p>Layer 1 的典型答案:<strong>工作量变少</strong>。新一代 Codex 写的代码更符合你的 spec,你们人审的负担下降,但 CI / spec / AGENTS.md 这些 harness 投资<strong>累积价值不变</strong>。
+Layer 2 的典型答案:<strong>工作量变多</strong>。新一代模型让 agent 能做更多关键任务,所以你们需要处理更复杂的 verification、更精细的 tool 权限、更严格的 session 协议。<strong>反脆弱的含义在两层上稍不相同</strong>。</p>
+<h2 id="本书两层的分工你现在翻到哪一章在讲哪一层"><a class="header" href="#本书两层的分工你现在翻到哪一章在讲哪一层">本书两层的分工:你现在翻到哪一章在讲哪一层</a></h2>
+<p>这本书总共十四章,按下面的分工组织:</p>
+<ul>
+<li><strong>Part 0(Ch 1–4)</strong> —— <strong>两层共享</strong> 的坐标系、第一性原理、历史定位。不管你站在哪一层,这四章都读。</li>
+<li><strong>Part A(Ch 5)</strong> —— <strong>专讲 Layer 1</strong>。OpenAI / Fowler / MindStudio / AGENTS.md 这几条线合在一章,压缩成一章的原因是:这一层的几位奠基者观点互相印证得很紧,不需要四章展开。</li>
+<li><strong>Part B(Ch 6–9)</strong> —— <strong>专讲 Layer 2</strong>。四根支柱 session / harness / tools / verification 逐章展开。这是本书字数密度最高的一部分,因为 Layer 2 的工程纪律没有现成的教科书。</li>
+<li><strong>Part C(Ch 10–12)</strong> —— <strong>两层共享</strong> 的跨时间维度:两类循环、知识治理、reflexive harness。两层都要用,但实现细节略不同。</li>
+<li><strong>Part D(Ch 13–14)</strong> —— <strong>两层共享</strong> 的落地、反脆弱、终局愿景。反脆弱四支柱在两层上都成立,但触发机制不同。</li>
+</ul>
+<p>一条捷径:<strong>如果你完全在 Layer 1</strong>(你的产品不是 agent),你读完 Part 0 + Ch 5 + Part C(只读循环、知识层)+ Ch 13–14 就够了,Part B 可以跳。<strong>如果你完全在 Layer 2</strong>(你的产品是 agent),Ch 5 是背景知识,Part B 是你的主场。<strong>如果你两层都在</strong>,线性读,中间在 Part 切换处停一下想清楚。</p>
+<p>附录 D 有按角色的阅读路径,可以作为补充。</p>
+<h2 id="为什么这本书把两层放进同一本"><a class="header" href="#为什么这本书把两层放进同一本">为什么这本书把两层放进同一本</a></h2>
+<p>最后一个该问的问题:<strong>既然两层正交,为什么不拆成两本书?</strong></p>
+<p>三个理由,由轻到重:</p>
+<ul>
+<li><strong>共享的坐标系</strong> —— Prompt / Context / Harness 三把尺、面向意图第一性原理、Oldest New Idea 历史定位,这些东西不区分层。读者在哪一层都先需要它们。</li>
+<li><strong>共享的反脆弱论证</strong> —— 模型越强、驾驭工程越值钱,这件事在两层上都成立,而且理由结构几乎一样。只讲一层,反脆弱论证显得孤证;两层合讲,论证力度放大。</li>
+<li><strong>真实工程师经常两层都在</strong> —— 一个做 agent 产品的公司,自己的开发过程也在用 Codex / Claude Code。一本书合讲可以帮他们在<strong>同一个概念框架里</strong>处理两层的问题,不用在两套术语之间翻译。</li>
+</ul>
+<p>但本书<strong>拒绝把这当成单一学科</strong>。两层有共享的工程原则,但<strong>它们不是同一件工作</strong>。这是第一章要钉下的第一根桩子。</p>
+<hr>
+<h2 id="可观察信号"><a class="header" href="#可观察信号">可观察信号</a></h2>
+<ul>
+<li>你的团队白板上,“harness” 这个词一天之内被用来指两种不同的东西吗?(如果是,你们已经在两层之间滑)</li>
+<li>招聘 JD 里,“AI coding harness” 和 “agent runtime” 两个岗位职责是分开写的,还是混成“AI 工程师“ 一个岗位?</li>
+<li>合规 review 时,是按 “软件产品” 套流程,还是按 “AI 系统” 套流程?</li>
+</ul>
+<hr>
+<h2 id="本章核心论断"><a class="header" href="#本章核心论断">本章核心论断</a></h2>
+<ol>
+<li><strong>“驾驭工程” 实际上横跨两层</strong>:Layer 1 AI Coding 过程 · Layer 2 AI Agent 自身。</li>
+<li>两层<strong>正交</strong>,不是嵌套。一家公司可能只在 Layer 1、只在 Layer 2、或两层都在。</li>
+<li>两层共享 engineering primitives(session / tool / verification / spec),但<strong>粒度、客户、合规、产出</strong>都不同。</li>
+<li><strong>读任何 harness 相关文献前先判断它讲的是哪一层</strong>;最常见的阅读错误,是把一层的洞察直接移植到另一层。</li>
+<li>本书 14 章按层分工:Part 0(共享坐标)/ Part A(Layer 1 专属)/ Part B(Layer 2 四柱)/ Part C + D(共享跨时间 + 落地 + 终局)。</li>
+</ol>
+<hr>
+<h2 id="本章奠基文对齐"><a class="header" href="#本章奠基文对齐">本章奠基文对齐</a></h2>
+<ul>
+<li>[[fowler-on-harness]] —— Layer 1 的学科命名者</li>
+<li>[[openai-harness-engineering]] —— Layer 1 最清晰的工程实证(1M LOC)</li>
+<li>[[anthropic-managed-agents]] —— Layer 2 的 meta-harness 立场</li>
+<li>[[anthropic-harness-design]] —— Layer 2 的 long-running 实证</li>
+<li>[[mindstudio-harness]] —— Layer 1 的入门级分类(五柱)</li>
+<li>[[aios-foundation]] —— Layer 2 的学术侧独立证据</li>
+</ul>
+<h2 id="本章对应-wiki-页"><a class="header" href="#本章对应-wiki-页">本章对应 wiki 页</a></h2>
+<ul>
+<li>[[concept-harness]] · [[concept-prompt-vs-context-vs-harness]]</li>
+</ul>
+<hr>
+<p><strong>第 2 章</strong>进入两层共享的第一块基石:<strong>三把嵌套的尺</strong>,重新安置你对“我在哪个尺度上工作“ 的判断。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="00-prologue.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="02-from-prompt-to-harness.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="00-prologue.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="02-from-prompt-to-harness.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

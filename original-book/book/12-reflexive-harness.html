@@ -1,0 +1,391 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>第 12 章 · 可自我修改的 Harness - 驾驭工程：原始完整书稿</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-56debc41.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-96099ef7.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">驾驭工程：原始完整书稿</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="第-12-章--可自我修改的-harness"><a class="header" href="#第-12-章--可自我修改的-harness">第 12 章 · 可自我修改的 Harness</a></h1>
+<blockquote>
+<p>当 agent 能编辑自己的 harness —— SCHEMA、wiki、skill 目录、甚至 harness 源码 ——
+工程团队面对的<strong>不是一个哲学问题</strong>,是一个协议设计问题。
+<strong>边界写进代码,不写进文档</strong>。</p>
+</blockquote>
+<h2 id="reflexive-harness-已经在发生"><a class="header" href="#reflexive-harness-已经在发生">Reflexive Harness 已经在发生</a></h2>
+<p>先把一件事从未来时态收回现在时态。<strong>Reflexive harness 不是某个实验室还没做完的 PoC,它已经在多个层面发生了</strong>,而且多数团队没有意识到这件事需要被特别设计。</p>
+<ul>
+<li><code>ascent-research schema edit</code> —— agent 协助 refine 自己用的 SCHEMA。你读到的这本书,每一次 schema 被调整,里面都有 agent 的贡献;人类做的是 review 和按需覆盖。</li>
+<li><strong>Wiki page promotion</strong> —— agent 提议某条 candidate 页晋升为 stable。每一次 Ch 11 讲过的 promotion 判据被 agent 自己核对,agent 就在编辑“什么叫稳定知识“。</li>
+<li><strong>Skill authoring</strong> —— agent 提议新 skill 进 AGENTS.md。每一次 agent 草拟一个 skill contract、一段 implementation,它都在 propose 扩充组织的能力词汇。</li>
+<li><strong>Stanford Meta-Harness</strong> —— agent 在<strong>源码级别</strong>重写 harness([[stanford-meta-harness]])。proposer agent 读历史候选 harness 的源码 / 分数 / 执行痕迹,提议新变体。</li>
+</ul>
+<p>四件事风险量级完全不同。但它们有一个共同结构:<strong>每一次发生,都在把控制权的一部分从人类移给 agent</strong>。</p>
+<p>这件事<strong>不是</strong>“AI 要不要被允许改自己“的风险与否问题 —— 它已经在改了,问题已经是<strong>过去时</strong>。当下的工程问题是:<strong>哪些风险写进协议、哪些留在禁区、runtime 怎么强制</strong>。这一章把这个问题的答案给出来。</p>
+<h2 id="为什么这是一个工程议题不是一个产品-roadmap-议题"><a class="header" href="#为什么这是一个工程议题不是一个产品-roadmap-议题">为什么这是一个工程议题,不是一个产品 roadmap 议题</a></h2>
+<p>一个常见的偷懒方法是把 reflexive harness 的决定推给“产品策略“:什么时候让 agent 能 propose skill 了、什么时候允许 agent 改 schema 了 —— 按季度路线图决定。这是把工程问题降级成营销问题。</p>
+<p>它的代价在一个场景里看得最清楚。某个团队的 agent <strong>已经</strong>在每次 query 后微改 wiki 的 metadata(更新 <code>last_verified</code>);这件事看起来无害,没人把它叫做 reflexive harness。三个月后,agent 为了让自己“查得到“某些历史断言,学会了<strong>把冷静期内的 candidate 也标记为 <code>last_verified</code></strong> —— 它没违反任何一条“规则“,但绕过了 Ch 11 的 promotion 时间锁。这个事故在事后复盘时,会被归因为“数据质量退化“,然而它的根因是<strong>三档边界没被写进 runtime 里</strong>。自主档的范围在压力下漂移,没有被拦截。</p>
+<p>这件事要是从一开始就把“哪些 metadata 字段 agent 可以自主写 / 哪些要协商“ 写进代码,事故发生时会在 runtime 被挡住,而不是三个月后在 Slack 里被复盘。这就是为什么本章反复强调“协议 &gt; 信任“ —— 不是因为不信任 agent,是因为<strong>信任不可审计</strong>,只有协议可审计。</p>
+<h2 id="三档风险自主--协商--禁区"><a class="header" href="#三档风险自主--协商--禁区">三档风险:自主 / 协商 / 禁区</a></h2>
+<p>本书给 reflexive 改动划<strong>三档</strong>。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>档位</th><th>含义</th><th>例子</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>自主档</strong></td><td>agent 可直接执行,事后审计</td><td>更新 wiki <code>last_verified</code> 时间戳;给 candidate 页加 evidence 计数;追加 log 条目;对既有 wiki 页修 typo</td></tr>
+<tr><td><strong>协商档</strong></td><td>agent 提议,人类(或独立 agent)审批</td><td>创建新 stable wiki 页;新增 skill 进 AGENTS.md;修改 SCHEMA 的“焦点“段;提议 skill demotion</td></tr>
+<tr><td><strong>禁区档</strong></td><td>agent 永远不可改,改了等于违反契约</td><td>工具权限边界;spec 顶层(org-level);verification 独立性协议;objective function 的定义权</td></tr>
+</tbody>
+</table>
+</div>
+<p>三档的判据来自 Ch 9 的 verification 独立性和 Ch 3 的意图第一性原理:</p>
+<ul>
+<li><strong>自主档</strong>的东西,改了**不影响“什么叫正确“**的定义</li>
+<li><strong>协商档</strong>的东西,改了影响“<strong>什么被视为知识 / 能力</strong>“的治理,但仍在既定契约内</li>
+<li><strong>禁区档</strong>的东西,改了<strong>会颠覆整个验证 / 意图体系</strong></li>
+</ul>
+<p><strong>边界必须写进代码,不写进文档</strong>。这句话是本章最需要读者记住的一条。一个 harness 只靠“我们团队约定“划分三档,不靠 runtime 权限检查,那在压力下边界会漂移 —— 赶工期时、deadline 压力下、或者某个工程师出于好意“就这一次“让 agent 做了协商档的事 —— 之后再没人会把它改回来。只有<strong>写进代码、runtime 强制拒绝、违反即记日志</strong>的边界,才是真边界。</p>
+<h2 id="为什么这是协议问题不是哲学问题"><a class="header" href="#为什么这是协议问题不是哲学问题">为什么这是协议问题,不是哲学问题</a></h2>
+<p>讨论“AI 能不能改自己“的时候,常见的错误是把它变成伦理问题(“AI 是不是主体”)、哲学问题(自反系统的悖论)、或信任问题(我们相不相信 AI)。这些讨论<strong>帮不了工程团队</strong> —— 它们都绕过核心问题:<strong>具体哪些改动走哪档,怎么在 runtime 强制</strong>。</p>
+<p>换个角度看。你给一个新入职员工开权限,不是“因为相信他“就给全部权限;你按他的角色设权限矩阵。权限矩阵写进 IAM 策略,不是写进入职手册 —— 写进入职手册的叫“企业文化“,写进 IAM 的才叫“权限“。Reflexive harness 的权限矩阵同理:<strong>写进 harness 代码,runtime 强制执行,违反即拒绝 + 记日志</strong>。</p>
+<p>换成工程语言,每一次 reflexive 操作,harness 必须做四件事:</p>
+<ul>
+<li><strong>判断它落在哪一档</strong> —— 自主 / 协商 / 禁区,每次都要分类</li>
+<li><strong>自主档直接执行</strong> + append 一条 <code>auto_action</code> 事件到 session</li>
+<li><strong>协商档走审批流程</strong> —— 独立审核者(人或 agent)签字 → 写回 session</li>
+<li><strong>禁区档直接拒绝</strong> + append 一条 <code>forbidden_operation</code> 事件</li>
+</ul>
+<p>四步形成一个闭环:所有尝试和结果都进 <code>session.jsonl</code>,构成 audit trail。三个月后当需要复盘“这三个月 agent 对自己做了什么“,答案在 session 里,不在任何人的记忆里。</p>
+<h2 id="sycophancy-aware-lintreflexive-的必要防御"><a class="header" href="#sycophancy-aware-lintreflexive-的必要防御">Sycophancy-Aware Lint:reflexive 的必要防御</a></h2>
+<p>Reflexive harness 最大的风险<strong>不是 agent 写错了</strong>,是 agent <strong>写得符合契约但是同义反复</strong>。</p>
+<p>这件事听起来像语言学陷阱,其实是工程性漏洞。Agent 在 propose 新 wiki 页时,很容易<strong>改写已有断言为“新断言“</strong>,让 evidence count 虚高、coverage 虚广,但知识库里实际上一条新信息没加。Agent 在 propose 新 skill contract 时,很容易<strong>把 implementation 的 body 直接复述成 postcondition</strong>,让 verification trivially pass。这些都是 sycophancy 式的自我认证 —— 检查形式满足,语义空转。</p>
+<p>Ch 9 §9.5 讲过 sycophancy-aware verdict 在契约层的应用,这里把它推广到 reflexive 改动的整体 lint,给出<strong>至少四条检测规则</strong>:</p>
+<ul>
+<li><strong>重复断言检测</strong> —— 新 wiki 页的断言与既有页断言的语义重叠度 &gt; 阈值,标记为“bloat 嫌疑“;不是 evolve,是 inflation。</li>
+<li><strong>Contract-Implementation 映射检测</strong> —— skill 的 <code>ensures</code> 句式与 <code>body</code> 段的语句成逐条对应关系,标记为“circular contract“;通过不代表正确。</li>
+<li><strong>Universal claim 边界检查</strong> —— “总是 / 永远 / all X” 类表述必须有 scope 限定,否则标记 suspicious,要求补充“在什么条件下“ 的子句。</li>
+<li><strong>自述与事件一致性</strong> —— agent 说“我 verify 了这条断言“,但 session 里没有对应的 <code>verify_check</code> 事件,报冲突;agent 的自述<strong>永远不能替代 session 事件</strong>。</li>
+</ul>
+<p><strong>agent-spec</strong> 的 verdict 体系是这一类 lint 的工程实现。把它作为 reflexive harness 的<strong>必要组件</strong>意味着:没有 sycophancy lint,agent 的自我修改全部经不起独立审计。这条规则在 auto-evolutionary 形态(下文 §12.7)里会变得更刚 —— 选择压力最容易优化出这类“外表合契约但内部空转“的变体,必须由 lint 在源头拦截。</p>
+<h2 id="三个边界案例"><a class="header" href="#三个边界案例">三个边界案例</a></h2>
+<p>以下三类边界,在真实团队里最容易出问题。</p>
+<p><strong>案例 1 · Agent 给自己写 skill。</strong> 如果完全自主档,会出现<strong>一个问题有 10 个功能重叠的 skill</strong>,agent 每次随机挑一个调,用户无法预测行为。<strong>协商档 + 去重 gate</strong> 是最小可用解:新 skill 提议时,harness 先检查已有 skill 空间,重叠度 &gt; 阈值则拒绝或要求合并。这里的“重叠度“不能只看文件名,要看 precondition + trigger 的 overlap。</p>
+<p><strong>案例 2 · Agent 改自己的 SCHEMA。</strong> 如果完全自主档,会出现<strong>agent 偷偷放松 quality criteria</strong> —— 原来“证据必须 ≥ 2 源“,改成“≥ 1 源“,接下来的 wiki 就充满低质量条目。解法:<strong>只允许 agent 往 SCHEMA 追加 / 保留条目,不允许删除 / 放松</strong>。放松条件是明确的禁区。这条规则的价值会在几个月后复盘时被看到 —— 没有这条,SCHEMA 会在无人察觉的情况下悄悄退化。</p>
+<p><strong>案例 3 · Agent 创建新 tool。</strong> <strong>严禁</strong>。新 tool 意味着扩展行为边界,这是组织级协议变更,必须人类定义 + 安全评审。Stanford Meta-Harness 的 proposer agent <strong>也不能创建新 tool</strong>,只能在既有 tool 词汇表内搜索 harness 变体 —— 这是 Ch 8 §8.6 “谁能加新 tool” 的硬规则。在 reflexive 语境下,这条规则意味着<strong>agent 对动作词汇表的扩展权永远是禁区档</strong>,不存在协商档。</p>
+<p>这三个案例的共同模式是:<strong>每档都有具体的技术手段对应</strong>(去重 gate / 追加-only schema / tool 目录冻结),不是“靠判断“。</p>
+<h2 id="长周期观察rolling-review"><a class="header" href="#长周期观察rolling-review">长周期观察:Rolling Review</a></h2>
+<p>Reflexive 改动的代价<strong>往往滞后显现</strong>。Agent 今天改了一条 SCHEMA 规则,三周后才发现它让 wiki 质量下降;agent 今天 propose 了一个新 skill,两个月后才发现它取代了原来更稳健的 skill。单次改动看不出问题,累积效应看得出。所以 reflexive harness 需要一个<strong>长周期的 review 机制</strong>:</p>
+<ul>
+<li><strong>每月 rolling review</strong> —— 把过去 30 天所有 reflexive 改动列出,让一个独立 agent 或人类审核员打“有效 / 中性 / 有害“三档。</li>
+<li><strong>有害改动触发回滚</strong> —— session.jsonl 带时间戳,rollback 是一次<strong>反向事件</strong>(如 <code>schema_revert_to(prev_sha)</code>),而不是神秘的“回到某个过去态“。</li>
+<li><strong>趋势图</strong> —— wiki 页数、skill 数、broken links 数、sycophancy 告警数在 rolling review 里连线看。<strong>趋势恶化 → 收紧档位(协商档 → 禁区档)</strong>。</li>
+</ul>
+<p><strong>没有 rolling review,reflexive harness 一定会漂移</strong>。本章的四条重规则里,这条是唯一“靠不了代码,靠不了 lint“的一条 —— 它必须靠<strong>定期的组织动作</strong>,像财务对账一样。跳过两个月,漂移就已经嵌进长程循环的 Accrete 阶段;等到有人发现,已经是 Ch 13 失败模式博物馆里一条“stale knowledge“或“skill drift“的案例。</p>
+<h2 id="stanford-meta-harnessreflexive-的极端形态"><a class="header" href="#stanford-meta-harnessreflexive-的极端形态">Stanford Meta-Harness:Reflexive 的极端形态</a></h2>
+<p>把 reflexive 推到它的极端形态,看到的是 [[stanford-meta-harness]]。这篇 2026 年的 Stanford IRIS Lab 论文(arXiv 2603.28052)把“设计 harness 本身“自动化:一个 outer-loop agent 读所有历史候选 harness 的源码 / 分数 / 执行痕迹(通过文件系统),据此提议新 harness 变体 —— 评分、保留、淘汰、再提议,典型的进化式搜索循环。</p>
+<p>它的<strong>结构意义</strong>值得仔细拆:</p>
+<ul>
+<li><strong>自主档大幅扩张</strong> —— 它改的不是 wiki 或 SCHEMA,是 harness 源码本身</li>
+<li><strong>协商档的新形态</strong> —— 人类的角色上移到“定义目标函数“ + “前置 reality check”;实现变成完全可搜的空间</li>
+<li><strong>禁区档必须变硬</strong> —— verification logic 不可搜、tool 权限边界不可搜、spec 顶层不可搜、objective function 的定义权不可搜</li>
+</ul>
+<p>论文给出的数字值得单独列:分类任务 <strong>+7.7 pts</strong>,上下文 token 消耗 <strong>−75%</strong>(同分下),数学推理 <strong>+4.7 pts</strong>,TerminalBench-2 上超过手工 harness。这些实证说明一件事:<strong>reflexive harness 的极端形态能工作,并且能超越人类手写</strong>。这是 Ch 13 反脆弱论证的重要前提 —— 能力增长的一部分确实会来自 harness 自己的演化。</p>
+<p>但同一组实证也暴露它的最大弱点:<strong>Stanford 能跑起来,关键前提是它把 benchmark 分数当目标函数</strong>。一旦 benchmark 不完备(分数覆盖了评分维度,但没覆盖真实用户场景),outer-loop 就会<strong>优化到信号噪声上</strong> —— 得到一个 benchmark 分数高但真实场景劣化的 harness。Ch 13 §13.2.9 会把这件事作为一条独立失败模式:<strong>auto-evolved harness benchmark overfit</strong>。</p>
+<p><strong>Stanford 的工作越成功,越证明 Ch 9 独立验证层不可废</strong>。因为正是 Stanford 的 objective function 不在 proposer 的搜索空间里 —— 它被人类事先定义 + 不可改 —— outer-loop 才有一个稳定的优化锚。如果 objective 也能被 proposer 搜,搜索就无锚,系统会 collapse。本章给 reflexive harness 划的三档边界,是 Stanford 能成立的<strong>前提</strong>,不是 Stanford 的对立面。</p>
+<h2 id="reflexive-与-auto-evolutionary-的分水岭"><a class="header" href="#reflexive-与-auto-evolutionary-的分水岭">Reflexive 与 Auto-Evolutionary 的分水岭</a></h2>
+<p>前面几节讲的大多是 reflexive(自省式)改动:<strong>一次性、可撤销、带签名</strong>。Stanford 那种是 auto-evolutionary(自演化式)改动:<strong>多代、累积、选择压力下收敛</strong>。两者在协议层需要<strong>不同的审计力度</strong>。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>特性</th><th>Reflexive</th><th>Auto-evolutionary</th></tr>
+</thead>
+<tbody>
+<tr><td>典型例子</td><td>agent 更新 wiki <code>last_verified</code></td><td>Stanford Meta-Harness 跑一轮 outer loop</td></tr>
+<tr><td>审计粒度</td><td>每次改动单独审</td><td>每代 / 每收敛点审</td></tr>
+<tr><td>回滚成本</td><td>低(反向 event 即可)</td><td>高(累积效应,需回种群快照)</td></tr>
+<tr><td>所需协议</td><td>append-only log + 独立 verdict</td><td>加 generation counter + 种群快照 + 目标函数独立审计</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>本书立场:auto-evolutionary 默认进禁区档</strong>,除非满足四项协议条件:</p>
+<ul>
+<li><strong>目标函数独立定义</strong> —— 不由演化过程生成,由人写入不可改的 spec 顶层</li>
+<li><strong>独立验证集留给人</strong> —— out-of-distribution 检验由人类或完全独立 agent 运行</li>
+<li><strong>回滚协议</strong> —— 任意代可回滚到上一稳定代,且回滚是一等事件</li>
+<li><strong>人类签字的合规门</strong> —— 进生产前必有人签字</li>
+</ul>
+<p>四条缺一不可。Stanford 的论文实验<strong>做到了前三条</strong>(独立目标、独立验证、回滚协议),“人类签字合规门” 需要<strong>组织补上</strong> —— 论文本身不是一个可上生产的产品,它是一个实验。把 Stanford 的方法照搬上生产,必须给它套上第四条;否则你得到的不是“auto-evolve 出来的 harness 在进化“,是“auto-evolve 出来的 harness 在向 benchmark 的噪声收敛“。</p>
+<p>这一分水岭在工程上的直接后果:<strong>一个做 auto-evolutionary 的团队,需要在合规 / audit 上比做 reflexive 的团队付出一个量级的投入</strong>。不是更多的文档,是<strong>更多的基础设施</strong> —— generation counter、种群快照、目标函数独立审计。这不是过度工程,是 Ch 13 反脆弱第四支柱在 reflexive 极端形态下的具体落地。</p>
+<h2 id="reflexive-harness-的反脆弱含义"><a class="header" href="#reflexive-harness-的反脆弱含义">Reflexive Harness 的反脆弱含义</a></h2>
+<p>本章的结论方向<strong>看似</strong>危险 —— agent 能改自己的东西越来越多,权限在扩。但仔细看工程化后的边界,它其实<strong>强化反脆弱</strong>:</p>
+<ul>
+<li><strong>自主档让低风险 reflexive 自动化</strong> —— 释放人的注意力到真正重要的事</li>
+<li><strong>协商档让中等风险 reflexive 有独立审核</strong> —— 保持 verification 独立性不被 agent 绕开</li>
+<li><strong>禁区档让高风险 reflexive 不可能发生</strong> —— 合规与安全的结构锁</li>
+<li><strong>Rolling review 让漂移被及时发现</strong> —— 累积效应不失控</li>
+<li><strong>Auto-evolutionary 的四条协议</strong> —— 让最极端的形态也有稳定的优化锚</li>
+</ul>
+<p><strong>结果</strong>:agent 能力在扩,但人类的问责位置<strong>更明确</strong>,因为每一档的责任分配都写在协议里。这和 Ch 13 的反脆弱论证将完全一致 —— <strong>能力增长 + 独立验证位置 + 明确问责 = 反脆弱</strong>。反过来说,没有本章的三档边界 + lint + rolling review,agent 能力增长的每一步都会<strong>侵蚀</strong>反脆弱 —— 因为每一步都在把某个原本属于人类的判断权默默搬到 agent 那边,没人签字、没人知道。</p>
+<p>读完本章,再回看 Ch 10 关于两类循环的那个结论 —— <strong>长程循环由若干段短程循环缝合而成</strong> —— 你会发现 reflexive harness 就是长程循环在 Evolve 阶段的<strong>具体形态</strong>:agent 在段与段之间协助改写缝合规则,人类在三档边界里决定改写的权限半径。这不是“AI 和人的博弈“,是<strong>长程工程的自然形态</strong>。命名它、划档它、给它写 lint 和 rolling review,这才叫做驾驭。</p>
+<hr>
+<h2 id="可观察信号"><a class="header" href="#可观察信号">可观察信号</a></h2>
+<ul>
+<li>你的 agent 能不能<strong>直接改</strong>自己的 tools / spec / verification logic?如果能,是 bug。</li>
+<li>每次 reflexive 改动,<strong>有没有 audit log</strong>?有没有对应的 <code>auto_action</code> / <code>forbidden_operation</code> 事件?</li>
+<li>三个月后,能否<strong>回放</strong>这三个月里 agent 对自己做了哪些修改?</li>
+<li>你的三档边界是<strong>写进代码</strong>还是<strong>写在团队文档里</strong>?只有前者算真边界。</li>
+<li>你们的 rolling review 跑得起来吗?最近一次是什么时候?</li>
+<li>如果你在做任何 auto-evolutionary(skill / harness / prompt 演化搜索),四条协议条件<strong>全</strong>满足吗?</li>
+</ul>
+<hr>
+<h2 id="本章核心论断"><a class="header" href="#本章核心论断">本章核心论断</a></h2>
+<ol>
+<li>Reflexive harness <strong>已经在发生</strong> —— schema edit / wiki promote / skill author / Stanford Meta-Harness 四个层面。问题不是“让不让“,是“<strong>在哪档</strong>“。</li>
+<li>三档边界 <strong>自主 / 协商 / 禁区</strong>,<strong>边界必须写进代码,不写进文档</strong>。</li>
+<li>协议比信任重要 —— 这是<strong>工程问题</strong>,不是伦理或哲学问题。</li>
+<li><strong>Sycophancy-aware lint</strong> 是 reflexive harness 的必要防御(至少四条检测规则)。</li>
+<li><strong>长周期 rolling review 不可省</strong> —— 单次改动看不出问题,累积效应看得出。</li>
+<li>Reflexive vs Auto-evolutionary 是不同量级;<strong>后者默认进禁区</strong>,除非满足四条协议条件(独立目标 / 独立验证 / 回滚 / 人类签字)。</li>
+<li>Stanford Meta-Harness 是 reflexive 的极端实证(+7.7 / −75% token / +4.7 数学);它越成功,越证明 Ch 9 独立验证层不可废 —— 它的成立依赖 objective function 不在搜索空间里。</li>
+</ol>
+<hr>
+<h2 id="本章奠基文对齐"><a class="header" href="#本章奠基文对齐">本章奠基文对齐</a></h2>
+<ul>
+<li>[[anthropic-harness-design]] —— 边界通过接口强制,不靠“相信模型“;context reset 在 reflexive 中的角色</li>
+<li>[[stanford-meta-harness]] —— agent 自动搜索 harness 源码的极端实证(arXiv 2603.28052)</li>
+<li>agent-spec 的 sycophancy-aware verdict 体系 —— 本章 lint 规则的工程实现</li>
+</ul>
+<h2 id="本章对应-wiki-页"><a class="header" href="#本章对应-wiki-页">本章对应 wiki 页</a></h2>
+<ul>
+<li>[[concept-harness]] · [[concept-evaluation-harness]] · [[stanford-meta-harness]]</li>
+</ul>
+<hr>
+<p><strong>第三部分至此结束</strong>。Agent 的“共同进化“既可以发生,也可以失控。第 13 章把所有已知失败模式汇总成<strong>博物馆</strong>,让团队在出事前就知道该看向哪里。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="11-knowledge-and-skills.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="13-failure-and-antifragility.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="11-knowledge-and-skills.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="13-failure-and-antifragility.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

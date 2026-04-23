@@ -24,6 +24,8 @@ Regenerate the synced book:
 python3 tools/assemble_synced_book.py
 mdbook build synced-book
 mdbook build synced-book-zh
+python3 tools/build_original_book.py
+mdbook build original-book
 python3 tools/build_pages.py
 ```
 
@@ -31,6 +33,7 @@ GitHub Pages is served from `docs/`:
 
 - `/en/` contains the English-outline edition.
 - `/zh/` contains the Chinese-outline edition.
+- `/original/` contains the original larger mdBook in its original order.
 
 ## Sources
 

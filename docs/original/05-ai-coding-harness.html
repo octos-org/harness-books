@@ -1,0 +1,422 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>第 5 章 · AI 生成代码的工程谱系 - 驾驭工程：原始完整书稿</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-56debc41.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-96099ef7.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">驾驭工程：原始完整书稿</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="第-5-章--ai-生成代码的工程谱系"><a class="header" href="#第-5-章--ai-生成代码的工程谱系">第 5 章 · AI 生成代码的工程谱系</a></h1>
+<blockquote>
+<p>如果你读到这里,你大概率是 Layer 1 的读者 —— 你的产品不是 agent,<strong>agent 是你们产线上的工具</strong>。这一章是你的主场;接下来四章(Part B)是 Layer 2 专场,你可以当作背景略读,或读完本章直接跳到 Part C。</p>
+</blockquote>
+<h2 id="凌晨两点的-merge-队列"><a class="header" href="#凌晨两点的-merge-队列">凌晨两点的 merge 队列</a></h2>
+<p>凌晨两点,某基础设施团队的三位工程师面前是一块白板,白板上写着一个数字:<strong>1,506</strong>。这是过去 24 小时 Codex 在他们仓库开出来、还没合的 PR 数量。他们三人此刻都没在写应用代码 —— 更准确的说法是,他们的<strong>整个岗位</strong>已经不是“写应用代码“了。</p>
+<p>他们在做三件事。第一位工程师盯着 CI 面板的红条 —— 架构约束 lint 失败:一批 PR 试图从 <code>payments/</code> 直接 import <code>audit-log/</code> 的内部类型,违反了三个月前“审计层只暴露 trait“ 的约定。她在想是否把这条规则从 warning 提到 error;提上去,这 47 个 PR 下一轮 CI 会被一次性挡下,不需要任何人去看。第二位工程师在改 <code>AGENTS.md</code>:他刚发现一批 PR 都在重新发明日期解析,因为 <code>AGENTS.md</code> 里没有指向 <code>docs/datetime-conventions.md</code> 的那行链接。第三位工程师在和一个 property test 的失败记录较劲 —— Codex 写的一段去重逻辑在 256 个随机输入里有 3 个触发重复写入,他正把失败输入序列化进 <code>tests/regression/</code> 作为回归锚点。</p>
+<p>三位工程师那晚没在写应用功能。但<strong>应用功能正以每天 3.5 个 PR / 人的节奏合进 main</strong>。他们做的工作的<strong>对象</strong>变了 —— 从“代码“变成了“让代码能自动被产出、自动被验证、自动被拒绝的那套条件“。</p>
+<p>这一章讲的就是这套条件。它不是新学科,是软件工程这门老学科面对 AI 大量生成代码这个新输入的一次重校准。本章的单一问题 —— Ch 1 两层分界里 Layer 1 的那个问题 —— 是:<strong>在 AI 大量生成代码的时代,怎么确保交付的工程质量</strong>?答案的骨头,在一份 OpenAI 2026 年 2 月发表的工程博客里。</p>
+<h2 id="1m-loc-背后的五件工程事实"><a class="header" href="#1m-loc-背后的五件工程事实">1M LOC 背后的五件工程事实</a></h2>
+<p>OpenAI Codex 团队 2025 年 8 月第一次提交,到 2026 年 2 月,五个月的时间窗口里,<strong>三位工程师 · 1500+ PR · 约 1M LOC · 人类写的代码 0 行 · 每天约 10 亿 token 的 agent loop 消耗</strong>。Ryan Lopopolo 在 Latent Space 播客上把这四个数字打包讲出来,配了一句话比任何宣传文案都准确:<em>“Extreme Harness Engineering for Token Billionaires: 1M LOC, 1B toks/day, 0% human code, 0% human review.”</em>(见 [[openai-harness-engineering]])</p>
+<p>这句话容易被读成“模型终于变强了“,那不是重点。重点是另一个:<strong>在这个规模上,能让 agent 可靠产出代码的那套脚手架,已经和 agent 本身一样是工程对象</strong>。拆开看,那套脚手架由五件具体的工程事实组成,每一件都不是 prompt 层能触达的。</p>
+<p><strong>一、可复现的开发环境是地基</strong>。Codex 在依赖锁到字节级、测试结果两次运行必须位等的环境里工作 —— 否则反馈信号就是噪声。人类遇到 flaky test 会凭经验忽略,agent 不会 —— 它把 flaky 当真实信号,沿着假信号走一整晚。复现性在这里不是“卫生指标“,是 agent loop 能否工作的<strong>前置条件</strong>。</p>
+<p><strong>二、架构约束必须被 CI 强制执行</strong>。白板前第一位工程师做的就是这件。架构纪律 —— 哪个模块能依赖哪个、哪些函数签名稳定 —— 如果只活在 <code>ARCHITECTURE.md</code> 里靠人审,一千多 PR / 天的量级下无法 scaling。办法是翻译成 linter、import 拓扑检查、公共 API diff,接到 CI 上。<strong>agent 不会“感觉“架构味道</strong>,它只会撞墙、看反馈、再改。没有墙,它就不会停。</p>
+<p><strong>三、测试基础设施要同时快、密闭、agent 可运行</strong>。快,是因为 agent 要求分钟级反馈;密闭,是因为测试不该触及真实网络 / 数据库 / 副作用;agent 可运行,是指测试有稳定调用接口,agent 能自己起测试、读结果、定位失败行。三条都满足,agent 能在同一个 PR 里跑几十轮试错不打扰人。这件事与评估框架(见 [[concept-evaluation-harness]])结构同构 —— 都是“让机器替人做 gate“。</p>
+<p><strong>四、反馈回路的设计本身是工程对象</strong>。PR 失败时 agent 看到什么?裸 stack trace?裁剪后的关键片段?渲染好的 UI 截图?每一个选择都会改变 agent 下一轮的行为。OpenAI 会把 CI 失败信息<strong>重新排版</strong>再喂给 agent —— 裁剪后的版本让 agent 更容易收敛到真因。用 Fowler 的话说(见 [[fowler-on-harness]]):<em>operator 的工作不是审查 agent 的输出,是迭代 harness 本身</em>。</p>
+<p><strong>五、AGENTS.md + docs/ 的分层,是 agent 知识注入的主模式</strong>。这条在下一节展开,因为它有一个可直接抄的结构。</p>
+<p>五件事加起来是一份岗位说明书,上面<strong>没有一条在讲“怎么写更好的 prompt“</strong>;每一条都在讲“怎么设计 agent 能正确产出代码的<strong>条件</strong>“。这就是 Ch 2 视角位移在 Layer 1 上的具体形态:工程师的工作层<strong>从写代码上移到设计写代码的条件</strong>。</p>
+<h2 id="agentsmd-作-toc不是-encyclopedia"><a class="header" href="#agentsmd-作-toc不是-encyclopedia">AGENTS.md 作 ToC,不是 encyclopedia</a></h2>
+<p>第二位工程师改的那份 <code>AGENTS.md</code>,是 Layer 1 最具代表性也最容易写错的一件制品。典型反模式:把全部风格指南、架构文档、API 手册、数据字典、on-call 流程塞进一个 50KB 的 Markdown 每次整段注入。这种写法有两个问题:token 预算炸掉、agent 学到的上下文哲学错了 —— 它会把 “context = 某个早被写下的全集” 当世界观,而不会养成 “context = 此刻与任务相关的切片” 的习惯。</p>
+<p>正确模式是把 <code>AGENTS.md</code> 当<strong>目录</strong>,不当百科全书 —— <strong>原则长驻上下文,细节按需加载</strong>。结构大致如下:</p>
+<blockquote>
+<p><strong>仓库根目录</strong>
+· <code>AGENTS.md</code> —— 短文档(2–5KB)。列出:仓库定位一句话、语言与工具链版本锁、工作区拓扑、五条高频违规的红线、分层规则、指向 <code>docs/</code> 里各主题的目录表
+· <code>AGENTS.local.md</code> —— 本机 / 本工作区临时覆盖,<code>.gitignore</code>
+· <strong><code>docs/</code></strong> —— 系统记录层,每个主题一篇,agent 按需检索
+· <code>docs/architecture.md</code> —— 模块拓扑与依赖方向
+· <code>docs/datetime-conventions.md</code> —— 日期 / 时区 / ISO 格式惯例
+· <code>docs/error-taxonomy.md</code> —— 错误分类与重试策略
+· <code>docs/observability.md</code> —— 日志字段、trace id 传播规则
+· <code>docs/security-boundaries.md</code> —— 哪些值不得进日志、哪些调用必须过 sandbox
+· <code>docs/testing.md</code> —— 测试分层、fixtures、property test 规范
+· <strong><code>tests/</code></strong> —— 用例即规约
+· <code>tests/property/</code> —— property-based 测试套,L3 契约的运行载体
+· <code>tests/regression/</code> —— 失败输入的档案馆(agent 的负面教材)
+· <strong><code>.github/</code>(或等价 CI 目录)</strong> —— 机器层 gate
+· <code>workflows/architecture-lint.yml</code> —— 模块依赖方向检查
+· <code>workflows/public-api-diff.yml</code> —— 公共接口变更门禁
+· <code>CODEOWNERS</code> —— 高风险路径人审路由</p>
+</blockquote>
+<p>这套结构的价值在三件事。<strong>Principles always in scope</strong> —— <code>AGENTS.md</code> 每轮注入,必须短到 token 不炸,又要覆盖通用约束。<strong>Details pulled when needed</strong> —— <code>docs/</code> 按需打开,写支付模块时打开 <code>error-taxonomy.md</code>,写观测模块时打开 <code>observability.md</code>,互不干扰。<strong>tests/ 和 .github/ 是同一套意图的机器倒影</strong> —— <code>docs/</code> 里写的文字约束,<code>tests/</code> 和 CI 里应有对应的可执行检查。这对应 [[concept-tool-vocabulary]] 反复说的:<strong>agent 能做什么不是靠你劝它,是靠你给它的词表和检验器同时约束出来的</strong>。</p>
+<p>三类常见错误各有症状。<strong>写成百科全书</strong> —— 高频原则被细节稀释,“agent 读过也会违反”。<strong>只写在 <code>AGENTS.md</code> 不在 CI 上落</strong> —— 约束变建议,“说了不要 agent 还是做了”。<strong>只在 CI 上拦不在 <code>AGENTS.md</code> 上写</strong> —— “95% PR 能过,但每个都要走两轮”。三类错误对应三次修整动作,不用再多。</p>
+<h2 id="fowler-的两类控制在代码场景的落地"><a class="header" href="#fowler-的两类控制在代码场景的落地">Fowler 的两类控制在代码场景的落地</a></h2>
+<p>把那套脚手架形式化切一刀,Fowler 在 <em>Harness Engineering for Coding Agent Users</em> 里给的刀最好用(见 [[fowler-on-harness]])。他把 harness 里的“控制“ 分成两类:<strong>computational controls</strong>(可计算控制)和 <strong>inferential controls</strong>(推断控制)。这是分析脊柱。</p>
+<p><strong>Computational controls 确定性、便宜、快</strong> —— linter 拦风格、type-checker 拦类型、unit test 拦行为、structural analysis 拦依赖反向。每次改动都能跑,<strong>直接接进 agent 的 inner loop</strong>。<strong>Inferential controls 非确定性、慢、贵</strong> —— AI code review 判断“是不是过度工程“、语义去重判断“这件 utility 是不是已经存在“、架构评审判断“有没有违反领域边界“。得不出干净的 true/false,只能给出带置信度的意见,<strong>作为 outer loop 的 gate</strong> 在 PR 合并前或周会上跑。</p>
+<p>这一刀在 AI 生成代码场景下价值放大,因为**“代码好不好” 的评价函数不是单一维度**。后者一部分能翻译成 computational(架构约束一旦形式化就是 computational),一部分永远是 inferential 的。下表是两类控制在代码场景下的对照:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>待检验的性质</th><th>Computational(自动、便宜、inner loop)</th><th>Inferential(非确定、贵、outer loop gate)</th></tr>
+</thead>
+<tbody>
+<tr><td>语法与类型</td><td>rustc / tsc / mypy / pyright</td><td>——</td></tr>
+<tr><td>风格与细节一致</td><td>clippy / eslint / ruff / gofmt</td><td>——</td></tr>
+<tr><td>单元行为</td><td><code>cargo test</code> / <code>pytest</code> / <code>go test</code></td><td>——</td></tr>
+<tr><td>随机化反例</td><td>property-based test(proptest / Hypothesis / QuickCheck)</td><td>——</td></tr>
+<tr><td>架构依赖方向</td><td><code>cargo-deny</code> / <code>dep-cruiser</code> / 自制 import-graph linter</td><td>架构评审(human 或 LLM-as-reviewer)</td></tr>
+<tr><td>公共接口变更</td><td><code>cargo-semver-checks</code> / API diff CI 门禁</td><td>向后兼容性判断 · breaking 影响面评估</td></tr>
+<tr><td>代码重复度</td><td><code>jscpd</code> / <code>pmd-cpd</code> 的表层相似度</td><td>语义去重(“这件事已经有 utility”)</td></tr>
+<tr><td>过度工程</td><td>——</td><td>LLM-as-reviewer · CODEOWNERS 资深工程师</td></tr>
+<tr><td>命名与语义</td><td>——</td><td>代码评审里的“起名“ 讨论</td></tr>
+<tr><td>业务意图对齐</td><td>——</td><td>PRD 对照 · scenario 评审</td></tr>
+</tbody>
+</table>
+</div>
+<p>两侧都有项的行是最容易做对的。<strong>只有 inferential 对应物</strong>的行,是每一次能把一项从右移到左的机会。<strong>“把一条约束从 inferential 移到 computational”</strong> 是 harness 工程师一天的最高价值动作 —— 移过去之后,agent 的 inner loop 自己撞墙,不再需要 reviewer 复述。Fowler 援引的 Ashby’s Law(调节器的多样性必须不小于被调节系统)在这里翻译成一句:<strong>把组织约束形式化成 computational 规则的速度,决定了你们能承受的 AI 生成代码吞吐上限</strong>。</p>
+<p>反过来 <strong>inferential controls 永远消不掉但可以跑得少</strong>。把 80% 的 computable 部分搬到 CI 上,inferential 只在剩下 20% 上跑 —— 这 20% 通常是<strong>语义判断值得花时间</strong> 的那些。<strong>Agent 生成代码的时代,人的工作不是消失,是更精准地集中在 inferential gate 上</strong>。</p>
+<h2 id="mindstudio-五柱的代码落地"><a class="header" href="#mindstudio-五柱的代码落地">MindStudio 五柱的代码落地</a></h2>
+<p>Fowler 的切法是分析刀,MindStudio 入门指南(见 [[mindstudio-harness]])的切法是清单刀 —— 把 harness 切成 tool orchestration / guardrails / error recovery / observability / HITL 五柱。对 Layer 1 读者,这五柱的真实价值在<strong>每一柱都能落到仓库里的具体文件夹或 CI 规则上</strong>。MindStudio 反复引的 LangChain 实验是:同一个模型,<strong>只改 harness</strong>,benchmark 从 52.8% 走到 66.5%。+13.7pp 没有发生在 prompt 或模型里 —— 全在脚手架上。</p>
+<p>下表把五柱逐一落到 Layer 1 的物理位置上:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>MindStudio 五柱</th><th>Layer 1 里的物理位置</th><th>可观察信号</th></tr>
+</thead>
+<tbody>
+<tr><td>Tool orchestration</td><td><code>AGENTS.md</code> 里的工具白名单 · <code>docs/tools/</code> 单篇工具说明 · <code>package.json</code> / <code>Cargo.toml</code> 的依赖清单</td><td>agent 可调用的 util / CLI / MCP tool 列表是否成文</td></tr>
+<tr><td>Guardrails &amp; 安全约束</td><td>CI 里的 architecture lint · <code>security-boundaries.md</code> · <code>CODEOWNERS</code> 上的敏感路径 · 硬编码值 lint(secrets / tokens)</td><td>违规 PR 能在 CI 阶段被阻断,而不是在 review 里被记起</td></tr>
+<tr><td>Error recovery &amp; feedback loops</td><td>CI 的失败信息格式化 · retry 策略文档 · <code>tests/regression/</code> 的失败档案馆 · merge queue 的 re-run 策略</td><td>agent 第二轮修错的成功率 · flaky rate</td></tr>
+<tr><td>Observability</td><td>结构化日志字段规约 · trace id 贯穿要求 · <code>observability.md</code> · PR 模板里的“可观察性影响“ 一栏</td><td>事故复盘时能从日志直接定位到 agent 的哪一次 tool call</td></tr>
+<tr><td>Human-in-the-loop</td><td><code>CODEOWNERS</code> 高风险路径必审 · PR 模板的合规 checklist · release gate</td><td>每周 human review 的 PR 数量 / 总 PR 数的比例能不能被组织接受</td></tr>
+</tbody>
+</table>
+</div>
+<p>两张表合起来看:<strong>Fowler 的表是“控制怎么分类“,MindStudio 的表是“控制放在哪“</strong>。前者关心分析,后者关心落地。合在一起,就是 1M LOC 背后那套脚手架的结构。</p>
+<p>一个诚实的警告:MindStudio 的五柱在学理上<strong>没说清楚“为什么是五“</strong>,它把 guardrails 和 tool orchestration 当成同级,而 Fowler 的语法里 guardrails 应当是 tool 层的一个<strong>属性</strong>。对 Layer 1 读者这个瑕疵不伤使用 —— 作为入门清单够用;想深一层的读者可以直接用 Fowler 的两类切法去整理。</p>
+<h2 id="spec--property-test--audit-trail-作为-ai-代码审计的结构性甜点"><a class="header" href="#spec--property-test--audit-trail-作为-ai-代码审计的结构性甜点">Spec → Property Test → Audit Trail 作为 AI 代码审计的结构性甜点</a></h2>
+<p>五柱和两类控制都讲完了,剩下一件事最关键:<strong>AI 生成的代码凭什么被信?</strong> Layer 1 的答案不是“让另一个 AI 再审一遍“,是让<strong>契约读代码</strong>,不是让人读代码。</p>
+<p>Ch 3 已经把上游讲透 —— 意图分三层严密度(L1 prompt / L2 BDD / L3 DbC 函数契约),L3 的现代落地是 Bertrand Meyer 1986 <em>Design by Contract</em> 在 Rust 形式化验证生态(Creusot / Prusti / Kani)里的回归(见 [[concept-evaluation-harness]])。Ch 3 的工作是<strong>把意图送上 L3</strong>;Ch 5 的工作是<strong>在 AI 大量生成代码的条件下,把 L3 契约接到审计链路的下游</strong>。</p>
+<p>连接点是:<strong>spec → property test → audit trail</strong>。契约定义“正确“是什么意思;property test 生成 128 / 256 组随机输入打穿实现;audit trail 把失败输入序列化归档,作为 AI 生成代码的负面教材。下面两段代码展示两端。选的例子是<strong>审计日志追加</strong> —— AI 生成代码里出错频率最高、代码评审里又最不容易看出问题的一类:看上去对,但时序 / 幂等 / 单调性搞错了。</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// L3 · 函数契约:append-only audit log 的四条性质
+// 用 Creusot / Prusti 形式化属性声明(语法示意,具体 crate 语法各有差异)
+#[requires(event.seq == old(log.last_seq()) + 1)]          // 序号必须严格递增
+#[requires(event.ts &gt;= old(log.last_ts()))]                // 时间戳单调不减
+#[ensures(log.len() == old(log.len()) + 1)]                // 追加且仅追加一条
+#[ensures(*log.get(log.len() - 1) == event)]               // 最后一条等于刚写入
+fn append(log: &amp;mut AuditLog, event: AuditEvent) {
+    log.entries.push(event);
+    log.last_seq = event.seq;
+    log.last_ts = event.ts;
+}
+<span class="boring">}</span></code></pre>
+<p>四条性质不多,但合起来把“审计日志“ 从 AI 眼里“大约能 work 的 push“ 钉成了可机器验证的断言。<code>requires</code> 是前置条件,<code>ensures</code> 是后置条件,<code>old(…)</code> 捕获调用前状态 —— 任何违反这四条的 AI 实现都会被下一步的 property test 逮出来。</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// property test:让机器生成随机输入序列,检验契约永不被违反
+use proptest::prelude::*;
+
+proptest! {
+    #[test]
+    fn audit_log_append_preserves_monotonicity(
+        events in prop::collection::vec(any::&lt;AuditEvent&gt;(), 0..256)
+    ) {
+        let mut log = AuditLog::new();
+        let mut last_seq = 0u64;
+        let mut last_ts = 0i64;
+
+        for ev in events {
+            // 前置条件过滤:不合法的输入不参与检验
+            prop_assume!(ev.seq == last_seq + 1);
+            prop_assume!(ev.ts &gt;= last_ts);
+
+            let len_before = log.len();
+            append(&amp;mut log, ev.clone());
+
+            // 四条不变式一次性验证
+            prop_assert_eq!(log.len(), len_before + 1);
+            prop_assert_eq!(log.get(log.len() - 1).cloned(), Some(ev.clone()));
+            last_seq = ev.seq;
+            last_ts = ev.ts;
+        }
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>proptest 每次 CI 跑时生成 256 条随机事件序列,任何让契约翻车的序列都会被自动缩小(shrink)成最小反例,序列化到 <code>proptest-regressions/</code> 文件夹里。<strong>那个文件夹就是 audit trail 的起点</strong> —— 失败输入的档案馆,AI 生成代码在这个函数上<strong>所有翻过的车</strong>的物证。下一次 CI 重跑时,proptest 先跑档案馆里的用例,再跑新随机输入;<strong>任何历史上翻过的车永远不会再翻第二次</strong>。</p>
+<p>这条链路的意义不是“多一层检查“,是<strong>检查的语法变了</strong>。手写时代 property test 是“值得用但经常不用“ 的工具,因为人有直觉兜底;AI 生成代码时代它是必选项 —— AI 的“直觉“ 是训练语料的统计偏好,不是你这个仓库的 invariants。<strong>让契约读代码</strong>把审查负担从人眼转嫁到机器,这就是 Layer 1 在 AI 时代的结构性甜点。</p>
+<p>一个限制要明说:L3 契约不是 AI 代码的全部审计。它覆盖“单个函数行为正确吗“,不直接覆盖“函数放在这个模块对吗“、“API 设计对吗”、“改动有没有违背产品意图”。后者仍需要 inferential controls —— 前一节 Fowler 表格的右列。<strong>L3 + property test 是审计地基,inferential review 是审计屋顶</strong>,两者都不可省。</p>
+<h2 id="0-human-review-的真实边界"><a class="header" href="#0-human-review-的真实边界">“0% human review” 的真实边界</a></h2>
+<p>“0% human review” 是 1M LOC 故事里最煽动、也最容易被断章取义的一块。工程 lead 要问的第一件事不是“太厉害了“,是:<strong>它在什么条件下成立,在什么条件下不成立</strong>?</p>
+<p>条件成立的场景,是 OpenAI 自己内部的 Codex 工具链 —— 一个<strong>内部仓库 · 非合规关键路径 · 风险自吸收</strong>的环境。内部仓库意味着没有外部客户数据面、没有 SLA 合约;非合规关键路径意味着出错不触发监管事故;风险自吸收意味着 bug 的代价由 OpenAI 自己承担,没有第三方受害者向法律体系主张权利。三条都成立时,“computational + property test + inferential gate 构成完整 gating,省掉每条 PR 的 human review” 是可以做的工程选择,那次选择的产出(1M LOC, 3.5 PR / eng / day)是真实的。</p>
+<p><strong>三条前提任何一条不成立,“0% human review” 立刻失效</strong>。有三类场景必须明确列出 opt-out:</p>
+<p><strong>第一类,医疗 SaMD(Software as a Medical Device)</strong>。代码进入诊断、治疗、患者监护路径,FDA 21 CFR Part 820 与 IEC 62304 对变更控制、设计评审、可追溯性有具体要求 —— 关键路径代码变更必须有<strong>签名的人类评审记录</strong>。AI 生成的代码在 CI 上全绿,也不能省掉 named human reviewer 的签字。EU MDR 对 SaMD 的分级评审同理。这里“0% human review“ 不是工程问题,是合规事实。</p>
+<p><strong>第二类,金融与 SEC / 等价监管</strong>。支付清算、风控决策、交易撮合、反洗钱路径,代码变更按 SOX 404 要求必须有双人评审与变更批准记录;SEC 新近的 AI 披露倾向还可能要求披露“AI 介入生成的代码比例“。可以让 AI 写测试、写 boilerplate,但<strong>核心金融逻辑的变更评审权不能交给机器</strong>。</p>
+<p><strong>第三类,个人隐私与 GDPR / CCPA / 中国 PIPL</strong>。处理个人身份信息、健康信息、金融信息的数据流代码,GDPR 下变更影响 Data Protection Impact Assessment(DPIA)时,必须经过 DPO 的 review 记录。<strong>DPIA-affecting 的部分,merge 前人类签字不能省</strong>。PIPL 对关键信息基础设施运营者要求更严。</p>
+<p>三类加起来覆盖了大多数企业级仓库至少 20%–40% 的路径。结论要写进团队手册:<strong>“0% human review” 是有边界条件的工程选择,不是普世目标</strong>。</p>
+<h2 id="stanford-meta-harness-在-coding-侧的含义"><a class="header" href="#stanford-meta-harness-在-coding-侧的含义">Stanford Meta-Harness 在 coding 侧的含义</a></h2>
+<p>Layer 1 的终极想象是“把手工 harness 也自动搜出来“,证据在 Stanford IRIS Lab 2026 年的 <em>End-to-End Optimization of Model Harnesses</em>(见 [[stanford-meta-harness]])。它把“设计 harness“ 交给 outer-loop agent 去搜 —— proposer 读历史候选 harness 的源码、分数、trace,提议新变体,评分、保留、淘汰、再提议。Paper 实测:分类任务 +7.7 pts、数学推理 +4.7 pts、同分下 context token −75%,<strong>TerminalBench-2 超越手工构造 harness</strong>(具体增量以原始论文为准)。TerminalBench-2 是 coding 侧最接近实务的 benchmark —— 自动搜出来的跑赢人手工调的,这是 Layer 1 自动化极限的一块实证。</p>
+<p>Layer 1 读者会问一个锋利的问题:<strong>既然自动搜出来的都能跑赢手工,那“工程师的工作上移到设计 harness“ 还有意义吗</strong>?</p>
+<p>答案分两半。<strong>第一半</strong>:Stanford meta-harness 自动化的是<strong>稳定接口之下</strong>的实现 —— retry 策略、tool 选择启发式、memory 压缩规则、plan 分解模板。这些是代码,是 proposer 能读写的对象。但在它之上有一样东西不在自动化范围内:<strong>目标函数是谁定的、评估语义是谁写的、哪个接口被认为是 load-bearing 的</strong>。三件事都还是人的工作。Paper 也认了这件事 —— outer-loop 的前提是评估函数可信,否则优化会收敛到噪声上([[concept-evaluation-harness]] 里的原话:meta-harness 的前提是评估框架本身可信)。</p>
+<p><strong>第二半在 Ch 13 展开</strong>:反脆弱的第四支柱 —— “什么叫做好” 永远由人定 —— 在 coding 场景下的具体形态就是这个答案。Stanford meta-harness 把 Layer 1 工程师从“写 harness 的每一行代码“ 里解放出来,但没有从“定义 objective、哪些接口值得长期稳定、哪些 invariants 不可让渡“ 里解放出来。<strong>工作层继续往上移,不是消失</strong>。从“写代码“ 到“写 harness“ 到“定义 objective 与接口“,每一次上移都把人类判断推向更低频率、更高杠杆的位置。</p>
+<h2 id="回到那三位工程师"><a class="header" href="#回到那三位工程师">回到那三位工程师</a></h2>
+<p>白板前那三位工程师,凌晨三点做完了当晚的工作。第一位把那条架构约束从 warning 提到 error,47 个 PR 在下一次 CI 时被一次性挡下,她当晚不再看它们。第二位在 <code>AGENTS.md</code> 里加上指向 <code>docs/datetime-conventions.md</code> 的那行链接 —— 下一批 Codex PR 的日期处理会自动收敛。第三位把 3 个 property test 失败输入序列化进 <code>tests/regression/proptest-regressions/audit-log.txt</code> —— 这个文件下周被 proptest 自动先跑,历史翻过的车永远不会再翻第二次。</p>
+<p>他们那晚没审一条 PR。但他们完成的三件事每一件都<strong>把未来几周几百条 PR 的审查</strong>从 inferential controls 移到了 computational controls。这就是 Layer 1 harness 工程师的一天 —— 不是更高明的 prompt 技巧,是<strong>把组织隐性知识 spec 化、把验证从 PR 级挪到 CI 级、把工作层从“写代码“上移到“设计 AI 能产出正确代码的条件“</strong>。</p>
+<p>下一章(Ch 6)翻进 Layer 2。如果你的产品不是 agent,Part B 可作为背景略读,读完可跳到 Part C;如果你的产品是 agent,Part B 四章(session / harness / tools / verification)是你的主场。两层工程纪律在名词上相似,在问题上不同 —— Ch 1 已钉过,这里重复是为了提醒:<strong>Layer 1 做好了,不等于 Layer 2 就省了</strong>。</p>
+<hr>
+<h2 id="可观察信号自测三问"><a class="header" href="#可观察信号自测三问">可观察信号(自测三问)</a></h2>
+<ul>
+<li>你们仓库里,<strong>最近一条架构约束从 warning 提到 error</strong> 是什么时候的事?如果答不上来,意味着 Fowler 意义上的 computational controls 没有在持续扩张 —— 你们的 inferential 负担在默默堆积。</li>
+<li>打开 <code>AGENTS.md</code>,它是<strong>不到 5KB 的目录</strong>,还是<strong>几十 KB 的百科全书</strong>?如果是后者,token 预算在每次对话里被稀释,agent 在学习一种错误的 context 哲学。</li>
+<li>上周你们仓库合进 main 的 PR 里,有多少条是 <strong>agent 直接开出、人只在 CI gate 上把关、没有 line-by-line human read</strong> 的?这个比例决定了你们在 Layer 1 harness 成熟度上站在哪。</li>
+</ul>
+<hr>
+<h2 id="本章核心论断"><a class="header" href="#本章核心论断">本章核心论断</a></h2>
+<ol>
+<li><strong>Layer 1 的驾驭工程 = 把软件工程的老学科,针对 AI 生成代码这个新输入重新校准</strong>。核心动作是把组织隐性知识 spec 化、把验证从 PR 级挪到 CI 级、把工作层从写代码上移到设计写代码的条件。</li>
+<li><strong>1M LOC 背后不是“模型变强“,是五件具体工程事实</strong>:可复现开发环境、CI 强制架构约束、密闭快测试基础设施、精细反馈回路、AGENTS.md + docs/ 分层注入。缺一不可。</li>
+<li><strong>AGENTS.md 是 ToC,不是 encyclopedia</strong>。principles always in scope,details pulled when needed;<code>docs/</code> 作系统记录,<code>tests/</code> 和 CI 是同一套意图的机器倒影。</li>
+<li><strong>Fowler 两类控制(computational / inferential)是 harness 设计的分析脊柱</strong>。工程师一天最高价值的动作,是把一条约束从 inferential 移到 computational,让 agent 自己撞到墙上。</li>
+<li><strong>L3 契约 + property test 是 AI 代码审计的结构性甜点</strong>(与 Ch 3 互为上下游):契约定义正确、property test 打穿实现、regression 文件是失败档案馆。审查的语法从“人读代码“ 变成“契约读代码“。</li>
+<li><strong>“0% human review” 有边界条件</strong>。内部仓库 / 非合规关键路径 / 风险自吸收三条成立才能用。医疗(FDA SaMD / IEC 62304)、金融(SOX / SEC)、隐私(GDPR DPIA / PIPL)三类场景下,named human reviewer 签字是合规事实,不是可选项。</li>
+<li><strong>Stanford Meta-Harness 在 TerminalBench-2 上超越手工 harness,是 Layer 1 自动化的极限证据,也是工作层继续上移的指向牌</strong>。稳定接口之下可自动化,接口之上的 objective / verification semantics / 哪些 invariants 不可让渡 —— 仍然是人的工作。</li>
+</ol>
+<hr>
+<h2 id="本章奠基文对齐"><a class="header" href="#本章奠基文对齐">本章奠基文对齐</a></h2>
+<ul>
+<li>[[openai-harness-engineering]] —— 1M LOC / 3.5 PR per engineer per day / AGENTS.md + docs 模式的一手出处</li>
+<li>[[fowler-on-harness]] —— computational vs inferential 两类控制的分析脊柱;steering loop 概念</li>
+<li>[[mindstudio-harness]] —— 五柱入门清单;LangChain 52.8→66.5 harness-not-model 的最可引用数据点</li>
+<li>[[stanford-meta-harness]] —— Layer 1 自动化极限证据;TerminalBench-2 超越手工 harness</li>
+</ul>
+<h2 id="本章对应-wiki-页"><a class="header" href="#本章对应-wiki-页">本章对应 wiki 页</a></h2>
+<ul>
+<li>[[concept-harness]] · [[concept-tool-vocabulary]] · [[concept-evaluation-harness]]</li>
+</ul>
+<hr>
+<p><strong>第 6 章进入 Part B 的第一柱:session</strong>。Layer 1 读者可以把 Part B 四章当背景略读,或跳到 Part C(两类循环、知识治理、reflexive harness) —— 这些是两层共享的跨时间维度。Layer 2 读者,Ch 6 开始是你的主场。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="04-oldest-new-idea.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="06-session-pillar.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="04-oldest-new-idea.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="06-session-pillar.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

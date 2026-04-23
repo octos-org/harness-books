@@ -1,0 +1,437 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>第 8 章 · Tools 是可问责的动作词汇表 - 驾驭工程：原始完整书稿</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-56debc41.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-96099ef7.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">驾驭工程：原始完整书稿</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="第-8-章--tools-是可问责的动作词汇表"><a class="header" href="#第-8-章--tools-是可问责的动作词汇表">第 8 章 · Tools 是可问责的动作词汇表</a></h1>
+<blockquote>
+<p><strong>命题</strong>:Tool <strong>不是</strong> 给 agent 的 API 集合,<strong>是</strong>动作词汇表;词汇表的三个硬要求是<strong>正交、可问责、与权限绑定</strong>。定义词汇表的人,就在定义 agent 的社会契约。</p>
+</blockquote>
+<h2 id="开场一个工程师盯着-47-行-json-看了很久"><a class="header" href="#开场一个工程师盯着-47-行-json-看了很久">开场:一个工程师盯着 47 行 JSON 看了很久</a></h2>
+<p>一位负责 agent 平台的工程师,被拉进一间会议室做 tool 清单的季度复查。投影仪上是一份 <code>tools.yaml</code>,47 个工具,从 <code>read_file</code> 到 <code>send_slack_message</code> 到 <code>cancel_subscription</code>,按加入顺序排列。安全团队的人问他第一个问题:</p>
+<blockquote>
+<p>“第 7 号这个 <code>invoke_workflow</code>,你能一句话说清楚它是做什么的吗?”</p>
+</blockquote>
+<p>他看了几秒。然后他开始解释:这个工具是三年前加的,当时的需求是让 agent 能触发一条 Zapier 自动化流,但后来 Zapier 换了接口,于是内部又拿它包了一层 Slack 提醒,再后来某个客户要求接入他们的 CRM,于是它又加了一段“如果目标系统是 Salesforce 就走另一条分支“的逻辑……一句话解释不下来。</p>
+<p>安全的人接着问第二个问题:“如果一个 agent 同时调用 <code>read_file</code> 和这个 <code>invoke_workflow</code>,能不能把任何一个文件的内容通过某条 workflow 路径发到你不信任的第三方?”</p>
+<p>这位工程师第二个问题也答不上来。不是因为答案是“能“,也不是因为答案是“不能“,是因为他从来没有<strong>以词汇表组合的视角</strong>看过这份 tool 清单。在他的心智模型里,这 47 个工具是 47 个独立的 API,每个的安全性各自评估过。<strong>他从没把它们当成“词“ 来看,所以也没想过词与词能拼出什么句子</strong>。</p>
+<p>本章要讲的就是这件事:为什么 tool 不是 API 集合,为什么它是一份词汇表,以及,作为词汇表的设计者,你每次加一个词都在给 agent 的行为空间扩张一块新的语法区域 —— <strong>哪怕你自己没意识到</strong>。</p>
+<p>Ch 6 讲过 session 是事实的载体,Ch 7 讲过 harness 是调度的脑干。两根柱立起来,到这一步 agent 还没真正作用于世界。真正让 “candidate action” 变成“real operation“ 的那一步 —— 改一份文件、发一封邮件、扣一次款 —— 都发生在 tools 这一层。[[milvus-execution-layer]] 用一句话把这件事压缩到底:</p>
+<blockquote>
+<p><em>The brain generates candidate actions; the execution layer turns those candidates into real operations. Without it, every agent action has to fit inside one prompt/response — which does not scale past toys.</em></p>
+</blockquote>
+<p><strong>Tool 是 agent 面向世界的那扇门</strong>。门的形状、宽度、门禁规则、哪两扇门能同时开、哪两扇门绝不能同时开 —— 全部是工程师<strong>一次性</strong>的设计决策,之后 agent 的所有行为都会被这些决策塑形。开头那位工程师面对的困境,不是他写得不认真,是他把自己的工作<strong>误认成了“加 API“</strong>,而不是“修订词汇表“。从第一种视角到第二种视角的切换,就是这一章要钉下的那根桩子。</p>
+<h2 id="81-为什么叫词汇表不叫api-集合"><a class="header" href="#81-为什么叫词汇表不叫api-集合">§8.1 为什么叫“词汇表“,不叫“API 集合“</a></h2>
+<p>把开场那场会议再往下推一步。如果你是那位工程师,散会之后你最该改的不是某个工具的实现,是<strong>你对这件事的词</strong>。你过去每次讨论工具,脑子里浮现的是什么?是不是“给 agent 一组 endpoint“,就像后端给前端提供 REST API 那样?这个心智模型在 agent 语境下会漏掉一整层问题 —— <strong>它漏掉的那一层,恰恰是事故最常发生的那一层</strong>。</p>
+<p><strong>API 集合</strong> 的心智模型是:你列出若干调用端点,每个端点独立评估 —— schema 对不对、权限对不对、错误处理对不对、速率限制对不对。你心里的图景是一个<strong>列表</strong>,每一项是一个独立单元。这个图景适合描述“前端调后端“ 那一类场景,因为在那里,调用者的意图是人预先写好的,每次调用只产生一个独立的副作用,不存在“调用者自己组合“这回事。</p>
+<p><strong>Vocabulary</strong> 的心智模型完全不同。每个 tool 是一个“词“;词与词之间的<strong>组合</strong> 会产生新语义;治理词汇表的人要同时考虑三件事:每个词的含义、词与词的组合会拼出什么句子、<strong>哪些句子不应该被拼出来</strong>。这里的调用者不是人,是 LLM —— 一个会<strong>自己组词</strong>、会在跨调用之间<strong>构建组合策略</strong>、会在发现某组词能够达成某个隐含目标时<strong>主动选用该组合</strong>的调用者。你设计的不是 endpoint 列表,是<strong>一种语言的语法</strong>。</p>
+<p>这个区分不是文字游戏。它决定两件事。</p>
+<p><strong>第一件事</strong>:你是否会主动设计 tool 的<strong>正交性</strong>。如果你认为你在维护一组 API,那 “是否重复” 只是代码洁癖层面的问题 —— <code>read_file</code> 和 <code>cat_file</code> 重合了,无非浪费一行文档。但如果你认为你在维护一份词汇表,那两个词表达同一动作<strong>本身就是语义污染</strong>:模型在两个同义词之间选时会迷茫,在文档里看到两条几乎相同的描述会开始幻觉参数,在事故复盘里两个工具的行为差异会被埋到 git blame 里。<strong>正交不是美学,是语言治理</strong>。</p>
+<p><strong>第二件事</strong>:你是否会主动设计<strong>组合不变量</strong>。API 集合的心智模型不会问“A 和 B 的组合能做什么“,因为它默认每个端点各自评估就够了。词汇表的心智模型必须问 —— 因为词本来就是为了被组合。一个词汇表里有 <code>read_file</code>、有 <code>send_email</code>、有 <code>list_directory</code>,<strong>单独看每一个都合规</strong>;但组合起来的那个句子是“把任意文件的内容通过邮件发出去“—— 这是组合语义,不是单点语义。Ch 13 会把这类失败专门命名为 <strong>tool escape</strong>(工具逃逸),并把它当作 session / harness / tools / verification 四柱失败的归因样本之一。</p>
+<p>把这两件事加起来,可以得到一条判据。<strong>当你加一个新 tool 的时候,你应该问:它与现有词汇表每一个词的组合,分别会生成什么样的新句子?</strong> —— 如果你答不上来、或者回答“这问题太大没法列举“,那你还在用 API 集合的心智做词汇表的工作。这正是那 47 行 YAML 安全复查的真正问题:<strong>它从来没被当作语法来治理过</strong>。</p>
+<h2 id="82-三个硬要求正交可问责与权限绑定"><a class="header" href="#82-三个硬要求正交可问责与权限绑定">§8.2 三个硬要求:正交、可问责、与权限绑定</a></h2>
+<p>一份合格的 tool vocabulary 必须同时满足三件事。缺一件,它就只是个 API 清单。</p>
+<h3 id="要求-1--正交--每个词有一件独立的事"><a class="header" href="#要求-1--正交--每个词有一件独立的事">要求 1 · 正交 —— 每个词有一件独立的事</a></h3>
+<p>正交是词汇表里最接近“语言洁癖“ 的要求,但它不是美学偏好,是<strong>可用性前提</strong>。一个 LLM 在面对 80 个工具的清单时,会比面对 15 个工具时<strong>显著更容易选错</strong>。这不是因为模型不够聪明 —— 人类工程师也会。选项越多、语义重叠越大,<strong>选择本身</strong> 就变成一个独立的决策成本。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>反模式</th><th>正交替代</th><th>词汇表视角的解释</th></tr>
+</thead>
+<tbody>
+<tr><td><code>do_everything(json_payload)</code></td><td><code>read_file / write_file / run_cmd / fetch_url</code> 拆开</td><td>一个词不能承担五种语义,否则模型学不会在什么时候用它</td></tr>
+<tr><td><code>smart_action(goal: str)</code></td><td>明确的动词 + 结构化参数</td><td>把“决定怎么做“这件事从 tool 里抠出来,还给 agent</td></tr>
+<tr><td><code>execute_task(task_name)</code> + 另一个 <code>run_job(job_id)</code> 并存</td><td>选一个名字统一</td><td>两个词表达同一动作,等于给调用者制造永恒的二选一困境</td></tr>
+<tr><td><code>process(input, mode="read")</code> vs <code>process(input, mode="write")</code></td><td>拆成 <code>read_X</code> / <code>write_X</code></td><td>动词被藏在参数里,schema 无法在调用前表达约束</td></tr>
+</tbody>
+</table>
+</div>
+<p>判别标准很简单,也很残酷:<strong>“能一句话说出这个 tool 的职责” 吗?</strong> 说不出来的那个,就是<strong>不正交的物证</strong>。开场那位工程师面对的第 7 号工具之所以解释不下来,根本原因不是他没准备,是这个工具从语义上就不应该存在 —— 它是三年里三次不同需求压在同一个名字上的结果。按词汇表视角,他应该做的不是“更好地描述它“,是<strong>拆</strong>:一个词还给 Zapier 触发,一个词还给 Slack 通知,一个词还给 CRM 分支路径。三个正交的词,加起来覆盖原来那一个模糊的词,才能重新被治理。</p>
+<p>正交不等于“越多越好“。[[concept-tool-vocabulary]] 里提到的<strong>词表规模陷阱</strong> 依然成立 —— 工具太少 agent 做不了事,太多选择崩溃、幻觉参数。经验值 10–20 个工具是甜区,视任务域偶有上下。正交意味着<strong>每个词的职责边界清晰、不与其他词重叠</strong>,不意味着要把一件事拆到最碎。一个拆成 50 个微型工具的清单,可能比一个混乱的 10 个工具清单<strong>更难治理</strong>,因为组合爆炸让组合安全性变得不可枚举。</p>
+<p>真实团队的做法是:<strong>先把词汇表规模压进甜区,再在甜区内部保证正交</strong>。不是“先拆成 50 个再合并“,也不是“先写 5 个糊的再拆“。从第一天就按词汇表治理。</p>
+<h3 id="要求-2--可问责--每次调用都留痕"><a class="header" href="#要求-2--可问责--每次调用都留痕">要求 2 · 可问责 —— 每次调用都留痕</a></h3>
+<p>一个词被说出来,它<strong>说了什么</strong> 必须有记录。在词汇表视角下,这不是“调试方便“ 的工程习惯,是<strong>可问责性</strong> 的结构性要求。没有留痕的调用,在事后复盘时等于没发生过 —— 你只能靠 agent 的自述去拼凑,而 agent 的自述不是证据(Ch 9 会把这一点讲透)。</p>
+<p>每次 tool call 必须同时产出以下结构化信息,一次不少地写进 session:</p>
+<ul>
+<li><strong>tool name</strong> —— 调的是词汇表里的哪一个</li>
+<li><strong>input</strong> —— 参数结构化记录,不是自由文本</li>
+<li><strong>output / output sha256</strong> —— 返回值(小的直接存,大的存 hash + blob 路径)</li>
+<li><strong>actor</strong> —— 由哪个 agent / 哪条 persona 发起</li>
+<li><strong>timestamp</strong> —— 精确到毫秒</li>
+<li><strong>parent_event_id</strong> —— 这次调用是在回应哪条上游事件</li>
+</ul>
+<p>这六件事放在一起,<strong>一次 tool call 就是一次完整可审计的事实</strong>。任何事后的复盘、replay、diff 都需要这套字段;少一个字段,都可能在某次事故里变成“不可复现的黑洞“。[[concept-observability]] 讲了为什么 observability 必须是 harness 的一等公民,本章把它具体到 tool 层 —— 每一次词被说出来,都必须有一条可追溯的证据。</p>
+<p>你可能会觉得六个字段是冗余。但想一下这样的场景:两个月后审计团队来查某次事故的责任链。agent 在事故当天做了 312 次 tool call,你想找的那一次在序列的中段。如果 actor 字段不全,你不知道是哪个 sub-agent 发起的;如果 parent_event_id 缺失,你不知道它是回应哪条用户请求的;如果 output sha 没存,你不知道它当时拿到的返回值是不是后来被静默修改过的版本。<strong>缺任何一个字段,这次调用都会变成审计链上的断点</strong>。断点在合规视角下不是技术问题,是<strong>责任不可追溯</strong>,这是监管能直接判定不合格的一类缺陷。</p>
+<h3 id="要求-3--与权限绑定--credentials-不进-sandbox"><a class="header" href="#要求-3--与权限绑定--credentials-不进-sandbox">要求 3 · 与权限绑定 —— credentials 不进 sandbox</a></h3>
+<p>[[anthropic-managed-agents]] 里,Lance Martin 团队给出了一条本书反复引用的原则 —— 他们的原话直接摆在 2026 年 4 月那篇工程 blog 里:</p>
+<blockquote>
+<p><em>Credentials never reach sandboxes where Claude-generated code runs; MCP proxy patterns handle credential fetches without exposing tokens to the model.</em></p>
+</blockquote>
+<p>原文的立场锋利得不加修饰 —— 把权限收窄给一个 “narrow-scoped token” 放进 sandbox,本质上是<strong>在赌模型不会想出方法滥用这个 token</strong>。模型越来越聪明,这种赌局越来越不划算。</p>
+<p>narrow-scoped token 的问题不在“scope 不够窄“,在于<strong>它把安全边界建在“能力假设“ 上</strong>。你发一个只能读某个 S3 bucket 的 token,你的假设是“模型不会想出办法把这个 token 的能力扩大“。但模型拿到这个 token 之后,能做的事不止它表面的 scope —— 它可以把 token 原样输出到某条日志、某封邮件、某个 issue;它可以在 token 过期前反复调用,消耗配额;它可以把 scope 内但不该读的内容(比如另一个用户的数据,哪怕在同一 bucket 里)合法地读出。<strong>这些都是“在 scope 内但不合意图“ 的调用</strong>,token 本身拦不住。</p>
+<p>更稳的做法是把安全从<strong>能力级</strong>(相信模型不会滥用)升级到<strong>结构级</strong>(即使模型想滥用也拿不到凭证):</p>
+<ul>
+<li><strong>凭证不进 sandbox</strong> —— sandbox 里的 agent 看不到任何真实 token / key / secret。物理上看不到。</li>
+<li><strong>MCP proxy 做凭证桥接</strong> —— sandbox 里的 agent 发起“请求 X“,proxy 在外部 vault 里取真实凭证、发出实际 HTTP 请求、把 sanitized 结果传回。凭证在 proxy 的进程空间里,从未跨进 sandbox 的进程空间。</li>
+<li><strong>Vault 持有凭证</strong> —— 凭证的生命周期由 vault 管,不由 agent 管。轮换、撤销、审计都是 vault 的职责,不借 agent 的手。</li>
+</ul>
+<p>这套设计让“即使 agent 被越狱,它能做到的最多是<strong>发起被 proxy 审核过的请求</strong>“,而不是“把 token 原样泄露到外部”。两者的失败半径差几个数量级。</p>
+<p>举一个组合逃逸的具体例子,把这件事落到地面。某团队给 agent 配了两个看起来都合规的工具:<code>read_file(path)</code>,只能读 <code>/workspace/</code> 下的文件;<code>send_email(to, subject, body)</code>,只能发给该用户<strong>已验证过的邮箱</strong>,body 限 2MB。单独审计每个工具都通过了安全 review。部署半年后事故复盘发现,一位用户通过特定提示,让 agent 把 <code>/workspace/</code> 下的一个敏感配置文件读出来,拼成 body,发到“自己已验证的邮箱“—— 然后那个邮箱是攻击者注册的、并提前通过社工完成了邮箱验证。单独看每个 tool 都守规矩,组合起来就是<strong>完整的数据外发链路</strong>。</p>
+<p>narrow-scoped token 防不住这类事,因为 token 在每一步都合规。防住它的不是更窄的 token,是<strong>结构性分层</strong>:让 “read + send” 的组合本身必须经过一条<strong>组合策略检查</strong>(比如“任何把文件内容放进外发正文的操作都要过二次确认“),检查发生在 proxy 而不是 agent 里。<strong>这是把“语义“的治理放到和“语法“同一级的事</strong>。[[anthropic-managed-agents]] 把这种设计哲学总结为 “不赌未来”—— 不押注模型的当前弱点,因为弱点会随升级而消失;要押注<strong>结构</strong> 的持久性,因为结构不随模型变。</p>
+<h2 id="83-一个-tool-call-事件在-sessionjsonl-里长什么样"><a class="header" href="#83-一个-tool-call-事件在-sessionjsonl-里长什么样">§8.3 一个 tool call 事件在 session.jsonl 里长什么样</a></h2>
+<p>把 §8.2 三条要求合起来,落进 Ch 6 讲过的 session.jsonl,一次 tool call 及其结果对应两条事件,合并放在一起看更直观:</p>
+<pre><code class="language-json">[
+  {
+    "ts": 1734301000,
+    "kind": "tool_call",
+    "actor": "agent:generator",
+    "parent_event_id": "evt_plan_17",
+    "tool": "write_file",
+    "input": {"path": "/workspace/foo.py", "content_sha256": "bd9...a1"},
+    "guards_passed": ["path_in_workspace", "no_binary_content"],
+    "status": "pending"
+  },
+  {
+    "ts": 1734301001,
+    "kind": "tool_result",
+    "actor": "tool:write_file",
+    "parent_event_id": "evt_tool_call_42",
+    "output": {"bytes_written": 1247, "new_file_sha256": "4c3...f9"},
+    "sensors_passed": ["diff_within_sprint_scope", "no_forbidden_imports"],
+    "status": "ok"
+  }
+]
+</code></pre>
+<p>这一对事件放在一起是一个完整的证据单元。谁在什么时间发起、参数结构化是什么、调用前的 guard 过了哪些、执行结果是什么、调用后的 sensor 过了哪些 —— 一次 tool call 可以被<strong>完整 replay</strong>。事后的 audit 或 debugger 只需要读这两条事件,不需要 agent 的任何自述、不需要 harness 的任何 console log。</p>
+<p>注意 <code>guards_passed</code> 和 <code>sensors_passed</code> 两个字段。它们不只是“做了哪些检查“,更重要的是 —— 它们把 §8.4 要讲的 feedforward / feedback 两类控制,<strong>以事件的形式固化进了证据链</strong>。事后审计问“你们有没有检查路径合规“,回答不是口头的“有“,是<strong>事件里列着 <code>path_in_workspace</code></strong>。这条记录在 agent 运行时就写入了,不可能事后补造。</p>
+<p>这种结构化 event 是 §8.2 “可问责” 要求的具体产物。缺任何一个字段都会让审计链断掉 —— 这也是为什么本章要把“可问责“和“正交“ 放在同一级的要求上。<strong>Agent 能做什么,取决于词汇表的正交设计;你事后能不能追溯它做了什么,取决于每次调用的可问责结构</strong>。这两件事不是 trade-off,是同一个语言系统的两半。</p>
+<h2 id="84-guides--sensors--fowler-的两类控制在-tool-层的落地"><a class="header" href="#84-guides--sensors--fowler-的两类控制在-tool-层的落地">§8.4 Guides + Sensors —— Fowler 的两类控制在 tool 层的落地</a></h2>
+<p>[[fowler-on-harness]] 里 Fowler 的核心分析框架是 <strong>computational controls(deterministic)</strong> 和 <strong>inferential controls(non-deterministic)</strong> 两分。放到 tool 层,这个分类变形为一对更好用的工程术语 —— <strong>guides(feedforward)</strong> 和 <strong>sensors(feedback)</strong>。它们在每一次 tool call 的时间轴上,占据调用<strong>之前</strong> 和<strong>之后</strong> 两个位置。</p>
+<h3 id="guides调用之前的守卫"><a class="header" href="#guides调用之前的守卫">Guides:调用之前的守卫</a></h3>
+<p>Guide 在 tool 真正执行<strong>之前</strong> 起作用。典型实现是 tool schema、argument validation、allowlist、dry-run 预演。它的目的只有一个:<strong>在副作用发生之前,拒绝不应该发生的那些调用</strong>。</p>
+<p>举一个具体例子。某团队的 <code>write_file(path, content)</code> 的 guide 长这样:</p>
+<ul>
+<li>路径必须在 <code>/workspace/</code> 下(allowlist)</li>
+<li>content 不能是二进制(content-type 检查)</li>
+<li>写入前先 dry-run 一次,看这次写入是否会让仓库中的 <code>.gitignore</code> 失效</li>
+<li>写入前比对 path 的 lock 状态,确认没有别的 agent 正在写同一路径</li>
+</ul>
+<p>这几条检查做完,这次 <code>write_file</code> 才真正落盘。任何一条挂掉,tool 返回 <code>status: "guard_failed"</code>,连同失败原因一起写进 session;<strong>副作用从未发生</strong>。</p>
+<p>一个真实失败场景:某次 agent 在迁移代码时,意图“把旧文件移到 archive/“—— 它用 <code>write_file</code> 直接写 <code>/archive/old_foo.py</code> 作为目标。因为 <code>/archive/</code> 不在 <code>/workspace/</code> 下,path allowlist guard 拦住了这次调用。session 里留下一条 <code>guard_failed</code> 事件,attached reason 是 <code>"path_not_in_workspace"</code>。agent 看到这条 feedback,下一轮改走 <code>move_file</code> 工具(它的 guard 允许跨目录但要求 source 和 dest 都在 allowlist 上),成功完成迁移。<strong>Guard 的价值不在“拦住错误调用”,在“让错误调用变成 feedback“,不让它污染物理世界</strong>。</p>
+<h3 id="sensors调用之后的观测"><a class="header" href="#sensors调用之后的观测">Sensors:调用之后的观测</a></h3>
+<p>Sensor 在 tool 调用<strong>之后</strong> 起作用。典型实现是 output 校验、副作用对齐检测、异常序列模式识别。它的目的是:<strong>副作用发生后,尽快检测出“虽然调用本身合规,但结果不合预期“ 的情况</strong>。</p>
+<p>仍以 <code>write_file</code> 为例,sensor 的一组具体实现:</p>
+<ul>
+<li><strong>diff scope sensor</strong> —— 这次写入产生的 diff 是否超出了当前 sprint 声明的文件范围?超出就发 <code>sensor_warning</code>。</li>
+<li><strong>forbidden imports sensor</strong> —— 写入的代码是否引入了项目 <code>.agent-forbidden-imports</code> 列表里的依赖(比如 <code>eval / exec / requests.get(verify=False)</code>)?</li>
+<li><strong>binary diff sensor</strong> —— 虽然内容不是二进制,但 diff 里是否出现了 base64 大段字符串这类“混入二进制“的模式?</li>
+<li><strong>test coverage sensor</strong> —— 写入的源文件是否有对应的测试文件同步改动?没有就发 <code>coverage_regression</code> 事件,但<strong>不 block 本次调用</strong> —— 因为它属于 architecture fitness,不是 correctness(Fowler 的三层分类)。</li>
+</ul>
+<p>一个真实场景:agent 在实现一个 payment 相关的函数,它的 <code>write_file</code> 合法通过了所有 guard,落盘成功。diff scope sensor 在 <code>tool_result</code> 之后立刻跑,发现 diff 里有一处改到了 <code>/billing/rate_limit.py</code>—— 而当前 sprint contract 里声明的改动范围是 <code>/billing/checkout.py</code>。sensor 发出 <code>scope_drift</code> 警告,harness 把这条警告注入下一轮 agent 的 context,agent 回滚了那一处越界修改。</p>
+<p><strong>只有 guide 不够</strong>:模型可以用完全合法的参数,做出不合预期的事。<strong>只有 sensor 不够</strong>:副作用已经发生了,回滚本身有成本、有时甚至不可逆(想一下 <code>send_email</code> 之后再想 “取消”—— 邮件已经出去了)。成熟的 tool 层<strong>成对设计</strong> guide 和 sensor,让每个词都有前置守卫 + 后置检查。这对“双柱“在词汇表治理上的价值,等同于编译器里“语法分析 + 语义分析“ 的两段:<strong>任何一段缺失,都会让错误的“句子“ 溜进生产</strong>。</p>
+<h2 id="85-milvus-五组件到本书四柱的映射"><a class="header" href="#85-milvus-五组件到本书四柱的映射">§8.5 Milvus 五组件到本书四柱的映射</a></h2>
+<p>[[milvus-execution-layer]] 把 agent 的 execution layer 拆成五个组件。这五个组件和本书讲的四根柱不是一一对应关系 —— 它们<strong>切法不同</strong>,但讲的是同一块地形。把两种切法并列放在同一张表里,可以帮你在读两份不同文献时不迷路。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Milvus 执行层组件</th><th>本书定位</th><th>关系解释</th></tr>
+</thead>
+<tbody>
+<tr><td>Tool dispatcher</td><td><strong>Tools 柱的核心</strong>(本章)</td><td>一对一对应 —— tool 是执行层的入口</td></tr>
+<tr><td>State store</td><td><strong>Session 柱</strong>(Ch 6)</td><td>session 就是 state store 的通用化 —— append-only 的事实流,不只是“当前状态“</td></tr>
+<tr><td>Memory substrate</td><td><strong>Session + 知识层</strong>(Ch 6 + Ch 11)</td><td>短期在 session、长期在 wiki 层,两层职责不同</td></tr>
+<tr><td>Retrieval orchestration</td><td><strong>Tools 柱</strong>(作为一种特殊 tool)</td><td>retrieval 本身是 agent 可以调用的一个词,不是“旁路“</td></tr>
+<tr><td>Observability</td><td><strong>横切</strong>(本章 §8.2 可问责 + Ch 9 verification)</td><td>本书不单独立一柱,因为它是上述两柱的副产品</td></tr>
+</tbody>
+</table>
+</div>
+<p>这张映射表里最值得展开的是 Milvus 的一个立场:它把 retrieval orchestration <strong>当成 execution 的一部分</strong>,而不是 context engineering 的一部分。这对多数用 RAG 的团队来说反直觉 —— 他们习惯把 retrieval 当成“上下文装配管线“ 的一段,和 tool 分开讲。Milvus 的立场是:<strong>retrieval 什么时候查、查哪个 index、怎么 rerank、结果少了怎么办,这些都是 harness 在运行时做的执行决策</strong>,本质上就是“调用某只手“,只不过这只手是检索而已。</p>
+<p>本书采纳 Milvus 的切法。意味着:<strong>你的 retrieval 和你的 <code>read_file</code> 在词汇表治理上是对等的</strong> —— 同样要正交(两个 retrieval tool 不能语义重叠)、同样要可问责(每次 retrieval 的 query / result sha 必须进 session)、同样要与权限绑定。把 retrieval 从“context 配菜“ 升格到“tool 主菜“,是这一章和多数 RAG 教程最大的分歧点。Observability 这一列 Milvus 单独立柱,本书把它分拆到“session 层的可问责字段“和“verification 柱的 audit 输入“,不另立,两种切法在工程上等价。</p>
+<h2 id="86-tool-层治理谁能加谁能撤谁在审计"><a class="header" href="#86-tool-层治理谁能加谁能撤谁在审计">§8.6 Tool 层治理:谁能加、谁能撤、谁在审计</a></h2>
+<p>回到开场那位工程师手里那份 47 行的 <code>tools.yaml</code>。散会后他回到座位上,不是改代码,是<strong>先改流程</strong>。词汇表不是“一次设计好“ 的东西,它会随团队需求演化;而演化本身需要治理。治理包括三个动作,每个动作都要落到人 / 时机 / 证据三要素。</p>
+<p><strong>谁能加新 tool?</strong> —— 通常需要 <strong>spec 评审 + 安全 review</strong> 两道。spec 评审问:这个词的正交职责能不能一句话说出来?它和现有词表的哪些词会产生组合?安全 review 问:这些组合里是否存在“单词合规、组合不合规“ 的 tool escape 路径?任何一道没过,不加。<strong>加新 tool = 扩大 agent 行为边界 = 一次协议变更</strong>,不是一次普通的 PR。Ch 12 讲 reflexive harness 时会把一条更硬的红线画清楚:<strong>agent 自己创建新 tool = 禁区档</strong>,不允许。</p>
+<p><strong>谁能撤销 tool?</strong> —— 通常通过 <strong>runtime flag</strong>,不用重启 harness。这是为了响应事故:如果发现某 tool 有安全问题,必须能<strong>立刻停用</strong> 而不等下一次 release window。撤销时要写一条 <code>tool_deprecated</code> 事件进 session,让下游的 agent 在下一轮 <code>getEvents</code> 时自然感知到这个词从词汇表里消失。<strong>撤销不是静默的</strong>,它是词汇表的一次修订,所有正在运行的 session 都要收到这条修订事件。</p>
+<p><strong>谁审计 tool call?</strong> —— 所有 tool call 进 <code>session.jsonl</code>,作为<strong>审计链</strong>的一部分(§8.3)。Ch 9 会讲到,verification 的独立性要求 evaluator 能<strong>独立读</strong>到这些事件,不依赖生成者 agent 的自述。审计者可以是人,可以是独立的 evaluator agent,但不能是“被审计的 agent 自己“—— 这一条在下一章会展开成结构性论证。</p>
+<p>把三个动作拉平在一张表里,方便你对照自己团队的现状:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>治理动作</th><th>触发人</th><th>证据落点</th><th>红线</th></tr>
+</thead>
+<tbody>
+<tr><td>加新 tool</td><td>提案工程师 + spec reviewer + 安全 reviewer 三方</td><td>PR 里含 spec 评审记录 + 组合安全分析</td><td><strong>agent 自主创建新 tool 禁止</strong>(Ch 12)</td></tr>
+<tr><td>撤销 tool</td><td>值班工程师 / 安全团队</td><td><code>tool_deprecated</code> 事件写入所有活跃 session</td><td>不需要停机,但必须有 audit log</td></tr>
+<tr><td>审计 tool call</td><td>独立 evaluator(人或 agent)</td><td>读 session.jsonl,不读 agent 自述</td><td><strong>被审计 agent 自己不能是审计者</strong>(Ch 9)</td></tr>
+</tbody>
+</table>
+</div>
+<p>这三件事合起来,是词汇表活下去的免疫系统。<strong>免疫系统不是一次性设计的,是每次事故后加固的</strong>。回到开场那位工程师手里的 47 行 —— 真正的问题不是其中某几行,是<strong>他们的团队从没设计过这套治理</strong>。每个工具都是某次临时需求加进来的,没有 spec 评审记录,没有安全 review 记录,没有撤销流程,没有变更审计。清单看似“历史悠久“,实质是<strong>无治理状态下的自然沉积</strong>。</p>
+<p>所以他散会后做的第一件事不是拆哪个工具、不是加哪个 sensor,是<strong>先写一份 tool 变更的 SOP</strong>。从这一刻起,词汇表成为一个<strong>被治理的资产</strong>,而不是被动累积的清单 —— 但你必须先意识到它是词汇表,才能意识到治理是必需的。</p>
+<h2 id="87-失败模式前瞻tool-escape-与-hallucinated-parameters"><a class="header" href="#87-失败模式前瞻tool-escape-与-hallucinated-parameters">§8.7 失败模式前瞻:Tool Escape 与 Hallucinated Parameters</a></h2>
+<p>Ch 13 会把 tool 层的失败模式展开到博物馆级别,这里先埋两根最重要的标记作跨章索引。</p>
+<p><strong>Tool Escape(组合逃逸)</strong>:两个独立看安全的 tool 组合使用,产生了超出单 tool 权限的能力。§8.2 讲过的 <code>read_file + send_email</code> 只是最简单的一种;更隐蔽的组合如 <code>fetch_url + write_file</code>(用外部内容覆写项目文件,供应链式污染)、<code>run_tests + modify_ci</code>(改 CI 标准让失败的测试通过)、<code>read_calendar + create_meeting</code>(通过新会议的描述字段泄露私密日历内容)。防御不是“更严格地审每个单 tool“,是在 harness 或 MCP proxy 层<strong>识别并拦截可疑的调用序列模式</strong>。</p>
+<p><strong>Hallucinated Parameters(参数幻觉)</strong>:模型幻觉出 tool 不支持的参数,tool 返回报错,但<strong>模型在下一轮可能“假装没发生“ 继续推进</strong>,导致状态漂移 —— 它以为副作用已经产生,但实际什么都没发生。防御是 <strong>schema 严格验证 + 失败信号强制回传 session + 下一轮 prompt 显式展示上一次失败原因</strong> 三件事合起来。</p>
+<p>两类失败的共同点:<strong>都是结构性问题,靠“提醒模型小心“ 解决不了</strong>,只能在 harness 和 tools 两层设计出来。词汇表治理不只是“把词写对“,更包括“把不该拼出来的句子拦在语言系统之外“ —— 后一半,才是 tool 层真正的工程深度。</p>
+<hr>
+<h2 id="可观察信号"><a class="header" href="#可观察信号">可观察信号</a></h2>
+<ul>
+<li>你能<strong>一句话说出</strong>你系统里每个 tool 的“正交职责“ 吗?说不出来的那些,就是不正交的物证。</li>
+<li>每次 tool call 的六字段(tool / input / output / actor / ts / parent_event_id)都在 session 里吗?缺一个,后续审计就会断链。</li>
+<li><strong>Credentials 是否物理上不可被 agent 看到</strong>?如果答“agent 其实能读到 token,只是我们信它不会滥用“,这就是 narrow-scoped token 赌局,不合格。</li>
+<li>你的 tool 层有 guard(feedforward) 和 sensor(feedback) 两种控制吗?只有一种 = 半条腿走路。</li>
+<li>你们加一个新 tool 的流程里,有没有<strong>组合安全性检查</strong> 这一步?如果没有,你们在维护 API 集合,不是词汇表。</li>
+</ul>
+<hr>
+<h2 id="本章核心论断"><a class="header" href="#本章核心论断">本章核心论断</a></h2>
+<ol>
+<li>Tool <strong>不是</strong> API 集合,<strong>是</strong> 动作词汇表 —— 词与词的<strong>组合</strong> 决定 agent 的行为边界。</li>
+<li>三个硬要求:<strong>正交 / 可问责 / 与权限绑定</strong>。缺一个都不合格。</li>
+<li><strong>安全不建立在“模型不够聪明“上</strong>,建立在<strong>结构性权限边界</strong> 上。Credentials 不进 sandbox,Vault + MCP proxy 解耦。</li>
+<li><strong>Guides + Sensors</strong> 必须成对设计 —— 前置守卫 + 后置检查,任何一端缺失都会出现可预期的失败模式。</li>
+<li>Tool call 必须<strong>全部进 session</strong>,每条事件含六字段。这是 Ch 9 verification 独立性的上游信号来源。</li>
+<li>Tool 层治理包括<strong>谁能加 / 谁能撤 / 谁审计</strong> 三个动作。<strong>agent 自主创建 tool = 禁区档</strong>(Ch 12)。</li>
+<li>Tool Escape 和 Hallucinated Parameters 是两类结构性失败,Ch 13 展开为失败模式博物馆的样本。</li>
+</ol>
+<hr>
+<h2 id="本章奠基文对齐"><a class="header" href="#本章奠基文对齐">本章奠基文对齐</a></h2>
+<ul>
+<li>[[milvus-execution-layer]] —— execution layer 作为 agent 本质;五组件切分</li>
+<li>[[anthropic-managed-agents]] —— credentials 不进 sandbox、narrow-scoped token 赌局</li>
+<li>[[fowler-on-harness]] —— computational vs inferential controls;guides + sensors</li>
+<li>[[mindstudio-harness]] —— 五柱分类中 tool orchestration + guardrails 的并置</li>
+</ul>
+<h2 id="本章对应-wiki-页"><a class="header" href="#本章对应-wiki-页">本章对应 wiki 页</a></h2>
+<ul>
+<li>[[concept-tool-vocabulary]] · [[concept-observability]] · [[concept-harness]]</li>
+</ul>
+<hr>
+<p><strong>前三柱是“做什么 + 怎么做“</strong>。Session 是事实,harness 是调度,tools 是动作边界。<strong>第 9 章的第四柱回答一个更锋利的问题:谁来证明 agent 做的事是对的?</strong> —— verification 的独立性,是本书反脆弱论证的核心支点;也是开场那位工程师在下一次季度复查里,必须准备好回答的第三个问题。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="07-harness-pillar.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="09-verification-pillar.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="07-harness-pillar.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="09-verification-pillar.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

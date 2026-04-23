@@ -1,0 +1,377 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>第 10 章 · 两种协作循环 - 驾驭工程：原始完整书稿</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-56debc41.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-96099ef7.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">驾驭工程：原始完整书稿</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="第-10-章--两种协作循环--短程与长程"><a class="header" href="#第-10-章--两种协作循环--短程与长程">第 10 章 · 两种协作循环 —— 短程与长程</a></h1>
+<blockquote>
+<p>一个每次从零开始的实习生,无论他那一天多聪明,对组织的价值都是<strong>固定的</strong>。
+agent 也一样。</p>
+</blockquote>
+<h2 id="ariely-再度敲门"><a class="header" href="#ariely-再度敲门">Ariely 再度敲门</a></h2>
+<p>楔子里引过一次的那句话,要在本章再出一次:</p>
+<blockquote>
+<p><em>“Big data is like teenage sex: everyone talks about it, nobody really knows how to do it, everyone thinks everyone else is doing it, so everyone claims they are doing it.”</em>
+—— Dan Ariely, 2013</p>
+</blockquote>
+<p>这句话在 2013 年是对 “大数据” 的讽刺。2026 年把 “big data” 换成 “agent”,句子原封不动照用。全书三次回响,楔子是第一次,本章是第二次,结语会是第三次 —— 三次出现的目的不同。楔子用它扣“问题意识“:<strong>概念先于实践,词先于事</strong>。结语会用它提醒“命名不等于掌握“。本章用它做<strong>临床诊断</strong>:<strong>几乎所有声称“我们在做 agent“ 的团队,真正做到的其实是短程循环那一半;他们把短程循环当成长程循环在卖,而自己不知道</strong>。</p>
+<p>这一章的活,就是把两类循环的边界钉清楚,让读者下次看到一句 “我们的 agent 能学习”、“我们的 agent 越用越聪明”,能先问一句:<strong>你们做的是哪一类循环</strong>?</p>
+<h2 id="短程循环所有-agent-都有"><a class="header" href="#短程循环所有-agent-都有">短程循环:所有 agent 都有</a></h2>
+<p>先把读者熟悉的那一半放下来。</p>
+<p>凡你听过的 agent 架构 —— ReAct、Reflexion、Plan-and-Execute、CodeAct、Deep Research、Computer Use Agent —— 内核都是同一个骨架:<strong>Plan → Act → Observe → 判断是否继续</strong>。这个骨架本书叫它<strong>短程循环</strong>。它的尺度是<strong>一次 agent 执行</strong>:短则几秒(回答一个问题),长则几小时(做完一次深度研究)。但无论多长,它都有明确的终点 —— 任务完成、预算耗尽,或触发一次人类 checkpoint。</p>
+<p>短程循环已经被这个行业研究透了。ReAct 2022 年的论文、Reflexion 2023 年的论文、Plan-and-Execute 系列、各种 tool-use 基准,全部是在短程循环的尺度上在做优化。工程上你要关心的事情也成熟了:</p>
+<ul>
+<li><strong>终止条件</strong> —— 模型有“再试一次“的漂移倾向,harness 必须有预算控制、冗余检测、进度度量。[[case-karpathy-autoresearch]] 里 Karpathy 就把显式步数上限 + 无进展检测当作<strong>双重护栏</strong>,一根都不能省。</li>
+<li><strong>Context packing</strong> —— 每一轮把 session 里哪些事件塞进 context,是 harness 决定,不是模型决定。Ch 6 §6.1 讲过的 <code>getEvents()</code> 接口,就是让 packing 成为可编程对象。</li>
+<li><strong>Observability</strong> —— 每一步的输入输出都写进 <code>session.jsonl</code>,作为事后 debug 与合规审计的唯一真相源。</li>
+</ul>
+<p><strong>短程循环的工程正确性,本书 Part B(Ch 6–9)已经讲完。</strong> 本章不重复那块地图。本章要讲的是被短程循环的完善性掩盖的另一件事:<strong>你以为把短程循环做好 agent 就做好了。其实没有</strong>。</p>
+<h2 id="长程循环驾驭工程独有的那一半"><a class="header" href="#长程循环驾驭工程独有的那一半">长程循环:驾驭工程独有的那一半</a></h2>
+<p>再看第二张骨架:<strong>Accrete → Resume → Evolve</strong>。</p>
+<p>它的尺度不再是一次执行,是 agent 的<strong>全生命周期</strong> —— 跨多次会话、多天、多周,甚至多月。三个阶段各自管一件事:</p>
+<ul>
+<li><strong>Accrete(积累)</strong> —— 每次短程循环跑完,产出的不是“完成任务“这一件事,还有副产品:有效的事实、验证过的方法、踩过的坑。这些副产品要被<strong>沉淀</strong>进 session,并且在时机到了的时候<strong>提升</strong>到 wiki 层(Ch 11 会讲 promotion)。积累不是自动发生的,积累是工程动作。</li>
+<li><strong>Resume(恢复)</strong> —— 下一次短程循环启动,不从零开始:它从 wiki + session 里加载<strong>上次的稳定知识 + 未完成状态</strong>,在已积累的高度上起跑。</li>
+<li><strong>Evolve(进化)</strong> —— Schema、tool vocabulary、skill 目录随时间修订;失败教训变成新的 guide 或 sensor;整个 harness 在 verification 约束下持续演化。</li>
+</ul>
+<p><strong>短程循环所有 agent 都有;长程循环是驾驭工程独有的。</strong></p>
+<p>这句话要仔细念两遍。因为整个行业的一个最广泛的误读,就是把“短程循环做得很好“当成“我们有 agent“。这件事在 demo 阶段你感觉不到区别,在半年后你开始感觉痛。</p>
+<h2 id="长程循环从哪里来"><a class="header" href="#长程循环从哪里来">长程循环从哪里来</a></h2>
+<p>长程循环不是本书发明的,它的雏形在 [[case-karpathy-autoresearch]] 的<strong>两文件祖训</strong>里就已经出现。Karpathy 的 <code>index.md</code> 是“rewritten-every-time 的内容目录“,<code>log.md</code> 是“append-only 的时间线“;两份文件合起来就是一次最小的 <strong>Resume 协议</strong> —— 下一次 ingest 启动,agent 读 index 知道有什么、读 log 知道发生过什么,不从零开始。<strong>两文件是最小的长程循环</strong>。</p>
+<p>但 Karpathy 的两文件只做了 Accrete 的一小块和 Resume 的一部分,<strong>没有 Evolve</strong>。<code>pi-autoresearch</code>(Dave Copeland 的开源版本)把 Accrete 扩展到 benchmark-guided 的代码优化;[[case-ascent-research]] 把 Evolve 扩展到知识治理 —— wiki promotion、demotion、lint、schema 修订全部成为一等对象,而不是团队默契。</p>
+<p>你手上这本书的写作过程,本身就是一次 ascent-research 式的长程循环在跑。每一章的草稿,都是某一次短程循环的产出;章与章之间,wiki 在生长、SCHEMA 在修订、奠基文从 10 条加到 11 条 —— 这些是<strong>在单次短程循环之外</strong>发生的事。如果本书只靠短程循环写,你现在读到的第 10 章会是一个<strong>遗忘了前九章的草稿</strong>。</p>
+<h2 id="没有长程循环的-agent是每次从零开始的实习生"><a class="header" href="#没有长程循环的-agent是每次从零开始的实习生">没有长程循环的 agent,是每次从零开始的实习生</a></h2>
+<p>很多团队把“每次 session 里跑一个 ReAct“当成“我们的 agent 在学习“。这是本章最想命名的反模式:<strong>短程循环冒充长程循环</strong>。它的代价在三个维度上都看得见。</p>
+<p><strong>对用户的体验代价。</strong> “上次聊过的东西要重说一遍。” “这个 edge case 我们讨论过三次了。” “昨天调通的 prompt 今天不 work。” 每一句抱怨背后,都是同一件事:agent 不积累。用户在替你维护“agent 记不住但本来应该记住“的那一截记忆 —— 他每次对话都在给一个失忆症病人读病历。</p>
+<p><strong>对组织的隐性成本。</strong> 踩过的坑没有被 agent 系统吸收,新成员入职时仍然要靠口耳相传。所有的教训都活在某几个资深工程师的头脑里,随人员流动流失。agent 作为组织资产的复利<strong>根本没有发生</strong> —— 它是一个永远停在第一天的实习生,日薪不低,回报率零。</p>
+<p><strong>对产品的可靠性代价。</strong> agent 的能力边界不随时间扩展。这个月能做 100 类任务,半年后还是 100 类,因为没有 evolve 机制把“这次做对了的新方法“ 升级成“组织能稳定调用的 skill“(Ch 11 会展开)。你花钱在 demo 上很漂亮,花钱在生产上很疲惫。</p>
+<p>类比一下人类员工。一个永远不积累经验的实习生,无论他那一天多聪明、多努力,他对组织的价值都是<strong>固定的</strong>;一个能积累经验的员工,价值随时间<strong>复利</strong>。agent 也一样。</p>
+<p><strong>Ariely 引用在这里第一次落地成工程判断</strong>:所有人都在谈 agent,但谁家 agent 的能力曲线三个月后还在涨,谁家停在起点,看长程循环就知道。这个差别,从 demo 里看不出来。</p>
+<h2 id="两类循环在四柱上的不同侧重"><a class="header" href="#两类循环在四柱上的不同侧重">两类循环在四柱上的不同侧重</a></h2>
+<p>两类循环共用 Part B 的四柱基础,但对每一柱的<strong>演化节奏</strong>要求不同。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>柱</th><th>短程循环的侧重</th><th>长程循环的侧重</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Session</strong></td><td>本次执行的事实流;支持短程 resume,context 快满时触发 reset</td><td>跨会话的事实仓库;支持长程 accrete,provenance 是一等公民</td></tr>
+<tr><td><strong>Harness</strong></td><td>本次的 plan → act → observe 调度;稳定跑</td><td>跨会话的 schema 修订、loop 变体升级;可演化跑</td></tr>
+<tr><td><strong>Tools</strong></td><td>本次能调哪些工具、每次 tool call 进 audit</td><td>工具目录随时间扩展;新工具的 spec review + 权限边界审计</td></tr>
+<tr><td><strong>Verification</strong></td><td>本次步骤的 unit + trace 验证;actor 与 generator 分离</td><td>跨会话 golden trace 回归 + spec 演化 verify + sycophancy-aware lint</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>一句话总结这张表</strong>:短程循环要求四柱“稳定跑“,长程循环要求四柱“<strong>可演化跑</strong>“。前者是工程正确性,后者是工程可持续性。很多团队只看前者,所以才会在第二年发现自己的 agent 系统被自己的积累堵死 —— tool 变量名冲突、skill 重复、wiki 腐烂。这些都是长程循环没有被工程化的症状。</p>
+<h2 id="两类循环的缝合点context-reset-with-structured-handoff"><a class="header" href="#两类循环的缝合点context-reset-with-structured-handoff">两类循环的缝合点:Context Reset with Structured Handoff</a></h2>
+<p>短程循环和长程循环之间,最精妙的工程连接,是 [[anthropic-harness-design]] 给出的 <strong>context reset with structured handoff</strong>。</p>
+<p>Anthropic Labs 在跑 4 小时 coding 任务(Retro Game Maker benchmark)时碰到一个现象:单个 agent 跑到 context 用到 ~70% 时,会出现 <strong>context anxiety</strong> —— 开始表现得像一个被催着交卷的学生,草草下结论、跳过子目标、把原本能做的事情做一半。Ch 2 §1.2.1 讲过这个命名。他们试过各种“更聪明的 summarization“ —— 全失败。真正有效的修法,只有一种:</p>
+<p><strong>硬重置 + 结构化移交。</strong> 把当前 agent 进程整个杀掉,起一个全新的 agent,context window 清空;新 agent 通过 session 读到前 agent 的<strong>关键产出 + 未完成事项 + 当前状态快照</strong>。这里最关键的一个细节是:移交<strong>不是通过 context 注入</strong>,是<strong>通过 session 事实流</strong>。前 agent 不是把信息“塞到新 agent 的 prompt 里“,而是前 agent 写入 session,新 agent 启动时从 session 读。</p>
+<p>这个机制,本质上是<strong>用“一次短程循环的结束 + 另一次短程循环的开始“ 代替一次超长 context 的延续</strong>。它只有在 session 独立于 context 的前提下才可行 —— Ch 6 的 session ≠ context window 分界,这里第一次结出果实。它的存在,让<strong>长程循环可以由若干段短程循环缝合而成</strong>,而不是被硬绷成“一个超长的短程循环“。</p>
+<p>Anthropic 的实证非常直观:solo Claude 跑这个任务,20 分钟 9 美元,输出浅;三 agent harness(planner / generator / evaluator)+ context reset,4 小时 80 美元,产出是生产质量。<strong>harness 解锁了模型本来就有、但被 context anxiety 锁住的能力</strong>。这不是“模型变强“,是短程与长程被工程正确地缝合。</p>
+<p>这一手为什么非得是 context reset,不能是“把所有历史塞一个更大 context 里“,值得用一张表钉一下 —— 两种做法在四个维度上的工程差异:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>维度</th><th>长 context 延续</th><th>Context reset + structured handoff</th></tr>
+</thead>
+<tbody>
+<tr><td>状态载体</td><td>context window 本身</td><td>session.jsonl(与 context 解耦)</td></tr>
+<tr><td>失败边界</td><td>单个 agent 进程挂 = 全部丢</td><td>单个 agent 进程挂 = 重启新 agent resume</td></tr>
+<tr><td>上下文污染</td><td>前半段噪声会污染后半段推理</td><td>每次 reset 是一次清场</td></tr>
+<tr><td>可审计性</td><td>事后要从 context 反推发生过什么</td><td>session 是真相源,天然可 replay</td></tr>
+</tbody>
+</table>
+</div>
+<p>左列在短任务里没区别,在超过 context 40–60% 之后开始显著劣化;右列在短任务里是<strong>过度工程</strong>,在 4 小时以上的长任务里是<strong>必要条件</strong>。两栏的分界线就在“任务长度能否被一次短程循环装下“这一个判据上。</p>
+<h2 id="两类循环的一个组织诊断--看你们在哪一类里"><a class="header" href="#两类循环的一个组织诊断--看你们在哪一类里">两类循环的一个组织诊断 —— 看你们在哪一类里</a></h2>
+<p>在把两类循环推到抽象层之前,先给一组<strong>直接可用的组织诊断问题</strong>。每一组问题,答“有“就说明你们在该类循环上已经进场;答“没有“就说明还没有进场 —— 进场的条件并不是“团队水平“,是“<strong>有没有把一件具体的事做成协议</strong>“。</p>
+<p>问题一(短程):<strong>你的短程循环终止条件是</strong>什么**,写在哪儿**?是“我们工程师感觉应该停了“ 写在一张 Confluence 上,还是 <code>max_iters=20 | no_progress_for=3_rounds | human_checkpoint_triggered</code> 写在代码里?前者在压力下会变形,后者不会。</p>
+<p>问题二(短程):<strong>一次 tool call 失败,feedback 到下一次 plan 的路径是什么</strong>?如果答“agent 自己会读 error 调整“,那是 prompt 层解释,不是 harness 层。harness 层的回答应该能说清楚 error 的哪段字符进 next prompt、怎么截断、哪些 stack frame 保留、哪些丢弃。</p>
+<p>问题三(长程):<strong>新成员入职,三小时能摸清你们 agent 的能力边界吗</strong>?如果能,你们有某种版本的 AGENTS.md + docs/skills/ 架构。如果不能,你们的长程循环没有 Accrete 层 —— 能力没被外化,只活在资深工程师的脑子里。</p>
+<p>问题四(长程):<strong>上线六个月的 agent,现在它比上线第一天多会做几类任务</strong>?数得出来吗?数得出来,你们的 Evolve 在跑;数不出来,你们是短程循环冒充长程循环的典型形态。</p>
+<p>问题五(两类之间):<strong>context 用到 70% 会发生什么</strong>?草草收尾、乱引用、结论跳步 —— 是 context anxiety。触发 structured handoff、起新 agent、从 session 读上一段状态继续 —— 是两类循环被缝合上了。</p>
+<p><strong>这五个问题的价值不在“答对“,在“答得出来“</strong>。一个团队能用精确语言回答这五问,说明两类循环在他们的工程对象里都是一等公民;支支吾吾的,说明他们的 agent 系统里有一个<strong>语焉不详的暗角</strong> —— 这个暗角很可能就是他们产品不稳定的来源。</p>
+<h2 id="一个具体例子本书写作本身"><a class="header" href="#一个具体例子本书写作本身">一个具体例子:本书写作本身</a></h2>
+<p>把前面几节具体化,用一个读者能检查的例子 —— <strong>你现在读的这本书</strong>,写作过程本身就是一次长程循环的活样本。</p>
+<p><strong>Accrete</strong>。每一次 <code>ascent-research loop</code> 跑完,产出新 wiki 页或更新既有 wiki 页;每一次 <code>add</code> 摄入新的 raw 源;每一次章节草稿由 <code>/tech-writer</code> skill 从 spec 生成。每一步都写进 <code>session.jsonl</code>,append-only,不改不删。这是积累的机械底座。</p>
+<p><strong>Resume</strong>。任一工程师接过这个 session,拿到 <code>SCHEMA.md</code> + <code>wiki/*.md</code> + <code>session.md</code> 三份文件,就能完整重建现场 —— 上次做到哪儿、下次从哪继续,不依赖任何一个人的记忆。你此刻读的这一段,是在第三位工作者接手之后写的;她不知道前两位私下聊过什么,但她<strong>不需要知道</strong> —— Resume 协议把所需的一切都放在文件里。</p>
+<p><strong>Evolve</strong>。Stanford Meta-Harness 作为第 11 个奠基文被加入后,SCHEMA 追加了一条 “Round 3 focus”,wiki 新开 <code>stanford-meta-harness.md</code>,Ch 3、5、11、12、13 都被回头修订。这是一次完整的“<strong>评估新证据 → 更新稳定知识 → 回修下游章节</strong>“链条。evolve 不是哲学意义上的进化,它是具体的、可 grep 的、在 git log 里能看到的一串 commit。</p>
+<p>这个例子值得细看的一个点是:<strong>两类循环不是并列,而是嵌套</strong>。长程循环的每一步,里面都有若干次短程循环(每一章的写作、每一次 wiki 的 ingest、每一次 schema 的 lint);长程循环的 evolve 阶段,会<strong>回过来改短程循环的规则</strong>(改了 schema,下次章节生成就按新 schema 来)。这和 Ch 3 讲的 feedforward / feedback 控制一致 —— 长程循环就是对短程循环的<strong>外层 feedback</strong>。</p>
+<h2 id="读完本章第三部分剩下的章怎么看"><a class="header" href="#读完本章第三部分剩下的章怎么看">读完本章,第三部分剩下的章怎么看</a></h2>
+<p>本书 Part C(Ch 10–12)的三章,不是在讲三件相互独立的话题,是在展开<strong>长程循环的三个维度</strong>:</p>
+<ul>
+<li><strong>Ch 10(本章)</strong> —— 长程 vs 短程的区分</li>
+<li><strong>Ch 11</strong> —— 长程循环的 <strong>Accrete</strong> 阶段:知识如何沉淀、skill 如何从候选晋升为组织能力(两级结构同构,所以合并一章)</li>
+<li><strong>Ch 12</strong> —— 长程循环的 <strong>Evolve</strong> 阶段:reflexive harness 的边界在哪,agent 改自己改到什么程度要叫停</li>
+</ul>
+<p>下一章开始讲 Accrete 的时候,读者很容易把“knowledge distillation“ 误读为“更好的 memory“,把“skills“ 误读为“prompt 库“,把“reflexive harness“ 误读为“AI 伦理“。<strong>这三个误读都来自同一件事:没有把话题放在长程循环的维度上看</strong>。请带着两类循环的区分读下去。</p>
+<h2 id="回到-ariely"><a class="header" href="#回到-ariely">回到 Ariely</a></h2>
+<p>本章开头的 Ariely 引用,现在可以合上了。</p>
+<p>“everyone talks about it” —— 所有人都谈 agent。
+“nobody really knows how to do it” —— 真正把长程循环工程化的少得可怜。
+“everyone thinks everyone else is doing it” —— 每家 demo 都看起来很 agent,所以每家都觉得“别人在做“。
+“so everyone claims they are doing it” —— 招聘 JD 写“构建 agent 系统“,内部汇报说“agent 已上线“。</p>
+<p><strong>但短程循环做得再好,没有长程循环,agent 就还是那个每天从零开始的实习生</strong>。</p>
+<p>Ariely 的这句话在结语还会响一次。那一次的主题会是“命名不等于掌握“。而在本章,我们先让它落地成一个问题:<strong>下一次有人告诉你他们的 agent 在“学习“,请先问一句:它的 Accrete / Resume / Evolve 分别写在哪个文件、由谁审、用什么 verification 拦截漂移?</strong> 三个问题都答得上,那是真在做驾驭工程。任何一个答不上,都是短程循环在冒充长程循环。</p>
+<hr>
+<h2 id="可观察信号"><a class="header" href="#可观察信号">可观察信号</a></h2>
+<ul>
+<li>关掉你的 agent 一周再打开 —— 它<strong>记得上次的进度</strong>吗?记得的是“对话历史“,还是“有效事实“?</li>
+<li>你的 agent 用得越久,是<strong>越来越好用</strong>还是<strong>越来越臃肿</strong>?越好用 = evolve 机制在工作;越臃肿 = 只有 accrete 没有 demotion。</li>
+<li>团队里那些“隐性调试经验“,有没有被 agent 系统<strong>吸收</strong>到 wiki 里?还是仍然只活在某个同事的头脑里?</li>
+<li>你的长任务跑到 context 70% 会怎样?agent 草草收尾(context anxiety),还是 harness 触发 structured handoff?</li>
+</ul>
+<hr>
+<h2 id="本章核心论断"><a class="header" href="#本章核心论断">本章核心论断</a></h2>
+<ol>
+<li><strong>两类循环的尺度不同</strong> —— 短程循环 = 一次执行(几秒到几小时),长程循环 = 全生命周期(跨多天、多周、多月)。</li>
+<li>短程循环所有 agent 都做,本书 Part B 已讲完;<strong>长程循环是驾驭工程独有的</strong>。</li>
+<li>没有长程循环的 agent = 每次从零开始的实习生;价值固定,<strong>不复利</strong>。</li>
+<li>长程循环三阶段 <strong>Accrete → Resume → Evolve</strong>,分别依赖四柱的不同侧重;四柱同一套,演化节奏不同。</li>
+<li><strong>Context reset with structured handoff</strong> 是两类循环的缝合点;它依赖 session ≠ context window 这个根本分界。</li>
+<li>两类循环<strong>不是并列,是嵌套</strong>:长程循环由若干段短程循环构成,长程循环的 evolve 会回过来改短程循环的规则。</li>
+<li>Part C(Ch 10–12)三章分别展开长程循环的三个维度:本章是入口,Ch 11 讲 Accrete,Ch 12 讲 Evolve 的边界。</li>
+</ol>
+<hr>
+<h2 id="本章奠基文对齐"><a class="header" href="#本章奠基文对齐">本章奠基文对齐</a></h2>
+<ul>
+<li>[[case-karpathy-autoresearch]] —— 两文件 resume 祖训、长程循环原型</li>
+<li>[[anthropic-harness-design]] —— context reset with structured handoff、4-hour task 实证</li>
+<li>[[openai-harness-engineering]] —— 短程循环在 AGENTS.md + <code>docs/</code> 架构中的工程正确性</li>
+</ul>
+<h2 id="本章对应-wiki-页"><a class="header" href="#本章对应-wiki-页">本章对应 wiki 页</a></h2>
+<ul>
+<li>[[concept-agent-loop]] · [[concept-state-durability]] · [[case-ascent-research]] · [[ariely-big-data-quote]]</li>
+</ul>
+<hr>
+<p><strong>有了两类循环的语言</strong>,第 11 章进入长程循环的 Accrete 阶段:agent 在积累的两级资产 —— 事实(知识)与方法(skill)—— 各自怎么沉淀、晋升、降级。两级的治理原则同构,所以合并在同一章里对比着讲最清楚。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="09-verification-pillar.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="11-knowledge-and-skills.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="09-verification-pillar.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="11-knowledge-and-skills.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

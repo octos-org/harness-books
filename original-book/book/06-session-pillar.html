@@ -1,0 +1,437 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>第 6 章 · Session 是可恢复的事实流 - 驾驭工程：原始完整书稿</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-56debc41.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-96099ef7.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">驾驭工程：原始完整书稿</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="第-6-章--session-是可恢复的事实流"><a class="header" href="#第-6-章--session-是可恢复的事实流">第 6 章 · Session 是可恢复的事实流</a></h1>
+<blockquote>
+<p><strong>如果你的 agent 能被 kill 掉又能无缝续上</strong>,你在读的不是这本书,是一份你们团队早就走通的内部文档。
+对其他所有人,本章是<strong>Layer 2 四柱的第一根</strong> —— 也是能把后面三根架起来的<strong>那根</strong>。</p>
+</blockquote>
+<h2 id="开场两个-agent一个-kill-命令"><a class="header" href="#开场两个-agent一个-kill-命令">开场:两个 agent,一个 kill 命令</a></h2>
+<p>两位工程师在同一个时区各自开了一个 agent,跑同一个任务 —— “从上游仓库抓一段文档,合并进我们的 wiki,顺便改掉两个旧链接”。Agent 各自跑了大约四十分钟,两位工程师不约而同在第十七分钟左右接到一个要去开的会,于是各自做了同一个动作:<strong>一个 <code>kill</code>,把 agent 进程按掉</strong>,打算会议结束回来再继续。</p>
+<p>会开完了。他们回到桌前,各自点了 “resume”。</p>
+<p>工程师 A 的 agent <strong>从第 37 轮的那一条 tool_result 接上</strong>,下一轮就去做“合并 wiki“ 那一步。它没有重新读一遍上游仓库的内容,因为那条 <code>tool_result</code> 的 sha256 已经 append 在场外事件流里,还在。两个旧链接的位置它也记得 —— 第 29 轮它写过一条 <code>fact_proposed</code>,标注了两个链接的位置和原文出处。</p>
+<p>工程师 B 的 agent <strong>从头开始</strong>。它先打招呼,然后问:“请问你想做什么?”</p>
+<p>这两个 agent 用的是同一家模型。模型能力不是区别所在。区别在<strong>它们的 session 放在哪里</strong>。</p>
+<p>A 的 session 是一条活在场外的事件流:agent 进程被 kill 了,事件流没死。新进程起来,从事件流的最后一条之后继续写。事件流是 A 这只 agent 的<strong>唯一真身</strong>,进程只是附在上面的临时劳动力。</p>
+<p>B 的 session 在 agent 的进程内存里:进程一挂,事件流跟着灰飞烟灭。B 起来的时候,它确实不知道自己刚才做过什么 —— 没有什么事“在它身上“,因为它是一个新生。</p>
+<p>在 2026 年 4 月 [[anthropic-managed-agents]] 那篇工程 blog 里,Lance Martin 的团队把这件事写成了本书反复要引的一句话:</p>
+<blockquote>
+<p><em>The session is not Claude’s context window.</em></p>
+</blockquote>
+<p>这句话读第一遍你可能以为是技术细节 —— “哦,session 比 context window 大一些”。<strong>实际上它在钉一根桩子</strong>。A 和 B 的差别,不是 context window 大小的差别,是“事实到底住在哪里“ 的差别。Context window 是每次 inference 一张白纸抄进来、吐完就丢的短期工作台;session 是白纸上每次抄的那些东西的<strong>原始档案</strong>,活在进程之外、活在调用之外,活在 agent 自己之外。</p>
+<p><strong>Layer 2 四柱的第一根,就是这个</strong>:把事实放在正确的位置 —— 场外,append-only,随时可重组,随时可恢复。后面三根柱子(harness / tools / verification)都要站在这根上。session 没立稳,后三柱就悬在半空。</p>
+<p>这一章的剩余篇幅,都在把这根柱子钉进地里。</p>
+<h2 id="61-从-ch-2-接过来--context-window-装不下的那一半"><a class="header" href="#61-从-ch-2-接过来--context-window-装不下的那一半">§6.1 从 Ch 2 接过来 —— context window 装不下的那一半</a></h2>
+<p>在 Ch 2 里,凌晨两点那位工程师遇到了一个症状:第十七轮说过的那句话,第四十轮 agent 不记得了。那一章给的诊断是:这不是 prompt 问题,是尺度错位 —— 他要解的问题只有在 harness 尺度上才有形式化落点。</p>
+<p>Ch 2 把尺度的名字讲清楚了。<strong>这一章要讲的是</strong>:harness 尺度上,<strong>事实具体住在哪</strong>。</p>
+<p>答案只有一个位置,就是 session。再精巧的 prompt、再聪明的 retrieval,都只是在一次 inference 内部解决“我此刻能读到什么“。但“我此刻能读到什么“ 这件事本身,要求<strong>某个场外的对象</strong> 在那儿待着、能被读。没有这个对象,你再精巧的调度都是在空气里划圈。</p>
+<p>你可以想象 session 是一条<strong>河</strong>,context window 是<strong>从河里用桶舀出来的那一桶水</strong>。桶的容量、桶里这一瞬间装的是什么,那是 prompt 和 context engineering 要关心的事。<strong>河本身</strong>是否一直在流、从哪里流到哪里、三天前它流过的那段河水有没有被记录下来 —— 这是 session engineering 关心的事。</p>
+<p><strong>河和桶不是一回事。把河当成“一堆桶的拼接“</strong>,你就在做一件可悲的事:你以为自己在管理长期记忆,其实你只是在管理桶里那点水的边角料。</p>
+<p>这也是为什么 Anthropic 要专门用那句话把两件事切开。在没有这种切分的团队里,session 被悄悄等同于“最近 N 轮对话的拼接“,或“context window 的一个滑动窗口“。听上去自然,但它<strong>把一个长寿命对象退化成了一个短寿命对象</strong>。河被削成了桶。</p>
+<h2 id="62-session-的四条硬约束"><a class="header" href="#62-session-的四条硬约束">§6.2 Session 的四条硬约束</a></h2>
+<p>要让 session 真的承担“事实的证据仓库 + agent 的长期记忆载体“ 这件事,它必须同时满足四条硬约束。这四条约束<strong>不是设计建议,是定义</strong>。缺任何一条,你手里那个东西就不是 session,只是一份日志。</p>
+<p><strong>第一条:append-only。</strong> 写过的事件不覆盖、不修改、不删除。你发现某条事件错了,修法不是把那条改掉,而是<strong>追加一条新事件</strong> —— “前一条 event_id=123 标记为失效,因为 …”。</p>
+<p>这一条非常反直觉,因为人的直觉是“写错了就改正“。但 session 的读者不是人,是<strong>未来的 harness、未来的 evaluator、未来的审计员</strong>。他们需要知道的不只是“正确答案是什么“,是“agent 当时相信了什么、什么时候改的信、为什么改“。把错的那条改成对的,你丢掉的不是一条错信息,是 agent 的<strong>判断路径</strong> —— 这是 replay、audit、diff 这三件事的物理基础。路径删了,这三件事全部做不了。</p>
+<p>一个具体的坏场景:第 12 轮 agent 调了 <code>web_fetch</code> 抓了一段文档,产出一条 <code>tool_result</code> 带 sha256=<code>a3f...89</code>。第 22 轮 agent 以“压缩对话历史“ 的名义,跑了一次 summarization,把第 10–20 轮合并成一条“调研背景“的摘要,<strong>原始的 sha256 被覆盖掉了</strong>。到第 30 轮 verification 跑一条 <code>verify_check</code>,要回溯“agent 当时依据的原文究竟是哪一段“,它在场外找不到 —— <code>source_sha</code> 指向的那条事件已经不存在。这种“回溯不到源头“的症状在 Ch 13 失败模式博物馆里有个专门的名字,叫 <strong>dropped refs</strong>。它几乎总是由一次看上去“很无害“的 compaction 引起的。</p>
+<p><strong>第二条:可查询。</strong> <code>getEvents(session_id)</code> 必须能按 append 顺序返回所有事件;最好还能按 event kind、按时间窗口、按 actor 做过滤。查询不是锦上添花,是 harness 重组 context 的基础。Ch 7 会讲,harness 本身无状态 —— 它每一轮要决定下一步做什么,都要先从 session 里读。<strong>读不出来的 session,harness 等于盲人</strong>。</p>
+<p><strong>第三条:可重组。</strong> harness 每一轮只把“这一轮相关“ 的事件片段塞进 context window,而不是“把所有历史塞给模型“。重组是 session 和“滑动窗口截断“ 的分水岭 —— 前者主动挑选,后者被动裁剪。被动裁剪的系统在 context window 满的时候会开始慌(Anthropic 在 [[anthropic-harness-design]] 里把这件事叫 <strong>context anxiety</strong>,Ch 2 §2.4 介绍过);主动挑选的系统在 context window 满的时候<strong>不慌</strong>,因为它知道不在窗里的那些事实<strong>都还在场外</strong>,任何一条之后都能被重新挑回来。</p>
+<p><strong>第四条:可恢复。</strong> 任意时刻 kill 掉整个 agent 进程,换一个新进程,<code>wake(session_id)</code> + <code>getEvents</code> <strong>从上一个事件继续</strong>。</p>
+<p>可恢复性不是独立的一条,是前三条综合起作用的<strong>可检验结果</strong>。如果 kill 后不能 resume,至少有一条没做到 —— append-only 破了(有事件被覆盖)、可查询破了(没法按顺序读)、或者 session 根本就没活在场外(事件流和进程绑死了)。<strong>§6.1 那个“A 能 resume、B 不能“的对照,就是这四条约束合起来能不能成立的最硬的考试</strong>。</p>
+<p>这四条合起来可以用一句话概括:<strong>session 是场外事实流,不是场内缓存</strong>。[[anthropic-harness-design]] 里三 agent 架构能跑四小时的长任务,不是模型变强了这么简单 —— 是因为它的 session 真正独立于任何一个 agent 进程存在。进程崩了事实不丢;换了新 agent,事实流仍然是同一条。四小时那个数字是<strong>四条约束合格之后的自然产物</strong>,不是被工程师熬夜堆出来的。</p>
+<h2 id="63-karpathy-的两文件祖训"><a class="header" href="#63-karpathy-的两文件祖训">§6.3 Karpathy 的两文件祖训</a></h2>
+<p>Session 协议的<strong>最小充分表达</strong>,不在任何一家大公司的架构白皮书里,在 Andrej Karpathy 的一篇 gist([[case-karpathy-autoresearch]])。Karpathy 没有用 “session” 这个词,他在写一个 autoresearch 的 pattern。但他给的那个最小 layout,就是本书后面所有 session 工程的<strong>原型</strong>。</p>
+<p>两个文件。就这样。</p>
+<ul>
+<li><code>autoresearch.md</code> —— <strong>人类可读的 living document</strong>。叙事层。记录 agent 当前在做什么、已经想到了什么、下一步打算怎么走。你可以在任何一个编辑器里打开它读。</li>
+<li><code>autoresearch.jsonl</code> —— <strong>append-only 事件日志</strong>。机器层。每一次 ingest / query / decision 都 append 一条结构化 event。</li>
+</ul>
+<p>Karpathy 的关键洞察只有一句:<strong>这两个文件足够让一个 fresh agent 从死里复活</strong>。</p>
+<p>你可以把旧 agent 进程全部杀掉,删干净。起一个全新的 agent,把这两个文件递给它。它能从 <code>.jsonl</code> 里读完整事件流,从 <code>.md</code> 里读到人类给出的脉络,然后接着做下去。<strong>不需要复杂的 state machine,不需要 in-memory buffer,不需要 DB schema</strong>。两个文本文件,叙事层 + 事件层,是 session 协议的 minimum viable protocol。</p>
+<p>下面这段就是 Karpathy 两文件模式的<strong>同一个代码块里并列</strong>的示意 —— 把 <code>.md</code> 当成 agent 写给未来同行的信,把 <code>.jsonl</code> 当成写给未来机器的档案:</p>
+<pre><code># session.md (narrative · 人类可读的 living document)
+## 现状
+当前在研究 Stanford Meta-Harness,已完成原文阅读。下一步打算交叉
+对照 Anthropic Managed Agents,找出"meta" 一词在两处的不同含义。
+
+## 待验证的几件事
+- Stanford 实测的 +7.7 分是在哪一个 benchmark 上
+- 它的 proposer 具体读取哪些历史 trace 做决策
+
+## 已放弃的路径
+(暂无)
+
+---
+
+# session.jsonl (events · append-only,每行一件事)
+{"ts":1734300100, "kind":"intent",       "actor":"user",   "text":"调研 Stanford Meta-Harness"}
+{"ts":1734300102, "kind":"tool_call",    "actor":"agent",  "tool":"web_fetch", "url":"arxiv.org/abs/2603.28052"}
+{"ts":1734300106, "kind":"tool_result",  "actor":"tool",   "bytes":58231, "sha256":"a3f...89"}
+{"ts":1734300108, "kind":"fact_proposed","actor":"agent",  "claim":"文本分类 +7.7 分", "source_sha":"a3f...89"}
+{"ts":1734300110, "kind":"wiki_write",   "actor":"agent",  "page":"stanford-meta-harness", "op":"append", "section":"实证"}
+{"ts":1734300112, "kind":"verify_check", "actor":"harness","page":"stanford-meta-harness", "outcome":"ok"}
+</code></pre>
+<p>你注意到了吗?<strong>两个文件里讲的是同一件事的两个面</strong>。<code>.md</code> 是叙事 —— agent 此刻在思考什么、下一步打算做什么、哪些路已经放弃过。<code>.jsonl</code> 是档案 —— 从哪个 URL 抓到多少字节、hash 是多少、哪一条 fact 指向哪一个 sha256、哪一个 wiki 页被哪一只手改过。</p>
+<p>一个朝人,一个朝机器。<strong>缺哪边都不够</strong>。只有 <code>.md</code>,新 agent 续上时没法精确引用某条 tool_result;只有 <code>.jsonl</code>,新 agent 读到一半会陷入“事件多到读不过来、不知道当前优先级在哪“ 的症状。两文件并列,人和机器都有自己那一份可读性。</p>
+<p>这份 gist 里还有一句被反复引用的话,值得把它印在这本书每一章的页眉上:</p>
+<blockquote>
+<p><em>The tedious part of maintaining a knowledge base is not reading or thinking — it’s bookkeeping.</em></p>
+</blockquote>
+<p>翻译过来大概是:“知识库里 tedious 的部分不是读、不是想,是记账”。这句话可以再推广一层 —— <strong>LLM 应用里 tedious 的部分,也不是 prompt,也不是 reasoning,是 bookkeeping</strong>。Session 就是 LLM 应用里 bookkeeping 层的最小形式。Karpathy 的两文件是它的最小协议,本书把这个 pattern 称为 <strong>autoresearch 祖训</strong>,后面每一章都会在某个位置引它。</p>
+<h2 id="64-ascent-research-的三层存储扩展"><a class="header" href="#64-ascent-research-的三层存储扩展">§6.4 ascent-research 的三层存储扩展</a></h2>
+<p><code>ascent-research</code>([[case-ascent-research]])是本书作者维护的一个开源实现。它在 Karpathy 祖训的基础上做了一次<strong>有控制的扩展</strong> —— 不是推翻祖训,是在祖训上加两个维度。本书的写作过程本身就在用它,所以这是一份同时出现在<strong>正文引用</strong> 和<strong>作者案例</strong> 里的自我演示。</p>
+<p>四层:</p>
+<ul>
+<li><code>session.md</code> —— <strong>叙事层</strong>。对人。延续 Karpathy 的 <code>autoresearch.md</code>。</li>
+<li><code>session.jsonl</code> —— <strong>事件层</strong>。对机器。延续 Karpathy 的 <code>autoresearch.jsonl</code>。</li>
+<li><code>SCHEMA.md</code> —— <strong>引导层</strong>。这是 Karpathy 原版里没有的。用户在研究过程中经常会<strong>改方向</strong>:不是改过去做错的地方,是修订“下一步搜集的焦点“。改 SCHEMA 对应在 session 里 append 一条 <code>SchemaUpdated</code> 事件,随后的 harness 循环读新的 SCHEMA 做事,<strong>但旧事件仍然留在场外</strong>。这就是“方向可改、证据不改“ 的具体落地。</li>
+<li><code>wiki/*.md</code> —— <strong>知识层</strong>。跨会话的 durable 记忆,<strong>不是对话历史</strong>。每个 wiki 页有 <code>kind</code> / <code>sources</code> / <code>related</code> / <code>updated</code> 等 frontmatter,是<strong>被提升过的 stable 事实</strong>,不是临时存档。</li>
+</ul>
+<p><strong>扩展没破坏祖训</strong>:两文件 resume 依然成立 —— 只给任何新 agent <code>session.md</code> + <code>session.jsonl</code>,它依然能恢复到“刚才在做什么“。但新增了两件事:(1) <strong>方向可修订而历史不动</strong>;(2) <strong>有效事实能被提升成跨会话的长期知识库</strong>。</p>
+<p>第二件事尤其关键。Ch 11 会把 wiki 层的 promotion/demotion 机制单独展开;这里只需要记住一句:<strong>session 承担 resume,wiki 承担 knowledge</strong>。两件不同的职责,不能塞在同一层。把它们塞在同一层的团队,最常见的症状是“越跑越慢“ —— 因为 session 尺寸无限膨胀、每一次 getEvents 都要读过几百 MB 的历史、harness 每一轮都在重新 parse 几千条事件。<strong>Knowledge 要被主动提升,不是被动堆积</strong>。</p>
+<h2 id="65-一次事件流一整条故事"><a class="header" href="#65-一次事件流一整条故事">§6.5 一次事件流,一整条故事</a></h2>
+<p>前面讲事件流时给过一个片段。把它放在一个具体任务的语境里再看一次,你会感到这份颗粒度到底是在承载什么。</p>
+<p>任务:“从网页抓一段素材、提取关键事实、更新 wiki 页”。agent 在四十秒内跑完这一轮。在这四十秒里,<code>session.jsonl</code> 里有这样几行事件被 append(已在 §6.3 的两文件代码块里给过,这里重述并解读):</p>
+<ul>
+<li><code>intent · user · "调研 Stanford Meta-Harness"</code> —— 用户意图进入 session 的那一刻。所有的下游动作都要回指这个 intent,不回指的就是<strong>越权执行</strong>。</li>
+<li><code>tool_call · agent · web_fetch · arxiv.org/abs/2603.28052</code> —— agent 发起的一次工具调用。参数本身被记录,以防重放时发现“当时用了错误的 URL“。</li>
+<li><code>tool_result · tool · bytes=58231, sha256=a3f...89</code> —— 副作用<strong>带 hash</strong> 记录下来。这个 hash 会被下游所有依赖这段素材的事件引用。<strong>上游内容变了,hash 对不上,下游验证层立刻就能知道</strong>。</li>
+<li><code>fact_proposed · agent · claim="文本分类 +7.7 分", source_sha=a3f...89</code> —— agent 从 tool 结果里提取出的断言。通常这种东西埋在 chain-of-thought 里看不见;session 把它拽出来当一等事件。<code>source_sha</code> 让这条 claim 可以<strong>独立反向追溯到原文</strong>。</li>
+<li><code>wiki_write · agent · page="stanford-meta-harness", op=append, section="实证"</code> —— 断言被提升到知识层的那一刻。这是 session 和 wiki 之间的一条“提升通道“,Ch 11 会把它展开。</li>
+<li><code>verify_check · harness · page="stanford-meta-harness", outcome=ok</code> —— verification 是<strong>独立的事件</strong>,不是 agent 说自己“检查过了“。这是 Ch 9 讲 verification 独立性时的最直接落地。</li>
+</ul>
+<p>这份颗粒度第一次见会让工程师心里发毛,觉得“太冗余了“。但只要发生过一次事故需要复盘,或者一次模型换代需要重新喂训练集,这份冗余就会立刻证明它的价值 —— 它让 agent 的每一步都可 replay、可 diff、可独立审计。</p>
+<p>你可以把它想成:<strong>session.jsonl 是 agent 生涯的 git log</strong>。不是“我最近想做什么“ 的笔记,是“我做过什么“ 的不可篡改提交历史。一个不给自己打 git log 的工程师,team 里愿意和他合作的人会很少。一个不给自己记 session 的 agent,你愿意让它进生产的概率应该一样低。</p>
+<h2 id="66-原创坐标轴durability-resume-axis"><a class="header" href="#66-原创坐标轴durability-resume-axis">§6.6 原创坐标轴:Durability-Resume Axis</a></h2>
+<p>以上都是在 Karpathy、Anthropic 这两份奠基文上的<strong>重述与延展</strong>。到这里,本章要加入一条现有奠基文里<strong>没有</strong>的原创坐标轴 —— <strong>durability-resume axis</strong>。</p>
+<p>Karpathy 给了<strong>最小协议</strong>(两文件),Anthropic 给了<strong>接口契约</strong>(<code>wake</code> / <code>getEvents</code> / <code>emitEvent</code>),但 <strong>“session 持久化的成熟度分级”</strong> 在 2026 年的奠基文里没有清晰坐标。这条坐标由本书作者在 <code>ascent-research</code> 的生产实战里提炼出来,是本书相对于七份参考文献的理论增量([[concept-state-durability]])。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>等级</th><th>状态生命周期</th><th>Resume 语义</th><th>代表实现</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Ephemeral</strong></td><td>进程级</td><td>无 —— crash = 从零重启</td><td>绝大多数 agent demo</td></tr>
+<tr><td><strong>Checkpointed</strong></td><td>定期写盘</td><td>best-effort replay</td><td>[[case-karpathy-autoresearch]]</td></tr>
+<tr><td><strong>Durable</strong></td><td>状态本身<strong>就是</strong>系统记录</td><td>kill-and-resume 是一等特性</td><td>[[case-ascent-research]]</td></tr>
+</tbody>
+</table>
+</div>
+<p>三个等级,对应三种投资密度,也对应三种能做的任务复杂度。</p>
+<p><strong>Ephemeral</strong> 只够支撑单次对话的 demo。你给它讲了十分钟,它回答得很漂亮,你关掉窗口,下一次打开一切从零。今天市面上被叫作“AI 助手“ 的大多数东西,都在这一级。<strong>它没有 agent 生涯,它只有无数个独立的片刻</strong>。</p>
+<p><strong>Checkpointed</strong> 够做个人 autoresearch 脚本 —— Karpathy 那份 gist 的使用场景。写盘是“best effort“,意思是<strong>大多数时候</strong>可以 replay,<strong>偶尔</strong>会因为某次 crash 前没来得及写而丢一段。对个人探索够用,对生产场景是定时炸弹。</p>
+<p><strong>Durable</strong> 才能支撑几小时、几天、跨团队的长任务。它的核心翻转是一件思想上的事:<strong>state 才是真身,agent 进程是附着在 state 上的临时劳动力</strong>。这件事在现代操作系统里早就成立了 —— 内核态进程表就是这样对待用户态进程的;在 LLM agent 里,2026 年它才刚刚变成一等公民。</p>
+<p>这条坐标轴和下一节 L0–L4 成熟度有重合但<strong>角度不同</strong>:L0–L4 是<strong>能力分级</strong>(“你能做什么”),durability-resume axis 是<strong>哲学分级</strong>(“你把 state 放在哪里”)。生产 agent 系统必须同时满足 L3+ 和 Durable,否则在<strong>跨进程</strong> 或<strong>跨团队</strong> 交接时一定会出事故。这是从 “demo agent” 走向“生产 agent“ 的分水岭 —— 也是本书 Part B 区别于其他 agent 教程<strong>最硬的一条</strong>。</p>
+<h2 id="67-l0l4-成熟度--判别自己到哪儿了"><a class="header" href="#67-l0l4-成熟度--判别自己到哪儿了">§6.7 L0–L4 成熟度 —— 判别自己到哪儿了</a></h2>
+<p>团队有 session 不等于做对了。本书给 session 层设五个成熟度等级,每一级都有<strong>可检验的判别信号</strong>:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>等级</th><th>描述</th><th>判别信号</th><th>典型表现</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>L0</strong></td><td>无 session</td><td>kill agent 进程,一切从零开始</td><td>多数 demo / chat 产品</td></tr>
+<tr><td><strong>L1</strong></td><td>有日志,不可 replay</td><td>log 存在,但缺事件 schema</td><td>“聊天记录存进 DB” 型系统</td></tr>
+<tr><td><strong>L2</strong></td><td>可 append、可查询</td><td>getEvents 接口存在、事件有 type 区分</td><td>生产级 agent 框架的最低线</td></tr>
+<tr><td><strong>L3</strong></td><td>可重组、可恢复</td><td>wake + 选择性 context 注入 work</td><td>Anthropic Managed Agents 描述的水位</td></tr>
+<tr><td><strong>L4</strong></td><td>Session 可提升到 wiki</td><td>有效事实能跨会话提升成 stable knowledge</td><td>ascent-research / 本书作者级别</td></tr>
+</tbody>
+</table>
+</div>
+<p>每升一级,能做的事情都会跨过一个<strong>质的台阶</strong>:</p>
+<ul>
+<li><strong>L0 → L1</strong> —— 让“事后排查“ 成为可能。你终于有东西可以回头看了,哪怕还读不清楚。</li>
+<li><strong>L1 → L2</strong> —— 让“agent 主动查自己做过什么“ 成为可能。agent 不再是健忘的,它有一份可以自己读的档案。</li>
+<li><strong>L2 → L3</strong> —— 让“换进程仍能继续“ 成为可能。kill-and-resume 变成一等特性。生产场景的门槛就在这里。</li>
+<li><strong>L3 → L4</strong> —— 让“agent 跨会话复用经验“ 成为可能。它不再每次都从零学习同一件事。</li>
+</ul>
+<p>反过来读这张表更有用:<strong>没到 L2,就不要谈 harness</strong>(harness 要读 session,session 读不出来,harness 没法无状态)。<strong>没到 L3,就不要谈反脆弱</strong>(反脆弱要求能从崩溃中学习,崩了就丢的系统学不到东西)。<strong>没到 L4,就不要谈“共同进化“</strong>(跨会话的经验积累没有物理载体)。</p>
+<p>自测一下你自己的 agent 系统 —— 它在哪一级?升下一级需要改什么?大多数团队的答案是 L1 或 L2,并且他们以为自己在 L3。这种自我误判的来源很明确:<strong>他们把“有日志“ 当成了“能 resume“</strong>。有日志不等于能 resume。两件事差了至少一根支柱。</p>
+<h2 id="68-五类反模式--你们架构图里有哪一条"><a class="header" href="#68-五类反模式--你们架构图里有哪一条">§6.8 五类反模式 —— 你们架构图里有哪一条</a></h2>
+<p>下面五类反模式在真实团队里极常见。任何一条如果在你们的架构图里能看到,就是 session 层没做对的硬证据:</p>
+<p><strong>反模式一 · 把对话历史当 session。</strong> 对话历史里的“assistant 说了什么、user 说了什么“,<strong>不是事件</strong>。它没有 tool call 副作用、没有 env 变化、没有 decision trace、没有 source sha、没有 actor 归属。把对话历史当 session,agent 就只能 replay “说过的话”,不能 replay “做过的事”。<strong>说过的话是证据的零头,做过的事才是证据的全部</strong>。</p>
+<p>一个你可以立刻自检的场景:打开你们的 session 存储,随便找一条 <code>assistant: "我已经帮你把那两个链接改了"</code> 开头的记录。在这一条附近,有没有独立的 <code>tool_call</code> + <code>tool_result</code> 事件把“改了哪两个链接“具体写下来?如果没有,你们就在把 agent 的自述当成证据。Agent 的自述不是证据 —— Ch 9 会用一整章讲这件事。</p>
+<p><strong>反模式二 · 把 vector DB 当 session。</strong> 向量库擅长相似度检索,<strong>但它丢掉了因果顺序</strong>。session 的核心是顺序,顺序丢了就不能追溯因果。“第 29 轮的 fact_proposed 依据的是第 12 轮的 tool_result” 这种关系,在按相似度排序的向量库里是读不出来的 —— 它们不相似,但它们因果相连。</p>
+<p>向量库可以作为 wiki 层的检索辅助(Ch 11 会讲),但<strong>不能替代 session</strong>。把它放在 session 位的团队最后都会遇到同一种症状:agent 能“想起“ 某件相似的事,但说不清自己<strong>为什么</strong> 在当前这一刻会想起它。因果线丢了,只剩相似度的幻影。</p>
+<p><strong>反模式三 · 用 summarization 代替原始事件。</strong> 每隔 N 轮把前 N 轮总结压缩一次,<strong>原始事件覆盖掉</strong>。这是最致命的反模式,因为它销毁的是 provenance —— 每条 fact 指回哪一段原文、哪一个 hash、哪一只手做的。原始事件必须保留;summarization 是 harness 塞进 context 时的<strong>派生操作</strong>,不是 session 层的“修复“。</p>
+<p>§6.2 给过的那个 dropped refs 例子,是这条反模式的具体下落。第 12 轮的 sha256 被第 22 轮的 summarization 盖掉后,第 30 轮的 verify_check 回溯失败 —— 这种事故在 Ch 13 失败模式博物馆里叫 <strong>dropped refs</strong>,它几乎都是这条反模式的直接后果。修法只有一个方向:<strong>summarization 是派生视图,不是原始替代</strong>。原始事件无论多长,都必须留在场外。</p>
+<p><strong>反模式四 · Session 和 context window 同尺寸。</strong> 如果 session 只存“能装进一次 context 的东西“,那它本质上就是 context window 的一个镜像;崩了没法从更早之前恢复。Session 是场外的,<strong>尺度应该远超任何一次 context</strong>。同尺寸的 session 是河被削成桶的最直接的形式 —— §6.1 讲过那个比喻,这里是它的工程版。</p>
+<p><strong>反模式五 · Session 可被 agent 自己写入任意内容。</strong> agent 能 append 事件是好事,但应该由 harness 包一层<strong>协议校验</strong> —— event schema、actor 归属、副作用 hash。没有协议校验,agent 写进 session 的东西就不可信,下游所有 audit 失效。</p>
+<p>这条反模式的严重性在于:agent 如果能往 session 写任意内容,它就可以<strong>事后伪造“我之前做过 X“</strong>,后续 verification 会被这条伪造事件骗到。Ch 12 会把“agent 能不能修改 session“ 作为 reflexive harness 的<strong>第一道边界</strong> 展开讨论。这里只需要记住:<strong>session 不是 agent 的私人笔记本,是它留在公共档案馆里的案卷</strong>。案卷只能由一个有协议校验的手(harness)经手写入,不是 agent 想写什么就写什么。</p>
+<p>这五条反模式里,前三条分别对应 Ch 13 §13.2.1(dropped refs)、§13.2.3(context collapse)、§13.2.2(hallucinated sources)三类失败模式。<strong>session 层的反模式是下游失败模式的根因之一</strong> —— 这一章和 Ch 13 一起读,闭环才完整。</p>
+<h2 id="69-session-是其他三柱的物理载体"><a class="header" href="#69-session-是其他三柱的物理载体">§6.9 Session 是其他三柱的物理载体</a></h2>
+<p>本章开头说 session 是 Layer 2 四柱的<strong>第一根</strong>。但实际上它有一个比“第一根“更准确的定位:它是<strong>载体支柱</strong>。后三根 —— harness / tools / verification —— 都在它上面跑。你把后三柱当成三栋楼,session 是它们共用的那块地。</p>
+<p><strong>对 harness 来说,session 是它的调度对象。</strong> Ch 7 会讲,harness 本身无状态 —— 它没有场内状态,它是 session 的<strong>检索-重组器</strong>。没有 session,harness 就没有东西可调度;它从 session 读事件、往 session 写事件,自身不记任何事。你可以把 harness 想成一个每次醒来先翻日历、再做今天那件事、然后关上日历睡觉的老工程师。<strong>日历是 session。老工程师是 harness,他每次醒来都是失忆的,但日历不会失忆</strong>。</p>
+<p><strong>对 tools 来说,session 是它的审计链。</strong> Ch 8 会讲,每次 tool call 的 input / output / actor / timestamp / parent event id 都要 append 一条事件。session 是 tool call 的完整档案;没有 session,tool 的副作用就是不可追溯的。你调了 100 次 tool,第 87 次做错了导致了 production 事故 —— 没有 session,你没法知道那一次的 input 是什么、调用者是谁、依据的是哪条 fact。</p>
+<p><strong>对 verification 来说,session 是它的验证对象。</strong> Ch 9 会讲,verification 的独立性依赖“能看到完整历史“ 这件事。session 就是历史的物理载体。没有 session 就没有独立 audit —— 验证者没有可验证的对象,只能问 agent“你是不是做对了“,这就变成 <strong>sycophantic verification</strong> 的反模式(agent 自己打自己分)。Ch 9 要排除的就是这种结构上就立不住的验证。</p>
+<p><strong>这就是为什么本章必须放在 Part B 第一章</strong>:session 不是一柱之中的普通一柱,它是其他三柱所需要的<strong>物理载体</strong>。一个团队想做 harness、tools、verification,但 session 还在 L0–L1,那后三柱无处安装。Session 做到 L3,是整条工程栈的先决条件。</p>
+<p>你也可以反过来读这个论断:如果一个 agent 产品号称自己做了 harness、做了 tool permission、做了 verification,但被问到“你的 session 在哪一级“ 时答不上来 —— <strong>那它前面说的那些都是空中楼阁</strong>。后三柱的存在价值,在 session 没立起来的前提下,等于零。</p>
+<h2 id="610-session-之于-layer-2为什么这是第一章"><a class="header" href="#610-session-之于-layer-2为什么这是第一章">§6.10 Session 之于 Layer 2:为什么这是第一章</a></h2>
+<p>回到本章开场那个“两个 agent,一个 kill 命令“ 的场景。A 能 resume,B 不能。你现在应该能把这件事翻译成本章每一节的语言:</p>
+<ul>
+<li>A 的 session 满足四条硬约束(§6.2);B 的不满足。</li>
+<li>A 的 session 大概率走 Karpathy 两文件祖训或它的某个扩展(§6.3-§6.4);B 的 session 可能和 context window 同尺寸(反模式四)。</li>
+<li>A 的 session 在 durability-resume axis 上是 Durable 级(§6.6),L0–L4 里至少 L3(§6.7);B 的是 Ephemeral,L0 或 L1。</li>
+<li>A 系统的 harness / tools / verification 三柱都立得起来(§6.9);B 系统里,哪怕它号称“做了 agent 架构“,后三柱其实都悬空。</li>
+</ul>
+<p>把 A 和 B 的差别写到这个粒度,你会发现<strong>这不是两个 agent 系统的差别,是两代工程哲学的差别</strong>。B 那代哲学的名字,大约就是“做一个能聊天的 LLM 应用 + 一堆日志“;A 那代哲学的名字,是<strong>Layer 2 的 agent 产品工程</strong>。后者承认一件事:agent 不是 LLM 的一个小伴侣,是一个<strong>独立的、有生涯的、需要档案的</strong>工程对象。档案就是 session。</p>
+<p>所以本章是 Part B 的第一章 —— 不是因为 session 最重要、其他三柱不重要,是因为<strong>其他三柱都在 session 这块地上盖房子</strong>。地没有,房子连图纸都画不出来。</p>
+<p>下一章,Ch 7,会把视角转过来问另一半问题:<strong>session 立住了,谁去消费它?</strong></p>
+<h2 id="可观察信号"><a class="header" href="#可观察信号">可观察信号</a></h2>
+<ul>
+<li>Kill 你的 agent 进程,<strong>重启后它能从最后一条事件继续</strong>吗?(不能 = session 没立起来)</li>
+<li>Agent 运行到第 30 轮的时候,<strong>它能 query 第 3 轮发生过什么事件</strong>吗?(不能 = 没做 append-only 可查询)</li>
+<li>你们做 summarization / compaction 的时候,<strong>原始事件还在场外吗</strong>?(被覆盖 = dropped refs 反模式)</li>
+</ul>
+<p>三问任何一问答“做不到“,你撞上的不是 prompt 问题、也不是 retrieval 问题,是 session 层没做对。</p>
+<h2 id="本章核心论断"><a class="header" href="#本章核心论断">本章核心论断</a></h2>
+<ol>
+<li><strong>Session ≠ context window</strong>。前者是场外 append-only 事实流,后者是场内一次 inference 的派生视图。河与桶的关系。</li>
+<li>Session 必须同时满足四条硬约束:<strong>append-only / 可查询 / 可重组 / 可恢复</strong>。缺一条就不是 session,只是日志。</li>
+<li><strong>Durability-resume axis</strong>(Ephemeral / Checkpointed / Durable)是本书在既有奠基文之上的原创坐标;生产 agent 必须同时满足 L3+ 和 Durable。</li>
+<li>Summarization / compaction 是 harness 的派生操作,<strong>不能破坏 session 的完整性</strong> —— 原始事件永不丢。</li>
+<li>Session 是<strong>载体支柱</strong> —— harness / tools / verification 都在它上面跑;没到 L2 不要谈 harness,没到 L3 不要谈反脆弱。</li>
+</ol>
+<h2 id="本章奠基文对齐"><a class="header" href="#本章奠基文对齐">本章奠基文对齐</a></h2>
+<ul>
+<li>[[anthropic-managed-agents]] —— <em>“The session is not Claude’s context window”</em> 原出处;wake/getSession/emitEvent 三接口</li>
+<li>[[case-karpathy-autoresearch]] —— 两文件 resume 祖训、bookkeeping 洞察</li>
+<li>[[anthropic-harness-design]] —— sprint 之间的 structured handoff、4-hour coding 任务的 session durability 实证</li>
+<li>[[case-ascent-research]] —— 本书作者级别的三层存储扩展 + durability-resume axis 原创坐标</li>
+</ul>
+<h2 id="本章对应-wiki-页"><a class="header" href="#本章对应-wiki-页">本章对应 wiki 页</a></h2>
+<ul>
+<li>[[concept-state-durability]] · [[concept-memory-layer]] · [[concept-agent-loop]]</li>
+</ul>
+<hr>
+<p><strong>Session 立住了,第二个问题随之而来</strong>:谁来消费这条场外事实流?它被读出来之后,谁在做“读哪一段、做哪件事、把结果写回去“ 的决策?第 7 章把焦点转向<strong>harness 本身</strong> —— 作为 session 之上的检索-重组器,它必须无状态、可替换,不给自己攒任何私人记忆。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="05-ai-coding-harness.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="07-harness-pillar.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="05-ai-coding-harness.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="07-harness-pillar.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

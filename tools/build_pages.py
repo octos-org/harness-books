@@ -19,6 +19,7 @@ def main() -> None:
     DOCS.mkdir(exist_ok=True)
     copy_book(ROOT / "synced-book" / "book", DOCS / "en")
     copy_book(ROOT / "synced-book-zh" / "book", DOCS / "zh")
+    copy_book(ROOT / "original-book" / "book", DOCS / "original")
 
     (DOCS / ".nojekyll").write_text("", encoding="utf-8")
     (DOCS / "index.html").write_text(
@@ -90,6 +91,10 @@ def main() -> None:
       <a href="./zh/">
         <strong>中文纲要版</strong>
         <span>使用中文纲要正文和中文目录，保留必要技术名词、代码标识符和原文标题。</span>
+      </a>
+      <a href="./original/">
+        <strong>原始完整书稿</strong>
+        <span>保留较大 mdBook 源书的原始章节顺序和全部正文内容。</span>
       </a>
     </section>
   </main>

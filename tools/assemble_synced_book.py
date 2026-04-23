@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import re
+import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -251,6 +252,7 @@ def convert_section_for_mdbook(section_body: str) -> str:
 def write_mdbook(title_block: str, sections: list[tuple[str, str]]) -> None:
     src_dir = OUT_DIR / "src"
     src_dir.mkdir(parents=True, exist_ok=True)
+    copy_shared_assets(src_dir)
 
     (OUT_DIR / "book.toml").write_text(
         "[book]\n"
@@ -344,6 +346,7 @@ def expansion_for_zh(section_heading: str) -> str:
 def write_zh_mdbook(title_block: str, zh_sections: list[tuple[str, str]]) -> None:
     src_dir = ZH_OUT_DIR / "src"
     src_dir.mkdir(parents=True, exist_ok=True)
+    copy_shared_assets(src_dir)
 
     (ZH_OUT_DIR / "book.toml").write_text(
         "[book]\n"
@@ -409,6 +412,13 @@ def write_zh_map(sections: list[tuple[str, str]]) -> None:
     lines.append(f"- `{ZH_SINGLE_OUT.relative_to(ROOT)}`")
     lines.append(f"- `{ZH_OUT_DIR.relative_to(ROOT)}/`")
     ZH_MAP_OUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def copy_shared_assets(src_dir: Path) -> None:
+    for asset in FULL_SRC.glob("*.svg"):
+        shutil.copy2(asset, src_dir / asset.name)
+    for asset in FULL_SRC.glob("*.png"):
+        shutil.copy2(asset, src_dir / asset.name)
 
 
 def main() -> None:

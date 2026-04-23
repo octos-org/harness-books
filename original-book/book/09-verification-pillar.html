@@ -1,0 +1,470 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>第 9 章 · Verification 的独立性 - 驾驭工程：原始完整书稿</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-56debc41.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-96099ef7.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">驾驭工程：原始完整书稿</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="第-9-章--verification-的独立性"><a class="header" href="#第-9-章--verification-的独立性">第 9 章 · Verification 的独立性</a></h1>
+<blockquote>
+<p><strong>命题</strong>:任何足够重要的 AI 系统,都需要一个<strong>独立于自身</strong>的验证层。这种独立性是<strong>结构性的</strong>(位置属性),不是<strong>能力性的</strong>(多聪明)。这一条是本书反脆弱论证的核心支点 —— 模型再强,也不能让同一个体既是生成者又是唯一验证者。</p>
+</blockquote>
+<h2 id="开场三个座位上的人"><a class="header" href="#开场三个座位上的人">开场:三个座位上的人</a></h2>
+<p>先看三个场景。</p>
+<p>上午八点十二分,一架载着三百二十七人的 A350 正从法兰克福起飞。机长坐在左座,副驾驶坐在右座。整个起飞过程,飞控系统全程自主完成 —— 它比任何一位人类飞行员算得都准、反应都快、疲劳度都低。自动驾驶这件事六十年前就技术可行。可是两位飞行员还在座位上,还要在起飞前对照清单念出每一项参数,还要为这趟飞行签字。为什么?</p>
+<p>下午两点半,一家肿瘤医院的放射科。一位医师在屏幕前看一张胸部 CT。AI 已经在图像上标好了三处可疑结节,并把每一处的恶性概率算到小数点后三位。某些任务上,AI 的准确率在十年前就超过了放射科医师的平均水平。可是最后那份诊断报告,仍然由医师签字交出。医师花了二十分钟,逐个结节核对、回看患者既往影像、做出最终判断。为什么不是 AI 直接出报告?</p>
+<p>傍晚六点四十,某个大型会计师事务所的合规办公室。一位审计师合上一份 10-K 申报文件的最终稿。全部数字都由系统自动汇总、交叉核对过,Excel 四十年前就能把账算得比任何人都准。但这份文件最后一页,要审计师本人签字。事务所本身还要盖章。如果有一天发现账目造假,事务所会被 SEC 追责,审计师本人可能被吊销执照。</p>
+<p>三个座位上的人,都没有因为自动化能力的提升而消失。从能力看,他们每一位都比不过身边的那台机器 —— 算得不如机器准、看得不如机器仔细、记得不如机器全。但是他们都<strong>还在</strong>。为什么?</p>
+<p>答案不是“因为他们还能算出机器算不出的东西“。机器在各自的任务上都更强。答案是另一件事:<strong>在关键场景里,验证角色不会因为自动化能力提升而消失</strong>。飞行员不在座位上,不是因为他算得过飞控;是因为出事时,有一个可问责的人。医师不在,不是因为他看片子比 AI 准;是因为病人有知情权,保险公司要求人签字。会计师不在,不是因为他算得过 Excel;是因为监管需要可问责的事务所盖章。</p>
+<p>三件事都指向同一方向:<strong>验证是社会-监管需求,不是能力缺口</strong>。</p>
+<p>这一章要论证的是:<strong>LLM 时代,这件事不会改变 —— 只会更强烈</strong>。因为 AI 被部署到越来越关键的场景,验证层的独立性不仅不会被模型能力提升削弱,反而会成为<strong>上线 / 不上线</strong> 的分水岭。讲完这个论证,本书前四柱合拢,第二部分结束。</p>
+<h2 id="91-位置属性-vs-能力属性--本章最重要的一刀"><a class="header" href="#91-位置属性-vs-能力属性--本章最重要的一刀">§9.1 位置属性 vs 能力属性 —— 本章最重要的一刀</a></h2>
+<p>把开场那三个场景压缩到一句话:<strong>验证的独立性,是位置属性,不是能力属性</strong>。</p>
+<p>这句话乍看像咬文嚼字,但它是本章最重要的一刀。两种属性的区分决定了你怎么读后面几节。</p>
+<p><strong>能力属性</strong>:一方比另一方更强、更准、更聪明、更懂领域。这是工程师最熟悉的思维模式 —— 讨论“验证“ 时,第一反应往往是“验证者要比被验对象更强“。这个直觉在某些场景成立(比如专家 review 新手的代码),但在 AI 验证场景里会变成致命的误导。</p>
+<p><strong>位置属性</strong>:一方在另一方的“外面“、“上游”、“第三方”。它不依赖谁更强,依赖谁<strong>在哪个位置上签字、看谁手里的证据、对谁负责</strong>。飞行员可能算不过飞控,但他在“能被追责的位置“ 上;医师可能看片不比 AI 准,但他在“向患者和保险公司签字的位置“ 上;审计师可能算不过 Excel,但他在“事务所担责的位置“ 上。</p>
+<p>在 AI 系统里,这个区分具体变成这样:<strong>让同一个 AI 既做生成者又做唯一验证者,不是“能力不够“,是“位置不对“</strong>。哪怕这个 AI 强到可以解答自己提出的所有问题,哪怕它自我验证的准确率达到 99.99%,它在<strong>位置上</strong> 依然不构成独立验证 —— 因为它和被验对象是同一个 actor,没有第三方、没有上游、没有外部追责的支点。</p>
+<p>这一刀切下去之后,本章后面几节才能成立。§9.2 讲 P vs NP 的结构不对称 —— 它是位置独立性的<strong>数学基础</strong>;§9.3 讲 Gödel / Rice / Löb 三条逻辑链条 —— 它是位置独立性的<strong>逻辑基础</strong>;§9.4 讲三要件 Spec / Property Test / Audit Trail —— 它是位置独立性的<strong>工程落地</strong>;§9.5 讲 Anthropic 三 agent 架构 —— 它是独立性在真实长程任务里的工程形态;§9.6 讲 sycophancy-aware lint —— 它是位置独立性的<strong>防御武器</strong>;§9.7 讲四套监管框架 —— 它是位置独立性的<strong>社会实现</strong>;§9.8 用四问压力测试收尾 —— 它证明位置独立性<strong>不随模型能力波动</strong>。</p>
+<p>如果你读完本章只带走一件事,就是这一刀:<strong>位置独立性,不是能力独立性</strong>。它是本书反脆弱论证的支点。</p>
+<h2 id="92-生成--验证--p-vs-np-级的结构不对称"><a class="header" href="#92-生成--验证--p-vs-np-级的结构不对称">§9.2 生成 ≠ 验证 —— P vs NP 级的结构不对称</a></h2>
+<p>先说一件结构性的事。<strong>生成一个对象</strong>,和<strong>检查一个对象是否满足某性质</strong>,在复杂度上可以差天文数字。</p>
+<p>最典型的例子是 SAT 问题 —— 找一个命题的满足解,在最坏情况下需要指数时间;但<strong>验证</strong>一个给定的赋值是否满足命题,只要线性时间。这正是 P vs NP 问题的核心直觉:验证往往比生成容易得多,这个不对称是<strong>计算理论级的</strong>,不是“我们还没找到好算法“。</p>
+<p>需要在这里划一条线:本节用“P vs NP“ 只是借它的<strong>结构不对称</strong> 作为类比,不主张“AI 验证 = NP 问题的形式化“—— 后者是一个具体数学猜想,本章不涉及它的技术化表述。<strong>借的只是那个“生成难、检查易“ 的结构直觉</strong>。把它保持在这个抽象度,就不会被拖进计算复杂性的具体定理里。</p>
+<p>这个不对称在软件工程里到处都是:</p>
+<ul>
+<li>写一个 OAuth 实现,<strong>vs</strong> 证明该实现不会泄露 token —— 两个完全不同的问题,后者往往更难,但也更独立。</li>
+<li>写一段排序代码,<strong>vs</strong> 检查排序结果是否有序 —— 前者可能错 10 种,后者一次过。</li>
+<li>训练一个模型做图像分类,<strong>vs</strong> 检查一张图的分类是否正确 —— 一个要 GPU 周,一个要人一秒。</li>
+<li>写一份一万行的合规报告,<strong>vs</strong> 检查某一段是否引用了错误版本的监管条款 —— 前者是撰写任务,后者是对照任务。</li>
+</ul>
+<p>这个不对称有一个关键的工程含义:<strong>验证者不需要和生成者一样强</strong>。验证者只要能检查“这个产物符不符合某组性质“,不需要知道怎么<strong>造出</strong> 这个产物。这让验证层可以用<strong>更简单、更可靠、更独立</strong> 的技术栈去做,而不是追着生成者的能力跑。</p>
+<p>把这件事反过来说更鲜明:<strong>“只有更强的 AI 才能验证强 AI” 这句话是错的</strong>。它把能力属性和位置属性混淆了。飞控系统再强,它在结构上依然不是它自己的验证者;飞行员再弱,他在结构上依然是那个可追责的位置。验证的需求是“独立 + 可追溯“,不是“更强“。P vs NP 结构不对称的真正礼物是 —— 它让“独立 + 可追溯“ 在<strong>更便宜、更可靠、更好审计</strong> 的技术上成为可能,而不用等一个同等强的新 AI。</p>
+<p><strong>P vs NP 不对称不会因为模型变强而消失</strong>。反过来:模型越强、产出越多、每一次产出的验证需求越高,这个不对称的工程价值就越大。这是 §9.8 四问压力测试要再次回到的一条判据。</p>
+<p>这里还要预防一个常见的误读。有些读者听到“验证比生成简单“ 时会反射性反问 —— 那是不是说我们可以用一个更弱的 AI 做验证?答案不是那么直接。“更简单” 不等于“更弱的 AI 就行“,它的真实意思是:<strong>验证可以用更不一样的技术栈</strong>。可以是确定性测试、可以是类型检查、可以是形式化证明、可以是人类 reviewer、可以是另一个架构不同的 AI。关键词是“不一样“,不是“更弱“。两个同架构 AI 互验,在位置属性上依然不独立 —— 哪怕你让其中一个“扮演 verifier“。位置属性关心的是“是否同一 actor 的扩展“,不是“名义上谁在当 verifier“。</p>
+<h2 id="93-自我验证的结构性死结--三条通向同一方向的逻辑链"><a class="header" href="#93-自我验证的结构性死结--三条通向同一方向的逻辑链">§9.3 自我验证的结构性死结 —— 三条通向同一方向的逻辑链</a></h2>
+<p>直觉上,“让 AI 自己验自己” 似乎是个省事的办法 —— 同一个模型,既生成又打分,不就够了吗?答案是:<strong>不够</strong>。这件事的失败不是技术水平问题,是<strong>结构上的死结</strong>。</p>
+<p>有三条逻辑链条指向同一方向。</p>
+<p><strong>Gödel 不完备定理</strong>(1931)—— 一个足够强的形式系统,无法从自己内部证明自己的一致性。具体到 AI 语境:如果一个系统强到能表达关于自身的陈述,它就无法完全确认自己的所有陈述。自我验证在足够丰富的系统里,必然留下它<strong>看不见的盲区</strong>。</p>
+<p><strong>Rice 定理</strong>(1953)—— 任何关于图灵机行为的非平凡语义性质,都是不可判定的,除非验证者具有“比被验程序更高的视角“。翻译到 AI 语境:从系统<strong>内部</strong> 判断系统行为的“好坏“,在一般情况下不可计算。唯一的出路是<strong>从外面看</strong>—— 用一个具有更高视角的独立验证者。这个“更高视角“ 不是能力意义上的更高,是<strong>位置意义上的外部</strong>。</p>
+<p><strong>Löb 定理</strong>(1955)—— “系统相信自己的某陈述 → 该陈述为真” 这种自反性只在该系统本身一致的前提下成立;而系统无法从内部证明自己一致。翻译:一个 agent 说“我验证过了“,这句话的可信度上限,等于“agent 是否一致“ 这个前提的可信度 —— 而这个前提<strong>不能由 agent 自己给出</strong>。</p>
+<p>这三条定理从三个不同方向指向同一个结构事实:<strong>系统无法从自己内部完整验证自己</strong>。即使把这些数学结果放一边,纯直觉也能看出问题 —— 如果 AI 的训练数据里就存在系统性偏差,那么基于同一训练数据的“自我验证“ 会<strong>完美地错过</strong> 这些偏差,因为偏差在它的先验里是“正确“的。让 A 和 A 的影子互相审计,影子不会发现 A 的遮蔽物。</p>
+<p>这里还要多说一句工程上的体感。两个同架构 AI 共享训练数据,它们的错误在统计上是<strong>相关的</strong>,所以它们彼此验证并不等于独立验证。“用 GPT 验 GPT、用 Claude 验 Claude” 的惯常做法,在位置属性上<strong>完全不独立</strong>:它们在训练语料、价值对齐、默认偏好上共享太多。这类验证不是没价值,但它不是<strong>verification 独立性</strong> 在本书讲的那个意义上的独立 —— 它充其量是“同架构自检“,和<strong>外部 evaluator</strong> 差一个量级。</p>
+<p>独立验证的出路,要么来自不同训练数据、不同架构、不同假设的另一个生成器(同构但异源);要么干脆不来自机器生成 —— 比如:确定性测试、形式化证明、人类 reviewer、合规签字。这就是 §9.4 要讲的 <strong>Spec → Property Test → Audit Trail</strong> 三层结构,也是 §9.7 四套监管框架把独立验证<strong>锁死在社会层</strong> 的工程落点。</p>
+<p>这里有一件要在工程团队里反复重申的事:<strong>“用另一个 LLM 做 judge” 不等于独立验证</strong>。把一份 GPT-4 的输出喂给 GPT-4(或 Claude 3、或 Gemini 1)去打分,表面上看是两次独立调用,位置属性上依然塌了 —— 两次调用背后的 actor 是同一个训练数据流、同一个 RLHF 偏好、同一个默认风格。它们共享盲区的概率远高于两个真正独立设计的验证者。更深的问题是,这种“LLM as judge“ 的 benchmark 会同时被<strong>生成者</strong> 和<strong>评估者</strong> 在同一条训练轨迹上优化过,意味着 judge 对 generator 的默认偏好已经内建。把它当 verification 独立性的证据,是典型的<strong>以生成系统的副产品当验证系统</strong> —— 犯的正是 §9.1 位置属性那一刀试图阻止的错误。</p>
+<h2 id="94-verification-的三要件spec--property-test--audit-trail"><a class="header" href="#94-verification-的三要件spec--property-test--audit-trail">§9.4 Verification 的三要件:Spec → Property Test → Audit Trail</a></h2>
+<p>位置独立性在工程上怎么落地?三个组件,按数据流串起来。它们不是可选项,是<strong>最小必要结构</strong> —— 缺任何一件,独立性就不成立。</p>
+<h3 id="a-spec--把人类意图形式化到可被机器检查的断言"><a class="header" href="#a-spec--把人类意图形式化到可被机器检查的断言">(a) Spec —— 把人类意图形式化到可被机器检查的断言</a></h3>
+<p>第一步是把人类意图<strong>形式化</strong> 到机器可检查的断言。这正是 Ch 3 讲过的 spec 三层严密度的应用:</p>
+<ul>
+<li><strong>L1 prompt</strong> —— <strong>无法机器验证</strong>,只能作为上下文。</li>
+<li><strong>L2 BDD scenario</strong> —— Given / When / Then,可被 scenario test runner 执行。</li>
+<li><strong>L3 DbC 契约</strong> —— <code>requires / ensures / old(…)</code>,可被形式化 verifier 检查。</li>
+</ul>
+<p>大多数验证工作落在 L2 / L3。作为一个具体例子,下面是一段 Rust Design-by-Contract 风格的契约 —— 它声明“从账户扣款“ 这个动作必须满足的前置和后置条件:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// L3 DbC · 把意图直接表达为可被 formal verifier 检查的断言
+#[requires(amount &gt; 0 &amp;&amp; account.balance &gt;= amount)]
+#[ensures(account.balance == old(account.balance) - amount)]
+#[ensures(result == amount)]
+fn withdraw(account: &amp;mut Account, amount: u64) -&gt; u64 {
+    account.balance -= amount;
+    amount
+}
+<span class="boring">}</span></code></pre>
+<p>三件事值得注意。<strong>第一</strong>,<code>requires</code> 表达前置条件 —— 金额必须大于 0 且余额足够;这是一个<strong>在调用前</strong> 应当被保证的不变量,如果违反,调用应该直接拒绝,而不是执行后发现错误。<strong>第二</strong>,<code>ensures</code> 表达后置条件 —— 余额必须严格减少 amount,返回值必须等于 amount;这是这次调用<strong>承诺</strong> 给调用者的事实。<strong>第三</strong>,<code>old(account.balance)</code> 引用调用前的状态快照,这是 DbC 在表达“状态迁移“ 时最锋利的工具 —— 它把“之前 vs 之后“ 显式地结构化进了断言。</p>
+<p>这段契约写出来之后,它有什么用?它可以被 Rust 生态里的 formal verifier(Creusot / Prusti / Kani)静态检查 —— verifier 会试图证明:<strong>在任何满足 <code>requires</code> 的输入下,函数体执行完毕后 <code>ensures</code> 都成立</strong>。如果证不出来,verifier 会反馈一个反例 —— 比如它可能发现“如果 amount 极大导致溢出,后置条件不成立“。这是<strong>位置独立性在 spec 层的体现</strong>:契约作为独立于实现的证据,静态 verifier 作为独立于实现作者的 checker。</p>
+<p>这里还要澄清一件事。Bertrand Meyer 在 1986 年提出 DbC 时,默认的假设是“spec 是人写的、正确的,只是实现需要验证“。这个假设在 AI 时代部分失效 —— AI 可能同时写实现和 spec。§9.6 会把这件事作为 sycophancy-aware lint 的核心问题展开。但 spec 作为“比 prompt 更形式化的意图载体“ 这件事不变,只是需要额外的一道防御。</p>
+<h3 id="b-property-test--把契约变成随机化断言"><a class="header" href="#b-property-test--把契约变成随机化断言">(b) Property Test —— 把契约变成随机化断言</a></h3>
+<p>契约写出来了,下一步是让它<strong>真的跑起来</strong>。L3 的静态 verifier 是一条路,但它对开发者的形式化训练要求很高,且不一定覆盖所有 property。一条更务实、更广覆盖的路是<strong>property-based testing</strong>:把契约翻译成随机化断言,让 quickcheck 式的框架在大量随机输入下验证它。</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// Property-based testing · 把契约变成 128 次随机化测试
+#[quickcheck]
+fn withdraw_preserves_contract(mut acc: Account, amt: u64) -&gt; bool {
+    // 只在满足 requires 的输入上检验 ensures
+    if amt == 0 || acc.balance &lt; amt {
+        return true; // precondition 不满足,跳过
+    }
+    let before = acc.balance;
+    let returned = withdraw(&amp;mut acc, amt);
+    acc.balance == before - amt &amp;&amp; returned == amt
+}
+<span class="boring">}</span></code></pre>
+<p>quickcheck 默认跑 128 次随机样本。每一次它都按类型生成 <code>Account</code> 和 <code>u64</code>,筛掉不满足 <code>requires</code> 的那些,在剩下的样本上检查 <code>ensures</code>。如果发现反例,它会自动 shrink(缩小反例规模)报告出来 —— 这是比单元测试更有力的一层:<strong>你不需要手写 128 个用例,随机化 + shrink 做了这件事</strong>。</p>
+<p>这两段代码放在一起的意义是:<strong>同一条契约,静态 verifier 和 property test 从两个不同的角度给出独立证据</strong>。静态 verifier 在所有可能输入上给出数学证明(如果它证得出);property test 在随机样本空间里给出概率证据(它的样本覆盖度有限但实际命中率高)。两者合起来,是“L3 契约“ 在工程上的两条腿。</p>
+<p><strong>agent-spec</strong>(本书作者维护的项目)在这一层还增加了一条:把 Ch 6 讲的 session 里的事件回放,作为 golden trace 类型的 regression test。那是一个整条 agent 轨迹级的正确性检查,不是单步。三个层次合起来 —— 单步契约(property test)、整条轨迹(golden trace)、外部结果(outcome judge)—— 对应 [[concept-evaluation-harness]] 的三层评估模型。</p>
+<h3 id="c-audit-trail--每次-passfail-作为独立事件持久化"><a class="header" href="#c-audit-trail--每次-passfail-作为独立事件持久化">(c) Audit Trail —— 每次 pass/fail 作为独立事件持久化</a></h3>
+<p>验证通过与否,必须作为<strong>事件</strong> 写回 session(Ch 6)。Ch 8 讲了 tool call 的事件结构,verify 事件的结构类似,但<strong>关键字段不同</strong>:</p>
+<pre><code class="language-json">{
+  "ts": 1734302500,
+  "kind": "verify_check",
+  "actor": "verifier:evaluator",
+  "parent_event_id": "evt_tool_result_73",
+  "checked_spec": "payment_flow_v3",
+  "property_tests": {"passed": 256, "failed": 0, "total": 256},
+  "golden_traces": {"passed": 14, "failed": 0, "total": 14},
+  "human_signoff": null,
+  "verdict": "ok"
+}
+</code></pre>
+<p>注意 <code>actor</code> 字段的值是 <strong><code>"verifier:evaluator"</code></strong>,<strong>不是</strong> <code>"agent"</code>。这一个细节承担了本章 §9.1 位置独立性的<strong>全部工程落地</strong>:同一个 session 里,生成者事件和验证者事件由<strong>不同 actor</strong> 写入。审计时可以按 actor 过滤,独立读出“验证层都验了什么“—— 不需要相信 agent 的自述、不需要拼凑 chain-of-thought、不需要事后还原。</p>
+<p>这个对比有多重要,可以做一张小表:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>事件字段</th><th>生成者视角</th><th>独立验证者视角</th><th>为什么不能合</th></tr>
+</thead>
+<tbody>
+<tr><td><code>actor</code></td><td><code>"agent:generator"</code></td><td><code>"verifier:evaluator"</code></td><td>合并 = 同一方既写实现又写 verdict,审计不知该信谁</td></tr>
+<tr><td>写入时机</td><td>tool call 完成后</td><td>evaluator 独立读 session 后异步写入</td><td>同步写 = verdict 依赖生成者进程,失败相关</td></tr>
+<tr><td>数据源</td><td>本地执行结果 + agent 自述</td><td>只读 session 事实流,不读 agent 自述</td><td>共享数据源 = 共享盲区</td></tr>
+<tr><td>失败影响</td><td>agent 自己看到失败会尝试修正</td><td>evaluator 失败不影响 agent,只影响 verdict</td><td>同一进程 = 失败会被悄悄吞掉</td></tr>
+</tbody>
+</table>
+</div>
+<p>这张表不是“最佳实践列表“,是<strong>结构性必然</strong>。每一列的第三行,就是把独立性合并掉之后的直接后果。</p>
+<p>三要件合起来是 <strong>意图可形式化 → 性质可机器运行 → 结果可持久审计</strong>。每一步都让“正确性“ 从<strong>主观感受</strong> 走向<strong>可检验的结构性证据</strong>。这正是第 9 章区别于前三柱的最重要一点:<strong>其他柱都让 agent “做事做得好”,这一柱让 agent “做的事能被独立证明”</strong>。</p>
+<h2 id="95-anthropic-三-agent-架构--独立性的真实工程形态"><a class="header" href="#95-anthropic-三-agent-架构--独立性的真实工程形态">§9.5 Anthropic 三 agent 架构 —— 独立性的真实工程形态</a></h2>
+<p>[[anthropic-harness-design]] 在 2026 年发布的 long-running apps 实证里给出了一个具体的三 agent 架构:<strong>planner / generator / evaluator</strong>。把 §9.1 的位置属性,具象到一个跑了四小时的真实任务里,它长这样。</p>
+<p>想象一次任务:让 agent 在 4 小时内为一家客户搭一个复古游戏生成器。任务从<strong>planner</strong> 开始:planner 读用户需求,产出一份 <strong>sprint contract</strong> —— 明确写明“这个 sprint 要做什么 / 什么叫成功“。这份 contract 作为一条事件写进 session,所有下游 agent 都能读到。</p>
+<p>然后进入 <strong>generator</strong> 阶段:generator 读 sprint contract,开始写代码、调 tool、把 diff 推进仓库。每一次 tool call、每一条 diff、每一次 retry,都以事件写进 session(Ch 8 讲过的六字段)。generator 不知道自己写得好不好 —— 它只负责“按 contract 生产“。</p>
+<p>接着 <strong>evaluator</strong> 被独立唤醒:它读 session、读 sprint contract、读 generator 的产物。关键是,它<strong>不读</strong> generator 的自述(也就是 agent 自己在 chain-of-thought 里说的“我做得很好“之类的话)—— 它只读<strong>客观事件</strong>。它启动一个独立的 Playwright sandbox,把 generator 产出的应用跑起来,按四个维度打分:<strong>Design / Originality / Craft / Functionality</strong>。打分结果作为一条 <code>verdict</code> 事件写进 session,<code>actor</code> 字段是 <code>"verifier:evaluator"</code>。</p>
+<p>如果 verdict 不通过,evaluator 把失败原因写进 session,generator 的下一轮读到后重新工作。这个循环跑 5–15 次,直到 verdict 通过或进入人类 review。</p>
+<p>这个架构里,三件事是本章主张的直接工程化:</p>
+<p><strong>第一</strong>,planner / generator / evaluator 是三个<strong>独立 actor</strong>,不是同一个 agent 的三种“模式“。它们可以运行在不同进程、不同机器、不同模型版本上。<strong>独立不是语义层面的,是进程层面的</strong>。</p>
+<p><strong>第二</strong>,evaluator 的证据来源是 <strong>session 的客观事实流</strong>,不是 generator 的自述。这直接落地 §9.1 的位置属性 —— evaluator 在 generator 的“外面“,它看的不是 generator 说什么,是 generator <strong>留下了什么客观痕迹</strong>。</p>
+<p><strong>第三</strong>,self-evaluation 在 Anthropic 的实证里被直接证明<strong>不够用</strong>:同一个 agent 自评自己的输出,在主观任务上会自信地夸自己的平庸产出。修法不是“更好的 prompt 让它更诚实“,是<strong>换一个独立 actor 作为 evaluator</strong>。这和 §9.3 三定理的结论完美对齐 —— 不是能力不够,是结构不对。</p>
+<p>Anthropic 给的数字:同一个任务,单 agent 跑 20 分钟、花 $9、结果浅;三 agent 架构跑 4 小时、花 ~$80、做出单 agent 在任何 token 预算下都达不到的生产级产物。<strong>harness 解锁了模型已经拥有但单 agent 结构用不出来的能力</strong>。这是 Fowler 的 <em>Agent = Model + Harness</em> 等式在大规模任务上的一次强印证:<strong>改 harness,不改模型,13.7 个百分点的提升量级</strong> —— 这是 [[mindstudio-harness]] 里 LangChain 52.8% → 66.5% 的同类信号,在 Anthropic 这里以 4 小时 / 4 维评分的形式重现。</p>
+<p>[[stanford-meta-harness]] 在 2026 年从另一个方向给出了独立验证的实证:用一个独立的 outer-loop proposer 搜索 harness 代码变体,每一个候选 harness 在一组 held-out 题目(比如 200 道 IMO 级数学题)上打分。关键是<strong>评分函数由独立评估者持有,不由 proposer 自评</strong>。如果 proposer 能同时改 harness 和改评估,outer-loop 就会 collapse 成“找一个让自己打高分的 harness“,不是“找一个真正做得更好的 harness“。这件事在工程上的直接启示是:<strong>评估函数的独立性,是 meta-harness 能不能跑起来的前提</strong>。搜索算法再强,评估不独立,搜到的就是自我奉承。</p>
+<h2 id="96-sycophancy-aware-verification--一位合规官问出的问题"><a class="header" href="#96-sycophancy-aware-verification--一位合规官问出的问题">§9.6 Sycophancy-aware Verification —— 一位合规官问出的问题</a></h2>
+<p>把场景切到另一间会议室。这一次,一位合规官在 review 一份 AI 生成的代码审计报告。她是金融监管合规背景出身,读 10-K 文件十五年,对“谁签字“ 这件事的敏感度远高于技术细节。她问的问题听起来像技术问题,但本质上是位置问题:</p>
+<blockquote>
+<p>“你们的 verifier 通过了。但这个 verifier 验的是<strong>谁写的 spec</strong>?”</p>
+</blockquote>
+<p>会议室里一阵短暂的沉默。在场的工程师第一反应是想解释 verifier 的覆盖率、property test 的数量、golden trace 的完整度。但合规官没有问这些。她问的是<strong>位置链条</strong>:spec 从哪里来,implementation 从哪里来,verifier 在检查什么。</p>
+<p>如果 spec 也是同一个 AI 写的,那“verifier 通过“ 这件事的真正含义是 —— <strong>AI 生成的代码,通过了 AI 生成的 spec 的检查</strong>。这件事在位置属性上,和“AI 自评“ 一样不独立。spec 可能只是 function body 的同义改写:body 写 <code>x = y + 1</code>,spec 写 <code>ensures(x == y + 1)</code>;verifier 通过 —— 但它通过的是一个<strong>重言式</strong>,不是一个“代码正确“的证据。</p>
+<p>这件事在本书语境里叫 <strong>sycophancy-aware verification</strong> —— 意识到 AI 生成的证据本身可能是“自我奉承“ 的回声。agent-spec(本书作者维护的项目)把这件事做成了一组可运行的 lint 规则。三条例子:</p>
+<ul>
+<li><strong>检测 <code>ensures</code> 子句是否只是 body 的赋值映射</strong> —— 比如 body 写 <code>x = y + 1</code>,ensures 写 <code>x == y + 1</code>。通过不代表正确,只代表重言式。这条 lint 看 AST 相似度,超过阈值就 flag。</li>
+<li><strong>检测 universal claim 是否缺边界条件</strong> —— 比如“for all input X, f(X) is safe“,往往只在训练集覆盖的输入空间成立。边界条件(溢出、空、极大值、负值、NaN)缺失是重大信号,lint 应要求 universal claim 必须配套一组显式 boundary condition 检查。</li>
+<li><strong>检测 contract test 与 function 同源</strong> —— 如果 function 和它的 property test 都由同一个 agent 写成,生成和检查就不独立。lint 要求 test 必须由“另一个独立 agent 或人“ 重写 —— 这个“必须“ 不是礼貌建议,是结构要求。</li>
+</ul>
+<p>把三条 lint 放进一张表里,可以看得更清楚它们各自防御的是哪类“自我奉承“:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Lint 规则</th><th>检测信号</th><th>典型触发场景</th><th>防御的失败类型</th></tr>
+</thead>
+<tbody>
+<tr><td><code>ensures</code> vs body AST 相似度</td><td>两者 AST 结构化相似度 &gt; 阈值</td><td>agent 写 <code>x = f(y)</code> 又写 <code>ensures(x == f(y))</code></td><td>重言式 spec —— verifier 通过但没有证据力</td></tr>
+<tr><td>Universal claim 边界条件</td><td>全称命题没有配套溢出 / 空值 / NaN 检查</td><td>agent 写 <code>for all X, safe(f(X))</code> 不配 boundary case</td><td>训练集内“看上去全对“,边界处真实失败</td></tr>
+<tr><td>Contract test 同源检测</td><td>function 和 property test 的 commit author / session actor 相同</td><td>同一 agent 在同一 session 里写 impl + test</td><td>生成-检查闭环,位置独立性塌陷</td></tr>
+</tbody>
+</table>
+</div>
+<p>三条合起来,就是<strong>先验证 spec 本身,再拿 spec 去验证 implementation</strong> 的两级结构。<strong>传统 verifier 假设 spec 是正确的、只是实现需要证明;AI 时代的 verifier 必须先假设 spec 本身可能是生成的,需要先验证 spec</strong>。这是本章相对 Bertrand Meyer 1986 年原始 DbC 的一次必要扩展。</p>
+<p>回到那位合规官。她问的问题,实际上是把 §9.1 位置属性的判据应用到 spec 层 —— 她不在乎 verifier 多强,她在乎“生成 spec 的位置“ 和“生成 implementation 的位置“ 是否独立。<strong>如果两者都是同一个 AI</strong>,位置属性上就已经塌了,再强的 verifier 也救不回来。所以 Ch 12 讲 reflexive harness 时会把这条红线画更狠一点:<strong>agent 不能同时改 agent-spec 和改 implementation</strong>,否则就是自己写 spec 又自己判自己通过。</p>
+<h2 id="97-社会的验证独立性--四套监管框架"><a class="header" href="#97-社会的验证独立性--四套监管框架">§9.7 社会的验证独立性 —— 四套监管框架</a></h2>
+<p>前面几节讲的是<strong>数学层 + 工程层</strong> 的独立性。但真正把 verification 独立性<strong>锁死</strong> 在 “不能妥协” 这一档的,不是数学,是社会 —— <strong>现代社会的监管和问责结构要求 verification 由可问责的独立方执行</strong>。</p>
+<p>四套具体的监管框架并列摆在那里:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>框架</th><th>适用范围</th><th>对独立验证的要求</th><th>位置独立性落点</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>EU AI Act</strong>(2024)</td><td>所有高风险 AI(医疗、教育、司法、执法、基础设施)</td><td>risk management + data governance + <strong>human oversight</strong> + technical documentation</td><td>“human oversight” 直接要求可问责的人类节点不被自动化替代</td></tr>
+<tr><td><strong>SEC AI disclosure</strong></td><td>上市公司使用 AI 的披露义务</td><td>披露 AI 作用范围 + 训练数据来源 + 输出 <strong>attestation</strong></td><td>attestation 意味着有人签字 —— 机器不签字</td></tr>
+<tr><td><strong>FDA SaMD</strong></td><td>医疗 AI 设备(Software as a Medical Device)</td><td>pre-market review + post-market surveillance + clinical validation</td><td>每一步都需要<strong>人类专业机构</strong> 认证,不是算法自证</td></tr>
+<tr><td><strong>GDPR DPIA</strong></td><td>涉及个人数据的 AI 处理</td><td>Data Protection Impact Assessment + DPO 签字</td><td>责任不在模型,在负责 DPIA 的<strong>人</strong></td></tr>
+</tbody>
+</table>
+</div>
+<p>四套框架的共同模式:<strong>都要求一个“不是被验系统自己“ 的位置,在事后必须可追责</strong>。这个位置在 EU AI Act 里叫 human oversight,在 SEC 里叫 attestation,在 FDA 里叫 clinical validation,在 GDPR 里叫 DPO。名字不同,结构同构 —— 都是把“位置独立性“ 写进了法律,不是写进了技术。</p>
+<p>这件事的工程意涵是:<strong>哪怕你的 AI 强到能自我验证,你在这四套框架下依然需要独立验证层</strong> —— 因为框架要求的是“可追责的位置“,不是“能力足够的验证者“。位置独立性<strong>先被数学锁住,再被社会锁死</strong>。</p>
+<p>还有一件事要点出来:这四套框架在 2024–2026 年都在<strong>加强</strong>,不是放松。随着 AI 在关键场景的部署深度增加,监管对“独立验证“ 的要求只会更严。这是 Ch 13 反脆弱论证要回来详谈的一条结构性趋势 —— 模型越强、部署越深,验证独立性的<strong>商业合规价值</strong> 就越高,不是相反。本章现在只需要让读者知道:<strong>四套框架同时存在,构成 verification 独立性的社会共识</strong>,这件事不是某一国政策或某一家公司意愿,是整个数字社会对“关键 AI 系统“ 的默认期望。</p>
+<h2 id="98-四问压力测试--模型越强第四柱越值钱"><a class="header" href="#98-四问压力测试--模型越强第四柱越值钱">§9.8 四问压力测试 —— “模型越强,第四柱越值钱”</a></h2>
+<p>把本章的所有论证合起来,放进四个压力测试问题里。这是本书 Ch 13 反脆弱论证的预演,但本章要先把它的结构摆清楚 —— 因为不做这个压力测试,第四柱的论证就不完整。</p>
+<p><strong>问题 1</strong>:完美 GPT-6 明天发布,第四柱归零吗?</p>
+<blockquote>
+<p><strong>不归零</strong>。此时 AI 会被部署到更关键场景(医疗、金融、基础设施),独立验证的<strong>监管需求</strong> 只会更强,不会消失。§9.7 四套框架会在模型更强之后<strong>要求更高</strong>,不是放松。模型能力增长反而推高第四柱的<strong>商业合规价值</strong>。</p>
+</blockquote>
+<p><strong>问题 2</strong>:Self-verifying AGI 出现(一个号称能自我验证的 AI),独立验证层失效吗?</p>
+<blockquote>
+<p><strong>不失效</strong>。独立性依赖<strong>位置属性</strong>(不同 actor),不是<strong>能力属性</strong>(多聪明)。哪怕一个 AI 能自我验证,它和它自己的 verdict 仍然是<strong>同一 actor</strong>,依然<strong>不构成</strong> 监管意义上的独立验证。§9.3 的三定理和 §9.7 的四套框架都独立给出这一结论,从数学和法律两个方向上锁死。</p>
+</blockquote>
+<p><strong>问题 3</strong>:Formal-verification AGI 出现(一个能证明任何代码满足任何 spec 的 AI),契约还需要吗?</p>
+<blockquote>
+<p><strong>需要</strong>,而且更需要。契约的锚是<strong>人类意图</strong>,不是证明。formal verifier 只能证明“实现满足契约“,不能证明“契约反映了人类想要什么“。<strong>意图永远是人写的</strong>。§9.6 sycophancy lint 讨论的正是这件事 —— 你不能让 AI 同时写实现和 spec,因为那会让 verifier 退化成重言式检查。</p>
+</blockquote>
+<p><strong>问题 4</strong>:有没有单一技术突破能让整个驾驭工程失效?</p>
+<blockquote>
+<p><strong>没有</strong>。四柱结构性独立:session(Ch 6)是事实载体,harness(Ch 7)是调度,tools(Ch 8)是动作词汇表,verification(本章)是独立位置。四柱在不同维度上;任何单一突破都不能同时摧毁它们。<strong>这就是反脆弱的精确陈述 —— 模型进展不削弱驾驭工程,而是让它更值钱</strong>。</p>
+</blockquote>
+<p>四问压力测试的一致回答是:<strong>驾驭工程 —— 尤其是 verification 这根柱 —— 不是“模型不够好“的补丁,是“模型再好也绕不开“的结构要求</strong>。这是 Ch 13 反脆弱四支柱的完整展开之一,本章是它的证据奠基。</p>
+<hr>
+<h2 id="可观察信号"><a class="header" href="#可观察信号">可观察信号</a></h2>
+<ul>
+<li>你的验证层和被验系统<strong>在 actor 级别独立</strong>吗?还是“用 AI 验 AI,共享训练数据“?</li>
+<li>当监管者问“你怎么知道这是对的“,你能拿出什么<strong>不是被验系统自己生成的</strong>证据?</li>
+<li>你的 contract 通过了不等于 intent 对了。<strong>谁检查 contract 本身对不对?</strong></li>
+<li>你的 verify_check 事件在 session 里 actor 是谁?如果是 <code>"agent"</code> 和 tool call 同 actor,就不独立。</li>
+<li>你现在的 verification 结构,明天 GPT-6 发布后会被削弱还是增强?如果答“被削弱“,那你押的是能力,不是位置。</li>
+</ul>
+<hr>
+<h2 id="本章核心论断"><a class="header" href="#本章核心论断">本章核心论断</a></h2>
+<ol>
+<li><strong>位置独立性 ≠ 能力独立性</strong> —— 这是本章最重要的一刀,也是本书反脆弱论证的支点。</li>
+<li><strong>生成 ≠ 验证</strong> —— P vs NP 级的结构不对称,不会随模型变强而消失;验证者<strong>不需要</strong> 和生成者一样强,只需要在<strong>独立位置</strong> 上。</li>
+<li><strong>系统无法从自己内部完整验证自己</strong> —— Gödel / Rice / Löb 三定理从不同角度指向同一结构死结;同架构 AI 共享训练数据,互验不等于独立验证。</li>
+<li>独立验证层的三要件:<strong>Spec → Property Test → Audit Trail</strong>。verify 事件的 <code>actor</code> 字段必须和生成者不同,这是位置独立性在事件层的具体体现。</li>
+<li>Anthropic 三 agent 架构是位置独立性的真实工程形态;<strong>planner / generator / evaluator 是独立 actor,不是同一 agent 的模式</strong>。</li>
+<li><strong>Sycophancy-aware lint</strong> 是 AI 时代 verifier 的新武器 —— 传统 verifier 假设 spec 正确,AI 时代 verifier 必须先验证 spec 本身。</li>
+<li>Verification 是<strong>社会-监管需求</strong>。EU AI Act / SEC / FDA / GDPR 四套框架从四个方向锁死“独立可追责位置“。</li>
+<li><strong>模型越强,第四柱越值钱</strong> —— 四问压力测试证明它是反脆弱的,不是补丁。</li>
+</ol>
+<hr>
+<h2 id="本章奠基文对齐"><a class="header" href="#本章奠基文对齐">本章奠基文对齐</a></h2>
+<ul>
+<li>[[fowler-on-harness]] —— computational / inferential controls 两分</li>
+<li>[[anthropic-harness-design]] —— planner / generator / evaluator 三 agent 架构、evaluator ≠ generator</li>
+<li>[[mindstudio-harness]] —— Human-in-the-loop checkpoints 作为 verification 的社会落地</li>
+<li>[[stanford-meta-harness]] —— 200 题 held-out 验证方法、outer-loop 搜索需要独立评分函数</li>
+<li>Bertrand Meyer, <em>Design by Contract</em>(1986)—— L3 契约的学理奠基</li>
+<li>Creusot / Prusti / Kani —— Rust formal verification 谱系</li>
+<li>EU AI Act(2024)/ SEC AI disclosure / FDA SaMD / GDPR DPIA —— 四套监管框架</li>
+</ul>
+<h2 id="本章对应-wiki-页"><a class="header" href="#本章对应-wiki-页">本章对应 wiki 页</a></h2>
+<ul>
+<li>[[concept-evaluation-harness]] · [[concept-observability]] · [[ariely-big-data-quote]]</li>
+</ul>
+<hr>
+<p><strong>第二部分至此结束</strong>。四柱已立:session 是事实载体(Ch 6)、harness 是无状态调度(Ch 7)、tools 是可问责动作词汇表(Ch 8)、verification 是独立的结构性位置(本章)。<strong>第三部分进入跨时间维度</strong> —— 当四柱跨会话运行,<strong>人机共同进化</strong> 开始发生;第 10 章先从两个循环讲起 —— 一个循环是 agent 在单次任务内的自我修正,另一个循环是 harness 本身在跨任务之间的演化。本章的四问压力测试在那里会获得它的第二层回答。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="08-tools-pillar.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="10-two-loops.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="08-tools-pillar.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="10-two-loops.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
