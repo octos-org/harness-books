@@ -34,8 +34,8 @@
 
 Skill 也不是 prompt 集合。一个合格 skill 至少要有触发条件、输入输出契约、执行步骤和验证方式。对 Octos 来说，skill 的价值不在“让模型多知道一点”，而在“把组织经验变成可执行、可检查的流程”。
 
-[^long-loop-ch9]: 本段关于 wiki -> skill -> `AGENTS.md` / docs -> CI / validator / dashboard 的长循环，借鉴 Karpathy 的知识记账思路以及本书前述 harness 实践抽象；见第 19 章参考文献 9。
-[^promotion-discipline-ch9]: 本段关于经验的 promotion / demotion 与 `AGENTS.md` 保持短目录的治理方式，综合 OpenAI 的 `AGENTS.md + docs` 实践与 Karpathy 的知识治理思路；见第 19 章参考文献 2、9。
+[^long-loop-ch9]: 本章在此处使用 Karpathy 的知识记账思路，并结合本文前述 harness 实践，说明 wiki -> skill -> `AGENTS.md` / docs -> CI / validator / dashboard 的长循环；对应第 19 章参考文献 9。
+[^promotion-discipline-ch9]: 本章在此处综合 OpenAI 与 Karpathy 关于 `AGENTS.md` 保持短目录、经验 promotion / demotion 的治理思路；对应第 19 章参考文献 2、9。
 
 ## 9.5 反身 harness 的边界
 
