@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-e685d58f.js";
+            window.path_to_searchindex_js = "searchindex-8b973fcb.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-90596f49.js"></script>
+        <script src="toc-155d6106.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -175,22 +175,22 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="0-全书地图与阅读指南"><a class="header" href="#0-全书地图与阅读指南">0. 全书地图与阅读指南</a></h1>
-<p>这份单文件书稿是 Octos 驾驭工程的合并版综合稿。它保留既有叙事主线，并把 ZIP 源书的前置说明、阅读指南、附录和参考文献折叠进来，让整个论证可以在一个地方读完。</p>
+<p>这份单文件书稿源自 Octos 提纲，但主分析线不以 Octos 为中心。它保留既有叙事主线，并把 ZIP 源书的前置说明、阅读指南、附录和参考文献折叠进来，让整个论证可以在一个地方读完。</p>
 <h2 id="01-先抓住这本书的主线"><a class="header" href="#01-先抓住这本书的主线">0.1 先抓住这本书的主线</a></h2>
 <p>为了避免章节多了以后主线发散，可以先把全书逻辑压成六步：</p>
 <ol>
 <li>LLM 有容量上限，但工程上真正重要的是有效工作区间，而不是 brochure 上的最大 context。</li>
 <li>一旦任务跨越长时间、多工具、多会话，质量、成本、时延和状态一致性会一起恶化，所以不能把 prompt 当系统。</li>
 <li>OpenAI、Anthropic 这类前沿团队之所以能把 agent 用到生产，不是因为 prompt 更花，而是因为有了 harness、验证、回放、知识分层和操作员控制面。</li>
-<li>Octos 当前遇到的多数事故，本质上都能还原为同一类问题：系统把“类似聊天的输出”误当成“运行时事实”。</li>
+<li>像 Octos 这样还在补控制平面的系统，当前遇到的多数事故，本质上都能还原为同一类问题：系统把“类似聊天的输出”误当成“运行时事实”。</li>
 <li>因此解法必须围绕 session、harness、tools、verification 四支柱展开，并落到事件 ABI、UI replay、operator dashboard、mini-fleet 门禁、sub-agent/swarm 编排这些具体机制上。</li>
 <li>最后还要把这些机制沉淀成原则、路线图、清单和边界说明，避免系统只会“偶尔成功”，却不能稳定交付。</li>
 </ol>
 <h2 id="02-这本书适合谁"><a class="header" href="#02-这本书适合谁">0.2 这本书适合谁</a></h2>
 <ul>
-<li>需要稳定运行时事实、而不是演示级行为的 Octos 维护者</li>
-<li>需要进度、产物、验证契约的 app-skill 作者</li>
-<li>需要不靠聊天文本猜测失败模式的平台操作员</li>
+<li>需要稳定运行时事实、而不是演示级行为的 coding agent / agent platform 维护者</li>
+<li>需要进度、产物、验证契约的 skill / app 开发者</li>
+<li>需要不靠聊天文本猜测失败模式的平台操作员和技术负责人</li>
 </ul>
 <h2 id="03-推荐阅读顺序"><a class="header" href="#03-推荐阅读顺序">0.3 推荐阅读顺序</a></h2>
 <ul>
@@ -201,13 +201,13 @@
 </ul>
 <h2 id="04-这个合并版新增了什么"><a class="header" href="#04-这个合并版新增了什么">0.4 这个合并版新增了什么</a></h2>
 <ul>
-<li>面向 Octos 读者的紧凑前置说明</li>
+<li>面向中文工程读者的紧凑前置说明</li>
 <li>十篇奠基论文和文章的源文本附录</li>
 <li>四根 harness 支柱的自查矩阵</li>
 <li>贯穿全书的核心术语表</li>
 <li>按角色组织的阅读指南和研究轨迹</li>
 </ul>
-<p>核心弧线保持不变：第 1 节提出控制系统视角，第 3 节把 Octos 事故转化为失败类别，第 4 节和第 7 节把这些失败转化为运行时架构，后续章节区分 harness 能解决什么，以及哪些仍然依赖模型质量、治理和操作纪律。</p>
+<p>核心弧线保持不变：第 1 节提出控制系统视角，第 2 节先用 Claude Code、Codex、OpenClaw、Hermes 拉出成熟实践光谱，第 3 节再把 Octos 这个失败样本转化为失败类别，第 4 节和第 7 节把这些失败转化为运行时架构，后续章节区分 harness 能解决什么，以及哪些仍然依赖模型质量、治理和操作纪律。</p>
 <hr>
                     </main>
 

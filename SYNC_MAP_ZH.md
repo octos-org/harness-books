@@ -8,7 +8,7 @@ Octos 短纲要控制章节顺序。较大的 mdBook 源材料按下表映射进
 | 0. 全书地图与阅读指南 | `00-how-to-read.md` — larger-book reading guide<br>`SUMMARY.md` — original mdBook table of contents for traceability | 已映射 |
 | 1. LLM 的工作区间：为什么控制系统必不可少 | `01-two-layers.md` — Layer 1 / Layer 2 boundary<br>`02-from-prompt-to-harness.md` — prompt -> context -> harness progression<br>`04-oldest-new-idea.md` — stable abstraction and control-system lineage | 已映射 |
 | 2. 成熟度鸿沟：灵光一闪 vs 工厂化输出 | `03-intent-first-engineering.md` — intent/spec/harness loop<br>`05-ai-coding-harness.md` — OpenAI 1M LOC case and AI coding factory mechanics | 已映射 |
-| 3. Octos 遇到的失败类别，以及代价为何高 | `13-failure-and-antifragility.md` — failure museum, root-cause taxonomy, antifragile repair | 已映射 |
+| 3. 通用失败类别：Octos 把它们暴露得很典型 | `13-failure-and-antifragility.md` — failure museum, root-cause taxonomy, antifragile repair | 已映射 |
 | 4. 核心 Harness 架构：当前实用模型 | `06-session-pillar.md` — session as recoverable fact stream<br>`07-harness-pillar.md` — replaceable harness scheduler and runtime interface<br>`08-tools-pillar.md` — tools as accountable action vocabulary<br>`09-verification-pillar.md` — independent verification and audit trail | 已映射 |
 | 5. 非 Rust 桥接：平台现实的必需品 | _无_ | 纲要主导缺口 |
 | 6. UI 回放不是前端功能，而是可靠性功能 | _无_ | 纲要主导缺口 |

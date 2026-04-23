@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-e685d58f.js";
+            window.path_to_searchindex_js = "searchindex-8b973fcb.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-90596f49.js"></script>
+        <script src="toc-155d6106.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -196,7 +196,7 @@
 <li>自信语言和真实正确性分离</li>
 </ul>
 <h2 id="11-自主系统中的控制栈演化"><a class="header" href="#11-自主系统中的控制栈演化">1.1 自主系统中的控制栈演化</a></h2>
-<p>Octos 的工程实践演化出一组外层控制，用来让长任务尽量留在这个质量区间内：</p>
+<p>过去一年里几个代表性系统都演化出一组外层控制，用来让长任务尽量留在这个质量区间内：</p>
 <pre><code class="language-text">Prompt 工程
   -&gt; 改善局部单轮行为
 上下文工程
@@ -477,7 +477,7 @@ Harness 工程
 <li>验证/操作员 agent 执行契约和升级</li>
 </ul>
 <p>Harness 是让这种分解长期可靠的底座。</p>
-<p>因此本书后续会在理论和 Octos 事故之间来回切换。事故展示控制平面在哪里断裂；理论解释为什么如果不把 session、tool、verification 和 replay 当作一个系统，同样的断裂会反复出现。</p>
+<p>因此本书后续会在理论、成熟样本和 Octos 失败样本之间来回切换。失败样本展示控制平面在哪里断裂；成熟样本展示哪些机制已经被工程化；理论解释为什么如果不把 session、tool、verification 和 replay 当作一个系统，同样的断裂会反复出现。</p>
 <h2 id="110-根因llm-不是状态机也不是操作系统"><a class="header" href="#110-根因llm-不是状态机也不是操作系统">1.10 根因：LLM 不是状态机，也不是操作系统</a></h2>
 <p>LLM 擅长在给定上下文中补全、推理和生成，但它本身不负责维护外部世界的真实状态。上下文窗口不是数据库，聊天历史不是事务日志，模型的自信也不是验证证据。只要任务跨越多个工具、多次重试、多个页面状态或多个 agent，系统就必须回答几个模型无法单独承担的问题：</p>
 <ul>
@@ -489,10 +489,10 @@ Harness 工程
 <p>这就是 harness 的根因。它不是为了弥补某个模型“不够聪明”，而是为了给概率生成系统补上确定性的运行时边界。模型越强，能做的事越多，外部状态和副作用越复杂，harness 反而越重要。</p>
 <h2 id="111-两层驾驭工程先把对象分清"><a class="header" href="#111-两层驾驭工程先把对象分清">1.11 两层驾驭工程：先把对象分清</a></h2>
 <p>原书反复强调一个容易混淆的点：驾驭工程至少有两层。</p>
-<p>第 1 层是 AI 编码过程的驾驭工程。这里 agent 是工程团队的生产工具，最终产品仍然是代码、服务、应用或基础设施。OpenAI Codex 团队的 1M LOC 案例、Fowler 的代码 agent harness、AGENTS.md + docs 的知识注入模式，都属于这一层。<sup class="footnote-reference" id="fr-layer1-harness-ch1-1"><a href="#footnote-layer1-harness-ch1">11</a></sup></p>
-<p>第 2 层是 AI agent 自身的 harness 工程。这里产品本身就是 agent，用户直接把任务交给它。系统要处理 session 恢复、sandbox 权限、工具调用审计、长任务重启、客户环境隔离和合规签字。Anthropic 的 session / harness / sandbox 三抽象、Milvus 的执行层、Neo4j 的记忆层，更接近这一层。<sup class="footnote-reference" id="fr-layer2-harness-ch1-1"><a href="#footnote-layer2-harness-ch1">12</a></sup></p>
-<p>Octos 同时踩在两层上：团队用 AI 写代码，也在构建 agent 平台。因此本书采用 Octos 的故障和里程碑作为主线，但会借用原书中两层共同适用的稳定原则：状态持久化、工具可问责、验证独立、知识可晋升。</p>
-<p>到这里，第 1 章只做了一件事：说明 harness 不是可选的产品装饰，而是让 LLM 长任务留在有效工作区间内的控制系统。接下来的第 2 到第 4 章会依次回答三个问题：成熟团队是如何跨过这道鸿沟的；Octos 现在具体卡在哪里；这些问题最后应当落成什么样的运行时架构。</p>
+<p>第 1 层是 AI 编码过程的驾驭工程。这里 agent 是工程团队的生产工具，最终产品仍然是代码、服务、应用或基础设施。OpenAI Codex 团队的 1M LOC 案例、Fowler 的代码 agent harness、Codex 开源仓库里对 sandbox、approval、MCP、rollout 和 <code>AGENTS.md</code> 的显式边界，都属于这一层。<sup class="footnote-reference" id="fr-layer1-harness-ch1-1"><a href="#footnote-layer1-harness-ch1">11</a></sup></p>
+<p>第 2 层是 AI agent 自身的 harness 工程。这里产品本身就是 agent，用户直接把任务交给它。系统要处理 session 恢复、sandbox 权限、工具调用审计、长任务重启、客户环境隔离、gateway 路由和合规签字。Anthropic 的 session / harness / sandbox 三抽象、Claude Code 源码里对 compaction、resume、worktree、sub-agent 的拆分，以及 OpenClaw/Hermes 在 gateway、memory、skills、cron 和多会话上的控制面，都更接近这一层。<sup class="footnote-reference" id="fr-layer2-harness-ch1-1"><a href="#footnote-layer2-harness-ch1">12</a></sup></p>
+<p>Claude Code 和 Codex 站在这两层的分界线附近：它们既是编码生产工具，也体现出长任务 harness 产品的形态。OpenClaw 和 Hermes 更明显属于 Layer 2：产品本身就是会话、记忆、gateway、skills、cron 和 sub-agent 的控制面。Octos 在本文里只承担一个角色：失败样本。它有价值，不是因为它代表行业，而是因为它把同一种结构性问题暴露得很具体。</p>
+<p>到这里，第 1 章只做了一件事：说明 harness 不是可选的产品装饰，而是让 LLM 长任务留在有效工作区间内的控制系统。接下来的第 2 到第 4 章会依次回答三个问题：成熟系统究竟在建设什么；当这些机制缺位时系统会怎样坏；这些问题最后应当落成什么样的运行时架构。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
@@ -527,10 +527,10 @@ Harness 工程
 <p>Huiqiang Jiang et al., <em>LongLLMLingua: Accelerating and Enhancing LLMs in Long Context Scenarios via Prompt Compression.</em> 本章在此处使用其关于长上下文三类问题与压缩收益的结果；对应第 19 章参考文献 18。 <a href="#fr-longllmlingua-1">↩</a> <a href="#fr-longllmlingua-2">↩2</a> <a href="#fr-longllmlingua-3">↩3</a></p>
 </li>
 <li id="footnote-layer1-harness-ch1">
-<p>本章在此处综合 Fowler 关于 coding agent harness 的框架，以及 OpenAI 关于 1M LOC 与 <code>AGENTS.md + docs</code> 的工程实践；对应第 19 章参考文献 1、2。 <a href="#fr-layer1-harness-ch1-1">↩</a></p>
+<p>本章在此处综合 Fowler 关于 coding agent harness 的框架，以及 OpenAI 与 Codex 开源仓库关于 1M LOC、<code>AGENTS.md</code>、sandbox、approval、MCP 与 rollout 的工程边界；对应第 19 章参考文献 1、2、21。 <a href="#fr-layer1-harness-ch1-1">↩</a></p>
 </li>
 <li id="footnote-layer2-harness-ch1">
-<p>本章在此处综合 Anthropic 关于 managed agents 与 long-running harness 的接口抽象，以及 Milvus execution layer、Neo4j memory/context layer 的观点；对应第 19 章参考文献 3、4、6、7。 <a href="#fr-layer2-harness-ch1-1">↩</a></p>
+<p>本章在此处综合 Anthropic 关于 managed agents 与 long-running harness 的接口抽象、Claude Code 本地源码镜像所体现的 session/compaction/sub-agent 机制，以及 OpenClaw/Hermes 在 gateway、memory、skills 与 sub-agent 上的产品形态；对应第 19 章参考文献 3、4、6、7、22、23、24。 <a href="#fr-layer2-harness-ch1-1">↩</a></p>
 </li>
 </ol>
 

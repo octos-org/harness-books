@@ -22,6 +22,10 @@
 18. Huiqiang Jiang et al. *LongLLMLingua: Accelerating and Enhancing LLMs in Long Context Scenarios via Prompt Compression.* ACL 2024. https://aclanthology.org/2024.acl-long.91/
 19. Huiqiang Jiang et al. *MInference: Accelerating Pre-filling for Long-Context LLMs via Dynamic Sparse Attention.* 2024. https://openreview.net/forum?id=C5Nh2UFJ9S
 20. OpenAI. *API Pricing.* Accessed 2026-04-23. https://openai.com/api/pricing/
+21. OpenAI. *openai/codex* repository, including README, `AGENTS.md`, and `docs/`. Accessed 2026-04-23. https://github.com/openai/codex
+22. OpenClaw. *openclaw/openclaw* repository README and docs. Accessed 2026-04-23. https://github.com/openclaw/openclaw
+23. Nous Research. *NousResearch/hermes-agent* repository README and developer guide. Accessed 2026-04-23. https://github.com/NousResearch/hermes-agent
+24. Claude Code 本地源码镜像审读，关键模块包括 `services/tools/StreamingToolExecutor.ts`、`services/compact/{microCompact,compact,apiMicrocompact}.ts`、`utils/sessionStorage.ts`、`utils/fileStateCache.ts`、`utils/task/diskOutput.ts`、`services/AgentSummary/agentSummary.ts`、`tools/AgentTool/resumeAgent.ts`、`utils/worktree.ts`。审读日期 2026-04-23。
 
 ## 19.2 支持性参考
 

@@ -43,6 +43,9 @@ SECTION_SOURCES: dict[str, list[SourceFile]] = {
         SourceFile("03-intent-first-engineering.md", "intent/spec/harness loop"),
         SourceFile("05-ai-coding-harness.md", "OpenAI 1M LOC case and AI coding factory mechanics"),
     ],
+    "3. Common failure classes: Octos exposed them clearly": [
+        SourceFile("13-failure-and-antifragility.md", "failure museum, root-cause taxonomy, antifragile repair"),
+    ],
     "3. Failure classes Octos hit (and why they were expensive)": [
         SourceFile("13-failure-and-antifragility.md", "failure museum, root-cause taxonomy, antifragile repair"),
     ],
@@ -86,6 +89,7 @@ SECTION_SLUGS: dict[str, str] = {
     "0. Book map and reading guide": "01-book-map.md",
     "1. LLM operating region and why control systems exist": "02-operating-region.md",
     "2. The maturity gap: genius moments vs factory output": "03-maturity-gap.md",
+    "3. Common failure classes: Octos exposed them clearly": "04-failure-classes.md",
     "3. Failure classes Octos hit (and why they were expensive)": "04-failure-classes.md",
     "4. Core harness architecture (current practical model)": "05-core-architecture.md",
     "5. Non-Rust bridge: mandatory for platform reality": "06-non-rust-bridge.md",
@@ -111,7 +115,8 @@ ZH_HEADINGS: dict[str, str] = {
     "0. Book map and reading guide": "0. 全书地图与阅读指南",
     "1. LLM operating region and why control systems exist": "1. LLM 的工作区间：为什么控制系统必不可少",
     "2. The maturity gap: genius moments vs factory output": "2. 成熟度鸿沟：灵光一闪 vs 工厂化输出",
-    "3. Failure classes Octos hit (and why they were expensive)": "3. Octos 遇到的失败类别，以及代价为何高",
+    "3. Common failure classes: Octos exposed them clearly": "3. 通用失败类别：Octos 把它们暴露得很典型",
+    "3. Failure classes Octos hit (and why they were expensive)": "3. 通用失败类别：Octos 把它们暴露得很典型",
     "4. Core harness architecture (current practical model)": "4. 核心 Harness 架构：当前实用模型",
     "5. Non-Rust bridge: mandatory for platform reality": "5. 非 Rust 桥接：平台现实的必需品",
     "6. UI replay is not a frontend feature; it is a reliability feature": "6. UI 回放不是前端功能，而是可靠性功能",

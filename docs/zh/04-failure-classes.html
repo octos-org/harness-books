@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>3. Octos 遇到的失败类别，以及代价为何高 - 驾驭工程：Octos 纲要同步版</title>
+        <title>3. 通用失败类别：Octos 把它们暴露得很典型 - 驾驭工程：Octos 纲要同步版</title>
 
 
         <!-- Custom HTML head -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-e685d58f.js";
+            window.path_to_searchindex_js = "searchindex-8b973fcb.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-90596f49.js"></script>
+        <script src="toc-155d6106.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -174,8 +174,8 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="3-octos-遇到的失败类别以及代价为何高"><a class="header" href="#3-octos-遇到的失败类别以及代价为何高">3. Octos 遇到的失败类别，以及代价为何高</a></h1>
-<p>如果说第 2 章回答的是工厂化输出长什么样，那么这一章回答的是 Octos 现在离它还差什么。这里不再讨论理念，而是把差距拆成可命名、可归档、可修复的失败类别。</p>
+                        <h1 id="3-通用失败类别octos-把它们暴露得很典型"><a class="header" href="#3-通用失败类别octos-把它们暴露得很典型">3. 通用失败类别：Octos 把它们暴露得很典型</a></h1>
+<p>如果说第 2 章回答的是成熟系统在建设什么，那么这一章回答的是：一旦这些机制缺位，系统会怎样坏。这里用 Octos 当样本，不是因为 Octos 比别人更特殊，而是因为它把问题暴露得足够具体。我们不再讨论理念，而是把差距拆成可命名、可归档、可修复的失败类别。</p>
 <h2 id="31-后台任务进度-bug"><a class="header" href="#31-后台任务进度-bug">3.1 后台任务进度 bug</a></h2>
 <p>观察到的类别：</p>
 <ul>
@@ -273,7 +273,7 @@
 <h2 id="37-失败模式博物馆每个事故都要沉淀成结构"><a class="header" href="#37-失败模式博物馆每个事故都要沉淀成结构">3.7 失败模式博物馆：每个事故都要沉淀成结构</a></h2>
 <p>原书提出“失败模式博物馆”这个说法，价值在于强迫团队把事故从故事变成结构。一个合格的失败条目至少包含三栏：症状、根因、修法。</p>
 <p>症状是用户或操作员看到的表面，例如状态气泡冻结、产物丢失、会话串扰。根因必须落到四支柱之一：session 没有持久事实、harness 没有稳定协议、tool 没有问责边界、verification 不独立或不阻断。修法不能停留在“改 prompt”或“加日志”，而要转成 schema、gate、fixture、validator、dashboard 诊断或文档契约。</p>
-<p>Octos 后续每次遇到 harness 事故，都应该按这个格式归档。否则团队只是在修 bug，没有增长系统免疫力。</p>
+<p>任何团队后续每次遇到 harness 事故，都应该按这个格式归档。否则团队只是在修 bug，没有增长系统免疫力。</p>
 <hr>
                     </main>
 

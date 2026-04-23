@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-e685d58f.js";
+            window.path_to_searchindex_js = "searchindex-8b973fcb.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-90596f49.js"></script>
+        <script src="toc-155d6106.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -179,10 +179,10 @@
 <p>这个生成版本以 Octos 短纲要作为目录与结构，把较大的 harness-engineering mdBook 源材料折叠进对应章节。</p>
 <h2 id="原始纲要标题块"><a class="header" href="#原始纲要标题块">原始纲要标题块</a></h2>
 <h2 id="驾驭工程从灵光一闪的天才到稳定输出的-ai-软件工厂"><a class="header" href="#驾驭工程从灵光一闪的天才到稳定输出的-ai-软件工厂">驾驭工程：从灵光一闪的天才到稳定输出的 AI 软件工厂</a></h2>
-<p>日期：2026-04-22<br>读者：Octos 维护者、app-skill 开发者、平台操作员</p>
+<p>日期：2026-04-22<br>读者：coding agent / agent 平台维护者、skill 开发者、平台操作员、技术负责人</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="前言为什么需要这本书"><a class="header" href="#前言为什么需要这本书">前言：为什么需要这本书</a></h1>
-<p>Octos 已经证明了一个硬事实：强模型加提示词技巧，可以在演示里显得很聪明；但一旦进入真实流量、长任务、页面重载和多会话并发，就会暴露系统性失败。</p>
+<p>如果把过去一年里最有代表性的几类系统放在一起看，无论是 Claude Code、Codex，还是 OpenClaw、Hermes 乃至 Octos，都在证明同一个硬事实：强模型加提示词技巧，可以在演示里显得很聪明；但一旦进入真实流量、长任务、页面重载、多会话和多工具并发，瓶颈就会从“回答质量”迅速转移到“控制系统质量”。</p>
 <p>这本书记录的是把这种模式推向工厂化姿态的驾驭工程经验：</p>
 <ul>
 <li>确定性的任务生命周期</li>
@@ -192,28 +192,28 @@
 <li>可回放的 UI 事实</li>
 <li>操作员可见的失败原因</li>
 </ul>
-<p>这些经验并不抽象。它们来自 Octos 的真实问题：后台任务进度漂移、<code>run_pipeline</code> / <code>deep-search</code> 状态不一致、会话污染、产物契约缺口、验证器不完整，以及操作员盲区。本书不断回到这些事故，是因为它们从不同表面展示了同一个模式：瓶颈不是模型，而是控制系统。</p>
+<p>这些经验并不抽象。Claude Code 和 Codex 提供了比较成熟的正向样本，OpenClaw 和 Hermes 提供了更广义 agent product 的相邻样本，Octos 则提供了一个失败样本：后台任务进度漂移、<code>run_pipeline</code> / <code>deep-search</code> 状态不一致、会话污染、产物契约缺口、验证器不完整，以及操作员盲区。本书会反复对照这些系统，不是为了做产品测评，而是为了说明同一个模式会怎样在不同系统表面重复出现：瓶颈不是模型，而是控制系统。</p>
 <p>目标不是架构洁癖。目标是在模型、网络、插件、浏览器标签页和用户行为都很混乱的情况下，仍然能得到可靠结果。</p>
 <p>这本书只试图把一条论证链讲清楚：LLM 之所以需要 harness，不是因为它“不够强”，而是因为长任务里的质量、成本、时延和状态一致性都会在离开最佳工作区间后迅速恶化；一旦系统要跨会话、跨工具、跨时间地行动，就必须把状态、验证和回放从 prompt 外移到运行时契约里。后文所有案例、事故、架构和路线图，都是在展开这条主线。</p>
-<p>这一版的写法有一个明确取舍：不把“大书”的章节原样搬进来，而是沿着 Octos 纲要的工程问题，把原书中关于两层驾驭工程、OpenAI 1M LOC 案例、AGENTS.md 分层、四支柱、长程循环、skills 晋升和“多脑多手”组织方式的论证重新消化。读者先获得一条稳定主线，再按需去 <code>/original/</code> 查看完整原书。</p>
+<p>这一版的写法有一个明确取舍：不把“大书”的章节原样搬进来，而是沿着当前提纲，把原书中关于两层驾驭工程、OpenAI 1M LOC 案例、AGENTS.md 分层、四支柱、长程循环、skills 晋升和“多脑多手”组织方式的论证，和 Claude Code、Codex、OpenClaw、Hermes 的实际系统形态重新消化。读者先获得一条稳定主线，再按需去 <code>/original/</code> 查看完整原书。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="0-全书地图与阅读指南"><a class="header" href="#0-全书地图与阅读指南">0. 全书地图与阅读指南</a></h1>
-<p>这份单文件书稿是 Octos 驾驭工程的合并版综合稿。它保留既有叙事主线，并把 ZIP 源书的前置说明、阅读指南、附录和参考文献折叠进来，让整个论证可以在一个地方读完。</p>
+<p>这份单文件书稿源自 Octos 提纲，但主分析线不以 Octos 为中心。它保留既有叙事主线，并把 ZIP 源书的前置说明、阅读指南、附录和参考文献折叠进来，让整个论证可以在一个地方读完。</p>
 <h2 id="01-先抓住这本书的主线"><a class="header" href="#01-先抓住这本书的主线">0.1 先抓住这本书的主线</a></h2>
 <p>为了避免章节多了以后主线发散，可以先把全书逻辑压成六步：</p>
 <ol>
 <li>LLM 有容量上限，但工程上真正重要的是有效工作区间，而不是 brochure 上的最大 context。</li>
 <li>一旦任务跨越长时间、多工具、多会话，质量、成本、时延和状态一致性会一起恶化，所以不能把 prompt 当系统。</li>
 <li>OpenAI、Anthropic 这类前沿团队之所以能把 agent 用到生产，不是因为 prompt 更花，而是因为有了 harness、验证、回放、知识分层和操作员控制面。</li>
-<li>Octos 当前遇到的多数事故，本质上都能还原为同一类问题：系统把“类似聊天的输出”误当成“运行时事实”。</li>
+<li>像 Octos 这样还在补控制平面的系统，当前遇到的多数事故，本质上都能还原为同一类问题：系统把“类似聊天的输出”误当成“运行时事实”。</li>
 <li>因此解法必须围绕 session、harness、tools、verification 四支柱展开，并落到事件 ABI、UI replay、operator dashboard、mini-fleet 门禁、sub-agent/swarm 编排这些具体机制上。</li>
 <li>最后还要把这些机制沉淀成原则、路线图、清单和边界说明，避免系统只会“偶尔成功”，却不能稳定交付。</li>
 </ol>
 <h2 id="02-这本书适合谁"><a class="header" href="#02-这本书适合谁">0.2 这本书适合谁</a></h2>
 <ul>
-<li>需要稳定运行时事实、而不是演示级行为的 Octos 维护者</li>
-<li>需要进度、产物、验证契约的 app-skill 作者</li>
-<li>需要不靠聊天文本猜测失败模式的平台操作员</li>
+<li>需要稳定运行时事实、而不是演示级行为的 coding agent / agent platform 维护者</li>
+<li>需要进度、产物、验证契约的 skill / app 开发者</li>
+<li>需要不靠聊天文本猜测失败模式的平台操作员和技术负责人</li>
 </ul>
 <h2 id="03-推荐阅读顺序"><a class="header" href="#03-推荐阅读顺序">0.3 推荐阅读顺序</a></h2>
 <ul>
@@ -224,13 +224,13 @@
 </ul>
 <h2 id="04-这个合并版新增了什么"><a class="header" href="#04-这个合并版新增了什么">0.4 这个合并版新增了什么</a></h2>
 <ul>
-<li>面向 Octos 读者的紧凑前置说明</li>
+<li>面向中文工程读者的紧凑前置说明</li>
 <li>十篇奠基论文和文章的源文本附录</li>
 <li>四根 harness 支柱的自查矩阵</li>
 <li>贯穿全书的核心术语表</li>
 <li>按角色组织的阅读指南和研究轨迹</li>
 </ul>
-<p>核心弧线保持不变：第 1 节提出控制系统视角，第 3 节把 Octos 事故转化为失败类别，第 4 节和第 7 节把这些失败转化为运行时架构，后续章节区分 harness 能解决什么，以及哪些仍然依赖模型质量、治理和操作纪律。</p>
+<p>核心弧线保持不变：第 1 节提出控制系统视角，第 2 节先用 Claude Code、Codex、OpenClaw、Hermes 拉出成熟实践光谱，第 3 节再把 Octos 这个失败样本转化为失败类别，第 4 节和第 7 节把这些失败转化为运行时架构，后续章节区分 harness 能解决什么，以及哪些仍然依赖模型质量、治理和操作纪律。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="1-llm-的工作区间为什么控制系统必不可少"><a class="header" href="#1-llm-的工作区间为什么控制系统必不可少">1. LLM 的工作区间：为什么控制系统必不可少</a></h1>
 <p>核心工程目标不是“孤立地让模型更聪明”。<br>真正的实践目标，是让 LLM 在尽可能长的任务周期里停留在它最擅长的上下文和工作区间内。</p>
@@ -254,7 +254,7 @@
 <li>自信语言和真实正确性分离</li>
 </ul>
 <h2 id="11-自主系统中的控制栈演化"><a class="header" href="#11-自主系统中的控制栈演化">1.1 自主系统中的控制栈演化</a></h2>
-<p>Octos 的工程实践演化出一组外层控制，用来让长任务尽量留在这个质量区间内：</p>
+<p>过去一年里几个代表性系统都演化出一组外层控制，用来让长任务尽量留在这个质量区间内：</p>
 <pre><code class="language-text">Prompt 工程
   -&gt; 改善局部单轮行为
 上下文工程
@@ -535,7 +535,7 @@ Harness 工程
 <li>验证/操作员 agent 执行契约和升级</li>
 </ul>
 <p>Harness 是让这种分解长期可靠的底座。</p>
-<p>因此本书后续会在理论和 Octos 事故之间来回切换。事故展示控制平面在哪里断裂；理论解释为什么如果不把 session、tool、verification 和 replay 当作一个系统，同样的断裂会反复出现。</p>
+<p>因此本书后续会在理论、成熟样本和 Octos 失败样本之间来回切换。失败样本展示控制平面在哪里断裂；成熟样本展示哪些机制已经被工程化；理论解释为什么如果不把 session、tool、verification 和 replay 当作一个系统，同样的断裂会反复出现。</p>
 <h2 id="110-根因llm-不是状态机也不是操作系统"><a class="header" href="#110-根因llm-不是状态机也不是操作系统">1.10 根因：LLM 不是状态机，也不是操作系统</a></h2>
 <p>LLM 擅长在给定上下文中补全、推理和生成，但它本身不负责维护外部世界的真实状态。上下文窗口不是数据库，聊天历史不是事务日志，模型的自信也不是验证证据。只要任务跨越多个工具、多次重试、多个页面状态或多个 agent，系统就必须回答几个模型无法单独承担的问题：</p>
 <ul>
@@ -547,10 +547,10 @@ Harness 工程
 <p>这就是 harness 的根因。它不是为了弥补某个模型“不够聪明”，而是为了给概率生成系统补上确定性的运行时边界。模型越强，能做的事越多，外部状态和副作用越复杂，harness 反而越重要。</p>
 <h2 id="111-两层驾驭工程先把对象分清"><a class="header" href="#111-两层驾驭工程先把对象分清">1.11 两层驾驭工程：先把对象分清</a></h2>
 <p>原书反复强调一个容易混淆的点：驾驭工程至少有两层。</p>
-<p>第 1 层是 AI 编码过程的驾驭工程。这里 agent 是工程团队的生产工具，最终产品仍然是代码、服务、应用或基础设施。OpenAI Codex 团队的 1M LOC 案例、Fowler 的代码 agent harness、AGENTS.md + docs 的知识注入模式，都属于这一层。<sup class="footnote-reference" id="fr-layer1-harness-ch1-1"><a href="#footnote-layer1-harness-ch1">11</a></sup></p>
-<p>第 2 层是 AI agent 自身的 harness 工程。这里产品本身就是 agent，用户直接把任务交给它。系统要处理 session 恢复、sandbox 权限、工具调用审计、长任务重启、客户环境隔离和合规签字。Anthropic 的 session / harness / sandbox 三抽象、Milvus 的执行层、Neo4j 的记忆层，更接近这一层。<sup class="footnote-reference" id="fr-layer2-harness-ch1-1"><a href="#footnote-layer2-harness-ch1">12</a></sup></p>
-<p>Octos 同时踩在两层上：团队用 AI 写代码，也在构建 agent 平台。因此本书采用 Octos 的故障和里程碑作为主线，但会借用原书中两层共同适用的稳定原则：状态持久化、工具可问责、验证独立、知识可晋升。</p>
-<p>到这里，第 1 章只做了一件事：说明 harness 不是可选的产品装饰，而是让 LLM 长任务留在有效工作区间内的控制系统。接下来的第 2 到第 4 章会依次回答三个问题：成熟团队是如何跨过这道鸿沟的；Octos 现在具体卡在哪里；这些问题最后应当落成什么样的运行时架构。</p>
+<p>第 1 层是 AI 编码过程的驾驭工程。这里 agent 是工程团队的生产工具，最终产品仍然是代码、服务、应用或基础设施。OpenAI Codex 团队的 1M LOC 案例、Fowler 的代码 agent harness、Codex 开源仓库里对 sandbox、approval、MCP、rollout 和 <code>AGENTS.md</code> 的显式边界，都属于这一层。<sup class="footnote-reference" id="fr-layer1-harness-ch1-1"><a href="#footnote-layer1-harness-ch1">11</a></sup></p>
+<p>第 2 层是 AI agent 自身的 harness 工程。这里产品本身就是 agent，用户直接把任务交给它。系统要处理 session 恢复、sandbox 权限、工具调用审计、长任务重启、客户环境隔离、gateway 路由和合规签字。Anthropic 的 session / harness / sandbox 三抽象、Claude Code 源码里对 compaction、resume、worktree、sub-agent 的拆分，以及 OpenClaw/Hermes 在 gateway、memory、skills、cron 和多会话上的控制面，都更接近这一层。<sup class="footnote-reference" id="fr-layer2-harness-ch1-1"><a href="#footnote-layer2-harness-ch1">12</a></sup></p>
+<p>Claude Code 和 Codex 站在这两层的分界线附近：它们既是编码生产工具，也体现出长任务 harness 产品的形态。OpenClaw 和 Hermes 更明显属于 Layer 2：产品本身就是会话、记忆、gateway、skills、cron 和 sub-agent 的控制面。Octos 在本文里只承担一个角色：失败样本。它有价值，不是因为它代表行业，而是因为它把同一种结构性问题暴露得很具体。</p>
+<p>到这里，第 1 章只做了一件事：说明 harness 不是可选的产品装饰，而是让 LLM 长任务留在有效工作区间内的控制系统。接下来的第 2 到第 4 章会依次回答三个问题：成熟系统究竟在建设什么；当这些机制缺位时系统会怎样坏；这些问题最后应当落成什么样的运行时架构。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
@@ -585,15 +585,15 @@ Harness 工程
 <p>Huiqiang Jiang et al., <em>LongLLMLingua: Accelerating and Enhancing LLMs in Long Context Scenarios via Prompt Compression.</em> 本章在此处使用其关于长上下文三类问题与压缩收益的结果；对应第 19 章参考文献 18。 <a href="#fr-longllmlingua-1">↩</a> <a href="#fr-longllmlingua-2">↩2</a> <a href="#fr-longllmlingua-3">↩3</a></p>
 </li>
 <li id="footnote-layer1-harness-ch1">
-<p>本章在此处综合 Fowler 关于 coding agent harness 的框架，以及 OpenAI 关于 1M LOC 与 <code>AGENTS.md + docs</code> 的工程实践；对应第 19 章参考文献 1、2。 <a href="#fr-layer1-harness-ch1-1">↩</a></p>
+<p>本章在此处综合 Fowler 关于 coding agent harness 的框架，以及 OpenAI 与 Codex 开源仓库关于 1M LOC、<code>AGENTS.md</code>、sandbox、approval、MCP 与 rollout 的工程边界；对应第 19 章参考文献 1、2、21。 <a href="#fr-layer1-harness-ch1-1">↩</a></p>
 </li>
 <li id="footnote-layer2-harness-ch1">
-<p>本章在此处综合 Anthropic 关于 managed agents 与 long-running harness 的接口抽象，以及 Milvus execution layer、Neo4j memory/context layer 的观点；对应第 19 章参考文献 3、4、6、7。 <a href="#fr-layer2-harness-ch1-1">↩</a></p>
+<p>本章在此处综合 Anthropic 关于 managed agents 与 long-running harness 的接口抽象、Claude Code 本地源码镜像所体现的 session/compaction/sub-agent 机制，以及 OpenClaw/Hermes 在 gateway、memory、skills 与 sub-agent 上的产品形态；对应第 19 章参考文献 3、4、6、7、22、23、24。 <a href="#fr-layer2-harness-ch1-1">↩</a></p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="2-成熟度鸿沟灵光一闪-vs-工厂化输出"><a class="header" href="#2-成熟度鸿沟灵光一闪-vs-工厂化输出">2. 成熟度鸿沟：灵光一闪 vs 工厂化输出</a></h1>
-<p>上一章回答的是“为什么必须有 harness”；这一章回答的是“成熟团队究竟在建设什么，才能从 demo 式聪明跨到工厂化输出”。先看 OpenAI 这类外部案例，不是为了抄作业，而是为了把成熟度鸿沟说具体。</p>
+<p>上一章回答的是“为什么必须有 harness”；这一章回答的是“成熟系统究竟在建设什么，才能从 demo 式聪明跨到工厂化输出”。这里会按重要性看四类样本：Claude Code 作为主分析对象，Codex 作为公开的开源结构样本，OpenClaw/Hermes 作为更广义 agent product 对照，而 OpenAI 1M LOC 案例则提供组织生产层的极端样本。Octos 不在这一章里做主角，它在下一章只作为失败样本出现。</p>
 <p>“灵光一闪的天才”模式有这些特征：</p>
 <ul>
 <li>成功依赖 prompt，且不可重复</li>
@@ -611,8 +611,18 @@ Harness 工程
 <li>每次事故都有操作员级证据</li>
 </ul>
 <p>Harness 就是这两种模式之间的转换机制。</p>
-<h2 id="21-openai-1m-loc-案例真正说明了什么"><a class="header" href="#21-openai-1m-loc-案例真正说明了什么">2.1 OpenAI 1M LOC 案例真正说明了什么</a></h2>
-<p>原书里最有冲击力的案例来自 OpenAI Codex 团队：从 2025 年 8 月第一次提交到 2026 年 2 月，约五个月时间，三位工程师驱动 Codex 产出约 1M LOC、1500+ 个已合并 PR，平均每位工程师每天 3.5 个 PR，并宣称人类不直接写应用代码。<sup class="footnote-reference" id="fr-openai-factory-ch2-1"><a href="#footnote-openai-factory-ch2">1</a></sup> 这个故事的重点不是“模型终于可以替代工程师”，而是工程师的工作对象上移了。</p>
+<h2 id="21-claude-codeharness-已经产品化"><a class="header" href="#21-claude-codeharness-已经产品化">2.1 Claude Code：harness 已经产品化</a></h2>
+<p>如果只看表面，Claude Code 像一个终端里的模型壳；但看源码，它更像一套为长运行 coding agent 准备的控制系统。2026-04-23 对本地源码镜像的审读里，光会话持久化 <code>sessionStorage.ts</code> 就约 5105 行，全量 compaction <code>compact.ts</code> 约 1705 行，worktree 管理 <code>worktree.ts</code> 约 1519 行，另有 <code>StreamingToolExecutor.ts</code>、<code>microCompact.ts</code>、<code>apiMicrocompact.ts</code>、<code>diskOutput.ts</code>、<code>agentSummary.ts</code>、<code>resumeAgent.ts</code> 等专门模块。这里最值得学的不是文件大，而是 Anthropic 把“长任务会坏在哪里”拆成了独立子系统。<sup class="footnote-reference" id="fr-claudecode-ch2-1"><a href="#footnote-claudecode-ch2">1</a></sup></p>
+<p>这套拆分至少说明了六件事。第一，tool execution 不是简单的“来一个就跑一个”；<code>StreamingToolExecutor</code> 明确区分 concurrency-safe 与 exclusive tool，把并发安全变成调度器的职责。第二，长上下文管理不是只有一次“大压缩”；Claude Code 事实上做了三层 compaction：<code>microCompact</code> 清理旧 tool result，<code>apiMicrocompact</code> 利用 provider 原生 context management，<code>compact.ts</code> 再做全量摘要并在压缩后补回最近文件与 skills。第三，session resume 不是简单地把 JSONL 重新读回来；恢复逻辑会过滤 unresolved tool uses、清理 orphaned thinking，并恢复 file history、context collapse snapshot 与 worktree 状态。第四，sub-agent 不是 fire-and-forget；每个子 agent 都可以有独立 disk-backed output、滚动摘要、后台恢复和继续发送消息。第五，worktree 不是方便功能，而是隔离副作用和保证恢复语义的一部分。第六，文件读取缓存、prompt cache、tool result 存储和任务输出文件，共同组成了长任务的外部工作记忆。</p>
+<p>Claude Code 真正证明的不是“模型够强就能写很多代码”，而是 coding agent 一旦进入多分钟、多子任务、可恢复、可继续派工的场景，就必须把并发、上下文、产物输出和子 agent 生命周期做成一等公民。否则所谓“长任务”只是把一次短聊天拖得更长。<sup class="footnote-reference" id="fr-claudecode-ch2-2"><a href="#footnote-claudecode-ch2">1</a></sup></p>
+<h2 id="22-codex把-harness-边界显式模块化"><a class="header" href="#22-codex把-harness-边界显式模块化">2.2 Codex：把 harness 边界显式模块化</a></h2>
+<p>相较之下，Codex 的公开仓库暴露的是另一种成熟度。它没有把 Claude Code 那样多的产品内脏完整摊开，但它把 harness 的边界切得更显式：仓库里单独存在 <code>codex-rs/exec-server</code>、<code>hooks</code>、<code>tools</code>、<code>rollout</code>、<code>mcp-server</code>、<code>process-hardening</code> 等模块，文档里把 <code>AGENTS.md</code>、sandbox、approvals 单独立项，<code>AGENTS.md</code> 还明确要求控制 crate 边界、最小化 <code>codex-core</code> 膨胀，以及通过专门的 MCP connection manager 管理工具调用。<sup class="footnote-reference" id="fr-codex-oss-ch2-1"><a href="#footnote-codex-oss-ch2">2</a></sup></p>
+<p>这说明 Codex 的代表性不在于“已经把所有长会话产品细节都做完”，而在于它把 harness 先拆成一组可维护、可组合、可审计的运行时原语：执行、审批、MCP、rollout、sandbox、文档注入。Claude Code 更像一个重产品化的长任务 coding agent；Codex 更像一个把运行边界讲清楚的开源内核。两者不是谁替代谁，而是从不同方向证明 harness 已经是主体，而不是附属。<sup class="footnote-reference" id="fr-codex-oss-ch2-2"><a href="#footnote-codex-oss-ch2">2</a></sup></p>
+<h2 id="23-openclaw-与-hermes更广义-agent-product-也在重复同一规律"><a class="header" href="#23-openclaw-与-hermes更广义-agent-product-也在重复同一规律">2.3 OpenClaw 与 Hermes：更广义 agent product 也在重复同一规律</a></h2>
+<p>OpenClaw 和 Hermes 不以 coding agent 为中心，但恰好证明 harness 不是 coding-only 现象。OpenClaw 把 Gateway 明确称为 control plane，核心围绕 sessions、channels、skills、routing、web surfaces 和安全边界展开；Hermes 则把 gateway、SQLite session store、FTS5 memory、skills、delegate tool、cron、MCP 与多种 terminal backend 放到同一运行面。二者共同点都不是“提示词写得更会”，而是把 session、memory、skills、gateway、cron、sub-agent 当作系统事实。<sup class="footnote-reference" id="fr-openclaw-hermes-ch2-1"><a href="#footnote-openclaw-hermes-ch2">3</a></sup></p>
+<p>对本书而言，OpenClaw 和 Hermes 只需要简单分析，因为它们不是最贴近“AI 软件工厂”的主样本；但它们非常有价值，因为它们说明一旦 agent 要跨渠道、跨时段、跨环境连续行动，control plane 一定会长出来。也就是说，harness 不是 coding agent 的偶然补丁，而是 agent product 普遍会演化出来的外层系统。<sup class="footnote-reference" id="fr-openclaw-hermes-ch2-2"><a href="#footnote-openclaw-hermes-ch2">3</a></sup></p>
+<h2 id="24-openai-1m-loc-案例真正说明了什么"><a class="header" href="#24-openai-1m-loc-案例真正说明了什么">2.4 OpenAI 1M LOC 案例真正说明了什么</a></h2>
+<p>相比 Claude Code 和 Codex 主要展示产品或仓库层面的运行时结构，OpenAI 的 1M LOC 案例展示的是组织生产层发生了什么变化：从 2025 年 8 月第一次提交到 2026 年 2 月，约五个月时间，三位工程师驱动 Codex 产出约 1M LOC、1500+ 个已合并 PR，平均每位工程师每天 3.5 个 PR，并宣称人类不直接写应用代码。<sup class="footnote-reference" id="fr-openai-factory-ch2-1"><a href="#footnote-openai-factory-ch2">4</a></sup> 这个故事的重点不是“模型终于可以替代工程师”，而是工程师的工作对象上移了。</p>
 <p>他们不再把主要时间花在逐行写业务代码，而是在设计让 agent 能持续产出正确代码的条件：</p>
 <ul>
 <li>可复现开发环境，让 agent 看到的失败信号稳定可信。</li>
@@ -622,29 +632,38 @@ Harness 工程
 <li><code>AGENTS.md</code> 作为目录，<code>docs/</code> 作为系统记录，避免把几十 KB 文档硬塞进每次上下文。</li>
 </ul>
 <p>这五件事合在一起，才是“工厂化输出”的骨架。没有这些条件，1M LOC 只会变成 1M 行没人敢合的文本。</p>
-<h2 id="22-agentsmd-应该是目录不是百科全书"><a class="header" href="#22-agentsmd-应该是目录不是百科全书">2.2 AGENTS.md 应该是目录，不是百科全书</a></h2>
-<p>原书对 <code>AGENTS.md</code> 的处理很值得 Octos 直接采用：它应该短、稳定、可常驻上下文，只放仓库定位、工具链版本、工作区拓扑、高频红线和指向 <code>docs/</code> 的目录。真正细节放在 <code>docs/</code> 里，按任务需要加载。<sup class="footnote-reference" id="fr-agents-catalog-ch2-1"><a href="#footnote-agents-catalog-ch2">2</a></sup></p>
+<h2 id="25-agentsmd-应该是目录不是百科全书"><a class="header" href="#25-agentsmd-应该是目录不是百科全书">2.5 AGENTS.md 应该是目录，不是百科全书</a></h2>
+<p>原书对 <code>AGENTS.md</code> 的处理很值得直接采用：它应该短、稳定、可常驻上下文，只放仓库定位、工具链版本、工作区拓扑、高频红线和指向 <code>docs/</code> 的目录。真正细节放在 <code>docs/</code> 里，按任务需要加载。Codex 的公开文档也明确把 <code>AGENTS.md</code> 当成一个单独的能力层，而不是把所有知识都塞进系统提示。<sup class="footnote-reference" id="fr-agents-catalog-ch2-1"><a href="#footnote-agents-catalog-ch2">5</a></sup></p>
 <p>反模式是把全部风格指南、API 手册、架构文档、on-call 流程塞进一个大 prompt。这样不仅浪费 token，更严重的是教会 agent 一种错误的上下文哲学：以为“上下文 = 曾经写下的全集”，而不是“上下文 = 当前任务需要的切片”。</p>
-<h2 id="23-0-人工审查的边界"><a class="header" href="#23-0-人工审查的边界">2.3 “0% 人工审查”的边界</a></h2>
-<p>OpenAI 的极端案例不能直接搬到所有场景。内部工具链、非合规关键路径、风险自吸收时，可以把大量人工审查下沉到 CI、性质测试、结构化验证和指标门禁。医疗、金融、隐私、客户数据路径则不同：实名人工 reviewer、审计记录、变更控制和合规签字是事实要求，不是工程偏好。<sup class="footnote-reference" id="fr-review-boundary-ch2-1"><a href="#footnote-review-boundary-ch2">3</a></sup></p>
-<p>因此 Octos 的目标不是追求“没有人看”，而是把人类从重复、低信号的逐行审查中解放出来，转向审查契约、门禁、失败分类和高风险边界。</p>
-<p>下一章会把这个鸿沟落回 Octos 自己的失败现场。也就是说，我们不再停留在“成熟团队长什么样”，而是直接回答“Octos 离它还差什么”。</p>
+<h2 id="26-0-人工审查的边界"><a class="header" href="#26-0-人工审查的边界">2.6 “0% 人工审查”的边界</a></h2>
+<p>OpenAI 的极端案例不能直接搬到所有场景。内部工具链、非合规关键路径、风险自吸收时，可以把大量人工审查下沉到 CI、性质测试、结构化验证和指标门禁。医疗、金融、隐私、客户数据路径则不同：实名人工 reviewer、审计记录、变更控制和合规签字是事实要求，不是工程偏好。<sup class="footnote-reference" id="fr-review-boundary-ch2-1"><a href="#footnote-review-boundary-ch2">6</a></sup></p>
+<p>因此大多数团队的目标都不该是追求“没有人看”，而是把人类从重复、低信号的逐行审查中解放出来，转向审查契约、门禁、失败分类和高风险边界。</p>
+<p>下一章不再继续看成熟样本，而改用 Octos 这个失败样本来回答另一个问题：当这些机制缺位时，系统具体会怎么坏。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
+<li id="footnote-claudecode-ch2">
+<p>本章在此处根据 2026-04-23 对 Claude Code 本地源码镜像的结构审读，使用其 <code>StreamingToolExecutor.ts</code>、<code>services/compact/*</code>、<code>utils/sessionStorage.ts</code>、<code>utils/fileStateCache.ts</code>、<code>utils/task/diskOutput.ts</code>、<code>services/AgentSummary/agentSummary.ts</code>、<code>tools/AgentTool/resumeAgent.ts</code> 与 <code>utils/worktree.ts</code> 所体现的并发控制、分层 compaction、resume、disk output、sub-agent summary 和 worktree 机制；对应第 19 章参考文献 24。 <a href="#fr-claudecode-ch2-1">↩</a> <a href="#fr-claudecode-ch2-2">↩2</a></p>
+</li>
+<li id="footnote-codex-oss-ch2">
+<p>OpenAI, <em>codex</em> 开源仓库。 本章在此处使用其 README、<code>AGENTS.md</code> 与 <code>docs/</code> 中关于 sandbox、approvals、MCP、rollout 与 <code>AGENTS.md</code> 的公开结构；对应第 19 章参考文献 21。 <a href="#fr-codex-oss-ch2-1">↩</a> <a href="#fr-codex-oss-ch2-2">↩2</a></p>
+</li>
+<li id="footnote-openclaw-hermes-ch2">
+<p>本章在此处综合 OpenClaw README 中关于 Gateway control plane、sessions、channels、skills 与 routing 的描述，以及 Hermes README/AGENTS 中关于 gateway、SQLite session store、memory、skills、delegate tool、cron 与 MCP 的结构；对应第 19 章参考文献 22、23。 <a href="#fr-openclaw-hermes-ch2-1">↩</a> <a href="#fr-openclaw-hermes-ch2-2">↩2</a></p>
+</li>
 <li id="footnote-openai-factory-ch2">
 <p>OpenAI, <em>Harness Engineering: Leveraging Codex in an Agent-First World.</em> 本章在此处使用其关于 1M LOC、1500+ merged PR、三位工程师与低人工写码比例的案例数字；对应第 19 章参考文献 2。 <a href="#fr-openai-factory-ch2-1">↩</a></p>
 </li>
 <li id="footnote-agents-catalog-ch2">
-<p>本章在此处综合 OpenAI 与 Fowler 关于 <code>AGENTS.md</code> 作为短目录、细节下沉到 <code>docs/</code> 的做法；对应第 19 章参考文献 1、2。 <a href="#fr-agents-catalog-ch2-1">↩</a></p>
+<p>本章在此处综合 Fowler、OpenAI 与 Codex 开源文档关于 <code>AGENTS.md</code> 作为短目录、细节下沉到 <code>docs/</code> 的做法；对应第 19 章参考文献 1、2、21。 <a href="#fr-agents-catalog-ch2-1">↩</a></p>
 </li>
 <li id="footnote-review-boundary-ch2">
 <p>本章在此处前半使用 OpenAI 关于极端自动化案例边界的表述；后半关于医疗、金融、隐私与客户数据路径的要求属于本文的工程外推；对应第 19 章参考文献 2。 <a href="#fr-review-boundary-ch2-1">↩</a></p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="3-octos-遇到的失败类别以及代价为何高"><a class="header" href="#3-octos-遇到的失败类别以及代价为何高">3. Octos 遇到的失败类别，以及代价为何高</a></h1>
-<p>如果说第 2 章回答的是工厂化输出长什么样，那么这一章回答的是 Octos 现在离它还差什么。这里不再讨论理念，而是把差距拆成可命名、可归档、可修复的失败类别。</p>
+<h1 id="3-通用失败类别octos-把它们暴露得很典型"><a class="header" href="#3-通用失败类别octos-把它们暴露得很典型">3. 通用失败类别：Octos 把它们暴露得很典型</a></h1>
+<p>如果说第 2 章回答的是成熟系统在建设什么，那么这一章回答的是：一旦这些机制缺位，系统会怎样坏。这里用 Octos 当样本，不是因为 Octos 比别人更特殊，而是因为它把问题暴露得足够具体。我们不再讨论理念，而是把差距拆成可命名、可归档、可修复的失败类别。</p>
 <h2 id="31-后台任务进度-bug"><a class="header" href="#31-后台任务进度-bug">3.1 后台任务进度 bug</a></h2>
 <p>观察到的类别：</p>
 <ul>
@@ -742,7 +761,7 @@ Harness 工程
 <h2 id="37-失败模式博物馆每个事故都要沉淀成结构"><a class="header" href="#37-失败模式博物馆每个事故都要沉淀成结构">3.7 失败模式博物馆：每个事故都要沉淀成结构</a></h2>
 <p>原书提出“失败模式博物馆”这个说法，价值在于强迫团队把事故从故事变成结构。一个合格的失败条目至少包含三栏：症状、根因、修法。</p>
 <p>症状是用户或操作员看到的表面，例如状态气泡冻结、产物丢失、会话串扰。根因必须落到四支柱之一：session 没有持久事实、harness 没有稳定协议、tool 没有问责边界、verification 不独立或不阻断。修法不能停留在“改 prompt”或“加日志”，而要转成 schema、gate、fixture、validator、dashboard 诊断或文档契约。</p>
-<p>Octos 后续每次遇到 harness 事故，都应该按这个格式归档。否则团队只是在修 bug，没有增长系统免疫力。</p>
+<p>任何团队后续每次遇到 harness 事故，都应该按这个格式归档。否则团队只是在修 bug，没有增长系统免疫力。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="4-核心-harness-架构当前实用模型"><a class="header" href="#4-核心-harness-架构当前实用模型">4. 核心 Harness 架构：当前实用模型</a></h1>
 <p>第 3 章已经把问题空间列清楚了。第 4 章开始给出解法：不是继续追加 prompt 规则，而是围绕状态、事件、验证和回放建立一套可运行的 harness 架构。</p>
@@ -785,14 +804,14 @@ UI 状态气泡、页头与重载回放
 <h2 id="43-为什么类型化事件重要"><a class="header" href="#43-为什么类型化事件重要">4.3 为什么类型化事件重要</a></h2>
 <p>没有类型化事件，进度只是“类似聊天的提示”。<br>有了类型化事件，进度就是可以验证、回放和审计的数据产品。</p>
 <h2 id="44-四支柱sessionharnesstoolsverification"><a class="header" href="#44-四支柱sessionharnesstoolsverification">4.4 四支柱：Session、Harness、Tools、Verification</a></h2>
-<p>原书把 Layer 2 的稳定基础拆成四根支柱，这正好可以解释 Octos 当前架构为什么要这样设计。</p>
+<p>原书把 Layer 2 的稳定基础拆成四根支柱，这也解释了为什么像 Octos 这样的系统最后都得走向这一套设计。</p>
 <p>Session 是可恢复的事实流。它不是聊天历史，也不是模型上下文，而是 append-only 的任务事实记录。一个好的 session 让新 teammate、重启后的 worker、dashboard 和审计系统都能从同一条事实流重建发生了什么。</p>
 <p>Harness 是可替换的调度脑干。它负责读取 session、驱动 agent 循环、调度工具、处理失败和升级。它应该尽量小而稳定，避免把一次产品补丁写成永久运行时协议。</p>
 <p>Tools 是可问责的动作词汇表。每个工具调用都应该有明确职责、权限边界、输入输出 schema 和审计记录。工具不是“模型想干什么就给什么”，而是系统允许它采取的有边界动作。</p>
 <p>Verification 是独立于生成的判断层。生成器说“完成”不等于完成；验证器、产物策略、性质测试、验证器运行器和外部证据才决定能否进入终态成功。</p>
 <h2 id="45-为什么-sessionjsonl-这类朴素设计仍然重要"><a class="header" href="#45-为什么-sessionjsonl-这类朴素设计仍然重要">4.5 为什么 session.jsonl 这类朴素设计仍然重要</a></h2>
 <p>原书借 Karpathy 的 autoresearch 思路强调：长期知识系统最难的不是“让模型想起来”，而是 bookkeeping。<code>session.md</code> 提供人类可读的叙事，<code>session.jsonl</code> 提供机器可回放的事件。这个组合朴素，但非常抗变化：模型会换，前端会换，工具会换，事实流不应该轻易换。<sup class="footnote-reference" id="fr-karpathy-bookkeeping-ch4-1"><a href="#footnote-karpathy-bookkeeping-ch4">1</a></sup></p>
-<p>Octos 的任务状态、SSE 回放、操作员仪表盘，本质上都应该从这个事实流派生，而不是各自维护一份“看起来差不多”的状态。</p>
+<p>任务状态、SSE 回放、操作员仪表盘，本质上都应该从这个事实流派生，而不是各自维护一份“看起来差不多”的状态。</p>
 <p>接下来的第 5 到第 7 章，会把这套架构拆到几个最容易失真的现实表面：多语言桥接、UI 回放，以及线上操作员/mini-fleet 视角。</p>
 <hr>
 <hr>
@@ -804,7 +823,7 @@ UI 状态气泡、页头与重载回放
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="5-非-rust-桥接平台现实的必需品"><a class="header" href="#5-非-rust-桥接平台现实的必需品">5. 非 Rust 桥接：平台现实的必需品</a></h1>
 <p>前一章给出的是核心运行时模型；接下来的三章讨论的是它如何落到真实系统表面。第 5 章先看最容易被低估的多语言边界，因为生态一旦开放，协议最先在这里腐蚀。</p>
-<p>Octos 是以 Rust 为主的运行时，但 skill 生态是多语言的。</p>
+<p>如果一个 agent runtime 以 Rust 为主，但 skill 生态是多语言的，那么多语言桥接就不是边角问题，而是协议能否守住的一部分。</p>
 <p>如果进度/事件契约只在 Rust 中可用：</p>
 <ul>
 <li>第三方集成速度会坍塌</li>
@@ -870,7 +889,7 @@ UI 状态气泡、页头与重载回放
 <li>跨会话进度泄漏</li>
 </ul>
 <p>仪表盘的价值不在于图表数量，而在于把事故响应时间压短。一个成熟的操作员视图应该能在几十秒内回答：哪个任务卡住了、卡在哪个阶段、哪个验证器失败、产物在哪里、是否有孤儿子进程、是否发生跨会话串扰、下一步应该重试、回滚还是升级给开发者。</p>
-<p>小型 fleet 则是发布真实性的底线。Harness bug 常常是时序型、多表面型的：单元测试能过，端到端本地也能过，但在两台真实主机、两个 session、一次重载、一次重连后才暴露。Octos 的发布门禁应该优先覆盖这些真实路径。</p>
+<p>小型 fleet 则是发布真实性的底线。Harness bug 常常是时序型、多表面型的：单元测试能过，端到端本地也能过，但在两台真实主机、两个 session、一次重载、一次重连后才暴露。这类系统的发布门禁应该优先覆盖这些真实路径。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="8-agent-群体编排harness-如何扩展团队而不只是代码"><a class="header" href="#8-agent-群体编排harness-如何扩展团队而不只是代码">8. Agent 群体编排：Harness 如何扩展团队而不只是代码</a></h1>
 <p>到这里为止，本书讨论的主要还是单个系统如何说真话。第 8 章再往前走一步：当系统开始扩展为多 agent、多负责人协作时，harness 如何把复杂度吸收掉，而不是放大混乱。</p>
@@ -961,7 +980,7 @@ UI/API 负责人
 <p>没有长循环，agent 每次都像从零开始的实习生。长循环跑起来之后，组织会把一次失败变成长期免疫力。</p>
 <h2 id="94-知识和-skill-的晋升纪律"><a class="header" href="#94-知识和-skill-的晋升纪律">9.4 知识和 Skill 的晋升纪律</a></h2>
 <p>不是所有经验都应该写进 <code>AGENTS.md</code>。原书给出的治理思路是 promotion / demotion：重复出现、跨任务稳定、能被验证的经验才晋升；过时、低频、无法验证或引起误导的经验要降级或删除。<sup class="footnote-reference" id="fr-promotion-discipline-ch9-1"><a href="#footnote-promotion-discipline-ch9">2</a></sup></p>
-<p>Skill 也不是 prompt 集合。一个合格 skill 至少要有触发条件、输入输出契约、执行步骤和验证方式。对 Octos 来说，skill 的价值不在“让模型多知道一点”，而在“把组织经验变成可执行、可检查的流程”。</p>
+<p>Skill 也不是 prompt 集合。一个合格 skill 至少要有触发条件、输入输出契约、执行步骤和验证方式。对这类系统来说，skill 的价值不在“让模型多知道一点”，而在“把组织经验变成可执行、可检查的流程”。</p>
 <h2 id="95-反身-harness-的边界"><a class="header" href="#95-反身-harness-的边界">9.5 反身 harness 的边界</a></h2>
 <p>未来 harness 会越来越多地修改自己：更新文档、生成测试、补充验证器、建议 schema 迁移。但反身能力必须分级。低风险变更可以自动化；影响协议、权限、验证独立性和合规目标的变更必须保留人工决策。不能把目标函数、权限边界和验证器独立性也交给提案者自己定义。</p>
 <hr>
@@ -1035,7 +1054,7 @@ UI/API 负责人
 <li>延迟/成本治理</li>
 </ul>
 <p>可以把 harness 看成运行时事实层。<br>没有它，质量无法被信任。<br>只有它，质量仍然依赖模型、工具和产品纪律。</p>
-<p>用 Octos 的说法，这是“系统说真话”和“系统是好产品”之间的边界。前者是失败模式迫使我们构建的东西；后者仍然依赖模型路由、沙箱、提示词/策略对齐和评审纪律。</p>
+<p>也可以把它理解为“系统说真话”和“系统是好产品”之间的边界。前者是失败模式迫使我们构建的东西；后者仍然依赖模型路由、沙箱、提示词/策略对齐和评审纪律。</p>
 <p>这条边界很重要。Harness 能让系统不撒谎：没完成就不显示完成，产物无效就不交付，验证失败就不进入 ready，会话切换不串状态。但它不能保证产品判断正确、模型选择最优、用户需求被理解、成本足够低、交互体验足够好。把 harness 当成产品质量的全部，是另一种形式的过度工程。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="12-可执行清单"><a class="header" href="#12-可执行清单">12. 可执行清单</a></h1>
@@ -1093,9 +1112,9 @@ UI/API 负责人
 <p>在这条流程完成前标记终态成功，是契约违例。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="14-结语下一阶段的工程姿态"><a class="header" href="#14-结语下一阶段的工程姿态">14. 结语：下一阶段的工程姿态</a></h1>
-<p>到这里，整本书的主线也就闭合了：从长上下文和长任务的根因出发，经过成熟度案例、Octos 失败、运行时架构、组织扩展与治理边界，最后落回可执行的工程姿态。</p>
+<p>到这里，整本书的主线也就闭合了：从长上下文和长任务的根因出发，经过 Claude Code/Codex 等成熟样本、OpenClaw/Hermes 的相邻对照、Octos 失败样本、运行时架构、组织扩展与治理边界，最后落回可执行的工程姿态。</p>
 <p>把 harness 工作当作产品可靠性工程，而不是抽象框架建设。</p>
-<p>Octos 的胜利模式一直是：</p>
+<p>对任何还在从 demo 走向系统的 agent 团队，更合理的胜利模式是：</p>
 <ol>
 <li>识别具体用户可见失败类别</li>
 <li>编码显式契约不变量</li>
@@ -1112,10 +1131,10 @@ UI/API 负责人
 <li>第 2 层谱系：Anthropic、Anthropic 长任务应用、Milvus、Stanford Meta-Harness</li>
 <li>桥接文本：Neo4j 的上下文工程，Karpathy 的 wiki 纪律</li>
 </ul>
-<p>对 Octos 来说，保留全部十篇的理由很具体：第 3 节中的失败属于 Layer 2 failure，而产生这本合并书的过程位于 Layer 1 谱系中。把二者放在一起读，能让控制系统视角保持诚实。</p>
+<p>保留全部十篇的理由很具体：第 3 节中的失败样本属于 Layer 2 failure，而产生这本合并书的过程又位于 Layer 1 谱系中。把二者放在一起读，能让控制系统视角保持诚实。</p>
 <h2 id="151-研究流程"><a class="header" href="#151-研究流程">15.1 研究流程</a></h2>
 <ol>
-<li>从 Octos 中一个真实失败模式或真实设计选择出发。</li>
+<li>从一个真实失败模式或真实设计选择出发。</li>
 <li>选择与你正在处理的层次匹配的源文本集群。</li>
 <li>抽取不变量，而不只是引文，并写入 wiki 页面、schema 或 checklist。</li>
 <li>在下一次事故前，把不变量变成测试、门禁或评审规则。</li>
@@ -1124,7 +1143,7 @@ UI/API 负责人
 <h2 id="152-核心研究问题"><a class="header" href="#152-核心研究问题">15.2 核心研究问题</a></h2>
 <ul>
 <li>这篇文本属于哪一层？</li>
-<li>哪个不变量本可以防止我正在研究的 Octos 失败？</li>
+<li>哪个不变量本可以防止我正在研究的失败样本？</li>
 <li>当模型变化时，什么必须保持稳定？</li>
 <li>哪些契约属于 runtime，哪些属于 policy？</li>
 </ul>
@@ -1266,6 +1285,10 @@ UI/API 负责人
 <li>Huiqiang Jiang et al. <em>LongLLMLingua: Accelerating and Enhancing LLMs in Long Context Scenarios via Prompt Compression.</em> ACL 2024. https://aclanthology.org/2024.acl-long.91/</li>
 <li>Huiqiang Jiang et al. <em>MInference: Accelerating Pre-filling for Long-Context LLMs via Dynamic Sparse Attention.</em> 2024. https://openreview.net/forum?id=C5Nh2UFJ9S</li>
 <li>OpenAI. <em>API Pricing.</em> Accessed 2026-04-23. https://openai.com/api/pricing/</li>
+<li>OpenAI. <em>openai/codex</em> repository, including README, <code>AGENTS.md</code>, and <code>docs/</code>. Accessed 2026-04-23. https://github.com/openai/codex</li>
+<li>OpenClaw. <em>openclaw/openclaw</em> repository README and docs. Accessed 2026-04-23. https://github.com/openclaw/openclaw</li>
+<li>Nous Research. <em>NousResearch/hermes-agent</em> repository README and developer guide. Accessed 2026-04-23. https://github.com/NousResearch/hermes-agent</li>
+<li>Claude Code 本地源码镜像审读，关键模块包括 <code>services/tools/StreamingToolExecutor.ts</code>、<code>services/compact/{microCompact,compact,apiMicrocompact}.ts</code>、<code>utils/sessionStorage.ts</code>、<code>utils/fileStateCache.ts</code>、<code>utils/task/diskOutput.ts</code>、<code>services/AgentSummary/agentSummary.ts</code>、<code>tools/AgentTool/resumeAgent.ts</code>、<code>utils/worktree.ts</code>。审读日期 2026-04-23。</li>
 </ol>
 <h2 id="192-支持性参考"><a class="header" href="#192-支持性参考">19.2 支持性参考</a></h2>
 <ul>

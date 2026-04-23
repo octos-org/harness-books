@@ -6,7 +6,7 @@
 - [0. 全书地图与阅读指南](./01-book-map.md)
 - [1. LLM 的工作区间：为什么控制系统必不可少](./02-operating-region.md)
 - [2. 成熟度鸿沟：灵光一闪 vs 工厂化输出](./03-maturity-gap.md)
-- [3. Octos 遇到的失败类别，以及代价为何高](./04-failure-classes.md)
+- [3. 通用失败类别：Octos 把它们暴露得很典型](./04-failure-classes.md)
 - [4. 核心 Harness 架构：当前实用模型](./05-core-architecture.md)
 - [5. 非 Rust 桥接：平台现实的必需品](./06-non-rust-bridge.md)
 - [6. UI 回放不是前端功能，而是可靠性功能](./07-ui-replay.md)
