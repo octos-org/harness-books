@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-47384e27.js";
+            window.path_to_searchindex_js = "searchindex-cb5a4f0d.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -245,91 +245,6 @@
 <li>低于 4 个 <code>✅</code>：L0，仍然以 prompt 为中心</li>
 </ul>
 <hr>
-<h3 id="扩展源材料"><a class="header" href="#扩展源材料">扩展源材料</a></h3>
-<h4 id="来自-appendix-b-self-audit-matrixmd附录-b--harness-四柱自查矩阵"><a class="header" href="#来自-appendix-b-self-audit-matrixmd附录-b--harness-四柱自查矩阵">来自 <code>appendix-b-self-audit-matrix.md</code>：附录 B · Harness 四柱自查矩阵</a></h4>
-<p><em>源材料角色：完整四支柱自查矩阵。</em></p>
-<h4 id="附录-b--harness-四柱自查矩阵"><a class="header" href="#附录-b--harness-四柱自查矩阵">附录 B · Harness 四柱自查矩阵</a></h4>
-<p>以下 20 行自查题,每根柱子 5 行,共 4 柱。每一行选一个答案:<strong>❌ 没做 / ⚠️ 部分做了 / ✅ 做到位了</strong>。</p>
-<p>累计 ≥ 16 个 ✅ → L4,Harness Maturity 最高档。
-累计 12-15 个 ✅ → L3,已有独立验证层。
-累计 8-11 个 ✅ → L2,session 协议成型。
-累计 4-7 个 ✅ → L1,有 session 但缺协议。
-累计 &lt; 4 个 ✅ → L0,仍停留在 prompt 层。</p>
-<hr>
-<h5 id="b1--session-柱5-行"><a class="header" href="#b1--session-柱5-行">B.1 · Session 柱(5 行)</a></h5>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>#</th><th>自查</th><th>你的答案</th></tr>
-</thead>
-<tbody>
-<tr><td>S1</td><td>你的 session 有独立的文件/存储吗?(不是对话历史,不是 vector DB)</td><td></td></tr>
-<tr><td>S2</td><td>Session 是 append-only 的吗?不会被 summarization 覆盖?</td><td></td></tr>
-<tr><td>S3</td><td>给一个 session ID,能不能 <code>wake(id)</code> 从任一 event 恢复?</td><td></td></tr>
-<tr><td>S4</td><td>Session 的事件流对人类可读?可以 grep / diff?</td><td></td></tr>
-<tr><td>S5</td><td>新员工能否从 session.md + session.jsonl 独立理解一次调研的整个过程?</td><td></td></tr>
-</tbody>
-</table>
-</div>
-<h5 id="b2--harness-柱5-行"><a class="header" href="#b2--harness-柱5-行">B.2 · Harness 柱(5 行)</a></h5>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>#</th><th>自查</th><th>你的答案</th></tr>
-</thead>
-<tbody>
-<tr><td>H1</td><td>你的 harness 是无状态的吗?状态在 session 不在 harness?</td><td></td></tr>
-<tr><td>H2</td><td>Harness 的接口只有 getEvents / emitEvent / execute 三类吗?</td><td></td></tr>
-<tr><td>H3</td><td>Agent loop 的变体(ReAct / Plan-Execute 等)可以换,<strong>不需要改 session 或 tools</strong>?</td><td></td></tr>
-<tr><td>H4</td><td>模型升级后,你的 harness 有多少行代码需要改?</td><td></td></tr>
-<tr><td>H5</td><td>你写 harness 的每一行时,能明确区分“补模型缺陷“还是“守协议“吗?</td><td></td></tr>
-</tbody>
-</table>
-</div>
-<h5 id="b3--tools-柱5-行"><a class="header" href="#b3--tools-柱5-行">B.3 · Tools 柱(5 行)</a></h5>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>#</th><th>自查</th><th>你的答案</th></tr>
-</thead>
-<tbody>
-<tr><td>T1</td><td>每个工具的职责是<strong>正交</strong>的吗?</td><td></td></tr>
-<tr><td>T2</td><td>每次 tool call 的参数 + 结果都记录到 session.jsonl?</td><td></td></tr>
-<tr><td>T3</td><td>错误的 tool call 能 rollback?</td><td></td></tr>
-<tr><td>T4</td><td>Credentials 不进 sandbox,通过 proxy + vault 解耦?</td><td></td></tr>
-<tr><td>T5</td><td>有机制检测“多个合法工具组合产生的 escape“?</td><td></td></tr>
-</tbody>
-</table>
-</div>
-<h5 id="b4--verification-柱5-行"><a class="header" href="#b4--verification-柱5-行">B.4 · Verification 柱(5 行)</a></h5>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>#</th><th>自查</th><th>你的答案</th></tr>
-</thead>
-<tbody>
-<tr><td>V1</td><td>你的 generator 和 evaluator 是<strong>不同</strong>的 agent 实例吗?(Ch 7)</td><td></td></tr>
-<tr><td>V2</td><td>Spec → property tests 的转换是自动的吗?(Ch 2 §2.3, Ch 7 §7.4)</td><td></td></tr>
-<tr><td>V3</td><td>每个 verdict(pass/fail)都进 audit trail?(Ch 7 §7.4)</td><td></td></tr>
-<tr><td>V4</td><td>有 sycophancy-aware lint 防止“AI 自我奉承“?(Ch 7 §7.5, Ch 11 §11.3)</td><td></td></tr>
-<tr><td>V5</td><td>当监管者问“你怎么知道这是对的“,你能拿出<strong>不是被验系统自己生成的</strong>证据?(Ch 7 §7.3)</td><td></td></tr>
-</tbody>
-</table>
-</div>
-<hr>
-<h5 id="如何使用这份矩阵"><a class="header" href="#如何使用这份矩阵">如何使用这份矩阵</a></h5>
-<ol>
-<li>团队一起填表,每人独立先填一遍</li>
-<li>对比答案差异 —— 差异本身就是重要信号(团队对 harness 没有共识)</li>
-<li>每季度重填一次,观察 ✅ 数的演化</li>
-<li>✅ 数不增长 &gt; 两季度 = 驾驭工程进度停滞,需要专门 review</li>
-</ol>
-<hr>
-<p><em>本矩阵可以用 ascent-research CLI 保存为长期 schema:</em></p>
-<pre><code class="language-bash">ascent-research schema edit &lt;slug&gt;
-# 把本矩阵粘贴到 schema,每次 loop 都让 agent 对齐这 20 行
-</code></pre>
-
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

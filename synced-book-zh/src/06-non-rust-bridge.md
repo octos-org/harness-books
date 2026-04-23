@@ -1,6 +1,6 @@
 # 5. 非 Rust 桥接：平台现实的必需品
 
-Octos 是 Rust-first runtime，但 skill 生态是多语言的。
+Octos 是以 Rust 为主的运行时，但 skill 生态是多语言的。
 
 如果进度/事件契约只在 Rust 中可用：
 
@@ -10,16 +10,16 @@ Octos 是 Rust-first runtime，但 skill 生态是多语言的。
 
 因此 M4.1A 的非 Rust 桥接是必要项，不是可选润色：
 
-- Python emitter helper
-- Node emitter helper
-- CLI fallback emitter
+- Python 事件发射辅助库
+- Node 事件发射辅助库
+- CLI 兜底发射器
 - sink 缺失时的 no-op 语义
-- runtime-side validation 仍然是权威
+- 运行时侧校验仍然是权威
 
 原则：发射端允许语言多样性，消费端严格规范化。
 
+非 Rust 桥接的重点不是“让 Python/Node 也能打印进度”。重点是让第三方 skill 不管用什么语言实现，都进入同一个事实协议。发射端可以有轻量辅助库、CLI 兜底发射器，甚至 no-op 兼容；消费端必须严格验证 schema、scope、phase 和产物契约。
+
+平台生态一旦开放，最容易腐蚀的是边缘一致性：某个 Python skill 用 stderr 当状态，某个 Node app 用文件名猜主产物，某个 shell 脚本忘了 session id。非 Rust 桥接的价值就是把这些边缘行为统一收口到运行时规范层。
+
 ---
-
-### 同步说明
-
-本节以 Octos 短纲要为准。较大的 mdBook 源材料中暂时没有直接映射到本节的章节，所以本节目前保留为纲要主导内容。

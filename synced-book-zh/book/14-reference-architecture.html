@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-47384e27.js";
+            window.path_to_searchindex_js = "searchindex-cb5a4f0d.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -176,23 +176,20 @@
                     <main>
                         <h1 id="13-参考架构片段"><a class="header" href="#13-参考架构片段">13. 参考架构片段</a></h1>
 <h2 id="131-任务事实流"><a class="header" href="#131-任务事实流">13.1 任务事实流</a></h2>
-<pre><code class="language-text">tool emits progress -&gt; runtime validates event -&gt; supervisor persists state
--&gt; TaskStatusChanged -&gt; API/SSE -&gt; UI replay/status bubble
+<pre><code class="language-text">工具发出进度事件 -&gt; 运行时校验事件 -&gt; 监督器持久化状态
+-&gt; TaskStatusChanged -&gt; API/SSE -&gt; UI 回放与状态气泡
 </code></pre>
 <p>任何绕开这条链的直接 UI 变更都是可靠性风险。</p>
 <h2 id="132-契约执行流"><a class="header" href="#132-契约执行流">13.2 契约执行流</a></h2>
-<pre><code class="language-text">spawn success
-  -&gt; resolve candidate outputs
+<pre><code class="language-text">生成子任务成功
+  -&gt; 解析候选输出
   -&gt; before_spawn_verify (allow/modify/deny)
-  -&gt; validator runner
-  -&gt; mark ready or failed
-  -&gt; persist delivery evidence
+  -&gt; 运行验证器
+  -&gt; 标记 ready 或 failed
+  -&gt; 持久化交付证据
 </code></pre>
 <p>在这条流程完成前标记终态成功，是契约违例。</p>
 <hr>
-<h3 id="同步说明"><a class="header" href="#同步说明">同步说明</a></h3>
-<p>本节以 Octos 短纲要为准。较大的 mdBook 源材料中暂时没有直接映射到本节的章节，所以本节目前保留为纲要主导内容。</p>
-
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

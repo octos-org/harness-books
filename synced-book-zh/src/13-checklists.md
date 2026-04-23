@@ -28,14 +28,10 @@
 
 - [ ] 对比 `/api/sessions/:id/tasks` 快照和 UI 气泡/页头。
 - [ ] 检查 SSE 流是否缺失或存在越界 `task_status` 事件。
-- [ ] 确认回放和实时事件上的 session/topic tags。
+- [ ] 确认回放和实时事件上的 session/topic 标签。
 - [ ] 检查最终快照中是否有重复 deep-research/run_pipeline 任务。
 - [ ] 验证阶段顺序单调性和进度范围。
-- [ ] 修补前捕获 diagnostic JSON 和 curl 提示。
-- [ ] 修复后重新运行 mini fleet 门禁；不要接受仅本地验证。
+- [ ] 修补前捕获诊断 JSON 和 curl 提示。
+- [ ] 修复后重新运行小型 fleet 门禁；不要接受仅本地验证。
 
 ---
-
-### 同步说明
-
-本节以 Octos 短纲要为准。较大的 mdBook 源材料中暂时没有直接映射到本节的章节，所以本节目前保留为纲要主导内容。

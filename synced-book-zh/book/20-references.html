@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-47384e27.js";
+            window.path_to_searchindex_js = "searchindex-cb5a4f0d.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -198,55 +198,6 @@
 <h2 id="193-研究轨迹"><a class="header" href="#193-研究轨迹">19.3 研究轨迹</a></h2>
 <p>底层研究材料位于写作本书时使用的 <code>ascent-research</code> session tree，包括 <code>session.md</code>、<code>session.jsonl</code>、<code>SCHEMA.md</code>、<code>wiki/</code>、<code>diagrams/</code>、<code>raw/</code> 和 <code>drafts/</code>。</p>
 <p>这条轨迹本身也是本书论点的一部分：写作过程就是一次被 harness 化、可恢复、可回放的工作。</p>
-<h3 id="扩展源材料"><a class="header" href="#扩展源材料">扩展源材料</a></h3>
-<h4 id="来自-99-referencesmd参考文献"><a class="header" href="#来自-99-referencesmd参考文献">来自 <code>99-references.md</code>：参考文献</a></h4>
-<p><em>源材料角色：完整参考文献列表。</em></p>
-<h4 id="参考文献"><a class="header" href="#参考文献">参考文献</a></h4>
-<h5 id="十篇奠基文2026-同一季度集中出现"><a class="header" href="#十篇奠基文2026-同一季度集中出现">十篇奠基文(2026 同一季度集中出现)</a></h5>
-<ol>
-<li>Birgitta Böckeler. <em>Harness engineering for coding agent users.</em> martinfowler.com, 2026-04-02. https://martinfowler.com/articles/harness-engineering.html</li>
-<li>OpenAI. <em>Harness Engineering: Leveraging Codex in an Agent-First World.</em> Feb 2026. https://openai.com/index/harness-engineering/</li>
-<li>Lance Martin, Gabe Cemaj, Michael Cohen. <em>Scaling Managed Agents: Decoupling the brain from the hands.</em> Anthropic Engineering, Apr 2026. https://www.anthropic.com/engineering/managed-agents</li>
-<li>Prithvi Rajasekaran. <em>Harness Design for Long-Running Application Development.</em> Anthropic Labs, 2026-03-24. https://www.anthropic.com/engineering/harness-design-long-running-apps</li>
-<li>NxCode. <em>What Is Harness Engineering? Complete Guide for AI Agent Development.</em> March 2026. https://www.nxcode.io/resources/news/what-is-harness-engineering-complete-guide-2026</li>
-<li>Nyah Macklin. <em>Context Engineering for AI Agents.</em> Neo4j blog, 2026-03-09. https://neo4j.com/blog/developer/context-engineering/</li>
-<li>Milvus. <em>Harness Engineering: The Execution Layer AI Agents Actually Need.</em> 2026. https://milvus.io/ai-quick-reference/harness-engineering-the-execution-layer-ai-agents-actually-need</li>
-<li>Fisher Zhang. <em>Harness Engineering: The Oldest New Idea in AI.</em> Medium, April 2026. https://medium.com/@fisher262425/harness-engineering-the-oldest-new-idea-in-ai-7a7bcd6baf7b</li>
-<li>Andrej Karpathy. <em>LLM Wiki.</em> GitHub Gist (2024-2026). https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f</li>
-<li>Lee, Nair, Zhang, Lee, Khattab, Finn (Stanford IRIS Lab). <em>Meta-Harness: End-to-End Optimization of Model Harnesses.</em> 2026. https://arxiv.org/abs/2603.28052 · https://github.com/stanford-iris-lab/meta-harness</li>
-</ol>
-<h5 id="其他重要来源"><a class="header" href="#其他重要来源">其他重要来源</a></h5>
-<ol start="11">
-<li>Kai Mei et al. <em>AIOS: LLM Agent Operating System.</em> COLM 2025. https://arxiv.org/abs/2403.16971</li>
-<li>AIOS Foundation. https://www.aios.foundation/</li>
-<li>Bertrand Meyer. <em>Object-Oriented Software Construction</em> (Design by Contract). Prentice-Hall, 1988.</li>
-<li>Dan Ariely. Twitter, January 2013. “Big data is like teenage sex…”</li>
-<li>EU AI Act. 2024.</li>
-<li>SEC AI Disclosure requirements.</li>
-<li>FDA Software as a Medical Device (SaMD) guidance.</li>
-</ol>
-<h5 id="相关开源项目"><a class="header" href="#相关开源项目">相关开源项目</a></h5>
-<ul>
-<li><strong>ascent-research</strong> (本书作者维护) —— https://github.com/ZhangHanDong/ascent-research</li>
-<li><strong>agent-spec</strong> (本书作者维护) —— spec-driven development framework</li>
-<li><strong>mempal</strong> (本书作者维护) —— memory governance for agent systems</li>
-<li><strong>pi-autoresearch</strong> (Dave Copeland) —— https://github.com/davebcn87/pi-autoresearch</li>
-<li><strong>Creusot</strong> —— Rust formal verification (INRIA)</li>
-<li><strong>Prusti</strong> —— Rust formal verification (ETH Zurich)</li>
-<li><strong>Kani</strong> —— Rust bounded model checker (AWS)</li>
-</ul>
-<h5 id="调研过程"><a class="header" href="#调研过程">调研过程</a></h5>
-<p>本书的全部调研过程透明可见于 <code>ascent-research</code> 会话:</p>
-<pre><code>~/.actionbook/research/harness-engineering/
-├── session.md          —— 叙事层
-├── session.jsonl       —— 事件流(所有 fetch / digest / write 记录)
-├── SCHEMA.md           —— 本书的 schema 指引
-├── wiki/               —— 21+ wiki 页面作为知识底库
-├── diagrams/           —— 3 张 hand-drawn SVG
-├── raw/                —— 所有原始 fact card
-└── drafts/             —— 章节草稿
-</code></pre>
-<p>读者可以 fork 这个 session,继续累积自己的 harness engineering 研究。这本身就是一次驾驭工程的演示。</p>
 
                     </main>
 

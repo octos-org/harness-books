@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-47384e27.js";
+            window.path_to_searchindex_js = "searchindex-cb5a4f0d.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -175,7 +175,7 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="5-非-rust-桥接平台现实的必需品"><a class="header" href="#5-非-rust-桥接平台现实的必需品">5. 非 Rust 桥接：平台现实的必需品</a></h1>
-<p>Octos 是 Rust-first runtime，但 skill 生态是多语言的。</p>
+<p>Octos 是以 Rust 为主的运行时，但 skill 生态是多语言的。</p>
 <p>如果进度/事件契约只在 Rust 中可用：</p>
 <ul>
 <li>第三方集成速度会坍塌</li>
@@ -184,17 +184,16 @@
 </ul>
 <p>因此 M4.1A 的非 Rust 桥接是必要项，不是可选润色：</p>
 <ul>
-<li>Python emitter helper</li>
-<li>Node emitter helper</li>
-<li>CLI fallback emitter</li>
+<li>Python 事件发射辅助库</li>
+<li>Node 事件发射辅助库</li>
+<li>CLI 兜底发射器</li>
 <li>sink 缺失时的 no-op 语义</li>
-<li>runtime-side validation 仍然是权威</li>
+<li>运行时侧校验仍然是权威</li>
 </ul>
 <p>原则：发射端允许语言多样性，消费端严格规范化。</p>
+<p>非 Rust 桥接的重点不是“让 Python/Node 也能打印进度”。重点是让第三方 skill 不管用什么语言实现，都进入同一个事实协议。发射端可以有轻量辅助库、CLI 兜底发射器，甚至 no-op 兼容；消费端必须严格验证 schema、scope、phase 和产物契约。</p>
+<p>平台生态一旦开放，最容易腐蚀的是边缘一致性：某个 Python skill 用 stderr 当状态，某个 Node app 用文件名猜主产物，某个 shell 脚本忘了 session id。非 Rust 桥接的价值就是把这些边缘行为统一收口到运行时规范层。</p>
 <hr>
-<h3 id="同步说明"><a class="header" href="#同步说明">同步说明</a></h3>
-<p>本节以 Octos 短纲要为准。较大的 mdBook 源材料中暂时没有直接映射到本节的章节，所以本节目前保留为纲要主导内容。</p>
-
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

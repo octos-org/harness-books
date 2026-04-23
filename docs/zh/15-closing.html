@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-47384e27.js";
+            window.path_to_searchindex_js = "searchindex-cb5a4f0d.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -181,56 +181,11 @@
 <li>识别具体用户可见失败类别</li>
 <li>编码显式契约不变量</li>
 <li>把运行时/UI/操作员表面绑定到同一个事实模型</li>
-<li>合并前在小型 fleet live gates 上证明</li>
+<li>合并前在小型 fleet 线上门禁上证明</li>
 <li>之后再扩展抽象和外部平台表面</li>
 </ol>
 <p>这就是从“今天看起来很聪明”走向“每天都能正确交付”的路径。</p>
 <hr>
-<h3 id="扩展源材料"><a class="header" href="#扩展源材料">扩展源材料</a></h3>
-<h4 id="来自-99-epiloguemd结语--ariely-的影子十年后再看一次"><a class="header" href="#来自-99-epiloguemd结语--ariely-的影子十年后再看一次">来自 <code>99-epilogue.md</code>：结语 · Ariely 的影子,十年后再看一次</a></h4>
-<p><em>源材料角色：大书收束论证。</em></p>
-<h4 id="结语--ariely-的影子十年后再看一次"><a class="header" href="#结语--ariely-的影子十年后再看一次">结语 · Ariely 的影子,十年后再看一次</a></h4>
-<p>2013 年 Dan Ariely 的那句:</p>
-<blockquote>
-<p><em>“Big data is like teenage sex: everyone talks about it, nobody really knows how to do it, everyone thinks everyone else is doing it, so everyone claims they are doing it.”</em></p>
-</blockquote>
-<p>十三年过去。你合上这本书的时候,应该能准确回答:<strong>什么才算“真正在做“驾驭工程?</strong></p>
-<h5 id="一张合书前的自查图"><a class="header" href="#一张合书前的自查图">一张合书前的自查图</a></h5>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>柱</th><th>能具体说出 → 你<strong>在做</strong></th><th>还在模糊 → 你<strong>在谈</strong></th></tr>
-</thead>
-<tbody>
-<tr><td><strong>Session</strong></td><td>append-only jsonl,不是 context window 镜像,可 <code>wake(id)</code> 从任一 event 恢复</td><td>“对话历史都存 DB 了”</td></tr>
-<tr><td><strong>Harness</strong></td><td>无状态,接口只有 <code>getEvents / emitEvent / execute</code>,agent loop 可替换</td><td>“我们用了 LangChain”</td></tr>
-<tr><td><strong>Tools</strong></td><td>词汇表正交 / 可问责 / 与权限绑定,credentials 不进 sandbox</td><td>“我们给 agent 开了 API”</td></tr>
-<tr><td><strong>Verification</strong></td><td>结构上独立于生成,spec → property test → audit trail 完整</td><td>“我们跑了一些 eval”</td></tr>
-</tbody>
-</table>
-</div>
-<p>左列能全部具体说出 → 你在做驾驭工程。
-只说得出右列 → 你<strong>在说</strong>驾驭工程。</p>
-<p>两者之间的距离,就是这本书的价值。</p>
-<h5 id="一个简单的预言"><a class="header" href="#一个简单的预言">一个简单的预言</a></h5>
-<p>五年后回头看这本书,你会发现:</p>
-<ul>
-<li><strong>具体工具都变了</strong> —— Claude 可能到了第 X 代,LangChain 可能归档,ascent-research 可能被上游吸收</li>
-<li><strong>四根稳定支柱没变</strong> —— session / harness / tools / verification 依然是同一结构</li>
-<li><strong>反脆弱四支柱更显眼</strong> —— Verification / Intent / Accountability / Objective 从“本书主张“ 变成“监管硬要求“</li>
-<li><strong>Ariely 的俏皮话仍然有效</strong> —— 永远有新的“大家都在谈“ 的词,永远有少数人真的在做</li>
-</ul>
-<p>这不是悲观,是<strong>结构性</strong>。</p>
-<h5 id="一句合书的话"><a class="header" href="#一句合书的话">一句合书的话</a></h5>
-<p>本书的 14 章,试图说服你一件事:</p>
-<blockquote>
-<p><strong>在 AI 越来越强的时代,工程师的价值不在“让 AI 更强“,而在“帮人在 AI 面前做出可问责的判断“。</strong></p>
-</blockquote>
-<p>这件事,从飞机自动驾驶出现那一天起就是这样。模型再强,也不会让它变。</p>
-<hr>
-<p><strong>合上书的时候,你会打开 Claude Code 或 Codex,启动一个新 session。</strong></p>
-<p><strong>那一刻,是你第一次 —— 不再“谈“驾驭工程,而是开始“做“它。</strong></p>
-
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

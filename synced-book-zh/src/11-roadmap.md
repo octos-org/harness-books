@@ -5,11 +5,11 @@
 ## M4.1A — 父级可见的结构化进度 ABI
 
 - 类型化 `octos.harness.event.v1`
-- sink + consumer + task_status bridge
-- deep-search 从 stderr status 迁移
-- UI/API replay 一致性
-- mini fleet live gate
-- 非 Rust emitters
+- 事件入口、消费端和 task_status 桥接
+- deep-search 从 stderr 状态迁移
+- UI/API 回放一致性
+- 小型 fleet 线上门禁
+- 非 Rust 事件发射器
 
 ## M4.2 — 开发者契约产品化
 
@@ -45,8 +45,6 @@
 
 这条路线图按上面的失败排序，而不是按 backlog 美观排序。前几项修复事实传播；后几项在事实模型稳定后加强兼容性和治理。下一章是必要的停顿：harness 修复编排正确性，但它不能完成整个产品。
 
+这也是路线图排序的工程理由：先修真相，再修体验；先修单一事实流，再修 dashboard；先让内置 skill 守约，再开放第三方生态。否则平台会在还没有稳定协议时吸纳外部复杂度，后面每一步都会更贵。
+
 ---
-
-### 同步说明
-
-本节以 Octos 短纲要为准。较大的 mdBook 源材料中暂时没有直接映射到本节的章节，所以本节目前保留为纲要主导内容。

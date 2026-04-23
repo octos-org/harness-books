@@ -3,8 +3,8 @@
 ## 13.1 任务事实流
 
 ```text
-tool emits progress -> runtime validates event -> supervisor persists state
--> TaskStatusChanged -> API/SSE -> UI replay/status bubble
+工具发出进度事件 -> 运行时校验事件 -> 监督器持久化状态
+-> TaskStatusChanged -> API/SSE -> UI 回放与状态气泡
 ```
 
 任何绕开这条链的直接 UI 变更都是可靠性风险。
@@ -12,18 +12,14 @@ tool emits progress -> runtime validates event -> supervisor persists state
 ## 13.2 契约执行流
 
 ```text
-spawn success
-  -> resolve candidate outputs
+生成子任务成功
+  -> 解析候选输出
   -> before_spawn_verify (allow/modify/deny)
-  -> validator runner
-  -> mark ready or failed
-  -> persist delivery evidence
+  -> 运行验证器
+  -> 标记 ready 或 failed
+  -> 持久化交付证据
 ```
 
 在这条流程完成前标记终态成功，是契约违例。
 
 ---
-
-### 同步说明
-
-本节以 Octos 短纲要为准。较大的 mdBook 源材料中暂时没有直接映射到本节的章节，所以本节目前保留为纲要主导内容。

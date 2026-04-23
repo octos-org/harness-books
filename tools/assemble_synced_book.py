@@ -325,22 +325,10 @@ def zh_heading(heading: str) -> str:
 
 
 def expansion_for_zh(section_heading: str) -> str:
-    sources = SECTION_SOURCES.get(section_heading, [])
-    if not sources:
-        return (
-            "\n### 同步说明\n\n"
-            "本节以 Octos 短纲要为准。较大的 mdBook 源材料中暂时没有直接映射到本节的章节，所以本节目前保留为纲要主导内容。\n"
-        )
-
-    parts = ["\n### 扩展源材料\n"]
-    for item in sources:
-        src_path = FULL_SRC / item.path
-        content = read(src_path)
-        title = source_title(content, item.path)
-        note = ZH_SOURCE_NOTES.get(item.note, item.note)
-        parts.append(f"\n#### 来自 `{item.path}`：{title}\n\n_源材料角色：{note}。_\n\n")
-        parts.append(shift_headings(content, 3))
-    return "\n".join(parts)
+    # The Chinese edition is an integrated rewrite. Relevant material from the
+    # larger mdBook is folded into the Chinese outline source itself, so we do
+    # not append raw source chapters here.
+    return ""
 
 
 def write_zh_mdbook(title_block: str, zh_sections: list[tuple[str, str]]) -> None:
@@ -365,7 +353,7 @@ def write_zh_mdbook(title_block: str, zh_sections: list[tuple[str, str]]) -> Non
     )
     (src_dir / "00-title.md").write_text(frontmatter, encoding="utf-8")
 
-    summary_lines = ["# Summary", "", "[标题页](./00-title.md)", ""]
+    summary_lines = ["# 目录", "", "[标题页](./00-title.md)", ""]
     for heading, _ in zh_sections:
         slug = SECTION_SLUGS[heading]
         summary_lines.append(f"- [{zh_heading(heading)}](./{slug})")

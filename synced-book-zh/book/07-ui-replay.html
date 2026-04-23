@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-47384e27.js";
+            window.path_to_searchindex_js = "searchindex-cb5a4f0d.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -185,14 +185,13 @@
 <p>如果 replay 缺失或不一致，即使后端正确，用户也会看到“随机性”。</p>
 <p>设计规则：</p>
 <ul>
-<li>replay path 和 live path 必须共享规范 event/task schema</li>
+<li>回放路径和实时路径必须共享规范事件/任务 schema</li>
 <li>UI 中不允许第二套解释层</li>
 <li>门禁测试必须断言任务 API 和 SSE 回放之间的一致性</li>
 </ul>
+<p>UI 回放的难点在于它横跨两种时间：实时流和历史回放。实时流让用户看到“正在发生什么”，历史回放让用户在刷新、断线、切会话后仍然看到“已经发生过什么”。如果这两条路径使用不同解释逻辑，系统迟早会出现“刚才显示 running，刷新后变 pending”这类体验。</p>
+<p>所以 UI 不应该拥有独立状态真相。它只负责把后端规范事实投影出来。前端可以做缓存、动画和布局，但不能发明生命周期。</p>
 <hr>
-<h3 id="同步说明"><a class="header" href="#同步说明">同步说明</a></h3>
-<p>本节以 Octos 短纲要为准。较大的 mdBook 源材料中暂时没有直接映射到本节的章节，所以本节目前保留为纲要主导内容。</p>
-
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

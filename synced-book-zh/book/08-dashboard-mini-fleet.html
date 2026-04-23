@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-47384e27.js";
+            window.path_to_searchindex_js = "searchindex-cb5a4f0d.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -185,7 +185,7 @@
 <li>跨会话串扰信号</li>
 </ul>
 <h2 id="72-小型-fleet-是发布事实"><a class="header" href="#72-小型-fleet-是发布事实">7.2 小型 fleet 是发布事实</a></h2>
-<p>单元测试和集成测试是必要的，但不充分。<br>Harness 回归通常具有时间性和多表面特征，只有 live canary 行为才能暴露。</p>
+<p>单元测试和集成测试是必要的，但不充分。<br>Harness 回归通常具有时间性和多表面特征，只有线上 canary 行为才能暴露。</p>
 <p>上线门禁姿态：</p>
 <ul>
 <li>至少在两台 mini-fleet 主机上运行脚本化验证</li>
@@ -197,13 +197,12 @@
 <li>缺失必需阶段</li>
 <li>非单调阶段序列</li>
 <li>生命周期回退</li>
-<li>重复 research session</li>
+<li>重复 research 会话</li>
 <li>跨会话进度泄漏</li>
 </ul>
+<p>仪表盘的价值不在于图表数量，而在于把事故响应时间压短。一个成熟的操作员视图应该能在几十秒内回答：哪个任务卡住了、卡在哪个阶段、哪个验证器失败、产物在哪里、是否有孤儿子进程、是否发生跨会话串扰、下一步应该重试、回滚还是升级给开发者。</p>
+<p>小型 fleet 则是发布真实性的底线。Harness bug 常常是时序型、多表面型的：单元测试能过，端到端本地也能过，但在两台真实主机、两个 session、一次重载、一次重连后才暴露。Octos 的发布门禁应该优先覆盖这些真实路径。</p>
 <hr>
-<h3 id="同步说明"><a class="header" href="#同步说明">同步说明</a></h3>
-<p>本节以 Octos 短纲要为准。较大的 mdBook 源材料中暂时没有直接映射到本节的章节，所以本节目前保留为纲要主导内容。</p>
-
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
