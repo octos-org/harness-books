@@ -1,19 +1,19 @@
 # 前言：为什么需要这本书
 
-Octos already proved a hard truth: a powerful model plus prompt tricks can look brilliant for demos, then fail under real traffic, long-running jobs, reloads, and multi-session concurrency.
+Octos 已经证明了一个硬事实：强模型加提示词技巧，可以在演示里显得很聪明；但一旦进入真实流量、长任务、页面重载和多会话并发，就会暴露系统性失败。
 
-This book captures the harness engineering lessons that turned that pattern into a factory posture:
+这本书记录的是把这种模式推向工厂化姿态的驾驭工程经验：
 
-- deterministic task lifecycle
-- durable contract state
-- typed progress/event ABI
-- validator-gated completion
-- replayable UI truth
-- operator-visible failure causes
+- 确定性的任务生命周期
+- 持久化的契约状态
+- 类型化的进度/事件 ABI
+- 由验证器把关的完成状态
+- 可回放的 UI 事实
+- 操作员可见的失败原因
 
-Those lessons are not abstract. They were forced out of Octos by background-task progress drift, `run_pipeline` / `deep-search` status mismatch, session contamination, artifact contract gaps, validator incompleteness, and operator blind spots. The book keeps returning to those incidents because they show the same pattern from different angles: the model was not the bottleneck, the control system was.
+这些经验并不抽象。它们来自 Octos 的真实问题：后台任务进度漂移、`run_pipeline` / `deep-search` 状态不一致、会话污染、产物契约缺口、验证器不完整，以及操作员盲区。本书不断回到这些事故，是因为它们从不同表面展示了同一个模式：瓶颈不是模型，而是控制系统。
 
-The goal is not architecture purity. The goal is reliable outcomes when the model, network, plugins, browser tabs, and user behavior are all messy.
+目标不是架构洁癖。目标是在模型、网络、插件、浏览器标签页和用户行为都很混乱的情况下，仍然能得到可靠结果。
 
 ---
 
@@ -22,7 +22,7 @@ The goal is not architecture purity. The goal is reliable outcomes when the mode
 
 #### 来自 `00-frontmatter.md`：驾驭工程
 
-_源材料角色：book positioning, audience, and frontmatter._
+_源材料角色：全书定位、读者对象与前置说明。_
 
 
 #### 驾驭工程
@@ -77,7 +77,7 @@ _源材料角色：book positioning, audience, and frontmatter._
 
 #### 来自 `00-prologue.md`：楔子 · 十年前的 Big Data,今天的驾驭工程
 
-_源材料角色：larger-book opening argument and two-layer framing._
+_源材料角色：大书开场论证与两层框架。_
 
 
 #### 楔子 · 十年前的 Big Data,今天的驾驭工程

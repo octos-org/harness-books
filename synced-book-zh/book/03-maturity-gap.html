@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-536ebfa7.js";
+            window.path_to_searchindex_js = "searchindex-47384e27.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -175,27 +175,27 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="2-成熟度鸿沟灵光一闪-vs-工厂化输出"><a class="header" href="#2-成熟度鸿沟灵光一闪-vs-工厂化输出">2. 成熟度鸿沟：灵光一闪 vs 工厂化输出</a></h1>
-<p>The “灵光一闪的天才” mode has these traits:</p>
+<p>“灵光一闪的天才”模式有这些特征：</p>
 <ul>
-<li>success is prompt-dependent and non-repeatable</li>
-<li>status comes from chat text, not durable runtime state</li>
-<li>artifacts are guessed from file names or heuristics</li>
-<li>long jobs can silently fail but still look “done”</li>
-<li>session switching causes state bleed and UI confusion</li>
+<li>成功依赖 prompt，且不可重复</li>
+<li>状态来自聊天文本，而不是持久运行时状态</li>
+<li>产物靠文件名或启发式猜测</li>
+<li>长任务可以静默失败，却看起来像“完成”</li>
+<li>会话切换导致状态串扰和 UI 混乱</li>
 </ul>
-<p>A software factory mode has opposite traits:</p>
+<p>软件工厂模式具有相反特征：</p>
 <ul>
-<li>contract-defined outputs and validators</li>
-<li>lifecycle is persisted and monotonic (<code>queued -&gt; running -&gt; verifying -&gt; ready|failed</code>)</li>
-<li>progress is evented, typed, replayable, and scoped</li>
-<li>UI is a projection of backend truth, not independent truth</li>
-<li>every incident has operator-grade evidence</li>
+<li>由契约定义输出和验证器</li>
+<li>生命周期持久化且单调（<code>queued -&gt; running -&gt; verifying -&gt; ready|failed</code>）</li>
+<li>进度是事件化、类型化、可回放、有作用域的</li>
+<li>UI 是后端事实的投影，而不是独立事实</li>
+<li>每次事故都有操作员级证据</li>
 </ul>
-<p>Harness is the shift mechanism between those two modes.</p>
+<p>Harness 就是这两种模式之间的转换机制。</p>
 <hr>
 <h3 id="扩展源材料"><a class="header" href="#扩展源材料">扩展源材料</a></h3>
 <h4 id="来自-03-intent-first-engineeringmd第-3-章--面向意图的工程学"><a class="header" href="#来自-03-intent-first-engineeringmd第-3-章--面向意图的工程学">来自 <code>03-intent-first-engineering.md</code>：第 3 章 · 面向意图的工程学</a></h4>
-<p><em>源材料角色：intent/spec/harness loop.</em></p>
+<p><em>源材料角色：intent/spec/harness 闭环。</em></p>
 <h4 id="第-3-章--面向意图的工程学"><a class="header" href="#第-3-章--面向意图的工程学">第 3 章 · 面向意图的工程学</a></h4>
 <blockquote>
 <p>代码是 AI 的输出;<strong>意图</strong>才是你的上游对象。
@@ -391,7 +391,7 @@ fn withdraw_preserves_invariants(mut acc: Account, amt: u64) -&gt; bool {
 <hr>
 <p><strong>第 3 章建立了本书的第一性原理:面向意图</strong>。坐标系是 Ch 1 + Ch 2 的事,方法论的主轴是 Ch 3 的事,剩下要做的是把这根主轴放进<strong>更大的历史语境里</strong>:为什么“围绕一个强核心搭稳定抽象层“ 是每一次技术飞跃都反复出现的结构,LLM 时代的驾驭工程是这个结构的最新一环 —— 不是空降的新词。下一章的回答会从四十年前的一段 Unix 历史开始。</p>
 <h4 id="来自-05-ai-coding-harnessmd第-5-章--ai-生成代码的工程谱系"><a class="header" href="#来自-05-ai-coding-harnessmd第-5-章--ai-生成代码的工程谱系">来自 <code>05-ai-coding-harness.md</code>：第 5 章 · AI 生成代码的工程谱系</a></h4>
-<p><em>源材料角色：OpenAI 1M LOC case and AI coding factory mechanics.</em></p>
+<p><em>源材料角色：OpenAI 1M LOC 案例与 AI coding 工厂机制。</em></p>
 <h4 id="第-5-章--ai-生成代码的工程谱系"><a class="header" href="#第-5-章--ai-生成代码的工程谱系">第 5 章 · AI 生成代码的工程谱系</a></h4>
 <blockquote>
 <p>如果你读到这里,你大概率是 Layer 1 的读者 —— 你的产品不是 agent,<strong>agent 是你们产线上的工具</strong>。这一章是你的主场;接下来四章(Part B)是 Layer 2 专场,你可以当作背景略读,或读完本章直接跳到 Part C。</p>

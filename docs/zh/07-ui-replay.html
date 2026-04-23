@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-536ebfa7.js";
+            window.path_to_searchindex_js = "searchindex-47384e27.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -175,19 +175,19 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="6-ui-回放不是前端功能而是可靠性功能"><a class="header" href="#6-ui-回放不是前端功能而是可靠性功能">6. UI 回放不是前端功能，而是可靠性功能</a></h1>
-<p>A reliable status bubble must survive:</p>
+<p>可靠的状态气泡必须承受：</p>
 <ul>
-<li>browser reload</li>
-<li>reconnect</li>
-<li>session switch away and back</li>
-<li>partial stream interruption</li>
+<li>浏览器重载</li>
+<li>重新连接</li>
+<li>切走会话后再切回来</li>
+<li>部分 stream 中断</li>
 </ul>
-<p>If replay is missing or inconsistent, users see “randomness,” even when backend is correct.</p>
-<p>Design rule:</p>
+<p>如果 replay 缺失或不一致，即使后端正确，用户也会看到“随机性”。</p>
+<p>设计规则：</p>
 <ul>
-<li>replay path and live path must share canonical event/task schema</li>
-<li>no second interpretation layer in UI</li>
-<li>gate tests must assert parity between task API and SSE replay</li>
+<li>replay path 和 live path 必须共享规范 event/task schema</li>
+<li>UI 中不允许第二套解释层</li>
+<li>门禁测试必须断言任务 API 和 SSE 回放之间的一致性</li>
 </ul>
 <hr>
 <h3 id="同步说明"><a class="header" href="#同步说明">同步说明</a></h3>

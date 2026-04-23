@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-536ebfa7.js";
+            window.path_to_searchindex_js = "searchindex-47384e27.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -175,22 +175,22 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="前言为什么需要这本书"><a class="header" href="#前言为什么需要这本书">前言：为什么需要这本书</a></h1>
-<p>Octos already proved a hard truth: a powerful model plus prompt tricks can look brilliant for demos, then fail under real traffic, long-running jobs, reloads, and multi-session concurrency.</p>
-<p>This book captures the harness engineering lessons that turned that pattern into a factory posture:</p>
+<p>Octos 已经证明了一个硬事实：强模型加提示词技巧，可以在演示里显得很聪明；但一旦进入真实流量、长任务、页面重载和多会话并发，就会暴露系统性失败。</p>
+<p>这本书记录的是把这种模式推向工厂化姿态的驾驭工程经验：</p>
 <ul>
-<li>deterministic task lifecycle</li>
-<li>durable contract state</li>
-<li>typed progress/event ABI</li>
-<li>validator-gated completion</li>
-<li>replayable UI truth</li>
-<li>operator-visible failure causes</li>
+<li>确定性的任务生命周期</li>
+<li>持久化的契约状态</li>
+<li>类型化的进度/事件 ABI</li>
+<li>由验证器把关的完成状态</li>
+<li>可回放的 UI 事实</li>
+<li>操作员可见的失败原因</li>
 </ul>
-<p>Those lessons are not abstract. They were forced out of Octos by background-task progress drift, <code>run_pipeline</code> / <code>deep-search</code> status mismatch, session contamination, artifact contract gaps, validator incompleteness, and operator blind spots. The book keeps returning to those incidents because they show the same pattern from different angles: the model was not the bottleneck, the control system was.</p>
-<p>The goal is not architecture purity. The goal is reliable outcomes when the model, network, plugins, browser tabs, and user behavior are all messy.</p>
+<p>这些经验并不抽象。它们来自 Octos 的真实问题：后台任务进度漂移、<code>run_pipeline</code> / <code>deep-search</code> 状态不一致、会话污染、产物契约缺口、验证器不完整，以及操作员盲区。本书不断回到这些事故，是因为它们从不同表面展示了同一个模式：瓶颈不是模型，而是控制系统。</p>
+<p>目标不是架构洁癖。目标是在模型、网络、插件、浏览器标签页和用户行为都很混乱的情况下，仍然能得到可靠结果。</p>
 <hr>
 <h3 id="扩展源材料"><a class="header" href="#扩展源材料">扩展源材料</a></h3>
 <h4 id="来自-00-frontmattermd驾驭工程"><a class="header" href="#来自-00-frontmattermd驾驭工程">来自 <code>00-frontmatter.md</code>：驾驭工程</a></h4>
-<p><em>源材料角色：book positioning, audience, and frontmatter.</em></p>
+<p><em>源材料角色：全书定位、读者对象与前置说明。</em></p>
 <h4 id="驾驭工程"><a class="header" href="#驾驭工程">驾驭工程</a></h4>
 <h5 id="面向意图的工程学--人与-ai-如何共同进化"><a class="header" href="#面向意图的工程学--人与-ai-如何共同进化">面向意图的工程学 —— 人与 AI 如何共同进化</a></h5>
 <hr>
@@ -225,7 +225,7 @@
 <hr>
 <p><em>本书使用 <a href="https://github.com/ZhangHanDong/ascent-research">ascent-research</a> 进行素材调研,使用 <a href="https://rust-lang.github.io/mdBook/">mdbook</a> 进行组织与渲染。书写过程的 session 目录完整公开于 <code>~/.actionbook/research/harness-engineering/</code>,读者可 fork 该 session 作为自己的调研起点 —— 这本身是驾驭工程长程循环的一次公开演示。</em></p>
 <h4 id="来自-00-prologuemd楔子--十年前的-big-data今天的驾驭工程"><a class="header" href="#来自-00-prologuemd楔子--十年前的-big-data今天的驾驭工程">来自 <code>00-prologue.md</code>：楔子 · 十年前的 Big Data,今天的驾驭工程</a></h4>
-<p><em>源材料角色：larger-book opening argument and two-layer framing.</em></p>
+<p><em>源材料角色：大书开场论证与两层框架。</em></p>
 <h4 id="楔子--十年前的-big-data今天的驾驭工程"><a class="header" href="#楔子--十年前的-big-data今天的驾驭工程">楔子 · 十年前的 Big Data,今天的驾驭工程</a></h4>
 <blockquote>
 <p><em>“Big data is like teenage sex: everyone talks about it, nobody really knows how to do it, everyone thinks everyone else is doing it, so everyone claims they are doing it.”</em></p>

@@ -4,9 +4,9 @@
 
 ## 原始纲要标题块
 
-## Harness Engineering: evolution from a 灵光一闪的天才 to a stable-output AI software factory
+## 驾驭工程：从灵光一闪的天才到稳定输出的 AI 软件工厂
 
-Date: 2026-04-22  
-Audience: Octos maintainers, app-skill developers, platform operators
+日期：2026-04-22  
+读者：Octos 维护者、app-skill 开发者、平台操作员
 
 ---

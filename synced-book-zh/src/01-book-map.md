@@ -1,29 +1,29 @@
 # 0. 全书地图与阅读指南
 
-This single-file book is the merged Octos harness engineering synthesis. It keeps the existing narrative spine, and folds in the ZIP source book's frontmatter, reading guide, appendix set, and reference list so the whole argument can be read in one place.
+这份单文件书稿是 Octos 驾驭工程的合并版综合稿。它保留既有叙事主线，并把 ZIP 源书的前置说明、阅读指南、附录和参考文献折叠进来，让整个论证可以在一个地方读完。
 
-## 0.1 Who this book is for
+## 0.1 这本书适合谁
 
-- Octos maintainers who need stable runtime truth, not demo-grade behavior
-- app-skill authors who need a contract for progress, artifacts, and verification
-- platform operators who need to diagnose failure modes without guessing from chat text
+- 需要稳定运行时事实、而不是演示级行为的 Octos 维护者
+- 需要进度、产物、验证契约的 app-skill 作者
+- 需要不靠聊天文本猜测失败模式的平台操作员
 
-## 0.2 What order to read it in
+## 0.2 推荐阅读顺序
 
-- Linear path: read sections 1 through 14 in order
-- Layer 1 path: focus on sections 1, 2, 3, 5, 10, 11, 13, 14
-- Layer 2 path: focus on sections 1, 2, 3, 6, 7, 8, 9, 12, 13
-- Role path: use the appendix-style sections at the end for lead, architect, CTO, and research workflows
+- 线性路径：按顺序阅读第 1 到第 14 节
+- Layer 1 路径：重点读第 1、2、3、5、10、11、13、14 节
+- Layer 2 路径：重点读第 1、2、3、6、7、8、9、12、13 节
+- 按角色路径：使用文末附录中的负责人、架构师、CTO 和研究者阅读路线
 
-## 0.3 What this merged version adds
+## 0.3 这个合并版新增了什么
 
-- a compact frontmatter-style framing for the Octos audience
-- a source-text appendix for the ten foundational papers and essays
-- a self-audit matrix for the four harness pillars
-- a glossary of the core terms that recur across the chapters
-- a role-based reading guide and reference trail
+- 面向 Octos 读者的紧凑前置说明
+- 十篇奠基论文和文章的源文本附录
+- 四根 harness 支柱的自查矩阵
+- 贯穿全书的核心术语表
+- 按角色组织的阅读指南和研究轨迹
 
-The core arc stays the same: section 1 names the control-systems lens, section 3 turns Octos incidents into failure classes, section 4 and section 7 turn those failures into runtime architecture, and the later sections separate what harness can fix from what still depends on model quality, governance, and operating discipline.
+核心弧线保持不变：第 1 节提出控制系统视角，第 3 节把 Octos 事故转化为失败类别，第 4 节和第 7 节把这些失败转化为运行时架构，后续章节区分 harness 能解决什么，以及哪些仍然依赖模型质量、治理和操作纪律。
 
 ---
 
@@ -32,7 +32,7 @@ The core arc stays the same: section 1 names the control-systems lens, section 3
 
 #### 来自 `00-how-to-read.md`：本书使用说明
 
-_源材料角色：larger-book reading guide._
+_源材料角色：大书阅读指南。_
 
 
 #### 本书使用说明
@@ -124,7 +124,7 @@ Dan Ariely 2013 年关于 big data 的那句俏皮话,在全书**只完整出现
 
 #### 来自 `SUMMARY.md`：Summary
 
-_源材料角色：original mdBook table of contents for traceability._
+_源材料角色：原 mdBook 目录，用于可追溯性。_
 
 
 #### Summary

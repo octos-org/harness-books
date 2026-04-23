@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-536ebfa7.js";
+            window.path_to_searchindex_js = "searchindex-47384e27.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -175,32 +175,32 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="9-原则与反模式"><a class="header" href="#9-原则与反模式">9. 原则与反模式</a></h1>
-<h2 id="91-principles"><a class="header" href="#91-principles">9.1 Principles</a></h2>
+<h2 id="91-原则"><a class="header" href="#91-原则">9.1 原则</a></h2>
 <ol>
-<li>Persist contract state outside prompt/chat context.</li>
-<li>Prefer explicit artifact ownership over heuristic delivery.</li>
-<li>Treat completion as a validator-gated terminal contract.</li>
-<li>Use one canonical lifecycle ladder across API/UI/operator surfaces.</li>
-<li>Enforce session/topic scoping as a hard safety boundary.</li>
-<li>Make progress replayable and diagnosable, not just visible in real-time.</li>
-<li>Keep transports replaceable; keep event schema stable and versioned.</li>
-<li>Tie every release claim to live gate evidence, not anecdotal runs.</li>
+<li>将契约状态持久化在 prompt/chat context 之外。</li>
+<li>优先使用显式产物归属，而不是启发式交付。</li>
+<li>把完成状态视为由验证器把关的终态契约。</li>
+<li>在 API/UI/operator 表面使用同一个规范生命周期阶梯。</li>
+<li>把 session/topic 作用域作为硬安全边界强制执行。</li>
+<li>让进度可回放、可诊断，而不只是实时可见。</li>
+<li>让 transport 可替换；让 event schema 稳定并版本化。</li>
+<li>每个发布声明都必须绑定 live gate 证据，而不是轶事式运行。</li>
 </ol>
-<h2 id="92-anti-patterns-to-ban"><a class="header" href="#92-anti-patterns-to-ban">9.2 Anti-patterns to ban</a></h2>
+<h2 id="92-必须禁止的反模式"><a class="header" href="#92-必须禁止的反模式">9.2 必须禁止的反模式</a></h2>
 <ol>
-<li>Prompt-only contracts (“the agent should remember to send the file”).</li>
-<li>UI-derived truth (“bubble says done, so task is done”).</li>
-<li>Filename guessing for primary artifact selection.</li>
-<li>Best-effort validators that do not block terminal success.</li>
-<li>Freeform stderr parsing as status protocol.</li>
-<li>Unscoped replay streams that can leak sibling session state.</li>
-<li>Dashboard metrics disconnected from runtime canonical data.</li>
-<li>“One more refactor” during release slices without user-visible invariant gains.</li>
+<li>Prompt-only 契约（“agent 应该记得发送文件”）。</li>
+<li>UI-derived truth（“气泡显示 done，所以任务完成”）。</li>
+<li>用文件名猜测主产物。</li>
+<li>不阻断终态成功的 best-effort 验证器。</li>
+<li>把自由格式 stderr parsing 当作状态协议。</li>
+<li>无作用域 replay stream 泄漏兄弟会话状态。</li>
+<li>仪表盘指标与运行时规范数据脱节。</li>
+<li>发布 slice 中为了“再重构一下”而不增加用户可见不变量。</li>
 </ol>
 <hr>
 <h3 id="扩展源材料"><a class="header" href="#扩展源材料">扩展源材料</a></h3>
 <h4 id="来自-10-two-loopsmd第-10-章--两种协作循环--短程与长程"><a class="header" href="#来自-10-two-loopsmd第-10-章--两种协作循环--短程与长程">来自 <code>10-two-loops.md</code>：第 10 章 · 两种协作循环 —— 短程与长程</a></h4>
-<p><em>源材料角色：short-loop vs long-loop operating principles.</em></p>
+<p><em>源材料角色：短循环与长循环的操作原则。</em></p>
 <h4 id="第-10-章--两种协作循环--短程与长程"><a class="header" href="#第-10-章--两种协作循环--短程与长程">第 10 章 · 两种协作循环 —— 短程与长程</a></h4>
 <blockquote>
 <p>一个每次从零开始的实习生,无论他那一天多聪明,对组织的价值都是<strong>固定的</strong>。
@@ -345,7 +345,7 @@ agent 也一样。</p>
 <hr>
 <p><strong>有了两类循环的语言</strong>,第 11 章进入长程循环的 Accrete 阶段:agent 在积累的两级资产 —— 事实(知识)与方法(skill)—— 各自怎么沉淀、晋升、降级。两级的治理原则同构,所以合并在同一章里对比着讲最清楚。</p>
 <h4 id="来自-11-knowledge-and-skillsmd第-11-章--知识沉淀与-skills-晋升"><a class="header" href="#来自-11-knowledge-and-skillsmd第-11-章--知识沉淀与-skills-晋升">来自 <code>11-knowledge-and-skills.md</code>：第 11 章 · 知识沉淀与 Skills 晋升</a></h4>
-<p><em>源材料角色：knowledge/skill promotion and anti-patterns.</em></p>
+<p><em>源材料角色：knowledge/skill 晋升与反模式。</em></p>
 <h4 id="第-11-章--知识沉淀与-skills-晋升"><a class="header" href="#第-11-章--知识沉淀与-skills-晋升">第 11 章 · 知识沉淀与 Skills 晋升</a></h4>
 <blockquote>
 <p>agent 在积累的东西<strong>分两级</strong>:事实(知识层)与方法(skill 层)。
@@ -521,7 +521,7 @@ deprecated: false
 <hr>
 <p><strong>Accrete 两级讲完了</strong>。当 agent 开始协助修改自己的 promotion 判据、schema、甚至 harness 源码,<strong>reflexive harness</strong> 的边界问题浮现。第 12 章处理它 —— 长程循环 Evolve 阶段,给 agent 自改权限分三档,<strong>边界写进代码,不写在团队文档里</strong>。</p>
 <h4 id="来自-12-reflexive-harnessmd第-12-章--可自我修改的-harness"><a class="header" href="#来自-12-reflexive-harnessmd第-12-章--可自我修改的-harness">来自 <code>12-reflexive-harness.md</code>：第 12 章 · 可自我修改的 Harness</a></h4>
-<p><em>源材料角色：self-modifying harness boundaries.</em></p>
+<p><em>源材料角色：自修改 harness 的边界。</em></p>
 <h4 id="第-12-章--可自我修改的-harness"><a class="header" href="#第-12-章--可自我修改的-harness">第 12 章 · 可自我修改的 Harness</a></h4>
 <blockquote>
 <p>当 agent 能编辑自己的 harness —— SCHEMA、wiki、skill 目录、甚至 harness 源码 ——

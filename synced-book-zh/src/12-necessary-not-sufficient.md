@@ -1,21 +1,21 @@
 # 11. Harness 必要但不充分
 
-Harness solves orchestration correctness, not full product quality.
+Harness 解决编排正确性，不解决完整产品质量。
 
-A high-quality coding agent still requires:
+高质量 coding agent 仍然需要：
 
-- strong model selection and routing strategy
-- tool safety boundaries (sandbox, auth, privilege gates)
-- robust prompt/policy alignment for coding workflows
-- test generation/repair discipline
-- repository-aware edit quality and review loops
-- latency/cost governance
+- 强模型选择和路由策略
+- 工具安全边界（沙箱、认证、权限门禁）
+- 面向编码工作流的强提示词/策略对齐
+- 测试生成/修复纪律
+- 仓库感知的编辑质量和评审循环
+- 延迟/成本治理
 
-Think of harness as the runtime truth layer.  
-Without it, quality cannot be trusted.  
-With it alone, quality still depends on model + tool + product discipline.
+可以把 harness 看成运行时事实层。  
+没有它，质量无法被信任。  
+只有它，质量仍然依赖模型、工具和产品纪律。
 
-In Octos terms, this is the boundary between "the system tells the truth" and "the system is a good product." The former is what the failure modes forced us to build; the latter still depends on model routing, sandboxing, prompt/policy alignment, and review discipline.
+用 Octos 的说法，这是“系统说真话”和“系统是好产品”之间的边界。前者是失败模式迫使我们构建的东西；后者仍然依赖模型路由、沙箱、提示词/策略对齐和评审纪律。
 
 ---
 

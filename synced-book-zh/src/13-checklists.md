@@ -1,38 +1,38 @@
 # 12. 可执行清单
 
-## 12.1 Maintainer pre-merge checklist (harness-affecting PRs)
+## 12.1 维护者预合并清单（影响 harness 的 PR）
 
-- [ ] Change maps to explicit user-visible invariant.
-- [ ] Contract state is durable across crash/reload/compaction.
-- [ ] Lifecycle transitions are monotonic and tested.
-- [ ] Artifact selection uses declared policy, not heuristic fallback as primary.
-- [ ] Validator failures block terminal success where required.
-- [ ] Session/topic scope checks prevent cross-session contamination.
-- [ ] API and SSE replay expose identical task truth.
-- [ ] Operator summary/dash signals include new failure mode.
-- [ ] Mini fleet gate passed on at least two hosts.
-- [ ] Docs + fixture + scripts + e2e updated in same slice when contract changed.
+- [ ] 变更映射到显式用户可见不变量。
+- [ ] 契约状态能跨崩溃/重载/压缩持久存在。
+- [ ] 生命周期迁移是单调的，并有测试覆盖。
+- [ ] 产物选择使用声明式策略，而不是把启发式回退当主路径。
+- [ ] 必要时验证器失败会阻断终态成功。
+- [ ] 会话/主题作用域检查能防止跨会话污染。
+- [ ] API 和 SSE 回放暴露同一份任务事实。
+- [ ] 操作员摘要/仪表盘信号包含新的失败模式。
+- [ ] 小型 fleet 门禁至少在两台主机上通过。
+- [ ] 契约变更时，文档、fixture、脚本、端到端测试在同一个 slice 更新。
 
-## 12.2 Third-party app/skill developer checklist
+## 12.2 第三方 app/skill 开发者清单
 
-- [ ] Declare a single canonical `primary` artifact.
-- [ ] Define validators for existence, size, and domain constraints.
-- [ ] Use stable lifecycle/task API fields only.
-- [ ] Emit structured progress through `OCTOS_EVENT_SINK` when available.
-- [ ] Keep stderr for diagnostics, not contract status.
-- [ ] Ensure hooks are idempotent (`before_spawn_verify` especially).
-- [ ] Test reload/session-switch behavior for your workflow.
-- [ ] Verify failure paths produce operator-readable evidence.
+- [ ] 声明单一规范 `primary` 产物。
+- [ ] 为存在性、大小和领域约束定义验证器。
+- [ ] 只使用稳定生命周期/任务 API 字段。
+- [ ] 当 `OCTOS_EVENT_SINK` 可用时，通过它发出结构化进度。
+- [ ] stderr 用于诊断，不用于契约状态。
+- [ ] 确保 hooks 幂等（尤其是 `before_spawn_verify`）。
+- [ ] 为你的工作流测试重载/会话切换行为。
+- [ ] 验证失败路径会产生操作员可读证据。
 
-## 12.3 Incident response checklist (status drift / contamination class)
+## 12.3 事故响应清单（状态漂移 / 污染类）
 
-- [ ] Compare `/api/sessions/:id/tasks` snapshot vs UI bubble/header.
-- [ ] Inspect SSE stream for missing or out-of-scope `task_status` events.
-- [ ] Confirm session/topic tags on replay and live events.
-- [ ] Check duplicate deep-research/run_pipeline tasks in final snapshot.
-- [ ] Validate phase order monotonicity and progress range.
-- [ ] Capture diagnostic JSON and curl hint before patching.
-- [ ] Re-run mini fleet gate after fix; do not accept local-only validation.
+- [ ] 对比 `/api/sessions/:id/tasks` 快照和 UI 气泡/页头。
+- [ ] 检查 SSE 流是否缺失或存在越界 `task_status` 事件。
+- [ ] 确认回放和实时事件上的 session/topic tags。
+- [ ] 检查最终快照中是否有重复 deep-research/run_pipeline 任务。
+- [ ] 验证阶段顺序单调性和进度范围。
+- [ ] 修补前捕获 diagnostic JSON 和 curl 提示。
+- [ ] 修复后重新运行 mini fleet 门禁；不要接受仅本地验证。
 
 ---
 

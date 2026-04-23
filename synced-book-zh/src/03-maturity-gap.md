@@ -1,22 +1,22 @@
 # 2. 成熟度鸿沟：灵光一闪 vs 工厂化输出
 
-The “灵光一闪的天才” mode has these traits:
+“灵光一闪的天才”模式有这些特征：
 
-- success is prompt-dependent and non-repeatable
-- status comes from chat text, not durable runtime state
-- artifacts are guessed from file names or heuristics
-- long jobs can silently fail but still look “done”
-- session switching causes state bleed and UI confusion
+- 成功依赖 prompt，且不可重复
+- 状态来自聊天文本，而不是持久运行时状态
+- 产物靠文件名或启发式猜测
+- 长任务可以静默失败，却看起来像“完成”
+- 会话切换导致状态串扰和 UI 混乱
 
-A software factory mode has opposite traits:
+软件工厂模式具有相反特征：
 
-- contract-defined outputs and validators
-- lifecycle is persisted and monotonic (`queued -> running -> verifying -> ready|failed`)
-- progress is evented, typed, replayable, and scoped
-- UI is a projection of backend truth, not independent truth
-- every incident has operator-grade evidence
+- 由契约定义输出和验证器
+- 生命周期持久化且单调（`queued -> running -> verifying -> ready|failed`）
+- 进度是事件化、类型化、可回放、有作用域的
+- UI 是后端事实的投影，而不是独立事实
+- 每次事故都有操作员级证据
 
-Harness is the shift mechanism between those two modes.
+Harness 就是这两种模式之间的转换机制。
 
 ---
 
@@ -25,7 +25,7 @@ Harness is the shift mechanism between those two modes.
 
 #### 来自 `03-intent-first-engineering.md`：第 3 章 · 面向意图的工程学
 
-_源材料角色：intent/spec/harness loop._
+_源材料角色：intent/spec/harness 闭环。_
 
 
 #### 第 3 章 · 面向意图的工程学
@@ -287,7 +287,7 @@ Ch 12 会把 "自写自用" 这个反模式放大到更深的讨论 —— 当 a
 
 #### 来自 `05-ai-coding-harness.md`：第 5 章 · AI 生成代码的工程谱系
 
-_源材料角色：OpenAI 1M LOC case and AI coding factory mechanics._
+_源材料角色：OpenAI 1M LOC 案例与 AI coding 工厂机制。_
 
 
 #### 第 5 章 · AI 生成代码的工程谱系

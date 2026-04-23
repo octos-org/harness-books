@@ -1,23 +1,23 @@
 # 17. 附录 C：精选术语表
 
-This is a compact excerpt of the glossary terms that recur most often in the book.
+这是全书最常出现术语的紧凑节选。
 
-| Term | Meaning |
+| 术语 | 含义 |
 |---|---|
-| Agent Loop | The repeated generate-act-observe cycle. |
-| Append-only log | A log that never rewrites history. |
-| Context Engineering | Structuring inputs so the model stays in its useful region. |
-| Feedforward / Feedback | Guidance before action, sensing after action. |
-| Harness | The runtime frame that bounds and interprets model behavior. |
-| Harness Engineering | Engineering the control layer around the model. |
-| Intent | The human goal that must be specified, not guessed. |
-| Meta-Harness | A harness that can itself be optimized or reconfigured. |
-| Prompt Engineering | Tuning single-turn behavior through prompts. |
-| Session | The durable, resumable fact stream for a task. |
-| Stable Abstraction | An interface that stays useful across model changes. |
-| Tool Vocabulary | The bounded set of actions the system can take. |
-| Verification Independence | Verification cannot be the same thing as generation. |
-| Wiki | The maintained, structured memory of prior work. |
+| Agent Loop | 重复的 generate-act-observe 循环。 |
+| Append-only log | 永不重写历史的日志。 |
+| Context Engineering | 组织输入，使模型停留在有用区间。 |
+| Feedforward / Feedback | 行动前的引导，行动后的感知。 |
+| Harness | 约束并解释模型行为的运行时框架。 |
+| Harness Engineering | 围绕模型设计控制层的工程实践。 |
+| Intent | 必须被明确表达、不能靠猜的人类目标。 |
+| Meta-Harness | 可以被优化或重新配置的 harness。 |
+| Prompt Engineering | 通过 prompt 调整单轮行为。 |
+| Session | 任务的持久、可恢复事实流。 |
+| Stable Abstraction | 跨模型变化仍然有用的接口。 |
+| Tool Vocabulary | 系统可以采取的有边界动作集合。 |
+| Verification Independence | 验证不能与生成是同一件事。 |
+| Wiki | 维护过的、结构化的历史工作记忆。 |
 
 ---
 
@@ -26,7 +26,7 @@ This is a compact excerpt of the glossary terms that recur most often in the boo
 
 #### 来自 `appendix-c-glossary.md`：附录 C · 术语对照
 
-_源材料角色：full glossary._
+_源材料角色：完整术语表。_
 
 
 #### 附录 C · 术语对照

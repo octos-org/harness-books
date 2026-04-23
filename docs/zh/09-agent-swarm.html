@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-536ebfa7.js";
+            window.path_to_searchindex_js = "searchindex-47384e27.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -175,8 +175,8 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="8-agent-群体编排harness-如何扩展团队而不只是代码"><a class="header" href="#8-agent-群体编排harness-如何扩展团队而不只是代码">8. Agent 群体编排：Harness 如何扩展团队而不只是代码</a></h1>
-<p>Harness is also a coordination system for multi-agent and multi-owner delivery.</p>
-<h2 id="81-work-decomposition-pattern"><a class="header" href="#81-work-decomposition-pattern">8.1 Work decomposition pattern</a></h2>
+<p>Harness 也是一个用于多 agent、多 owner 交付的协调系统。</p>
+<h2 id="81-工作分解模式"><a class="header" href="#81-工作分解模式">8.1 工作分解模式</a></h2>
 <pre><code class="language-text">Program Manager
   -&gt; defines milestone contract + acceptance invariants
 Runtime/Harness Owner
@@ -188,20 +188,19 @@ UI/API Owner
 Release/Operator Owner
   -&gt; owns live gate + diagnostics + rollback policy
 </code></pre>
-<p>Without this split, teams merge partial truths that pass local tests but fail system truth.</p>
-<h2 id="82-anti-chaos-rule"><a class="header" href="#82-anti-chaos-rule">8.2 Anti-chaos rule</a></h2>
-<p>No workstream may redefine contract semantics unilaterally after gates are active.<br>Any change to schema, lifecycle semantics, or replay behavior must update:</p>
+<p>没有这种拆分，团队会合并通过本地测试、但破坏系统事实的局部真相。</p>
+<h2 id="82-反混乱规则"><a class="header" href="#82-反混乱规则">8.2 反混乱规则</a></h2>
+<p>门禁激活后，任何工作流都不得单方面重定义契约语义。<br>任何 schema、生命周期语义或 replay 行为的变更，都必须在同一个 PR slice 中更新：</p>
 <ul>
 <li>fixture</li>
-<li>script gate</li>
+<li>脚本门禁</li>
 <li>e2e spec</li>
 <li>docs</li>
 </ul>
-<p>in one PR slice.</p>
 <hr>
 <h3 id="扩展源材料"><a class="header" href="#扩展源材料">扩展源材料</a></h3>
 <h4 id="来自-14-many-brains-many-handsmd第-14-章--many-brains-many-hands--终局愿景"><a class="header" href="#来自-14-many-brains-many-handsmd第-14-章--many-brains-many-hands--终局愿景">来自 <code>14-many-brains-many-hands.md</code>：第 14 章 · Many Brains, Many Hands —— 终局愿景</a></h4>
-<p><em>源材料角色：multi-agent orchestration and terminal vision.</em></p>
+<p><em>源材料角色：多 agent 编排与终局愿景。</em></p>
 <h4 id="第-14-章--many-brains-many-hands--终局愿景"><a class="header" href="#第-14-章--many-brains-many-hands--终局愿景">第 14 章 · Many Brains, Many Hands —— 终局愿景</a></h4>
 <blockquote>
 <p>互联网不属于任何一家公司。

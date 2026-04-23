@@ -1,27 +1,27 @@
 # 15. 附录 A：源文本与研究流程
 
-The book's argument is grounded in ten foundational texts, but they cluster into three practical groups:
+本书论证建立在十篇奠基文本之上，但它们可以聚成三个实践组：
 
-- Layer 1 lineage: Fowler, OpenAI, Fisher Zhang, NxCode
-- Layer 2 lineage: Anthropic, Anthropic long-running apps, Milvus, Stanford Meta-Harness
-- Bridge texts: Neo4j on context engineering, Karpathy on wiki discipline
+- Layer 1 谱系：Fowler、OpenAI、Fisher Zhang、NxCode
+- Layer 2 谱系：Anthropic、Anthropic long-running apps、Milvus、Stanford Meta-Harness
+- 桥接文本：Neo4j 的上下文工程，Karpathy 的 wiki 纪律
 
-For Octos, the reason to keep all ten is concrete: the failures in section 3 are Layer 2 failures, while the process that produced this merged book lives in the Layer 1 lineage. Reading both together keeps the control-systems framing honest.
+对 Octos 来说，保留全部十篇的理由很具体：第 3 节中的失败属于 Layer 2 failure，而产生这本合并书的过程位于 Layer 1 谱系中。把二者放在一起读，能让控制系统视角保持诚实。
 
-## 15.1 Study workflow
+## 15.1 研究流程
 
-1. Start from a live failure mode or a live design choice in Octos.
-2. Pick the source text cluster that matches the layer you are working in.
-3. Extract the invariant, not just the quote, into a wiki page, schema, or checklist.
-4. Turn the invariant into a test, gate, or review rule before the next incident.
-5. Revisit the chapter questions when the system behavior changes.
+1. 从 Octos 中一个真实失败模式或真实设计选择出发。
+2. 选择与你正在处理的层次匹配的源文本集群。
+3. 抽取不变量，而不只是引文，并写入 wiki 页面、schema 或 checklist。
+4. 在下一次事故前，把不变量变成测试、门禁或评审规则。
+5. 当系统行为变化时，重新审视章节问题。
 
-## 15.2 Core research questions
+## 15.2 核心研究问题
 
-- Which layer does this text belong to?
-- What invariant would have prevented the Octos failure I am studying?
-- What must stay stable when the model changes?
-- Which contracts belong in runtime, and which belong in policy?
+- 这篇文本属于哪一层？
+- 哪个不变量本可以防止我正在研究的 Octos 失败？
+- 当模型变化时，什么必须保持稳定？
+- 哪些契约属于 runtime，哪些属于 policy？
 
 ---
 
@@ -30,7 +30,7 @@ For Octos, the reason to keep all ten is concrete: the failures in section 3 are
 
 #### 来自 `appendix-a-foundation-texts.md`：附录 A · 十篇奠基文精读
 
-_源材料角色：full foundation-text appendix._
+_源材料角色：完整奠基文本附录。_
 
 
 #### 附录 A · 十篇奠基文精读

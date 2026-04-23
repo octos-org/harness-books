@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-536ebfa7.js";
+            window.path_to_searchindex_js = "searchindex-47384e27.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -175,79 +175,79 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="16-附录-bharness-自查矩阵"><a class="header" href="#16-附录-bharness-自查矩阵">16. 附录 B：Harness 自查矩阵</a></h1>
-<p>Use the matrix below to score a team or product. Mark each row as <code>❌</code>, <code>⚠️</code>, or <code>✅</code>.</p>
-<h2 id="161-session-pillar"><a class="header" href="#161-session-pillar">16.1 Session pillar</a></h2>
+<p>使用下面的矩阵为团队或产品打分。每一行标记为 <code>❌</code>、<code>⚠️</code> 或 <code>✅</code>。</p>
+<h2 id="161-session-支柱"><a class="header" href="#161-session-支柱">16.1 Session 支柱</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>#</th><th>Check</th></tr>
+<tr><th>#</th><th>检查项</th></tr>
 </thead>
 <tbody>
-<tr><td>S1</td><td>Session data is stored separately from chat history.</td></tr>
-<tr><td>S2</td><td>The session log is append-only.</td></tr>
-<tr><td>S3</td><td>A session can be resumed from an ID.</td></tr>
-<tr><td>S4</td><td>The event stream is human-readable and diffable.</td></tr>
-<tr><td>S5</td><td>A new teammate can reconstruct the work from the session artifacts.</td></tr>
+<tr><td>S1</td><td>Session 数据与聊天历史分开存储。</td></tr>
+<tr><td>S2</td><td>Session 日志只追加。</td></tr>
+<tr><td>S3</td><td>Session 可以通过 ID 恢复。</td></tr>
+<tr><td>S4</td><td>事件流对人可读且可比较差异。</td></tr>
+<tr><td>S5</td><td>新队友可以从 session 产物重建工作过程。</td></tr>
 </tbody>
 </table>
 </div>
-<h2 id="162-harness-pillar"><a class="header" href="#162-harness-pillar">16.2 Harness pillar</a></h2>
+<h2 id="162-harness-支柱"><a class="header" href="#162-harness-支柱">16.2 Harness 支柱</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>#</th><th>Check</th></tr>
+<tr><th>#</th><th>检查项</th></tr>
 </thead>
 <tbody>
-<tr><td>H1</td><td>Harness state lives outside the harness process.</td></tr>
-<tr><td>H2</td><td>The harness interface is small and stable.</td></tr>
-<tr><td>H3</td><td>Loop variants can change without rewriting the session model.</td></tr>
-<tr><td>H4</td><td>Model upgrades do not force broad harness rewrites.</td></tr>
-<tr><td>H5</td><td>Each harness change is clearly either defect repair or protocol enforcement.</td></tr>
+<tr><td>H1</td><td>Harness 状态存在于 harness 进程之外。</td></tr>
+<tr><td>H2</td><td>Harness 接口小而稳定。</td></tr>
+<tr><td>H3</td><td>循环变体可以变化，而不用重写 session 模型。</td></tr>
+<tr><td>H4</td><td>模型升级不会迫使大范围 harness 重写。</td></tr>
+<tr><td>H5</td><td>每个 harness 变更都明确属于缺陷修复或协议执行。</td></tr>
 </tbody>
 </table>
 </div>
-<h2 id="163-tools-pillar"><a class="header" href="#163-tools-pillar">16.3 Tools pillar</a></h2>
+<h2 id="163-tools-支柱"><a class="header" href="#163-tools-支柱">16.3 Tools 支柱</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>#</th><th>Check</th></tr>
+<tr><th>#</th><th>检查项</th></tr>
 </thead>
 <tbody>
-<tr><td>T1</td><td>Tool responsibilities are orthogonal.</td></tr>
-<tr><td>T2</td><td>Calls and results are recorded to the session log.</td></tr>
-<tr><td>T3</td><td>Invalid calls can be rolled back or corrected.</td></tr>
-<tr><td>T4</td><td>Credentials stay out of the sandbox.</td></tr>
-<tr><td>T5</td><td>Combinations of valid tools cannot silently escape policy.</td></tr>
+<tr><td>T1</td><td>工具职责是正交的。</td></tr>
+<tr><td>T2</td><td>调用和结果记录到 session 日志。</td></tr>
+<tr><td>T3</td><td>无效调用可以回滚或纠正。</td></tr>
+<tr><td>T4</td><td>凭据不进入沙箱。</td></tr>
+<tr><td>T5</td><td>有效工具组合不能静默逃逸策略。</td></tr>
 </tbody>
 </table>
 </div>
-<h2 id="164-verification-pillar"><a class="header" href="#164-verification-pillar">16.4 Verification pillar</a></h2>
+<h2 id="164-verification-支柱"><a class="header" href="#164-verification-支柱">16.4 Verification 支柱</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>#</th><th>Check</th></tr>
+<tr><th>#</th><th>检查项</th></tr>
 </thead>
 <tbody>
-<tr><td>V1</td><td>Generator and evaluator are distinct.</td></tr>
-<tr><td>V2</td><td>Specs flow into property tests automatically or semi-automatically.</td></tr>
-<tr><td>V3</td><td>Every verdict is persisted in an audit trail.</td></tr>
-<tr><td>V4</td><td>Linting resists self-serving or sycophantic outputs.</td></tr>
-<tr><td>V5</td><td>External evidence can justify correctness without trusting the verifier’s own output.</td></tr>
+<tr><td>V1</td><td>生成器和评估器是分离的。</td></tr>
+<tr><td>V2</td><td>规格自动或半自动流入性质测试。</td></tr>
+<tr><td>V3</td><td>每个裁决都持久化到审计轨迹。</td></tr>
+<tr><td>V4</td><td>Linting 能抵抗自利或迎合式输出。</td></tr>
+<tr><td>V5</td><td>外部证据可以证明正确性，而不必信任验证器自己的输出。</td></tr>
 </tbody>
 </table>
 </div>
-<h2 id="165-scoring"><a class="header" href="#165-scoring">16.5 Scoring</a></h2>
+<h2 id="165-评分"><a class="header" href="#165-评分">16.5 评分</a></h2>
 <ul>
-<li>16+ <code>✅</code>: L4, strong maturity</li>
-<li>12-15 <code>✅</code>: L3, independent verification layer exists</li>
-<li>8-11 <code>✅</code>: L2, session protocol is real but incomplete</li>
-<li>4-7 <code>✅</code>: L1, session exists but protocol is weak</li>
-<li>below 4 <code>✅</code>: L0, still prompt-centric</li>
+<li>16+ 个 <code>✅</code>：L4，强成熟度</li>
+<li>12-15 个 <code>✅</code>：L3，已有独立验证层</li>
+<li>8-11 个 <code>✅</code>：L2，session 协议真实存在但不完整</li>
+<li>4-7 个 <code>✅</code>：L1，session 存在但协议较弱</li>
+<li>低于 4 个 <code>✅</code>：L0，仍然以 prompt 为中心</li>
 </ul>
 <hr>
 <h3 id="扩展源材料"><a class="header" href="#扩展源材料">扩展源材料</a></h3>
 <h4 id="来自-appendix-b-self-audit-matrixmd附录-b--harness-四柱自查矩阵"><a class="header" href="#来自-appendix-b-self-audit-matrixmd附录-b--harness-四柱自查矩阵">来自 <code>appendix-b-self-audit-matrix.md</code>：附录 B · Harness 四柱自查矩阵</a></h4>
-<p><em>源材料角色：full four-pillar self-audit matrix.</em></p>
+<p><em>源材料角色：完整四支柱自查矩阵。</em></p>
 <h4 id="附录-b--harness-四柱自查矩阵"><a class="header" href="#附录-b--harness-四柱自查矩阵">附录 B · Harness 四柱自查矩阵</a></h4>
 <p>以下 20 行自查题,每根柱子 5 行,共 4 柱。每一行选一个答案:<strong>❌ 没做 / ⚠️ 部分做了 / ✅ 做到位了</strong>。</p>
 <p>累计 ≥ 16 个 ✅ → L4,Harness Maturity 最高档。

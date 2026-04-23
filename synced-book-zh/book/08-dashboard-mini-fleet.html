@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-536ebfa7.js";
+            window.path_to_searchindex_js = "searchindex-47384e27.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -175,30 +175,30 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="7-操作员仪表盘与小型-fleet-实测"><a class="header" href="#7-操作员仪表盘与小型-fleet-实测">7. 操作员仪表盘与小型 fleet 实测</a></h1>
-<h2 id="71-dashboard-role"><a class="header" href="#71-dashboard-role">7.1 Dashboard role</a></h2>
-<p>The dashboard is not cosmetic monitoring. It is the daily control plane for:</p>
+<h2 id="71-仪表盘的角色"><a class="header" href="#71-仪表盘的角色">7.1 仪表盘的角色</a></h2>
+<p>仪表盘不是装饰性监控。它是日常控制平面，用来观察：</p>
 <ul>
-<li>lifecycle anomalies</li>
-<li>phase stagnation</li>
-<li>artifact/validator failures</li>
-<li>retries/timeouts/orphaned children</li>
-<li>cross-session bleed signals</li>
+<li>生命周期异常</li>
+<li>阶段停滞</li>
+<li>产物/验证器失败</li>
+<li>重试、超时、孤儿子任务</li>
+<li>跨会话串扰信号</li>
 </ul>
-<h2 id="72-mini-fleet-as-release-truth"><a class="header" href="#72-mini-fleet-as-release-truth">7.2 Mini fleet as release truth</a></h2>
-<p>Unit/integration tests are necessary but insufficient.<br>Harness regressions are often temporal and multi-surface, only visible in live canary behavior.</p>
-<p>Live gate posture:</p>
+<h2 id="72-小型-fleet-是发布事实"><a class="header" href="#72-小型-fleet-是发布事实">7.2 小型 fleet 是发布事实</a></h2>
+<p>单元测试和集成测试是必要的，但不充分。<br>Harness 回归通常具有时间性和多表面特征，只有 live canary 行为才能暴露。</p>
+<p>上线门禁姿态：</p>
 <ul>
-<li>run scripted validation on at least two mini-fleet hosts</li>
-<li>enforce explicit diagnostic kinds (not generic “failed”)</li>
-<li>block merge when invariants break</li>
+<li>至少在两台 mini-fleet 主机上运行脚本化验证</li>
+<li>强制显式诊断类别，而不是通用 “failed”</li>
+<li>当不变量破坏时阻止合并</li>
 </ul>
-<p>Canonical examples include:</p>
+<p>规范例子包括：</p>
 <ul>
-<li>missing required phase</li>
-<li>non-monotonic phase sequence</li>
-<li>lifecycle regression</li>
-<li>duplicate research sessions</li>
-<li>cross-session progress bleed</li>
+<li>缺失必需阶段</li>
+<li>非单调阶段序列</li>
+<li>生命周期回退</li>
+<li>重复 research session</li>
+<li>跨会话进度泄漏</li>
 </ul>
 <hr>
 <h3 id="同步说明"><a class="header" href="#同步说明">同步说明</a></h3>

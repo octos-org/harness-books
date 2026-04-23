@@ -1,16 +1,16 @@
 # 14. 结语：下一阶段的工程姿态
 
-Treat harness work as product reliability engineering, not abstract framework building.
+把 harness 工作当作产品可靠性工程，而不是抽象框架建设。
 
-The winning pattern for Octos has been:
+Octos 的胜利模式一直是：
 
-1. identify concrete user-facing failure classes
-2. encode explicit contract invariants
-3. bind runtime/UI/operator surfaces to one truth model
-4. prove on mini fleet live gates before merge
-5. only then expand abstraction and external platform surface
+1. 识别具体用户可见失败类别
+2. 编码显式契约不变量
+3. 把运行时/UI/操作员表面绑定到同一个事实模型
+4. 合并前在小型 fleet live gates 上证明
+5. 之后再扩展抽象和外部平台表面
 
-That is the path from “looks smart today” to “ships correct every day.”
+这就是从“今天看起来很聪明”走向“每天都能正确交付”的路径。
 
 ---
 
@@ -19,7 +19,7 @@ That is the path from “looks smart today” to “ships correct every day.”
 
 #### 来自 `99-epilogue.md`：结语 · Ariely 的影子,十年后再看一次
 
-_源材料角色：larger-book closing argument._
+_源材料角色：大书收束论证。_
 
 
 #### 结语 · Ariely 的影子,十年后再看一次

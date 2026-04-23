@@ -1,33 +1,33 @@
 # 7. 操作员仪表盘与小型 fleet 实测
 
-## 7.1 Dashboard role
+## 7.1 仪表盘的角色
 
-The dashboard is not cosmetic monitoring. It is the daily control plane for:
+仪表盘不是装饰性监控。它是日常控制平面，用来观察：
 
-- lifecycle anomalies
-- phase stagnation
-- artifact/validator failures
-- retries/timeouts/orphaned children
-- cross-session bleed signals
+- 生命周期异常
+- 阶段停滞
+- 产物/验证器失败
+- 重试、超时、孤儿子任务
+- 跨会话串扰信号
 
-## 7.2 Mini fleet as release truth
+## 7.2 小型 fleet 是发布事实
 
-Unit/integration tests are necessary but insufficient.  
-Harness regressions are often temporal and multi-surface, only visible in live canary behavior.
+单元测试和集成测试是必要的，但不充分。  
+Harness 回归通常具有时间性和多表面特征，只有 live canary 行为才能暴露。
 
-Live gate posture:
+上线门禁姿态：
 
-- run scripted validation on at least two mini-fleet hosts
-- enforce explicit diagnostic kinds (not generic “failed”)
-- block merge when invariants break
+- 至少在两台 mini-fleet 主机上运行脚本化验证
+- 强制显式诊断类别，而不是通用 “failed”
+- 当不变量破坏时阻止合并
 
-Canonical examples include:
+规范例子包括：
 
-- missing required phase
-- non-monotonic phase sequence
-- lifecycle regression
-- duplicate research sessions
-- cross-session progress bleed
+- 缺失必需阶段
+- 非单调阶段序列
+- 生命周期回退
+- 重复 research session
+- 跨会话进度泄漏
 
 ---
 

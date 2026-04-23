@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-536ebfa7.js";
+            window.path_to_searchindex_js = "searchindex-47384e27.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -175,22 +175,22 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="5-非-rust-桥接平台现实的必需品"><a class="header" href="#5-非-rust-桥接平台现实的必需品">5. 非 Rust 桥接：平台现实的必需品</a></h1>
-<p>Octos is Rust-first runtime, but skill ecosystem is multi-language.</p>
-<p>If progress/event contracts work only in Rust:</p>
+<p>Octos 是 Rust-first runtime，但 skill 生态是多语言的。</p>
+<p>如果进度/事件契约只在 Rust 中可用：</p>
 <ul>
-<li>third-party integration speed collapses</li>
-<li>contract compliance becomes Rust-gatekept</li>
-<li>operator data quality becomes inconsistent</li>
+<li>第三方集成速度会坍塌</li>
+<li>契约合规会变成 Rust 门槛</li>
+<li>操作员数据质量会不一致</li>
 </ul>
-<p>Therefore M4.1A’s non-Rust bridge is essential, not optional polish:</p>
+<p>因此 M4.1A 的非 Rust 桥接是必要项，不是可选润色：</p>
 <ul>
 <li>Python emitter helper</li>
 <li>Node emitter helper</li>
 <li>CLI fallback emitter</li>
-<li>no-op semantics when sink absent</li>
-<li>runtime-side validation remains authoritative</li>
+<li>sink 缺失时的 no-op 语义</li>
+<li>runtime-side validation 仍然是权威</li>
 </ul>
-<p>Principle: language diversity at emit edge, strict normalization at consume edge.</p>
+<p>原则：发射端允许语言多样性，消费端严格规范化。</p>
 <hr>
 <h3 id="同步说明"><a class="header" href="#同步说明">同步说明</a></h3>
 <p>本节以 Octos 短纲要为准。较大的 mdBook 源材料中暂时没有直接映射到本节的章节，所以本节目前保留为纲要主导内容。</p>

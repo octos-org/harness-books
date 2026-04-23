@@ -1,26 +1,26 @@
 # 9. 原则与反模式
 
-## 9.1 Principles
+## 9.1 原则
 
-1. Persist contract state outside prompt/chat context.
-2. Prefer explicit artifact ownership over heuristic delivery.
-3. Treat completion as a validator-gated terminal contract.
-4. Use one canonical lifecycle ladder across API/UI/operator surfaces.
-5. Enforce session/topic scoping as a hard safety boundary.
-6. Make progress replayable and diagnosable, not just visible in real-time.
-7. Keep transports replaceable; keep event schema stable and versioned.
-8. Tie every release claim to live gate evidence, not anecdotal runs.
+1. 将契约状态持久化在 prompt/chat context 之外。
+2. 优先使用显式产物归属，而不是启发式交付。
+3. 把完成状态视为由验证器把关的终态契约。
+4. 在 API/UI/operator 表面使用同一个规范生命周期阶梯。
+5. 把 session/topic 作用域作为硬安全边界强制执行。
+6. 让进度可回放、可诊断，而不只是实时可见。
+7. 让 transport 可替换；让 event schema 稳定并版本化。
+8. 每个发布声明都必须绑定 live gate 证据，而不是轶事式运行。
 
-## 9.2 Anti-patterns to ban
+## 9.2 必须禁止的反模式
 
-1. Prompt-only contracts (“the agent should remember to send the file”).
-2. UI-derived truth (“bubble says done, so task is done”).
-3. Filename guessing for primary artifact selection.
-4. Best-effort validators that do not block terminal success.
-5. Freeform stderr parsing as status protocol.
-6. Unscoped replay streams that can leak sibling session state.
-7. Dashboard metrics disconnected from runtime canonical data.
-8. “One more refactor” during release slices without user-visible invariant gains.
+1. Prompt-only 契约（“agent 应该记得发送文件”）。
+2. UI-derived truth（“气泡显示 done，所以任务完成”）。
+3. 用文件名猜测主产物。
+4. 不阻断终态成功的 best-effort 验证器。
+5. 把自由格式 stderr parsing 当作状态协议。
+6. 无作用域 replay stream 泄漏兄弟会话状态。
+7. 仪表盘指标与运行时规范数据脱节。
+8. 发布 slice 中为了“再重构一下”而不增加用户可见不变量。
 
 ---
 
@@ -29,7 +29,7 @@
 
 #### 来自 `10-two-loops.md`：第 10 章 · 两种协作循环 —— 短程与长程
 
-_源材料角色：short-loop vs long-loop operating principles._
+_源材料角色：短循环与长循环的操作原则。_
 
 
 #### 第 10 章 · 两种协作循环 —— 短程与长程
@@ -225,7 +225,7 @@ Ariely 的这句话在结语还会响一次。那一次的主题会是"命名不
 
 #### 来自 `11-knowledge-and-skills.md`：第 11 章 · 知识沉淀与 Skills 晋升
 
-_源材料角色：knowledge/skill promotion and anti-patterns._
+_源材料角色：knowledge/skill 晋升与反模式。_
 
 
 #### 第 11 章 · 知识沉淀与 Skills 晋升
@@ -447,7 +447,7 @@ Accrete 阶段的 promotion 判据,在 Evolve 阶段会变成"agent 能不能改
 
 #### 来自 `12-reflexive-harness.md`：第 12 章 · 可自我修改的 Harness
 
-_源材料角色：self-modifying harness boundaries._
+_源材料角色：自修改 harness 的边界。_
 
 
 #### 第 12 章 · 可自我修改的 Harness

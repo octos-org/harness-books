@@ -1,8 +1,8 @@
 # 18. 附录 D：按角色阅读路径
 
-If you are reading this as a team artifact, use the shortest path that matches your job.
+如果你把这本书作为团队资料阅读，请使用与你职责最匹配的最短路径。
 
-| Role | Read first | Then read |
+| 角色 | 先读 | 然后读 |
 |---|---|---|
 | Engineering lead | 1, 2, 3 | 5, 10, 11, 13 |
 | Agent product builder | 1, 2, 6 | 7, 8, 9, 12 |
@@ -17,7 +17,7 @@ If you are reading this as a team artifact, use the shortest path that matches y
 
 #### 来自 `appendix-d-reading-guide.md`：附录 D · 按角色导读
 
-_源材料角色：full role-based reading guide._
+_源材料角色：完整按角色阅读指南。_
 
 
 #### 附录 D · 按角色导读

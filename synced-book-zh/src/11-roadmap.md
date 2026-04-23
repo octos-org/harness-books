@@ -1,49 +1,49 @@
 # 10. 工作流到里程碑映射：务实路线图
 
-This mapping aligns with current M4 direction and remaining platformization gaps.
+这份映射对齐当前 M4 方向和剩余平台化缺口。
 
-## M4.1A — Parent-visible structured progress ABI
+## M4.1A — 父级可见的结构化进度 ABI
 
-- typed `octos.harness.event.v1`
+- 类型化 `octos.harness.event.v1`
 - sink + consumer + task_status bridge
-- deep-search migration from stderr status
-- UI/API replay parity
+- deep-search 从 stderr status 迁移
+- UI/API replay 一致性
 - mini fleet live gate
-- non-Rust emitters
+- 非 Rust emitters
 
-## M4.2 — Developer contract productization
+## M4.2 — 开发者契约产品化
 
-- stable docs for manifest/policy/task fields
-- starter app templates across artifact classes
-- contract examples with failure modes
+- manifest/policy/task 字段的稳定文档
+- 面向各类产物的入门应用模板
+- 带失败模式的契约示例
 
-## M4.3 — Typed validator runner
+## M4.3 — 类型化验证器运行器
 
-- declarative validators with typed outcomes
-- timeout taxonomy and failure categories
-- replayable evidence and operator-facing provenance
+- 带类型化结果的声明式验证器
+- 超时分类和失败类别
+- 可回放证据与面向操作员的来源记录
 
-## M4.4 — Compatibility gate for third-party apps/skills
+## M4.4 — 第三方 app/skill 兼容性门禁
 
-- install from git
-- run harness flow
-- validate artifacts
-- reload and verify persistence
-- uninstall and verify no state bleed
+- 从 git 安装
+- 运行 harness 流程
+- 验证产物
+- 重载并验证持久化
+- 卸载并验证没有状态串扰
 
-## M4.5 — Operator dashboard maturation
+## M4.5 — 操作员仪表盘成熟化
 
-- lifecycle + phase + validator + artifact surfaces
-- retry/timeout/orphan diagnostics
-- compact incident-ready views backed by canonical task summary
+- 生命周期 + 阶段 + 验证器 + 产物表面
+- 重试/超时/孤儿任务诊断
+- 由规范任务摘要支撑的紧凑事故视图
 
-## M4.6 — Explicit ABI versioning and migration policy
+## M4.6 — 显式 ABI 版本化和迁移策略
 
-- schema versions for events/hooks/policy/task fields
-- compatibility tests and deprecation windows
-- breaking-change protocol before external adoption
+- events/hooks/policy/task 字段的 schema 版本
+- 兼容性测试和废弃窗口
+- 外部采用前的破坏性变更协议
 
-This roadmap is ordered to match the failures above, not to satisfy backlog aesthetics. The first items repair truth propagation; the later items harden compatibility and governance once the truth model is stable. The next chapter is the necessary pause: harness fixes orchestration correctness, but it does not finish the product.
+这条路线图按上面的失败排序，而不是按 backlog 美观排序。前几项修复事实传播；后几项在事实模型稳定后加强兼容性和治理。下一章是必要的停顿：harness 修复编排正确性，但它不能完成整个产品。
 
 ---
 

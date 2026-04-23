@@ -23,11 +23,11 @@ def main() -> None:
     (DOCS / ".nojekyll").write_text("", encoding="utf-8")
     (DOCS / "index.html").write_text(
         """<!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Harness Engineering Book</title>
+  <title>驾驭工程 / Harness Engineering Book</title>
   <style>
     :root { color-scheme: light dark; }
     body {
@@ -80,16 +80,16 @@ def main() -> None:
 </head>
 <body>
   <main>
-    <h1>Harness Engineering Book</h1>
-    <p>Outline-synced Octos edition generated from the short Octos outline and the larger harness-engineering mdBook source.</p>
+    <h1>驾驭工程</h1>
+    <p>基于 Octos 短纲要和较大的 harness-engineering mdBook 源材料生成的纲要同步版。</p>
     <section class="links" aria-label="Book editions">
       <a href="./en/">
         <strong>English Outline Edition</strong>
-        <span>Same synchronized book with the Octos outline as the table of contents.</span>
+        <span>English navigation edition with the Octos outline as the table of contents.</span>
       </a>
       <a href="./zh/">
         <strong>中文纲要版</strong>
-        <span>同一内容的中文导航版本，保留较大源书中的中文主体材料。</span>
+        <span>使用中文纲要正文和中文目录，保留必要技术名词、代码标识符和原文标题。</span>
       </a>
     </section>
   </main>

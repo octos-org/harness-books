@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-536ebfa7.js";
+            window.path_to_searchindex_js = "searchindex-47384e27.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -175,12 +175,12 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="13-参考架构片段"><a class="header" href="#13-参考架构片段">13. 参考架构片段</a></h1>
-<h2 id="131-task-truth-flow"><a class="header" href="#131-task-truth-flow">13.1 Task truth flow</a></h2>
+<h2 id="131-任务事实流"><a class="header" href="#131-任务事实流">13.1 任务事实流</a></h2>
 <pre><code class="language-text">tool emits progress -&gt; runtime validates event -&gt; supervisor persists state
 -&gt; TaskStatusChanged -&gt; API/SSE -&gt; UI replay/status bubble
 </code></pre>
-<p>Any direct UI mutation outside this chain is a reliability risk.</p>
-<h2 id="132-contract-enforcement-flow"><a class="header" href="#132-contract-enforcement-flow">13.2 Contract enforcement flow</a></h2>
+<p>任何绕开这条链的直接 UI 变更都是可靠性风险。</p>
+<h2 id="132-契约执行流"><a class="header" href="#132-契约执行流">13.2 契约执行流</a></h2>
 <pre><code class="language-text">spawn success
   -&gt; resolve candidate outputs
   -&gt; before_spawn_verify (allow/modify/deny)
@@ -188,7 +188,7 @@
   -&gt; mark ready or failed
   -&gt; persist delivery evidence
 </code></pre>
-<p>Marking terminal success before this flow completes is a contract violation.</p>
+<p>在这条流程完成前标记终态成功，是契约违例。</p>
 <hr>
 <h3 id="同步说明"><a class="header" href="#同步说明">同步说明</a></h3>
 <p>本节以 Octos 短纲要为准。较大的 mdBook 源材料中暂时没有直接映射到本节的章节，所以本节目前保留为纲要主导内容。</p>

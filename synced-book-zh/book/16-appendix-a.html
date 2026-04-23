@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-536ebfa7.js";
+            window.path_to_searchindex_js = "searchindex-47384e27.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -175,32 +175,32 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="15-附录-a源文本与研究流程"><a class="header" href="#15-附录-a源文本与研究流程">15. 附录 A：源文本与研究流程</a></h1>
-<p>The book’s argument is grounded in ten foundational texts, but they cluster into three practical groups:</p>
+<p>本书论证建立在十篇奠基文本之上，但它们可以聚成三个实践组：</p>
 <ul>
-<li>Layer 1 lineage: Fowler, OpenAI, Fisher Zhang, NxCode</li>
-<li>Layer 2 lineage: Anthropic, Anthropic long-running apps, Milvus, Stanford Meta-Harness</li>
-<li>Bridge texts: Neo4j on context engineering, Karpathy on wiki discipline</li>
+<li>Layer 1 谱系：Fowler、OpenAI、Fisher Zhang、NxCode</li>
+<li>Layer 2 谱系：Anthropic、Anthropic long-running apps、Milvus、Stanford Meta-Harness</li>
+<li>桥接文本：Neo4j 的上下文工程，Karpathy 的 wiki 纪律</li>
 </ul>
-<p>For Octos, the reason to keep all ten is concrete: the failures in section 3 are Layer 2 failures, while the process that produced this merged book lives in the Layer 1 lineage. Reading both together keeps the control-systems framing honest.</p>
-<h2 id="151-study-workflow"><a class="header" href="#151-study-workflow">15.1 Study workflow</a></h2>
+<p>对 Octos 来说，保留全部十篇的理由很具体：第 3 节中的失败属于 Layer 2 failure，而产生这本合并书的过程位于 Layer 1 谱系中。把二者放在一起读，能让控制系统视角保持诚实。</p>
+<h2 id="151-研究流程"><a class="header" href="#151-研究流程">15.1 研究流程</a></h2>
 <ol>
-<li>Start from a live failure mode or a live design choice in Octos.</li>
-<li>Pick the source text cluster that matches the layer you are working in.</li>
-<li>Extract the invariant, not just the quote, into a wiki page, schema, or checklist.</li>
-<li>Turn the invariant into a test, gate, or review rule before the next incident.</li>
-<li>Revisit the chapter questions when the system behavior changes.</li>
+<li>从 Octos 中一个真实失败模式或真实设计选择出发。</li>
+<li>选择与你正在处理的层次匹配的源文本集群。</li>
+<li>抽取不变量，而不只是引文，并写入 wiki 页面、schema 或 checklist。</li>
+<li>在下一次事故前，把不变量变成测试、门禁或评审规则。</li>
+<li>当系统行为变化时，重新审视章节问题。</li>
 </ol>
-<h2 id="152-core-research-questions"><a class="header" href="#152-core-research-questions">15.2 Core research questions</a></h2>
+<h2 id="152-核心研究问题"><a class="header" href="#152-核心研究问题">15.2 核心研究问题</a></h2>
 <ul>
-<li>Which layer does this text belong to?</li>
-<li>What invariant would have prevented the Octos failure I am studying?</li>
-<li>What must stay stable when the model changes?</li>
-<li>Which contracts belong in runtime, and which belong in policy?</li>
+<li>这篇文本属于哪一层？</li>
+<li>哪个不变量本可以防止我正在研究的 Octos 失败？</li>
+<li>当模型变化时，什么必须保持稳定？</li>
+<li>哪些契约属于 runtime，哪些属于 policy？</li>
 </ul>
 <hr>
 <h3 id="扩展源材料"><a class="header" href="#扩展源材料">扩展源材料</a></h3>
 <h4 id="来自-appendix-a-foundation-textsmd附录-a--十篇奠基文精读"><a class="header" href="#来自-appendix-a-foundation-textsmd附录-a--十篇奠基文精读">来自 <code>appendix-a-foundation-texts.md</code>：附录 A · 十篇奠基文精读</a></h4>
-<p><em>源材料角色：full foundation-text appendix.</em></p>
+<p><em>源材料角色：完整奠基文本附录。</em></p>
 <h4 id="附录-a--十篇奠基文精读"><a class="header" href="#附录-a--十篇奠基文精读">附录 A · 十篇奠基文精读</a></h4>
 <p>本书的十四章每一处具体引用,都能追溯到以下十篇在 2026 年同一季度集中涌现的文本(原九篇 + Stanford IRIS Lab Meta-Harness 论文,作为第 10 篇对 harness 自动化方向的奠基)。建议读者按编号顺序精读;它们在<strong>风格、受众、位置</strong>上互补:Fowler 给深度工程师,Anthropic 两篇给平台设计者,OpenAI 给实战 team lead,Medium 给概念梳理者,Neo4j/Milvus 给具体子领域,karpathy 给长期主义者,AIOS 给研究者,Stanford 给 “harness 本身可优化” 这一方向的开创者。</p>
 <h5 id="a1--martin-fowler--harness-engineering-for-coding-agent-users"><a class="header" href="#a1--martin-fowler--harness-engineering-for-coding-agent-users">A.1 · Martin Fowler · <em>Harness engineering for coding agent users</em></a></h5>

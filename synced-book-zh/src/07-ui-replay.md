@@ -1,19 +1,19 @@
 # 6. UI 回放不是前端功能，而是可靠性功能
 
-A reliable status bubble must survive:
+可靠的状态气泡必须承受：
 
-- browser reload
-- reconnect
-- session switch away and back
-- partial stream interruption
+- 浏览器重载
+- 重新连接
+- 切走会话后再切回来
+- 部分 stream 中断
 
-If replay is missing or inconsistent, users see “randomness,” even when backend is correct.
+如果 replay 缺失或不一致，即使后端正确，用户也会看到“随机性”。
 
-Design rule:
+设计规则：
 
-- replay path and live path must share canonical event/task schema
-- no second interpretation layer in UI
-- gate tests must assert parity between task API and SSE replay
+- replay path 和 live path 必须共享规范 event/task schema
+- UI 中不允许第二套解释层
+- 门禁测试必须断言任务 API 和 SSE 回放之间的一致性
 
 ---
 

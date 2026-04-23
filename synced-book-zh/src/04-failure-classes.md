@@ -1,105 +1,105 @@
 # 3. Octos 遇到的失败类别，以及代价为何高
 
-## 3.1 Background task progress bugs
+## 3.1 后台任务进度 bug
 
-Observed class:
+观察到的类别：
 
-- child task running correctly
-- parent session only shows initial status or stale status
-- users assume hang or retry, creating duplicate work and confusion
+- 子任务正确运行
+- 父会话只显示初始状态或陈旧状态
+- 用户以为任务挂起或重试，造成重复工作和混乱
 
-Root causes:
+根因：
 
-- progress emitted as freeform stderr text
-- no typed event sink contract
-- no durable bridge from child progress into parent task state
+- 进度以自由格式 stderr 文本发出
+- 没有类型化事件 sink 契约
+- 子任务进度没有持久桥接到父任务状态
 
-Cost:
+代价：
 
-- false support escalations
-- duplicate child sessions
-- “it works locally” but not in live canary confidence collapse
+- 错误的支持升级
+- 重复子会话
+- “本地能跑”但 live canary 失去信心
 
-## 3.2 `run_pipeline` / `deep-search` status drift
+## 3.2 `run_pipeline` / `deep-search` 状态漂移
 
-Observed class:
+观察到的类别：
 
-- deep research run is active, but status bubble and task API diverge
-- API may say running while bubble appears frozen or mismatched phase
+- 深度研究运行仍在进行，但状态气泡和任务 API 分离
+- API 可能显示 running，而气泡像是冻结或处于错误阶段
 
-Root causes:
+根因：
 
-- multiple status channels with weak reconciliation
-- no single canonical phase ladder enforced across UI/API/replay
+- 多个状态通道，缺乏强一致协调
+- UI/API/replay 没有强制使用单一规范阶段阶梯
 
-Fix direction (M4.1A contract):
+修复方向（M4.1A 契约）：
 
-- `octos.harness.event.v1` progress schema
+- `octos.harness.event.v1` 进度 schema
 - runtime sink -> `TaskStatusChanged` -> `/api/sessions/:id/tasks` + SSE
-- UI replay consumes same backend event truth
+- UI replay 使用同一份后端事件事实
 
-## 3.3 Session switching / status bubble contamination
+## 3.3 会话切换 / 状态气泡污染
 
-Observed class:
+观察到的类别：
 
-- switch to sibling session and see progress/status from another session
-- user cannot trust what belongs to current conversation
+- 切到兄弟会话时看到另一个会话的进度/状态
+- 用户无法信任哪些信息属于当前对话
 
-Root causes:
+根因：
 
-- topic/session scoping not enforced end-to-end
-- replay and active stream mixed without strict session ownership checks
+- topic/session 作用域没有端到端强制执行
+- replay 和 active stream 混在一起，缺少严格会话归属检查
 
-Fix direction:
+修复方向：
 
-- hard session/topic scoping in task status events
-- replay filters + bleed checks in live gates
-- explicit “no cross-session progress bleed” acceptance criteria
+- 在任务状态事件中强制 session/topic 作用域
+- live gate 中加入回放过滤和串扰检查
+- 明确“无跨会话进度泄漏”的验收标准
 
-## 3.4 Artifact contract enforcement gaps
+## 3.4 产物契约执行缺口
 
-Observed class:
+观察到的类别：
 
-- background job completes but wrong file is delivered
-- task marked done with missing/invalid primary artifact
+- 后台任务完成，但交付了错误文件
+- 缺失/无效主产物时仍标记任务完成
 
-Root causes:
+根因：
 
-- filename heuristics instead of declared artifact truth
-- completion not blocked by validator failure
+- 使用文件名启发式，而不是声明式产物事实
+- 验证失败没有阻止完成
 
-Fix direction:
+修复方向：
 
-- policy-owned `primary` artifact
-- `BeforeSpawnVerify` blocking contract
-- completion gating tied to validator outcomes
+- 由策略声明的 `primary` 主产物
+- `BeforeSpawnVerify` 阻断契约
+- 完成状态绑定验证器结果
 
-## 3.5 Validator runner incompleteness
+## 3.5 验证器运行器不完整
 
-Observed class:
+观察到的类别：
 
-- validators exist but outputs are too coarse for operators/devs
-- insufficient typed evidence for debugging and replay
+- 验证器存在，但输出对操作员/开发者过于粗糙
+- 缺少足够的类型化证据用于调试和回放
 
-Required posture:
+必需姿态：
 
-- typed per-validator outcome
-- duration, reason category, replayable evidence path
-- clear timeout and failure taxonomy
+- 类型化的逐验证器结果
+- 持续时间、原因类别、可回放证据路径
+- 明确超时和失败分类
 
-## 3.6 Operator blind spots
+## 3.6 操作员盲区
 
-Observed class:
+观察到的类别：
 
-- counters exist but no compact operator narrative
-- hard to answer “why this task failed” quickly
+- 有计数器，但没有紧凑的操作员叙事
+- 很难快速回答“这个任务为什么失败”
 
-Fix direction:
+修复方向：
 
-- operator summary and dashboard fed by canonical task/harness state
-- no dashboard-only hidden logic
+- 操作员摘要和仪表盘都由规范任务/harness 状态驱动
+- 不允许只存在于仪表盘中的隐藏逻辑
 
-Taken together, these failures are not six separate bugs. They are one pattern expressed through different surfaces: Octos treated chat-like output as if it were runtime truth. The next chapter turns that pattern into a concrete architecture for state, events, validation, and replay.
+合在一起，这些失败不是六个独立 bug。它们是同一种模式在不同表面上的表现：Octos 把类似聊天的输出当成了运行时事实。下一章会把这个模式转化为关于状态、事件、验证和回放的具体架构。
 
 ---
 
@@ -108,7 +108,7 @@ Taken together, these failures are not six separate bugs. They are one pattern e
 
 #### 来自 `13-failure-and-antifragility.md`：第 13 章 · 失败模式博物馆与反脆弱四支柱
 
-_源材料角色：failure museum, root-cause taxonomy, antifragile repair._
+_源材料角色：失败模式博物馆、根因分类与反脆弱修复。_
 
 
 #### 第 13 章 · 失败模式博物馆与反脆弱四支柱

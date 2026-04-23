@@ -1,54 +1,54 @@
 # 16. 附录 B：Harness 自查矩阵
 
-Use the matrix below to score a team or product. Mark each row as `❌`, `⚠️`, or `✅`.
+使用下面的矩阵为团队或产品打分。每一行标记为 `❌`、`⚠️` 或 `✅`。
 
-## 16.1 Session pillar
+## 16.1 Session 支柱
 
-| # | Check |
+| # | 检查项 |
 |---|---|
-| S1 | Session data is stored separately from chat history. |
-| S2 | The session log is append-only. |
-| S3 | A session can be resumed from an ID. |
-| S4 | The event stream is human-readable and diffable. |
-| S5 | A new teammate can reconstruct the work from the session artifacts. |
+| S1 | Session 数据与聊天历史分开存储。 |
+| S2 | Session 日志只追加。 |
+| S3 | Session 可以通过 ID 恢复。 |
+| S4 | 事件流对人可读且可比较差异。 |
+| S5 | 新队友可以从 session 产物重建工作过程。 |
 
-## 16.2 Harness pillar
+## 16.2 Harness 支柱
 
-| # | Check |
+| # | 检查项 |
 |---|---|
-| H1 | Harness state lives outside the harness process. |
-| H2 | The harness interface is small and stable. |
-| H3 | Loop variants can change without rewriting the session model. |
-| H4 | Model upgrades do not force broad harness rewrites. |
-| H5 | Each harness change is clearly either defect repair or protocol enforcement. |
+| H1 | Harness 状态存在于 harness 进程之外。 |
+| H2 | Harness 接口小而稳定。 |
+| H3 | 循环变体可以变化，而不用重写 session 模型。 |
+| H4 | 模型升级不会迫使大范围 harness 重写。 |
+| H5 | 每个 harness 变更都明确属于缺陷修复或协议执行。 |
 
-## 16.3 Tools pillar
+## 16.3 Tools 支柱
 
-| # | Check |
+| # | 检查项 |
 |---|---|
-| T1 | Tool responsibilities are orthogonal. |
-| T2 | Calls and results are recorded to the session log. |
-| T3 | Invalid calls can be rolled back or corrected. |
-| T4 | Credentials stay out of the sandbox. |
-| T5 | Combinations of valid tools cannot silently escape policy. |
+| T1 | 工具职责是正交的。 |
+| T2 | 调用和结果记录到 session 日志。 |
+| T3 | 无效调用可以回滚或纠正。 |
+| T4 | 凭据不进入沙箱。 |
+| T5 | 有效工具组合不能静默逃逸策略。 |
 
-## 16.4 Verification pillar
+## 16.4 Verification 支柱
 
-| # | Check |
+| # | 检查项 |
 |---|---|
-| V1 | Generator and evaluator are distinct. |
-| V2 | Specs flow into property tests automatically or semi-automatically. |
-| V3 | Every verdict is persisted in an audit trail. |
-| V4 | Linting resists self-serving or sycophantic outputs. |
-| V5 | External evidence can justify correctness without trusting the verifier's own output. |
+| V1 | 生成器和评估器是分离的。 |
+| V2 | 规格自动或半自动流入性质测试。 |
+| V3 | 每个裁决都持久化到审计轨迹。 |
+| V4 | Linting 能抵抗自利或迎合式输出。 |
+| V5 | 外部证据可以证明正确性，而不必信任验证器自己的输出。 |
 
-## 16.5 Scoring
+## 16.5 评分
 
-- 16+ `✅`: L4, strong maturity
-- 12-15 `✅`: L3, independent verification layer exists
-- 8-11 `✅`: L2, session protocol is real but incomplete
-- 4-7 `✅`: L1, session exists but protocol is weak
-- below 4 `✅`: L0, still prompt-centric
+- 16+ 个 `✅`：L4，强成熟度
+- 12-15 个 `✅`：L3，已有独立验证层
+- 8-11 个 `✅`：L2，session 协议真实存在但不完整
+- 4-7 个 `✅`：L1，session 存在但协议较弱
+- 低于 4 个 `✅`：L0，仍然以 prompt 为中心
 
 ---
 
@@ -57,7 +57,7 @@ Use the matrix below to score a team or product. Mark each row as `❌`, `⚠️
 
 #### 来自 `appendix-b-self-audit-matrix.md`：附录 B · Harness 四柱自查矩阵
 
-_源材料角色：full four-pillar self-audit matrix._
+_源材料角色：完整四支柱自查矩阵。_
 
 
 #### 附录 B · Harness 四柱自查矩阵

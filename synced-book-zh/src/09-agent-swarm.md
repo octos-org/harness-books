@@ -1,8 +1,8 @@
 # 8. Agent 群体编排：Harness 如何扩展团队而不只是代码
 
-Harness is also a coordination system for multi-agent and multi-owner delivery.
+Harness 也是一个用于多 agent、多 owner 交付的协调系统。
 
-## 8.1 Work decomposition pattern
+## 8.1 工作分解模式
 
 ```text
 Program Manager
@@ -17,19 +17,17 @@ Release/Operator Owner
   -> owns live gate + diagnostics + rollback policy
 ```
 
-Without this split, teams merge partial truths that pass local tests but fail system truth.
+没有这种拆分，团队会合并通过本地测试、但破坏系统事实的局部真相。
 
-## 8.2 Anti-chaos rule
+## 8.2 反混乱规则
 
-No workstream may redefine contract semantics unilaterally after gates are active.  
-Any change to schema, lifecycle semantics, or replay behavior must update:
+门禁激活后，任何工作流都不得单方面重定义契约语义。  
+任何 schema、生命周期语义或 replay 行为的变更，都必须在同一个 PR slice 中更新：
 
 - fixture
-- script gate
+- 脚本门禁
 - e2e spec
 - docs
-
-in one PR slice.
 
 ---
 
@@ -38,7 +36,7 @@ in one PR slice.
 
 #### 来自 `14-many-brains-many-hands.md`：第 14 章 · Many Brains, Many Hands —— 终局愿景
 
-_源材料角色：multi-agent orchestration and terminal vision._
+_源材料角色：多 agent 编排与终局愿景。_
 
 
 #### 第 14 章 · Many Brains, Many Hands —— 终局愿景

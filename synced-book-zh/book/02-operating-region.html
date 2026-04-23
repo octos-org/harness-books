@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-536ebfa7.js";
+            window.path_to_searchindex_js = "searchindex-47384e27.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -175,95 +175,95 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="1-llm-的工作区间为什么控制系统必不可少"><a class="header" href="#1-llm-的工作区间为什么控制系统必不可少">1. LLM 的工作区间：为什么控制系统必不可少</a></h1>
-<p>The central engineering goal is not “make the model smarter in isolation.”<br>The practical goal is to keep the LLM inside its best context and operating region for as much of the task horizon as possible.</p>
-<p>Two analogies are useful:</p>
+<p>核心工程目标不是“孤立地让模型更聪明”。<br>真正的实践目标，是让 LLM 在尽可能长的任务周期里停留在它最擅长的上下文和工作区间内。</p>
+<p>有两个类比很有用：</p>
 <ul>
-<li>CPU cache/RAM locality: when working sets stay local and coherent, throughput is predictable; once locality is lost, performance collapses and variance rises.</li>
-<li>Semiconductor amplifier linear region: in the linear zone, output tracks input with acceptable distortion; outside it, clipping/saturation makes output uncontrolled.</li>
+<li>CPU 缓存/RAM 局部性：工作集保持局部且一致时，吞吐是可预测的；一旦局部性丢失，性能会坍塌，方差会升高。</li>
+<li>半导体放大器的线性区：在线性区里，输出能以可接受的失真跟随输入；离开这个区间后，削顶和饱和会让输出失控。</li>
 </ul>
-<p>LLMs show the same practical behavior. There is a usable deterministic/high-quality zone where:</p>
+<p>LLM 在实践中也呈现类似行为。它存在一个可用的确定性/高质量区间，其中：</p>
 <ul>
-<li>task constraints are explicit and recent</li>
-<li>tool interfaces are unambiguous</li>
-<li>feedback loops are short and verifiable</li>
-<li>state transitions are coherent across turns</li>
+<li>任务约束明确且足够新</li>
+<li>工具接口没有歧义</li>
+<li>反馈回路短且可验证</li>
+<li>跨轮次的状态迁移保持一致</li>
 </ul>
-<p>Outside this zone, quality becomes unstable:</p>
+<p>离开这个区间后，质量会变得不稳定：</p>
 <ul>
-<li>hallucinated state and stale assumptions increase</li>
-<li>tool invocation quality drifts</li>
-<li>long-horizon coherence breaks</li>
-<li>confidence language diverges from actual correctness</li>
+<li>幻觉状态和陈旧假设增加</li>
+<li>工具调用质量漂移</li>
+<li>长周期一致性断裂</li>
+<li>自信语言和真实正确性分离</li>
 </ul>
-<h2 id="11-control-stack-evolution-in-autonomous-systems"><a class="header" href="#11-control-stack-evolution-in-autonomous-systems">1.1 Control-stack evolution in autonomous systems</a></h2>
-<p>Octos engineering evolved as layered outer controls that keep long-running work in that quality zone:</p>
+<h2 id="11-自主系统中的控制栈演化"><a class="header" href="#11-自主系统中的控制栈演化">1.1 自主系统中的控制栈演化</a></h2>
+<p>Octos 的工程实践演化出一组外层控制，用来让长任务尽量留在这个质量区间内：</p>
 <pre><code class="language-text">Prompt engineering
-  -&gt; improves local single-turn behavior
+  -&gt; 改善局部单轮行为
 Context engineering
-  -&gt; stabilizes multi-turn behavior (AGENTS.md, skills, memory, policy context)
+  -&gt; 稳定多轮行为（AGENTS.md、skills、memory、policy context）
 Harness engineering
-  -&gt; stabilizes long-horizon autonomous behavior with durable runtime contracts
+  -&gt; 用持久运行时契约稳定长周期自治行为
 </code></pre>
-<p>Prompt engineering alone cannot provide durable state truth.<br>Context engineering improves this but still depends on probabilistic adherence.<br>Harness engineering adds runtime-level guardrails and evidence, so the system can recover from model drift instead of pretending drift does not happen.</p>
-<h2 id="12-context-engineering-as-pre-harness-discipline"><a class="header" href="#12-context-engineering-as-pre-harness-discipline">1.2 Context engineering as pre-harness discipline</a></h2>
-<p>Before harness maturity, context engineering carries most control weight:</p>
+<p>单靠 prompt engineering 无法提供持久的状态事实。<br>Context engineering 能改善这一点，但仍依赖概率性的遵守。<br>Harness engineering 增加运行时级别的护栏和证据，使系统可以从模型漂移中恢复，而不是假装漂移不存在。</p>
+<h2 id="12-context-engineering-是-harness-前置纪律"><a class="header" href="#12-context-engineering-是-harness-前置纪律">1.2 Context engineering 是 harness 前置纪律</a></h2>
+<p>在 harness 成熟之前，上下文工程承担大部分控制重量：</p>
 <ul>
-<li><code>AGENTS.md</code> and role instructions constrain planning style</li>
-<li>skills encode reusable, domain-specific procedures</li>
-<li>memory captures user/project facts to reduce repeated drift</li>
-<li>bounded tool policies reduce unsafe exploration</li>
+<li><code>AGENTS.md</code> 和角色指令约束规划风格</li>
+<li>skills 编码可复用的领域流程</li>
+<li>memory 记录用户/项目事实，减少重复漂移</li>
+<li>有边界的工具策略减少不安全探索</li>
 </ul>
-<p>This layer is necessary. It is not sufficient for long-running, concurrent, background work.</p>
-<h2 id="13-harness-engineering-as-the-outer-deterministic-loop"><a class="header" href="#13-harness-engineering-as-the-outer-deterministic-loop">1.3 Harness engineering as the outer deterministic loop</a></h2>
-<p>Harness adds deterministic control loops around probabilistic model output:</p>
+<p>这一层是必要的，但对长任务、并发和后台工作并不充分。</p>
+<h2 id="13-harness-engineering-是外层确定性循环"><a class="header" href="#13-harness-engineering-是外层确定性循环">1.3 Harness engineering 是外层确定性循环</a></h2>
+<p>Harness 在概率模型输出外增加确定性控制循环：</p>
 <ul>
-<li>recoverable, traceable workspace state</li>
-<li>tool-call lifecycle hooks and event sinks for observability</li>
-<li>verification/confirmation of outputs before terminal success</li>
-<li>durable task lifecycle and replay semantics</li>
-<li>explicit failure categories for repair and operator action</li>
+<li>可恢复、可追踪的工作区状态</li>
+<li>工具调用生命周期 hook 和事件 sink，用于可观测性</li>
+<li>终态成功前的输出验证/确认</li>
+<li>持久任务生命周期和回放语义</li>
+<li>面向修复和操作员行动的显式失败类别</li>
 </ul>
-<p>The harness does not replace model intelligence. It bounds it.</p>
-<h2 id="14-key-mechanisms-that-keep-the-system-in-zone"><a class="header" href="#14-key-mechanisms-that-keep-the-system-in-zone">1.4 Key mechanisms that keep the system in-zone</a></h2>
+<p>Harness 不替代模型智能。它约束模型智能。</p>
+<h2 id="14-让系统保持在区间内的关键机制"><a class="header" href="#14-让系统保持在区间内的关键机制">1.4 让系统保持在区间内的关键机制</a></h2>
 <ol>
-<li>Recoverable and traceable workspace contracts</li>
-<li>Tool-call event hooks (<code>before_*</code>, <code>after_*</code>, spawn hooks) for visibility</li>
-<li>Artifact and validator contracts that confirm output truth</li>
-<li>Self-repair loops that update memory/skills from failures</li>
-<li>Replayable status APIs so UI/operator surfaces stay aligned</li>
+<li>可恢复、可追踪的工作区契约</li>
+<li>工具调用事件 hook（<code>before_*</code>、<code>after_*</code>、spawn hooks）用于可见性</li>
+<li>产物和验证器契约，用来确认输出事实</li>
+<li>从失败中更新 memory/skills 的自修复循环</li>
+<li>可回放状态 API，保证 UI/操作员表面保持一致</li>
 </ol>
-<p>This is how “good output sometimes” becomes “stable output under stress.”</p>
-<h2 id="15-workflow-vs-free-form-exploration-tradeoff"><a class="header" href="#15-workflow-vs-free-form-exploration-tradeoff">1.5 Workflow vs free-form exploration tradeoff</a></h2>
-<p>Workflow-constrained execution gives stronger guarantees:</p>
+<p>这就是“偶尔输出好结果”变成“压力下稳定输出”的方式。</p>
+<h2 id="15-工作流约束与自由探索的取舍"><a class="header" href="#15-工作流约束与自由探索的取舍">1.5 工作流约束与自由探索的取舍</a></h2>
+<p>受工作流约束的执行能提供更强保证：</p>
 <ul>
-<li>better phase monotonicity</li>
-<li>better artifact predictability</li>
-<li>easier replay and operator diagnosis</li>
+<li>更好的阶段单调性</li>
+<li>更好的产物可预测性</li>
+<li>更容易回放和操作员诊断</li>
 </ul>
-<p>Free-form exploration gives higher ceiling on novel problem-solving, but higher variance.</p>
-<p>The practical strategy is hybrid:</p>
+<p>自由探索在新颖问题解决上有更高上限，但方差更高。</p>
+<p>实践策略是混合式：</p>
 <ul>
-<li>use workflow rails for long-running/high-cost/high-risk segments</li>
-<li>allow bounded free-form exploration inside explicit budgets and checks</li>
+<li>对长时间/高成本/高风险片段使用工作流轨道</li>
+<li>在明确预算和检查内允许有边界的自由探索</li>
 </ul>
-<h2 id="16-multi-agent-orchestration-and-autonomy-levels"><a class="header" href="#16-multi-agent-orchestration-and-autonomy-levels">1.6 Multi-agent orchestration and autonomy levels</a></h2>
-<p>As systems move from L2 toward L3/L4 autonomy, long-horizon stability matters more than single-turn brilliance.</p>
+<h2 id="16-多-agent-编排与自治等级"><a class="header" href="#16-多-agent-编排与自治等级">1.6 多 agent 编排与自治等级</a></h2>
+<p>当系统从 L2 走向 L3/L4 自治时，长周期稳定性比单轮聪明更重要。</p>
 <ul>
-<li>L2-style assistive behavior tolerates more manual recovery.</li>
-<li>L3/L4-style delegated execution requires self-monitoring, repair, and bounded autonomy.</li>
+<li>L2 式辅助行为可以容忍更多人工恢复。</li>
+<li>L3/L4 式委托执行需要自监控、修复和有边界的自治。</li>
 </ul>
-<p>Multi-agent orchestration helps by decomposing behavior:</p>
+<p>多 agent 编排通过行为分解提供帮助：</p>
 <ul>
-<li>planner/coordinator agents manage phase intent</li>
-<li>specialist agents execute narrow tool domains</li>
-<li>verifier/operator agents enforce contracts and escalation</li>
+<li>planner/coordinator agent 管理阶段意图</li>
+<li>specialist agent 执行狭窄工具领域</li>
+<li>verifier/operator agent 执行契约和升级</li>
 </ul>
-<p>Harness is the substrate that makes this decomposition reliable over time.</p>
-<p>That is why the rest of the book keeps alternating between theory and Octos incidents. The incidents show where the control plane broke; the theory explains why the same break keeps reappearing unless session, tool, verification, and replay are treated as one system.</p>
+<p>Harness 是让这种分解长期可靠的底座。</p>
+<p>因此本书后续会在理论和 Octos 事故之间来回切换。事故展示控制平面在哪里断裂；理论解释为什么如果不把 session、tool、verification 和 replay 当作一个系统，同样的断裂会反复出现。</p>
 <hr>
 <h3 id="扩展源材料"><a class="header" href="#扩展源材料">扩展源材料</a></h3>
 <h4 id="来自-01-two-layersmd第-1-章--两种驾驭工程"><a class="header" href="#来自-01-two-layersmd第-1-章--两种驾驭工程">来自 <code>01-two-layers.md</code>：第 1 章 · 两种驾驭工程</a></h4>
-<p><em>源材料角色：Layer 1 / Layer 2 boundary.</em></p>
+<p><em>源材料角色：Layer 1 / Layer 2 边界。</em></p>
 <h4 id="第-1-章--两种驾驭工程"><a class="header" href="#第-1-章--两种驾驭工程">第 1 章 · 两种驾驭工程</a></h4>
 <blockquote>
 <p>你在读的这本书,<strong>同时在讲两件事</strong>。
@@ -376,7 +376,7 @@ Layer 2 的典型答案:<strong>工作量变多</strong>。新一代模型让 ag
 <hr>
 <p><strong>第 2 章</strong>进入两层共享的第一块基石:<strong>三把嵌套的尺</strong>,重新安置你对“我在哪个尺度上工作“ 的判断。</p>
 <h4 id="来自-02-from-prompt-to-harnessmd第-1-章--从-prompt-到-harness--一次视角的位移"><a class="header" href="#来自-02-from-prompt-to-harnessmd第-1-章--从-prompt-到-harness--一次视角的位移">来自 <code>02-from-prompt-to-harness.md</code>：第 1 章 · 从 Prompt 到 Harness —— 一次视角的位移</a></h4>
-<p><em>源材料角色：prompt -&gt; context -&gt; harness progression.</em></p>
+<p><em>源材料角色：prompt -&gt; context -&gt; harness 的演进。</em></p>
 <h4 id="第-1-章--从-prompt-到-harness--一次视角的位移"><a class="header" href="#第-1-章--从-prompt-到-harness--一次视角的位移">第 1 章 · 从 Prompt 到 Harness —— 一次视角的位移</a></h4>
 <blockquote>
 <p>如果你觉得你的 agent “最近有点蠢”,<strong>先别改 prompt</strong>。
@@ -500,7 +500,7 @@ Layer 2 的典型答案:<strong>工作量变多</strong>。新一代模型让 ag
 <hr>
 <p><strong>第 1 章做完了一件事 —— 重新安置你的坐标系。</strong> 坐标系有了,下一步是方法论第一性原理 —— <strong>为什么代码是 AI 的输出,意图才是工程师的上游对象</strong>。那位凌晨两点的工程师下一步做了什么?他重新写了那个 feature 的 spec。第 2 章从那个动作开始。</p>
 <h4 id="来自-04-oldest-new-ideamd第-4-章--the-oldest-new-idea--稳定抽象的历史"><a class="header" href="#来自-04-oldest-new-ideamd第-4-章--the-oldest-new-idea--稳定抽象的历史">来自 <code>04-oldest-new-idea.md</code>：第 4 章 · The Oldest New Idea —— 稳定抽象的历史</a></h4>
-<p><em>源材料角色：stable abstraction and control-system lineage.</em></p>
+<p><em>源材料角色：稳定抽象与控制系统谱系。</em></p>
 <h4 id="第-4-章--the-oldest-new-idea--稳定抽象的历史"><a class="header" href="#第-4-章--the-oldest-new-idea--稳定抽象的历史">第 4 章 · The Oldest New Idea —— 稳定抽象的历史</a></h4>
 <blockquote>
 <p>“围绕一个昂贵核心搭稳定抽象层”,是每一次技术飞跃都重复出现的结构。

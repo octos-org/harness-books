@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-536ebfa7.js";
+            window.path_to_searchindex_js = "searchindex-47384e27.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -195,9 +195,9 @@ API (/sessions/:id/tasks + /events/stream)
         v
 UI status bubble / header / reload replay
 </code></pre>
-<p>Key rule: the UI is downstream, never authority.</p>
-<h2 id="41-lifecycle-model"><a class="header" href="#41-lifecycle-model">4.1 Lifecycle model</a></h2>
-<p>Public state machine:</p>
+<p>关键规则：UI 永远是下游，不是权威。</p>
+<h2 id="41-生命周期模型"><a class="header" href="#41-生命周期模型">4.1 生命周期模型</a></h2>
+<p>公开状态机：</p>
 <ul>
 <li><code>queued</code></li>
 <li><code>running</code></li>
@@ -205,18 +205,18 @@ UI status bubble / header / reload replay
 <li><code>ready</code></li>
 <li><code>failed</code></li>
 </ul>
-<p>Internal fine-grained states may exist, but product surfaces must not depend on unstable internal labels.</p>
-<h2 id="42-contract-layers"><a class="header" href="#42-contract-layers">4.2 Contract layers</a></h2>
-<pre><code class="language-text">Layer A: Capability manifest  (what app can do)
+<p>内部可以存在更细粒度状态，但产品表面不应依赖不稳定的内部标签。</p>
+<h2 id="42-契约层"><a class="header" href="#42-契约层">4.2 契约层</a></h2>
+<pre><code class="language-text">Layer A: Capability manifest  (app 能做什么)
 Layer B: Workspace policy     (artifact + validator + spawn contract)
 Layer C: Runtime result model (lifecycle + task state + delivery evidence)
 </code></pre>
-<h2 id="43-why-typed-events-matter"><a class="header" href="#43-why-typed-events-matter">4.3 Why typed events matter</a></h2>
-<p>Without typed events, progress is “chat-like hints.”<br>With typed events, progress is a data product that can be validated, replayed, and audited.</p>
+<h2 id="43-为什么类型化事件重要"><a class="header" href="#43-为什么类型化事件重要">4.3 为什么类型化事件重要</a></h2>
+<p>没有类型化事件，进度只是“类似聊天的提示”。<br>有了类型化事件，进度就是可以验证、回放和审计的数据产品。</p>
 <hr>
 <h3 id="扩展源材料"><a class="header" href="#扩展源材料">扩展源材料</a></h3>
 <h4 id="来自-06-session-pillarmd第-6-章--session-是可恢复的事实流"><a class="header" href="#来自-06-session-pillarmd第-6-章--session-是可恢复的事实流">来自 <code>06-session-pillar.md</code>：第 6 章 · Session 是可恢复的事实流</a></h4>
-<p><em>源材料角色：session as recoverable fact stream.</em></p>
+<p><em>源材料角色：session 作为可恢复事实流。</em></p>
 <h4 id="第-6-章--session-是可恢复的事实流"><a class="header" href="#第-6-章--session-是可恢复的事实流">第 6 章 · Session 是可恢复的事实流</a></h4>
 <blockquote>
 <p><strong>如果你的 agent 能被 kill 掉又能无缝续上</strong>,你在读的不是这本书,是一份你们团队早就走通的内部文档。
@@ -421,7 +421,7 @@ Layer C: Runtime result model (lifecycle + task state + delivery evidence)
 <hr>
 <p><strong>Session 立住了,第二个问题随之而来</strong>:谁来消费这条场外事实流?它被读出来之后,谁在做“读哪一段、做哪件事、把结果写回去“ 的决策?第 7 章把焦点转向<strong>harness 本身</strong> —— 作为 session 之上的检索-重组器,它必须无状态、可替换,不给自己攒任何私人记忆。</p>
 <h4 id="来自-07-harness-pillarmd第-7-章--harness-是可替换的调度脑干"><a class="header" href="#来自-07-harness-pillarmd第-7-章--harness-是可替换的调度脑干">来自 <code>07-harness-pillar.md</code>：第 7 章 · Harness 是可替换的调度脑干</a></h4>
-<p><em>源材料角色：replaceable harness scheduler and runtime interface.</em></p>
+<p><em>源材料角色：可替换 harness 调度器与运行时接口。</em></p>
 <h4 id="第-7-章--harness-是可替换的调度脑干"><a class="header" href="#第-7-章--harness-是可替换的调度脑干">第 7 章 · Harness 是可替换的调度脑干</a></h4>
 <blockquote>
 <p><strong>Session 立住了,谁去消费它?</strong>
@@ -608,7 +608,7 @@ def run(session_id: str):
 <hr>
 <p><strong>Harness 负责调度,自身不记事</strong>。第 8 章把焦点转向 <strong>harness 调度的那些“手“</strong> —— 工具词汇表。工具是 agent 能作用于世界的全部边界,也是事故最常发生的地方。Harness 是脑干,session 是档案,tools 是<strong>手</strong>;三者合起来,agent 这个工程对象才真正有了肉身。</p>
 <h4 id="来自-08-tools-pillarmd第-8-章--tools-是可问责的动作词汇表"><a class="header" href="#来自-08-tools-pillarmd第-8-章--tools-是可问责的动作词汇表">来自 <code>08-tools-pillar.md</code>：第 8 章 · Tools 是可问责的动作词汇表</a></h4>
-<p><em>源材料角色：tools as accountable action vocabulary.</em></p>
+<p><em>源材料角色：tools 作为可问责动作词汇表。</em></p>
 <h4 id="第-8-章--tools-是可问责的动作词汇表"><a class="header" href="#第-8-章--tools-是可问责的动作词汇表">第 8 章 · Tools 是可问责的动作词汇表</a></h4>
 <blockquote>
 <p><strong>命题</strong>:Tool <strong>不是</strong> 给 agent 的 API 集合,<strong>是</strong>动作词汇表;词汇表的三个硬要求是<strong>正交、可问责、与权限绑定</strong>。定义词汇表的人,就在定义 agent 的社会契约。</p>
@@ -813,7 +813,7 @@ def run(session_id: str):
 <hr>
 <p><strong>前三柱是“做什么 + 怎么做“</strong>。Session 是事实,harness 是调度,tools 是动作边界。<strong>第 9 章的第四柱回答一个更锋利的问题:谁来证明 agent 做的事是对的?</strong> —— verification 的独立性,是本书反脆弱论证的核心支点;也是开场那位工程师在下一次季度复查里,必须准备好回答的第三个问题。</p>
 <h4 id="来自-09-verification-pillarmd第-9-章--verification-的独立性"><a class="header" href="#来自-09-verification-pillarmd第-9-章--verification-的独立性">来自 <code>09-verification-pillar.md</code>：第 9 章 · Verification 的独立性</a></h4>
-<p><em>源材料角色：independent verification and audit trail.</em></p>
+<p><em>源材料角色：独立 verification 与 audit trail。</em></p>
 <h4 id="第-9-章--verification-的独立性"><a class="header" href="#第-9-章--verification-的独立性">第 9 章 · Verification 的独立性</a></h4>
 <blockquote>
 <p><strong>命题</strong>:任何足够重要的 AI 系统,都需要一个<strong>独立于自身</strong>的验证层。这种独立性是<strong>结构性的</strong>(位置属性),不是<strong>能力性的</strong>(多聪明)。这一条是本书反脆弱论证的核心支点 —— 模型再强,也不能让同一个体既是生成者又是唯一验证者。</p>

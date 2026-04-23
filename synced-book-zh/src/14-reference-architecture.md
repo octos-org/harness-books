@@ -1,15 +1,15 @@
 # 13. 参考架构片段
 
-## 13.1 Task truth flow
+## 13.1 任务事实流
 
 ```text
 tool emits progress -> runtime validates event -> supervisor persists state
 -> TaskStatusChanged -> API/SSE -> UI replay/status bubble
 ```
 
-Any direct UI mutation outside this chain is a reliability risk.
+任何绕开这条链的直接 UI 变更都是可靠性风险。
 
-## 13.2 Contract enforcement flow
+## 13.2 契约执行流
 
 ```text
 spawn success
@@ -20,7 +20,7 @@ spawn success
   -> persist delivery evidence
 ```
 
-Marking terminal success before this flow completes is a contract violation.
+在这条流程完成前标记终态成功，是契约违例。
 
 ---
 

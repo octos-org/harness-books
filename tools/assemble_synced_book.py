@@ -8,6 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTLINE = ROOT / "sources" / "octos-outline" / "OCTOS_HARNESS_ENGINEERING_AI_SOFTWARE_FACTORY.md"
+ZH_OUTLINE = ROOT / "sources" / "octos-outline" / "OCTOS_HARNESS_ENGINEERING_AI_SOFTWARE_FACTORY.zh.md"
 FULL_SRC = ROOT / "sources" / "large-mdbook-src"
 OUT_DIR = ROOT / "synced-book"
 SINGLE_OUT = ROOT / "OCTOS_HARNESS_ENGINEERING_AI_SOFTWARE_FACTORY_FULL_SYNCED.md"
@@ -126,6 +127,34 @@ ZH_HEADINGS: dict[str, str] = {
     "17. Appendix C: selected glossary": "17. 附录 C：精选术语表",
     "18. Appendix D: role-based reading paths": "18. 附录 D：按角色阅读路径",
     "19. References and research trail": "19. 参考文献与研究轨迹",
+}
+
+
+ZH_SOURCE_NOTES: dict[str, str] = {
+    "book positioning, audience, and frontmatter": "全书定位、读者对象与前置说明",
+    "larger-book opening argument and two-layer framing": "大书开场论证与两层框架",
+    "larger-book reading guide": "大书阅读指南",
+    "original mdBook table of contents for traceability": "原 mdBook 目录，用于可追溯性",
+    "Layer 1 / Layer 2 boundary": "Layer 1 / Layer 2 边界",
+    "prompt -> context -> harness progression": "prompt -> context -> harness 的演进",
+    "stable abstraction and control-system lineage": "稳定抽象与控制系统谱系",
+    "intent/spec/harness loop": "intent/spec/harness 闭环",
+    "OpenAI 1M LOC case and AI coding factory mechanics": "OpenAI 1M LOC 案例与 AI coding 工厂机制",
+    "failure museum, root-cause taxonomy, antifragile repair": "失败模式博物馆、根因分类与反脆弱修复",
+    "session as recoverable fact stream": "session 作为可恢复事实流",
+    "replaceable harness scheduler and runtime interface": "可替换 harness 调度器与运行时接口",
+    "tools as accountable action vocabulary": "tools 作为可问责动作词汇表",
+    "independent verification and audit trail": "独立 verification 与 audit trail",
+    "multi-agent orchestration and terminal vision": "多 agent 编排与终局愿景",
+    "short-loop vs long-loop operating principles": "短循环与长循环的操作原则",
+    "knowledge/skill promotion and anti-patterns": "knowledge/skill 晋升与反模式",
+    "self-modifying harness boundaries": "自修改 harness 的边界",
+    "larger-book closing argument": "大书收束论证",
+    "full foundation-text appendix": "完整奠基文本附录",
+    "full four-pillar self-audit matrix": "完整四支柱自查矩阵",
+    "full glossary": "完整术语表",
+    "full role-based reading guide": "完整按角色阅读指南",
+    "full reference list": "完整参考文献列表",
 }
 
 
@@ -293,10 +322,6 @@ def zh_heading(heading: str) -> str:
     return ZH_HEADINGS.get(heading, heading)
 
 
-def zh_section_body(heading: str, body: str) -> str:
-    return body.replace(f"## {heading}", f"## {zh_heading(heading)}", 1)
-
-
 def expansion_for_zh(section_heading: str) -> str:
     sources = SECTION_SOURCES.get(section_heading, [])
     if not sources:
@@ -310,12 +335,13 @@ def expansion_for_zh(section_heading: str) -> str:
         src_path = FULL_SRC / item.path
         content = read(src_path)
         title = source_title(content, item.path)
-        parts.append(f"\n#### 来自 `{item.path}`：{title}\n\n_源材料角色：{item.note}._\n\n")
+        note = ZH_SOURCE_NOTES.get(item.note, item.note)
+        parts.append(f"\n#### 来自 `{item.path}`：{title}\n\n_源材料角色：{note}。_\n\n")
         parts.append(shift_headings(content, 3))
     return "\n".join(parts)
 
 
-def write_zh_mdbook(title_block: str, sections: list[tuple[str, str]]) -> None:
+def write_zh_mdbook(title_block: str, zh_sections: list[tuple[str, str]]) -> None:
     src_dir = ZH_OUT_DIR / "src"
     src_dir.mkdir(parents=True, exist_ok=True)
 
@@ -337,27 +363,25 @@ def write_zh_mdbook(title_block: str, sections: list[tuple[str, str]]) -> None:
     (src_dir / "00-title.md").write_text(frontmatter, encoding="utf-8")
 
     summary_lines = ["# Summary", "", "[标题页](./00-title.md)", ""]
-    for heading, _ in sections:
+    for heading, _ in zh_sections:
         slug = SECTION_SLUGS[heading]
         summary_lines.append(f"- [{zh_heading(heading)}](./{slug})")
     summary_lines.append("")
     (src_dir / "SUMMARY.md").write_text("\n".join(summary_lines), encoding="utf-8")
 
-    for heading, body in sections:
-        section_text = convert_section_for_mdbook(zh_section_body(heading, body))
+    for heading, body in zh_sections:
+        section_text = convert_section_for_mdbook(body)
         section_text += expansion_for_zh(heading)
         (src_dir / SECTION_SLUGS[heading]).write_text(section_text, encoding="utf-8")
 
 
-def write_zh_single_file(title_block: str, sections: list[tuple[str, str]]) -> None:
+def write_zh_single_file(title_block: str, zh_sections: list[tuple[str, str]]) -> None:
     parts = [
-        "# 驾驭工程：Octos 纲要同步版\n\n"
-        "> 同步版说明：本文以 Octos 短纲要作为控制结构，并把较大的 mdBook 源材料插入到匹配章节下。\n\n"
-        "## 原始纲要标题块\n\n"
-        + shift_headings(title_block, 1),
+        title_block.strip(),
+        "\n> 同步版说明：本文以 Octos 短纲要作为控制结构，并把较大的 mdBook 源材料插入到匹配章节下。\n",
     ]
-    for heading, body in sections:
-        parts.append(zh_section_body(heading, body))
+    for heading, body in zh_sections:
+        parts.append(body)
         parts.append(expansion_for_zh(heading))
     ZH_SINGLE_OUT.write_text("\n\n".join(part.strip() for part in parts if part.strip()) + "\n", encoding="utf-8")
 
@@ -389,15 +413,24 @@ def write_zh_map(sections: list[tuple[str, str]]) -> None:
 
 def main() -> None:
     title_block, sections = split_outline(read(OUTLINE))
+    zh_title_block, zh_raw_sections = split_outline(read(ZH_OUTLINE))
     missing = [heading for heading, _ in sections if heading not in SECTION_SLUGS]
     if missing:
         raise SystemExit(f"Missing output slug mapping for sections: {missing}")
+    if len(zh_raw_sections) != len(sections):
+        raise SystemExit(
+            f"Chinese outline section count mismatch: {len(zh_raw_sections)} != {len(sections)}"
+        )
+    zh_sections = [
+        (heading, zh_body)
+        for (heading, _), (_, zh_body) in zip(sections, zh_raw_sections)
+    ]
 
     write_single_file(title_block, sections)
     write_mdbook(title_block, sections)
     write_map(sections)
-    write_zh_single_file(title_block, sections)
-    write_zh_mdbook(title_block, sections)
+    write_zh_single_file(zh_title_block, zh_sections)
+    write_zh_mdbook(zh_title_block, zh_sections)
     write_zh_map(sections)
 
 
