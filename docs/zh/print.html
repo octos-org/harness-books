@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-4fa2a8b1.js";
+            window.path_to_searchindex_js = "searchindex-87d8682b.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -289,10 +289,9 @@ Harness 工程
 <h2 id="15-为什么会出现最佳工作区间"><a class="header" href="#15-为什么会出现最佳工作区间">1.5 为什么会出现“最佳工作区间”</a></h2>
 <p>这里先明确一个概念：所谓“最佳工作区间”，不是说所有模型都存在一个固定的 magic number，比如“128K 最好、256K 开始变差”。真实情况更像一个随任务结构变化的工作带宽。它描述的是：在多大范围内，模型还能稳定完成检索、遵循指令、保持多步推理、避免位置偏置，并且让系统在成本和时延上可接受。</p>
 <p>换句话说，最佳工作区间不是模型 brochure 上的容量数字，而是模型、任务、提示布局、信息密度和服务成本共同决定的工程区间。</p>
-<p>下文中的 <code>[11]</code> 到 <code>[20]</code> 对应第 19 节参考文献。</p>
 <h3 id="151-位置偏置不是错觉而是长上下文的基本病灶"><a class="header" href="#151-位置偏置不是错觉而是长上下文的基本病灶">1.5.1 位置偏置不是错觉，而是长上下文的基本病灶</a></h3>
-<p>长上下文退化最经典的证据来自 <em>Lost in the Middle</em>。这项工作讨论的不是“模型能不能读到很长的输入”，而是“模型是否均匀地用好了整段输入”。它的核心发现可以概括为：相关信息放在开头或结尾时表现更好，放在中间时明显更差（Liu et al., 2024，见[11]）。</p>
-<p>后续 <em>Found in the Middle</em> 进一步把这个现象与注意力机制联系起来，直接给出短语级结论：模型存在 <code>"U-shaped attention bias"</code>（Hsieh et al., 2024，见[12]）。也就是说，序列两端会天然吃到更多注意力，即便它们并不是最相关的信息。</p>
+<p>长上下文退化最经典的证据来自 <em>Lost in the Middle</em>。这项工作讨论的不是“模型能不能读到很长的输入”，而是“模型是否均匀地用好了整段输入”。它的核心发现可以概括为：相关信息放在开头或结尾时表现更好，放在中间时明显更差。<sup class="footnote-reference" id="fr-ltm-1"><a href="#footnote-ltm">1</a></sup></p>
+<p>后续 <em>Found in the Middle</em> 进一步把这个现象与注意力机制联系起来，直接给出短语级结论：模型存在 <code>"U-shaped attention bias"</code>。<sup class="footnote-reference" id="fr-fitm-1"><a href="#footnote-fitm">2</a></sup> 也就是说，序列两端会天然吃到更多注意力，即便它们并不是最相关的信息。</p>
 <p>这件事很关键，因为它说明：</p>
 <ul>
 <li>上下文窗口不是平的，而是有地形的；</li>
@@ -300,19 +299,19 @@ Harness 工程
 <li>中间位置的信息天然更容易掉权；</li>
 <li>指令布局不是文案问题，而是推理成功率问题。</li>
 </ul>
-<p>这也是为什么 Anthropic 的官方长上下文文档会给出非常操作性的建议：</p>
+<p>这也是为什么 Anthropic 的官方长上下文文档会给出非常操作性的建议：<sup class="footnote-reference" id="fr-anthropic-long-1"><a href="#footnote-anthropic-long">3</a></sup></p>
 <blockquote>
-<p>“Put longform data at the top”（Anthropic，见[13]）</p>
+<p>“Put longform data at the top”</p>
 </blockquote>
 <blockquote>
-<p>“Queries at the end can improve response quality by up to 30% in tests.”（Anthropic，见[13]）</p>
+<p>“Queries at the end can improve response quality by up to 30% in tests.”</p>
 </blockquote>
 <p>如果上下文窗口内部真的没有位置效应，那么这种布局建议就不该对质量产生这么大影响。恰恰因为位置偏置真实存在，所以 prompt 的空间编排本身已经成为性能变量。</p>
 <h3 id="152-1m-命中-needle不等于1m-适合真实任务"><a class="header" href="#152-1m-命中-needle不等于1m-适合真实任务">1.5.2 “1M 命中 needle”不等于“1M 适合真实任务”</a></h3>
-<p>长上下文宣传里最容易让人误判的一点，是把单 needle 检索成绩外推到真实 agent 工作流。Google 在 Gemini 1.5 的发布文中报告：在 NIAH 测试里，1.5 Pro 在 1M token 下能把嵌入文本找到 <code>"99% of the time"</code>（Google，见[14]）。这个结果当然重要，因为它证明超长上下文不是纯噱头。</p>
-<p>但同一套官方资料其实也给出了边界条件。Google 的 long context 开发文档明确说：一旦问题从单一 needle 变成多个信息点，性能就不会保持同样精度；文档原话是：</p>
+<p>长上下文宣传里最容易让人误判的一点，是把单 needle 检索成绩外推到真实 agent 工作流。Google 在 Gemini 1.5 的发布文中报告：在 NIAH 测试里，1.5 Pro 在 1M token 下能把嵌入文本找到 <code>"99% of the time"</code>。<sup class="footnote-reference" id="fr-gemini15-1"><a href="#footnote-gemini15">4</a></sup> 这个结果当然重要，因为它证明超长上下文不是纯噱头。</p>
+<p>但同一套官方资料其实也给出了边界条件。Google 的 long context 开发文档明确说：一旦问题从单一 needle 变成多个信息点，性能就不会保持同样精度；文档原话是：<sup class="footnote-reference" id="fr-google-long-context-1"><a href="#footnote-google-long-context">5</a></sup></p>
 <blockquote>
-<p>“performance can vary to a wide degree depending on the context”（Google AI for Developers，见[15]）</p>
+<p>“performance can vary to a wide degree depending on the context”</p>
 </blockquote>
 <p>这正是工程上最需要听懂的地方。单 needle 成绩回答的是“有没有基础寻址能力”；真实任务关心的是：</p>
 <ul>
@@ -324,7 +323,7 @@ Harness 工程
 <p>所以，“1M token 可用”与“1M token 最适合当前任务”之间，中间差了整整一层工作负载分析。</p>
 <h3 id="153-一旦去掉字面匹配真实长上下文理解会明显退化"><a class="header" href="#153-一旦去掉字面匹配真实长上下文理解会明显退化">1.5.3 一旦去掉字面匹配，真实长上下文理解会明显退化</a></h3>
 <p>如果说 <em>Lost in the Middle</em> 和 <em>Found in the Middle</em> 提供了理论上的位置偏置，那么更晚近的评测已经把问题推到更接近工程实战的地方。</p>
-<p><em>NoLiMa</em> 的设计很有价值，因为它专门去掉了传统 NIAH 里容易靠字面重合取巧的部分，逼模型做“没有明显表面线索的定位与关联”。结果是：在 32K 上下文时，13 个声称支持至少 128K 的模型里，有 11 个已经跌到各自短上下文强基线的一半以下；其中 GPT-4o 从 99.3% 掉到 69.7%（Modarressi et al., 2025，见[16]）。论文给出的解释也很直白：上下文一长、字面线索一弱，attention 更难把相关信息拉出来。</p>
+<p><em>NoLiMa</em> 的设计很有价值，因为它专门去掉了传统 NIAH 里容易靠字面重合取巧的部分，逼模型做“没有明显表面线索的定位与关联”。结果是：在 32K 上下文时，13 个声称支持至少 128K 的模型里，有 11 个已经跌到各自短上下文强基线的一半以下；其中 GPT-4o 从 99.3% 掉到 69.7%。<sup class="footnote-reference" id="fr-nolima-1"><a href="#footnote-nolima">6</a></sup> 论文给出的解释也很直白：上下文一长、字面线索一弱，attention 更难把相关信息拉出来。</p>
 <p>这对 agent 场景几乎是一记正中靶心的提醒。因为 agent 的真实任务，恰恰很少是“把一句完全相同的话从大文档里找出来”。更常见的是：</p>
 <ul>
 <li>从代码、日志、配置、文档之间建立隐含关联；</li>
@@ -334,7 +333,7 @@ Harness 工程
 </ul>
 <p>这些都更像 NoLiMa，而不是单 needle NIAH。</p>
 <h3 id="154-到代码任务里窗口越大也不代表理解越稳"><a class="header" href="#154-到代码任务里窗口越大也不代表理解越稳">1.5.4 到代码任务里，窗口越大也不代表理解越稳</a></h3>
-<p>如果用户任务是写代码、修 bug、跨仓库理解依赖关系，那么长上下文的真实挑战还要再上一个台阶。<em>LongCodeBench</em> 直接把问题放到了代码理解和修复上，而且评测的是 up to 1M context 的真实编码场景。作者的结论并不乐观：long-context 对所有模型仍是弱项；样例中，Claude 3.5 Sonnet 从 29% 降到 3%，Qwen2.5 从 70.2% 降到 40%（Rando et al., 2025，见[17]）。</p>
+<p>如果用户任务是写代码、修 bug、跨仓库理解依赖关系，那么长上下文的真实挑战还要再上一个台阶。<em>LongCodeBench</em> 直接把问题放到了代码理解和修复上，而且评测的是 up to 1M context 的真实编码场景。作者的结论并不乐观：long-context 对所有模型仍是弱项；样例中，Claude 3.5 Sonnet 从 29% 降到 3%，Qwen2.5 从 70.2% 降到 40%。<sup class="footnote-reference" id="fr-longcodebench-1"><a href="#footnote-longcodebench">7</a></sup></p>
 <p>这说明一个非常实际的事实：代码不是长文档摘要。代码任务通常要求：</p>
 <ul>
 <li>精确定位局部符号与跨文件调用关系；</li>
@@ -362,7 +361,7 @@ Harness 工程
 </ul>
 <p>这也是本书一直强调 session、tool、verification 和 replay 的原因：不是所有信息都应该留在 prompt 里。很多信息应该变成结构化外部状态，再按需投喂。</p>
 <h3 id="156-工程结论最佳工作区间是一个设计目标不是自然礼物"><a class="header" href="#156-工程结论最佳工作区间是一个设计目标不是自然礼物">1.5.6 工程结论：最佳工作区间是一个设计目标，不是自然礼物</a></h3>
-<p>综合 [11][12][13][14][15][16][17]，可以得出一个足够强的工程判断：</p>
+<p>综合前述研究与厂商文档，已经可以得出一个足够强的工程判断：<sup class="footnote-reference" id="fr-ltm-2"><a href="#footnote-ltm">1</a></sup> <sup class="footnote-reference" id="fr-fitm-2"><a href="#footnote-fitm">2</a></sup> <sup class="footnote-reference" id="fr-anthropic-long-2"><a href="#footnote-anthropic-long">3</a></sup> <sup class="footnote-reference" id="fr-gemini15-2"><a href="#footnote-gemini15">4</a></sup> <sup class="footnote-reference" id="fr-google-long-context-2"><a href="#footnote-google-long-context">5</a></sup> <sup class="footnote-reference" id="fr-nolima-2"><a href="#footnote-nolima">6</a></sup> <sup class="footnote-reference" id="fr-longcodebench-2"><a href="#footnote-longcodebench">7</a></sup></p>
 <ul>
 <li>上下文窗口内部存在位置偏置；</li>
 <li>指令和 query 的相对位置会显著影响结果；</li>
@@ -386,37 +385,37 @@ Harness 工程
 <li>系统调度账。</li>
 </ol>
 <h3 id="161-计费视角常常近似线性但官方价格表本身也在提醒边界"><a class="header" href="#161-计费视角常常近似线性但官方价格表本身也在提醒边界">1.6.1 计费视角常常近似线性，但官方价格表本身也在提醒边界</a></h3>
-<p>以 OpenAI 2026 年 4 月 23 日公开价格页为例，GPT-5.4 标准输入价是 <code>$2.50 / 1M tokens</code>，缓存输入是 <code>$0.25 / 1M tokens</code>，GPT-5.4 mini 标准输入价是 <code>$0.75 / 1M tokens</code>（OpenAI，见[20]）。这说明在常规上下文范围内，账单通常可以先按“每百万 token 单价”来估。</p>
+<p>以 OpenAI 2026 年 4 月 23 日公开价格页为例，GPT-5.4 标准输入价是 <code>$2.50 / 1M tokens</code>，缓存输入是 <code>$0.25 / 1M tokens</code>，GPT-5.4 mini 标准输入价是 <code>$0.75 / 1M tokens</code>。<sup class="footnote-reference" id="fr-openai-pricing-1"><a href="#footnote-openai-pricing">8</a></sup> 这说明在常规上下文范围内，账单通常可以先按“每百万 token 单价”来估。</p>
 <p>但同一页也有一句很值得工程团队注意的限定：</p>
 <blockquote>
-<p>“Pricing above reflects standard processing rates for context lengths under 270K.”（OpenAI，见[20]）</p>
+<p>“Pricing above reflects standard processing rates for context lengths under 270K.”</p>
 </blockquote>
 <p>这句话的含义不是“270K 以上一定贵多少”，而是：连公开价格页都把超长上下文视为另一类服务条件。换句话说，提供方自己也承认，超长上下文不只是简单地把 token 数乘上单价那么朴素。</p>
-<p>Google 在 Gemini 1.5 发布时也表达了同样的信号。它一方面宣布会提供 <code>"pricing tiers that start at the standard 128,000 context window and scale up to 1 million tokens"</code>，另一方面又提醒早期测试者应预期 <code>"longer latency times"</code>（Google，见[14]）。这说明在提供方视角里，长上下文从一开始就是“性能与成本要单独优化”的模式，而不是对普通请求做线性外推。</p>
+<p>Google 在 Gemini 1.5 发布时也表达了同样的信号。它一方面宣布会提供 <code>"pricing tiers that start at the standard 128,000 context window and scale up to 1 million tokens"</code>，另一方面又提醒早期测试者应预期 <code>"longer latency times"</code>。<sup class="footnote-reference" id="fr-gemini15-3"><a href="#footnote-gemini15">4</a></sup> 这说明在提供方视角里，长上下文从一开始就是“性能与成本要单独优化”的模式，而不是对普通请求做线性外推。</p>
 <h3 id="162-真正的-killer-常常是-prefill而不是-output-token"><a class="header" href="#162-真正的-killer-常常是-prefill而不是-output-token">1.6.2 真正的 killer 常常是 prefill，而不是 output token</a></h3>
 <p>从系统视角看，长上下文的核心痛点通常不在 decode，而在 prefill。原因很简单：在进入自回归生成前，模型先要把整段输入转成 KV cache 并完成注意力计算。输入越长，这一步越重。</p>
-<p><em>MInference</em> 的摘要给了一个足够刺眼的工程数字：</p>
+<p><em>MInference</em> 的摘要给了一个足够刺眼的工程数字：<sup class="footnote-reference" id="fr-minference-1"><a href="#footnote-minference">9</a></sup></p>
 <blockquote>
-<p>“30 minutes for an 8B LLM to process a prompt of 1M tokens”（Jiang et al., 2024，见[19]）</p>
+<p>“30 minutes for an 8B LLM to process a prompt of 1M tokens”</p>
 </blockquote>
 <p>而且同一句里明确点出了根因：这是由 attention 的二次复杂度驱动的。只要你还是在用 dense attention 的基本形态，序列长度翻上去，prefill 代价就不会跟着“温柔地线性增长”。</p>
 <p>这也是为什么很多 long-context 优化论文其实都在打 prefill：不是大家都特别喜欢底层系统，而是因为这里是最直接的瓶颈。</p>
 <h3 id="163-长上下文的真实代价是高计算成本--性能退化--位置偏置联动"><a class="header" href="#163-长上下文的真实代价是高计算成本--性能退化--位置偏置联动">1.6.3 长上下文的真实代价是“高计算成本 + 性能退化 + 位置偏置”联动</a></h3>
-<p><em>LongLLMLingua</em> 的摘要把长上下文的三大问题总结得很准确：<code>"higher computational cost, performance reduction, and position bias"</code>（Jiang et al., 2024，见[18]）。这句话很值钱，因为它把工程上常被拆开讨论的三个问题重新捆回了一起。</p>
+<p><em>LongLLMLingua</em> 的摘要把长上下文的三大问题总结得很准确：<code>"higher computational cost, performance reduction, and position bias"</code>。<sup class="footnote-reference" id="fr-longllmlingua-1"><a href="#footnote-longllmlingua">10</a></sup> 这句话很值钱，因为它把工程上常被拆开讨论的三个问题重新捆回了一起。</p>
 <p>也就是说，长上下文不是只会带来一种坏处，而是三个坏处经常同时发生：</p>
 <ul>
 <li>token 更多，prefill 更重；</li>
 <li>位置偏置更明显，中间信息更难被利用；</li>
 <li>在噪声增多后，任务表现本身也开始下滑。</li>
 </ul>
-<p><em>LongLLMLingua</em> 还给出一个非常有启发性的结果：在 NaturalQuestions 上，压缩后可以用 <code>"4x fewer tokens"</code> 取得更高表现；在 LooGLE 上，成本降幅达到 94.0%（见[18]）。这组结果的意义不是“所有项目都该先做 prompt compression”，而是它再次证明：更多 token 并不天然等于更好结果。很多时候，更短、更密、更有结构的上下文，反而同时赢下质量和成本。</p>
+<p><em>LongLLMLingua</em> 还给出一个非常有启发性的结果：在 NaturalQuestions 上，压缩后可以用 <code>"4x fewer tokens"</code> 取得更高表现；在 LooGLE 上，成本降幅达到 94.0%。<sup class="footnote-reference" id="fr-longllmlingua-2"><a href="#footnote-longllmlingua">10</a></sup> 这组结果的意义不是“所有项目都该先做 prompt compression”，而是它再次证明：更多 token 并不天然等于更好结果。很多时候，更短、更密、更有结构的上下文，反而同时赢下质量和成本。</p>
 <h3 id="164-google-官方文档其实已经把经济学结论说得很直白"><a class="header" href="#164-google-官方文档其实已经把经济学结论说得很直白">1.6.4 Google 官方文档其实已经把经济学结论说得很直白</a></h3>
-<p>Google 的 long context 文档在“限制”和“优化”部分给了两句很值得直接记进架构设计的提醒。</p>
+<p>Google 的 long context 文档在“限制”和“优化”部分给了两句很值得直接记进架构设计的提醒。<sup class="footnote-reference" id="fr-google-long-context-3"><a href="#footnote-google-long-context">5</a></sup></p>
 <p>第一句是：</p>
 <blockquote>
-<p>“there is an inherent tradeoff between getting the right information retrieved and cost”（Google AI for Developers，见[15]）</p>
+<p>“there is an inherent tradeoff between getting the right information retrieved and cost”</p>
 </blockquote>
-<p>第二句是它后面的例子：如果你要取 100 条信息，并希望维持极高准确率，那往往意味着要发出很多次查询；文档给出的意思是，这时 caching 会显著影响总成本（见[15]）。</p>
+<p>第二句是它后面的例子：如果你要取 100 条信息，并希望维持极高准确率，那往往意味着要发出很多次查询；文档给出的意思是，这时 caching 会显著影响总成本。<sup class="footnote-reference" id="fr-google-long-context-4"><a href="#footnote-google-long-context">5</a></sup></p>
 <p>这段话可以翻成工程语言：长上下文不是“单次把大资料包交给模型”就万事大吉。真正花钱的往往是：</p>
 <ul>
 <li>你要问多少轮；</li>
@@ -482,7 +481,7 @@ Harness 工程
 <li>每轮失败重试的代价很高。</li>
 </ol>
 <h3 id="168-工程结论swarm-是长上下文经济学的自然产物"><a class="header" href="#168-工程结论swarm-是长上下文经济学的自然产物">1.6.8 工程结论：swarm 是长上下文经济学的自然产物</a></h3>
-<p>综合 [14][15][18][19][20] 的事实链，可以得出一个比“多 agent 更高级”更扎实的结论：</p>
+<p>综合前述事实链，可以得出一个比“多 agent 更高级”更扎实的结论：<sup class="footnote-reference" id="fr-gemini15-4"><a href="#footnote-gemini15">4</a></sup> <sup class="footnote-reference" id="fr-google-long-context-5"><a href="#footnote-google-long-context">5</a></sup> <sup class="footnote-reference" id="fr-longllmlingua-3"><a href="#footnote-longllmlingua">10</a></sup> <sup class="footnote-reference" id="fr-minference-2"><a href="#footnote-minference">9</a></sup> <sup class="footnote-reference" id="fr-openai-pricing-2"><a href="#footnote-openai-pricing">8</a></sup></p>
 <ul>
 <li>API 账单有时近似线性，但公开定价本身已把超长上下文单独对待；</li>
 <li>prefill 的计算和时延并不线性；</li>
@@ -540,7 +539,41 @@ Harness 工程
 <p>第 1 层是 AI 编码过程的驾驭工程。这里 agent 是工程团队的生产工具，最终产品仍然是代码、服务、应用或基础设施。OpenAI Codex 团队的 1M LOC 案例、Fowler 的代码 agent harness、AGENTS.md + docs 的知识注入模式，都属于这一层。</p>
 <p>第 2 层是 AI agent 自身的 harness 工程。这里产品本身就是 agent，用户直接把任务交给它。系统要处理 session 恢复、sandbox 权限、工具调用审计、长任务重启、客户环境隔离和合规签字。Anthropic 的 session / harness / sandbox 三抽象、Milvus 的执行层、Neo4j 的记忆层，更接近这一层。</p>
 <p>Octos 同时踩在两层上：团队用 AI 写代码，也在构建 agent 平台。因此本书采用 Octos 的故障和里程碑作为主线，但会借用原书中两层共同适用的稳定原则：状态持久化、工具可问责、验证独立、知识可晋升。</p>
-<hr><div style="break-before: page; page-break-before: always;"></div>
+<hr>
+<hr>
+<ol class="footnote-definition">
+<li id="footnote-ltm">
+<p>Nelson F. Liu et al., <em>Lost in the Middle: How Language Models Use Long Contexts.</em> 见第 19 章参考文献 11。 <a href="#fr-ltm-1">↩</a> <a href="#fr-ltm-2">↩2</a></p>
+</li>
+<li id="footnote-fitm">
+<p>Cheng-Yu Hsieh et al., <em>Found in the Middle: Calibrating Positional Attention Bias Improves Long Context Utilization.</em> 见第 19 章参考文献 12。 <a href="#fr-fitm-1">↩</a> <a href="#fr-fitm-2">↩2</a></p>
+</li>
+<li id="footnote-anthropic-long">
+<p>Anthropic, <em>Prompting best practices: Long context prompting.</em> 本节引用其关于长文档前置、query 后置与约 30% 质量改进的建议；见第 19 章参考文献 13。 <a href="#fr-anthropic-long-1">↩</a> <a href="#fr-anthropic-long-2">↩2</a></p>
+</li>
+<li id="footnote-gemini15">
+<p>Google, <em>Introducing Gemini 1.5, Google’s next-generation AI model.</em> 本节引用其中关于 NIAH 命中率、1M context pricing tier 与长时延预期的表述；见第 19 章参考文献 14。 <a href="#fr-gemini15-1">↩</a> <a href="#fr-gemini15-2">↩2</a> <a href="#fr-gemini15-3">↩3</a> <a href="#fr-gemini15-4">↩4</a></p>
+</li>
+<li id="footnote-google-long-context">
+<p>Google AI for Developers, <em>Long context.</em> 本节引用其关于 performance variability、retrieval-cost tradeoff 与 caching 的说明；见第 19 章参考文献 15。 <a href="#fr-google-long-context-1">↩</a> <a href="#fr-google-long-context-2">↩2</a> <a href="#fr-google-long-context-3">↩3</a> <a href="#fr-google-long-context-4">↩4</a> <a href="#fr-google-long-context-5">↩5</a></p>
+</li>
+<li id="footnote-nolima">
+<p>Ali Modarressi et al., <em>NoLiMa: Long-Context Evaluation Beyond Literal Matching.</em> 本节引用其 32K 条件下模型退化统计与 GPT-4o 从 99.3% 降至 69.7% 的结果；见第 19 章参考文献 16。 <a href="#fr-nolima-1">↩</a> <a href="#fr-nolima-2">↩2</a></p>
+</li>
+<li id="footnote-longcodebench">
+<p>Stefano Rando et al., <em>LongCodeBench: Evaluating Coding LLMs at 1M Context Windows.</em> 本节引用其代码任务样例中 Claude 3.5 Sonnet 与 Qwen2.5 的退化数据；见第 19 章参考文献 17。 <a href="#fr-longcodebench-1">↩</a> <a href="#fr-longcodebench-2">↩2</a></p>
+</li>
+<li id="footnote-openai-pricing">
+<p>OpenAI, <em>API Pricing</em>, accessed 2026-04-23. 本节引用 GPT-5.4 与 GPT-5.4 mini 的输入价格，以及 “under 270K” 的定价限定；见第 19 章参考文献 20。 <a href="#fr-openai-pricing-1">↩</a> <a href="#fr-openai-pricing-2">↩2</a></p>
+</li>
+<li id="footnote-minference">
+<p>Huiqiang Jiang et al., <em>MInference: Accelerating Pre-filling for Long-Context LLMs via Dynamic Sparse Attention.</em> 本节引用其关于 8B 模型处理 1M tokens 需 30 分钟的摘要数字；见第 19 章参考文献 19。 <a href="#fr-minference-1">↩</a> <a href="#fr-minference-2">↩2</a></p>
+</li>
+<li id="footnote-longllmlingua">
+<p>Huiqiang Jiang et al., <em>LongLLMLingua: Accelerating and Enhancing LLMs in Long Context Scenarios via Prompt Compression.</em> 本节引用其对长上下文三类问题的总结，以及 NaturalQuestions 与 LooGLE 的压缩收益结果；见第 19 章参考文献 18。 <a href="#fr-longllmlingua-1">↩</a> <a href="#fr-longllmlingua-2">↩2</a> <a href="#fr-longllmlingua-3">↩3</a></p>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="2-成熟度鸿沟灵光一闪-vs-工厂化输出"><a class="header" href="#2-成熟度鸿沟灵光一闪-vs-工厂化输出">2. 成熟度鸿沟：灵光一闪 vs 工厂化输出</a></h1>
 <p>“灵光一闪的天才”模式有这些特征：</p>
 <ul>
