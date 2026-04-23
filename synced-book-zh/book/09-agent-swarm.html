@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-cb5a4f0d.js";
+            window.path_to_searchindex_js = "searchindex-a008ad06.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -199,6 +199,29 @@ UI/API 负责人
 <li>E2E 规范</li>
 <li>文档</li>
 </ul>
+<h2 id="83-为什么-sub-agent--swarm-往往比单个-1m-上下文更优"><a class="header" href="#83-为什么-sub-agent--swarm-往往比单个-1m-上下文更优">8.3 为什么 sub-agent / swarm 往往比单个 1M 上下文更优</a></h2>
+<p>如果任务天然可以分块，那么把全部材料一次性塞进单个超长上下文，往往不是最优解。更常见的高收益结构是：</p>
+<ol>
+<li>coordinator 只持有总目标、拆解计划、共享约束和最终验收标准；</li>
+<li>每个 sub-agent 只拿自己那一块原始材料或代码域；</li>
+<li>子 agent 产出的是摘要、证据、diff、引用和待验证结论，而不是把整个大海捞针窗口一路向上传递；</li>
+<li>verifier 再把跨 shard 的冲突和遗漏拦下来。</li>
+</ol>
+<p>这样做的好处不是单一维度的，而是四个维度一起改善：</p>
+<ul>
+<li>质量上：减少位置偏置和“lost in the middle”效应，让每个 agent 都在更短、更密、更局部的工作区间里完成任务。</li>
+<li>成本上：避免把同一百万 token 在每一轮对话里反复 prefill；可复用的公共材料可以缓存，不可复用的局部材料只喂给对应 agent。</li>
+<li>时延上：多个 200K 以内的 prefill 更容易并行、调度和提前结束，首 token 延迟也更容易控制。</li>
+<li>组织上：每个 agent 的失败边界更清晰，更适合绑到具体 validator、artifact policy 和 owner。</li>
+</ul>
+<p>当然，这不是说“永远不要用 1M 上下文”。如果问题确实需要对全局原文做一次统一视野下的比对、排序或证据整合，超长上下文仍然有价值。但在大多数工程任务里，真正需要的是：</p>
+<ul>
+<li>局部阅读；</li>
+<li>局部推理；</li>
+<li>局部修改；</li>
+<li>最后做全局汇总和验证。</li>
+</ul>
+<p>这正是 harness 要支持的 swarm 形态：不是把一个大脑塞得更满，而是把任务切成多个仍处于最佳工作区间的小脑，再用 session、contracts 和 verification 把它们重新编回一个系统。</p>
 <hr>
                     </main>
 

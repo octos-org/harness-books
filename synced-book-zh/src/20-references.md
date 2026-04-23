@@ -12,6 +12,16 @@
 8. Fisher Zhang. *Harness Engineering: The Oldest New Idea in AI.* https://medium.com/@fisher262425/harness-engineering-the-oldest-new-idea-in-ai-7a7bcd6baf7b
 9. Andrej Karpathy. *LLM Wiki.* https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
 10. Stanford IRIS Lab. *Meta-Harness: End-to-End Optimization of Model Harnesses.* https://arxiv.org/abs/2603.28052
+11. Nelson F. Liu et al. *Lost in the Middle: How Language Models Use Long Contexts.* TACL 2024. https://direct.mit.edu/tacl/article/doi/10.1162/tacl_a_00638/119630/Lost-in-the-Middle-How-Language-Models-Use-Long
+12. Cheng-Yu Hsieh et al. *Found in the Middle: Calibrating Positional Attention Bias Improves Long Context Utilization.* ACL Findings 2024. https://aclanthology.org/2024.findings-acl.890/
+13. Anthropic. *Prompting best practices: Long context prompting.* https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#long-context-prompting
+14. Google. *Introducing Gemini 1.5, Google's next-generation AI model.* 2024-02-15. https://blog.google/innovation-and-ai/products/google-gemini-next-generation-model-february-2024/
+15. Google AI for Developers. *Long context.* https://ai.google.dev/gemini-api/docs/long-context
+16. Ali Modarressi et al. *NoLiMa: Long-Context Evaluation Beyond Literal Matching.* ICML 2025. https://proceedings.mlr.press/v267/modarressi25a.html
+17. Stefano Rando et al. *LongCodeBench: Evaluating Coding LLMs at 1M Context Windows.* COLM 2025. https://openreview.net/forum?id=GFPoM8Ylp8
+18. Huiqiang Jiang et al. *LongLLMLingua: Accelerating and Enhancing LLMs in Long Context Scenarios via Prompt Compression.* ACL 2024. https://aclanthology.org/2024.acl-long.91/
+19. Huiqiang Jiang et al. *MInference: Accelerating Pre-filling for Long-Context LLMs via Dynamic Sparse Attention.* 2024. https://openreview.net/forum?id=C5Nh2UFJ9S
+20. OpenAI. *API Pricing.* Accessed 2026-04-23. https://openai.com/api/pricing/
 
 ## 19.2 支持性参考
 
