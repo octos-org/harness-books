@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-7823d214.js";
+            window.path_to_searchindex_js = "searchindex-e685d58f.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -492,6 +492,7 @@ Harness 工程
 <p>第 1 层是 AI 编码过程的驾驭工程。这里 agent 是工程团队的生产工具，最终产品仍然是代码、服务、应用或基础设施。OpenAI Codex 团队的 1M LOC 案例、Fowler 的代码 agent harness、AGENTS.md + docs 的知识注入模式，都属于这一层。<sup class="footnote-reference" id="fr-layer1-harness-ch1-1"><a href="#footnote-layer1-harness-ch1">11</a></sup></p>
 <p>第 2 层是 AI agent 自身的 harness 工程。这里产品本身就是 agent，用户直接把任务交给它。系统要处理 session 恢复、sandbox 权限、工具调用审计、长任务重启、客户环境隔离和合规签字。Anthropic 的 session / harness / sandbox 三抽象、Milvus 的执行层、Neo4j 的记忆层，更接近这一层。<sup class="footnote-reference" id="fr-layer2-harness-ch1-1"><a href="#footnote-layer2-harness-ch1">12</a></sup></p>
 <p>Octos 同时踩在两层上：团队用 AI 写代码，也在构建 agent 平台。因此本书采用 Octos 的故障和里程碑作为主线，但会借用原书中两层共同适用的稳定原则：状态持久化、工具可问责、验证独立、知识可晋升。</p>
+<p>到这里，第 1 章只做了一件事：说明 harness 不是可选的产品装饰，而是让 LLM 长任务留在有效工作区间内的控制系统。接下来的第 2 到第 4 章会依次回答三个问题：成熟团队是如何跨过这道鸿沟的；Octos 现在具体卡在哪里；这些问题最后应当落成什么样的运行时架构。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">

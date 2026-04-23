@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-7823d214.js";
+            window.path_to_searchindex_js = "searchindex-e685d58f.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -194,24 +194,35 @@
 </ul>
 <p>这些经验并不抽象。它们来自 Octos 的真实问题：后台任务进度漂移、<code>run_pipeline</code> / <code>deep-search</code> 状态不一致、会话污染、产物契约缺口、验证器不完整，以及操作员盲区。本书不断回到这些事故，是因为它们从不同表面展示了同一个模式：瓶颈不是模型，而是控制系统。</p>
 <p>目标不是架构洁癖。目标是在模型、网络、插件、浏览器标签页和用户行为都很混乱的情况下，仍然能得到可靠结果。</p>
+<p>这本书只试图把一条论证链讲清楚：LLM 之所以需要 harness，不是因为它“不够强”，而是因为长任务里的质量、成本、时延和状态一致性都会在离开最佳工作区间后迅速恶化；一旦系统要跨会话、跨工具、跨时间地行动，就必须把状态、验证和回放从 prompt 外移到运行时契约里。后文所有案例、事故、架构和路线图，都是在展开这条主线。</p>
 <p>这一版的写法有一个明确取舍：不把“大书”的章节原样搬进来，而是沿着 Octos 纲要的工程问题，把原书中关于两层驾驭工程、OpenAI 1M LOC 案例、AGENTS.md 分层、四支柱、长程循环、skills 晋升和“多脑多手”组织方式的论证重新消化。读者先获得一条稳定主线，再按需去 <code>/original/</code> 查看完整原书。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="0-全书地图与阅读指南"><a class="header" href="#0-全书地图与阅读指南">0. 全书地图与阅读指南</a></h1>
 <p>这份单文件书稿是 Octos 驾驭工程的合并版综合稿。它保留既有叙事主线，并把 ZIP 源书的前置说明、阅读指南、附录和参考文献折叠进来，让整个论证可以在一个地方读完。</p>
-<h2 id="01-这本书适合谁"><a class="header" href="#01-这本书适合谁">0.1 这本书适合谁</a></h2>
+<h2 id="01-先抓住这本书的主线"><a class="header" href="#01-先抓住这本书的主线">0.1 先抓住这本书的主线</a></h2>
+<p>为了避免章节多了以后主线发散，可以先把全书逻辑压成六步：</p>
+<ol>
+<li>LLM 有容量上限，但工程上真正重要的是有效工作区间，而不是 brochure 上的最大 context。</li>
+<li>一旦任务跨越长时间、多工具、多会话，质量、成本、时延和状态一致性会一起恶化，所以不能把 prompt 当系统。</li>
+<li>OpenAI、Anthropic 这类前沿团队之所以能把 agent 用到生产，不是因为 prompt 更花，而是因为有了 harness、验证、回放、知识分层和操作员控制面。</li>
+<li>Octos 当前遇到的多数事故，本质上都能还原为同一类问题：系统把“类似聊天的输出”误当成“运行时事实”。</li>
+<li>因此解法必须围绕 session、harness、tools、verification 四支柱展开，并落到事件 ABI、UI replay、operator dashboard、mini-fleet 门禁、sub-agent/swarm 编排这些具体机制上。</li>
+<li>最后还要把这些机制沉淀成原则、路线图、清单和边界说明，避免系统只会“偶尔成功”，却不能稳定交付。</li>
+</ol>
+<h2 id="02-这本书适合谁"><a class="header" href="#02-这本书适合谁">0.2 这本书适合谁</a></h2>
 <ul>
 <li>需要稳定运行时事实、而不是演示级行为的 Octos 维护者</li>
 <li>需要进度、产物、验证契约的 app-skill 作者</li>
 <li>需要不靠聊天文本猜测失败模式的平台操作员</li>
 </ul>
-<h2 id="02-推荐阅读顺序"><a class="header" href="#02-推荐阅读顺序">0.2 推荐阅读顺序</a></h2>
+<h2 id="03-推荐阅读顺序"><a class="header" href="#03-推荐阅读顺序">0.3 推荐阅读顺序</a></h2>
 <ul>
 <li>线性路径：按顺序阅读第 1 到第 14 节</li>
 <li>Layer 1 路径：重点读第 1、2、3、5、10、11、13、14 节</li>
 <li>Layer 2 路径：重点读第 1、2、3、6、7、8、9、12、13 节</li>
 <li>按角色路径：使用文末附录中的负责人、架构师、CTO 和研究者阅读路线</li>
 </ul>
-<h2 id="03-这个合并版新增了什么"><a class="header" href="#03-这个合并版新增了什么">0.3 这个合并版新增了什么</a></h2>
+<h2 id="04-这个合并版新增了什么"><a class="header" href="#04-这个合并版新增了什么">0.4 这个合并版新增了什么</a></h2>
 <ul>
 <li>面向 Octos 读者的紧凑前置说明</li>
 <li>十篇奠基论文和文章的源文本附录</li>
@@ -539,6 +550,7 @@ Harness 工程
 <p>第 1 层是 AI 编码过程的驾驭工程。这里 agent 是工程团队的生产工具，最终产品仍然是代码、服务、应用或基础设施。OpenAI Codex 团队的 1M LOC 案例、Fowler 的代码 agent harness、AGENTS.md + docs 的知识注入模式，都属于这一层。<sup class="footnote-reference" id="fr-layer1-harness-ch1-1"><a href="#footnote-layer1-harness-ch1">11</a></sup></p>
 <p>第 2 层是 AI agent 自身的 harness 工程。这里产品本身就是 agent，用户直接把任务交给它。系统要处理 session 恢复、sandbox 权限、工具调用审计、长任务重启、客户环境隔离和合规签字。Anthropic 的 session / harness / sandbox 三抽象、Milvus 的执行层、Neo4j 的记忆层，更接近这一层。<sup class="footnote-reference" id="fr-layer2-harness-ch1-1"><a href="#footnote-layer2-harness-ch1">12</a></sup></p>
 <p>Octos 同时踩在两层上：团队用 AI 写代码，也在构建 agent 平台。因此本书采用 Octos 的故障和里程碑作为主线，但会借用原书中两层共同适用的稳定原则：状态持久化、工具可问责、验证独立、知识可晋升。</p>
+<p>到这里，第 1 章只做了一件事：说明 harness 不是可选的产品装饰，而是让 LLM 长任务留在有效工作区间内的控制系统。接下来的第 2 到第 4 章会依次回答三个问题：成熟团队是如何跨过这道鸿沟的；Octos 现在具体卡在哪里；这些问题最后应当落成什么样的运行时架构。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
@@ -581,6 +593,7 @@ Harness 工程
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="2-成熟度鸿沟灵光一闪-vs-工厂化输出"><a class="header" href="#2-成熟度鸿沟灵光一闪-vs-工厂化输出">2. 成熟度鸿沟：灵光一闪 vs 工厂化输出</a></h1>
+<p>上一章回答的是“为什么必须有 harness”；这一章回答的是“成熟团队究竟在建设什么，才能从 demo 式聪明跨到工厂化输出”。先看 OpenAI 这类外部案例，不是为了抄作业，而是为了把成熟度鸿沟说具体。</p>
 <p>“灵光一闪的天才”模式有这些特征：</p>
 <ul>
 <li>成功依赖 prompt，且不可重复</li>
@@ -615,6 +628,7 @@ Harness 工程
 <h2 id="23-0-人工审查的边界"><a class="header" href="#23-0-人工审查的边界">2.3 “0% 人工审查”的边界</a></h2>
 <p>OpenAI 的极端案例不能直接搬到所有场景。内部工具链、非合规关键路径、风险自吸收时，可以把大量人工审查下沉到 CI、性质测试、结构化验证和指标门禁。医疗、金融、隐私、客户数据路径则不同：实名人工 reviewer、审计记录、变更控制和合规签字是事实要求，不是工程偏好。<sup class="footnote-reference" id="fr-review-boundary-ch2-1"><a href="#footnote-review-boundary-ch2">3</a></sup></p>
 <p>因此 Octos 的目标不是追求“没有人看”，而是把人类从重复、低信号的逐行审查中解放出来，转向审查契约、门禁、失败分类和高风险边界。</p>
+<p>下一章会把这个鸿沟落回 Octos 自己的失败现场。也就是说，我们不再停留在“成熟团队长什么样”，而是直接回答“Octos 离它还差什么”。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
@@ -630,6 +644,7 @@ Harness 工程
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="3-octos-遇到的失败类别以及代价为何高"><a class="header" href="#3-octos-遇到的失败类别以及代价为何高">3. Octos 遇到的失败类别，以及代价为何高</a></h1>
+<p>如果说第 2 章回答的是工厂化输出长什么样，那么这一章回答的是 Octos 现在离它还差什么。这里不再讨论理念，而是把差距拆成可命名、可归档、可修复的失败类别。</p>
 <h2 id="31-后台任务进度-bug"><a class="header" href="#31-后台任务进度-bug">3.1 后台任务进度 bug</a></h2>
 <p>观察到的类别：</p>
 <ul>
@@ -730,6 +745,7 @@ Harness 工程
 <p>Octos 后续每次遇到 harness 事故，都应该按这个格式归档。否则团队只是在修 bug，没有增长系统免疫力。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="4-核心-harness-架构当前实用模型"><a class="header" href="#4-核心-harness-架构当前实用模型">4. 核心 Harness 架构：当前实用模型</a></h1>
+<p>第 3 章已经把问题空间列清楚了。第 4 章开始给出解法：不是继续追加 prompt 规则，而是围绕状态、事件、验证和回放建立一套可运行的 harness 架构。</p>
 <pre><code class="language-text">子工具或技能（Rust/Python/Node/shell）
         |
         | 发出 octos.harness.event.v1（progress/error/info）
@@ -777,6 +793,7 @@ UI 状态气泡、页头与重载回放
 <h2 id="45-为什么-sessionjsonl-这类朴素设计仍然重要"><a class="header" href="#45-为什么-sessionjsonl-这类朴素设计仍然重要">4.5 为什么 session.jsonl 这类朴素设计仍然重要</a></h2>
 <p>原书借 Karpathy 的 autoresearch 思路强调：长期知识系统最难的不是“让模型想起来”，而是 bookkeeping。<code>session.md</code> 提供人类可读的叙事，<code>session.jsonl</code> 提供机器可回放的事件。这个组合朴素，但非常抗变化：模型会换，前端会换，工具会换，事实流不应该轻易换。<sup class="footnote-reference" id="fr-karpathy-bookkeeping-ch4-1"><a href="#footnote-karpathy-bookkeeping-ch4">1</a></sup></p>
 <p>Octos 的任务状态、SSE 回放、操作员仪表盘，本质上都应该从这个事实流派生，而不是各自维护一份“看起来差不多”的状态。</p>
+<p>接下来的第 5 到第 7 章，会把这套架构拆到几个最容易失真的现实表面：多语言桥接、UI 回放，以及线上操作员/mini-fleet 视角。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
@@ -786,6 +803,7 @@ UI 状态气泡、页头与重载回放
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="5-非-rust-桥接平台现实的必需品"><a class="header" href="#5-非-rust-桥接平台现实的必需品">5. 非 Rust 桥接：平台现实的必需品</a></h1>
+<p>前一章给出的是核心运行时模型；接下来的三章讨论的是它如何落到真实系统表面。第 5 章先看最容易被低估的多语言边界，因为生态一旦开放，协议最先在这里腐蚀。</p>
 <p>Octos 是以 Rust 为主的运行时，但 skill 生态是多语言的。</p>
 <p>如果进度/事件契约只在 Rust 中可用：</p>
 <ul>
@@ -806,6 +824,7 @@ UI 状态气泡、页头与重载回放
 <p>平台生态一旦开放，最容易腐蚀的是边缘一致性：某个 Python skill 用 stderr 当状态，某个 Node app 用文件名猜主产物，某个 shell 脚本忘了 session id。非 Rust 桥接的价值就是把这些边缘行为统一收口到运行时规范层。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="6-ui-回放不是前端功能而是可靠性功能"><a class="header" href="#6-ui-回放不是前端功能而是可靠性功能">6. UI 回放不是前端功能，而是可靠性功能</a></h1>
+<p>如果第 5 章解决的是外部接入的一致性，第 6 章解决的就是用户表面的真实性。对 harness 来说，前端不是装饰层，而是运行时事实能否被用户正确看见的最后一跳。</p>
 <p>可靠的状态气泡必须承受：</p>
 <ul>
 <li>浏览器重载</li>
@@ -824,6 +843,7 @@ UI 状态气泡、页头与重载回放
 <p>所以 UI 不应该拥有独立状态真相。它只负责把后端规范事实投影出来。前端可以做缓存、动画和布局，但不能发明生命周期。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="7-操作员仪表盘与小型-fleet-实测"><a class="header" href="#7-操作员仪表盘与小型-fleet-实测">7. 操作员仪表盘与小型 fleet 实测</a></h1>
+<p>当事实流、桥接和 UI 回放都具备之后，系统还需要一个操作员视角来证明这些契约在真实主机、真实 session 和真实重连路径上成立。第 7 章讨论的，就是这种“发布事实”。</p>
 <h2 id="71-仪表盘的角色"><a class="header" href="#71-仪表盘的角色">7.1 仪表盘的角色</a></h2>
 <p>仪表盘不是装饰性监控。它是日常控制平面，用来观察：</p>
 <ul>
@@ -853,6 +873,7 @@ UI 状态气泡、页头与重载回放
 <p>小型 fleet 则是发布真实性的底线。Harness bug 常常是时序型、多表面型的：单元测试能过，端到端本地也能过，但在两台真实主机、两个 session、一次重载、一次重连后才暴露。Octos 的发布门禁应该优先覆盖这些真实路径。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="8-agent-群体编排harness-如何扩展团队而不只是代码"><a class="header" href="#8-agent-群体编排harness-如何扩展团队而不只是代码">8. Agent 群体编排：Harness 如何扩展团队而不只是代码</a></h1>
+<p>到这里为止，本书讨论的主要还是单个系统如何说真话。第 8 章再往前走一步：当系统开始扩展为多 agent、多负责人协作时，harness 如何把复杂度吸收掉，而不是放大混乱。</p>
 <p>Harness 也是一个用于多 agent、多负责人交付的协调系统。</p>
 <h2 id="81-工作分解模式"><a class="header" href="#81-工作分解模式">8.1 工作分解模式</a></h2>
 <pre><code class="language-text">项目负责人
@@ -912,6 +933,7 @@ UI/API 负责人
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="9-原则与反模式"><a class="header" href="#9-原则与反模式">9. 原则与反模式</a></h1>
+<p>前面 1 到 8 章给的是论证、案例和架构部件；这一章把它们压缩成可执行原则和必须禁止的反模式。也可以把它看成前面整条论证链的工程压缩版。</p>
 <h2 id="91-原则"><a class="header" href="#91-原则">9.1 原则</a></h2>
 <ol>
 <li>将契约状态持久化在 prompt/聊天上下文之外。</li>
@@ -954,6 +976,7 @@ UI/API 负责人
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="10-工作流到里程碑映射务实路线图"><a class="header" href="#10-工作流到里程碑映射务实路线图">10. 工作流到里程碑映射：务实路线图</a></h1>
+<p>如果第 4 到第 9 章回答的是“目标架构应该是什么”，第 10 章回答的就是“工程上先做什么、后做什么”。路线图的作用不是展示 backlog，而是把逻辑上的先后关系变成实施顺序。</p>
 <p>这份映射对齐当前 M4 方向和剩余平台化缺口。</p>
 <h2 id="m41a--父级可见的结构化进度-abi"><a class="header" href="#m41a--父级可见的结构化进度-abi">M4.1A — 父级可见的结构化进度 ABI</a></h2>
 <ul>
@@ -1000,6 +1023,7 @@ UI/API 负责人
 <p>这也是路线图排序的工程理由：先修真相，再修体验；先修单一事实流，再修 dashboard；先让内置 skill 守约，再开放第三方生态。否则平台会在还没有稳定协议时吸纳外部复杂度，后面每一步都会更贵。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="11-harness-必要但不充分"><a class="header" href="#11-harness-必要但不充分">11. Harness 必要但不充分</a></h1>
+<p>讲完路线图以后，必须立刻收边界。否则团队很容易把 harness 当成万能解释，把所有产品质量问题都往上堆。这一章的任务，就是把 harness 能解决什么、不能解决什么切开。</p>
 <p>Harness 解决编排正确性，不解决完整产品质量。</p>
 <p>高质量代码 agent 仍然需要：</p>
 <ul>
@@ -1015,6 +1039,7 @@ UI/API 负责人
 <p>这条边界很重要。Harness 能让系统不撒谎：没完成就不显示完成，产物无效就不交付，验证失败就不进入 ready，会话切换不串状态。但它不能保证产品判断正确、模型选择最优、用户需求被理解、成本足够低、交互体验足够好。把 harness 当成产品质量的全部，是另一种形式的过度工程。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="12-可执行清单"><a class="header" href="#12-可执行清单">12. 可执行清单</a></h1>
+<p>边界讲清之后，剩下的工作就是把前面各章的要求压成能执行的检查项。第 12 章不是新观点，而是把整本书收敛成可以拿来合并前、上线前、事故后的动作清单。</p>
 <h2 id="121-维护者预合并清单影响-harness-的-pr"><a class="header" href="#121-维护者预合并清单影响-harness-的-pr">12.1 维护者预合并清单（影响 harness 的 PR）</a></h2>
 <ul>
 <li><input disabled="" type="checkbox"> 变更映射到显式用户可见不变量。</li>
@@ -1051,6 +1076,7 @@ UI/API 负责人
 </ul>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="13-参考架构片段"><a class="header" href="#13-参考架构片段">13. 参考架构片段</a></h1>
+<p>前面的章节已经给出原则、边界和检查表；这一章补两段最小架构片段，帮助团队把抽象要求落成具体事实流和契约执行流。</p>
 <h2 id="131-任务事实流"><a class="header" href="#131-任务事实流">13.1 任务事实流</a></h2>
 <pre><code class="language-text">工具发出进度事件 -&gt; 运行时校验事件 -&gt; 监督器持久化状态
 -&gt; TaskStatusChanged -&gt; API/SSE -&gt; UI 回放与状态气泡
@@ -1067,6 +1093,7 @@ UI/API 负责人
 <p>在这条流程完成前标记终态成功，是契约违例。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="14-结语下一阶段的工程姿态"><a class="header" href="#14-结语下一阶段的工程姿态">14. 结语：下一阶段的工程姿态</a></h1>
+<p>到这里，整本书的主线也就闭合了：从长上下文和长任务的根因出发，经过成熟度案例、Octos 失败、运行时架构、组织扩展与治理边界，最后落回可执行的工程姿态。</p>
 <p>把 harness 工作当作产品可靠性工程，而不是抽象框架建设。</p>
 <p>Octos 的胜利模式一直是：</p>
 <ol>

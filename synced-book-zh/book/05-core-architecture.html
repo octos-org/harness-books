@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-7823d214.js";
+            window.path_to_searchindex_js = "searchindex-e685d58f.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -175,6 +175,7 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="4-核心-harness-架构当前实用模型"><a class="header" href="#4-核心-harness-架构当前实用模型">4. 核心 Harness 架构：当前实用模型</a></h1>
+<p>第 3 章已经把问题空间列清楚了。第 4 章开始给出解法：不是继续追加 prompt 规则，而是围绕状态、事件、验证和回放建立一套可运行的 harness 架构。</p>
 <pre><code class="language-text">子工具或技能（Rust/Python/Node/shell）
         |
         | 发出 octos.harness.event.v1（progress/error/info）
@@ -222,6 +223,7 @@ UI 状态气泡、页头与重载回放
 <h2 id="45-为什么-sessionjsonl-这类朴素设计仍然重要"><a class="header" href="#45-为什么-sessionjsonl-这类朴素设计仍然重要">4.5 为什么 session.jsonl 这类朴素设计仍然重要</a></h2>
 <p>原书借 Karpathy 的 autoresearch 思路强调：长期知识系统最难的不是“让模型想起来”，而是 bookkeeping。<code>session.md</code> 提供人类可读的叙事，<code>session.jsonl</code> 提供机器可回放的事件。这个组合朴素，但非常抗变化：模型会换，前端会换，工具会换，事实流不应该轻易换。<sup class="footnote-reference" id="fr-karpathy-bookkeeping-ch4-1"><a href="#footnote-karpathy-bookkeeping-ch4">1</a></sup></p>
 <p>Octos 的任务状态、SSE 回放、操作员仪表盘，本质上都应该从这个事实流派生，而不是各自维护一份“看起来差不多”的状态。</p>
+<p>接下来的第 5 到第 7 章，会把这套架构拆到几个最容易失真的现实表面：多语言桥接、UI 回放，以及线上操作员/mini-fleet 视角。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">

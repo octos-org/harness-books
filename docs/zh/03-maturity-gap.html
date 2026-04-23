@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-7823d214.js";
+            window.path_to_searchindex_js = "searchindex-e685d58f.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -175,6 +175,7 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="2-成熟度鸿沟灵光一闪-vs-工厂化输出"><a class="header" href="#2-成熟度鸿沟灵光一闪-vs-工厂化输出">2. 成熟度鸿沟：灵光一闪 vs 工厂化输出</a></h1>
+<p>上一章回答的是“为什么必须有 harness”；这一章回答的是“成熟团队究竟在建设什么，才能从 demo 式聪明跨到工厂化输出”。先看 OpenAI 这类外部案例，不是为了抄作业，而是为了把成熟度鸿沟说具体。</p>
 <p>“灵光一闪的天才”模式有这些特征：</p>
 <ul>
 <li>成功依赖 prompt，且不可重复</li>
@@ -209,6 +210,7 @@
 <h2 id="23-0-人工审查的边界"><a class="header" href="#23-0-人工审查的边界">2.3 “0% 人工审查”的边界</a></h2>
 <p>OpenAI 的极端案例不能直接搬到所有场景。内部工具链、非合规关键路径、风险自吸收时，可以把大量人工审查下沉到 CI、性质测试、结构化验证和指标门禁。医疗、金融、隐私、客户数据路径则不同：实名人工 reviewer、审计记录、变更控制和合规签字是事实要求，不是工程偏好。<sup class="footnote-reference" id="fr-review-boundary-ch2-1"><a href="#footnote-review-boundary-ch2">3</a></sup></p>
 <p>因此 Octos 的目标不是追求“没有人看”，而是把人类从重复、低信号的逐行审查中解放出来，转向审查契约、门禁、失败分类和高风险边界。</p>
+<p>下一章会把这个鸿沟落回 Octos 自己的失败现场。也就是说，我们不再停留在“成熟团队长什么样”，而是直接回答“Octos 离它还差什么”。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
