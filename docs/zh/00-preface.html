@@ -1,0 +1,383 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>前言：为什么需要这本书 - 驾驭工程：Octos 纲要同步版</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-536ebfa7.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-90596f49.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">驾驭工程：Octos 纲要同步版</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="前言为什么需要这本书"><a class="header" href="#前言为什么需要这本书">前言：为什么需要这本书</a></h1>
+<p>Octos already proved a hard truth: a powerful model plus prompt tricks can look brilliant for demos, then fail under real traffic, long-running jobs, reloads, and multi-session concurrency.</p>
+<p>This book captures the harness engineering lessons that turned that pattern into a factory posture:</p>
+<ul>
+<li>deterministic task lifecycle</li>
+<li>durable contract state</li>
+<li>typed progress/event ABI</li>
+<li>validator-gated completion</li>
+<li>replayable UI truth</li>
+<li>operator-visible failure causes</li>
+</ul>
+<p>Those lessons are not abstract. They were forced out of Octos by background-task progress drift, <code>run_pipeline</code> / <code>deep-search</code> status mismatch, session contamination, artifact contract gaps, validator incompleteness, and operator blind spots. The book keeps returning to those incidents because they show the same pattern from different angles: the model was not the bottleneck, the control system was.</p>
+<p>The goal is not architecture purity. The goal is reliable outcomes when the model, network, plugins, browser tabs, and user behavior are all messy.</p>
+<hr>
+<h3 id="扩展源材料"><a class="header" href="#扩展源材料">扩展源材料</a></h3>
+<h4 id="来自-00-frontmattermd驾驭工程"><a class="header" href="#来自-00-frontmattermd驾驭工程">来自 <code>00-frontmatter.md</code>：驾驭工程</a></h4>
+<p><em>源材料角色：book positioning, audience, and frontmatter.</em></p>
+<h4 id="驾驭工程"><a class="header" href="#驾驭工程">驾驭工程</a></h4>
+<h5 id="面向意图的工程学--人与-ai-如何共同进化"><a class="header" href="#面向意图的工程学--人与-ai-如何共同进化">面向意图的工程学 —— 人与 AI 如何共同进化</a></h5>
+<hr>
+<p><strong>ZhangHanDong</strong> · 著</p>
+<hr>
+<h5 id="内容简介"><a class="header" href="#内容简介">内容简介</a></h5>
+<p>当 2023 年“prompt engineering“成为新的热词,2025 年“context engineering“接棒,2026 年业界几乎同时涌现出一组关于 <strong>harness engineering</strong> 的奠基文——Martin Fowler、OpenAI、Anthropic、MindStudio、Neo4j、Milvus、Karpathy、AIOS Foundation、Stanford IRIS Lab 从不同的入口给出了各自的回答。</p>
+<p><strong>但这些文本加在一起,仍然没有告诉一个工程团队:真正做驾驭工程时,每天要决定的是什么?</strong></p>
+<p>本书尝试给出答案。第一件要做的事,是把“驾驭工程“ 这个词<strong>横跨的两层划清</strong>:</p>
+<ul>
+<li><strong>Layer 1 · AI Coding 过程的驾驭工程</strong> —— 软件工程这门老学科面向 AI 时代的进化;agent(Codex / Claude Code)是你的生产工具,<strong>产品仍是代码本身</strong>。Fowler 的《Harness engineering for coding agent users》、OpenAI 的 1M LOC 实证、MindStudio 的五柱分类,都在这一层。</li>
+<li><strong>Layer 2 · AI Agent 自身的 Harness 工程</strong> —— agent 系统的运行时基础;<strong>产品就是 agent</strong>。Anthropic Managed Agents 的三抽象(session / harness / sandbox)、AIOS 的 LLM-as-OS、Neo4j 的 memory layer、Milvus 的 execution layer,都在这一层。</li>
+</ul>
+<p>两层<strong>正交</strong>(同一家公司可能只做其中一层、也可能两层都做),但共享一组工程原则 —— 面向意图、稳定抽象、验证独立。基于十篇奠基文的精读、三十余项一线工程实践,以及作者本人在 <code>octos</code>、<code>dora-rs</code>、<code>ascent-research</code>、<code>agent-spec</code>、<code>mempal</code> 等开源项目中的实操经验,本书将驾驭工程归纳为四根<strong>不随模型能力变化的稳定支柱</strong>:可恢复的 session、可替换的 harness、可问责的 tools、独立于生成的 verification。</p>
+<p>然后,本书进一步追问:当模型越来越强,这些支柱会消失吗?作者的论证是 —— 恰恰相反,<strong>AI 越强,驾驭工程越值钱</strong>。这是一门反脆弱的学科。它的命题不是“AI 有缺陷所以需要兜底“,而是:<strong>任何足够重要的 AI 系统,都需要一个独立于该系统自身的验证层,并且这个独立性是结构性的,不是能力性的</strong>。</p>
+<h5 id="适合谁读"><a class="header" href="#适合谁读">适合谁读</a></h5>
+<ul>
+<li><strong>工程团队 lead</strong> —— 你们用 AI 写代码,想要把“临时流程“ 升级成“可复制的工程学科“(Layer 1 的主要读者群)</li>
+<li><strong>Agent 产品团队</strong> —— 你们做的产品<strong>本身就是</strong> agent,合规、运维、长任务可靠性是生死线(Layer 2 的主要读者群)</li>
+<li><strong>做三年尺度架构选型的技术决策者</strong> —— 你想知道什么会被模型升级清算、什么会更值钱</li>
+<li><strong>研究 agent systems 的学术工作者、关注 AI 治理与合规的技术管理者</strong> —— 反脆弱四支柱对应的四套监管框架(EU AI Act / SEC / FDA / GDPR)是本书最直接的合规工具</li>
+</ul>
+<p>第 1 章会用三问帮你判断自己站在哪一层。</p>
+<h5 id="不适合谁读"><a class="header" href="#不适合谁读">不适合谁读</a></h5>
+<ul>
+<li>寻找“最好用 prompt 模板“ 的初学者 —— 本书假设你已跨过 prompt engineering 阶段</li>
+<li>相信 AGI 会在明天到来从此不需要任何工程 —— 请直接读结语里的压力测试</li>
+</ul>
+<h5 id="致谢"><a class="header" href="#致谢">致谢</a></h5>
+<p>本书的写作本身是一次驾驭工程的实验 —— 所有研究都在 <code>ascent-research</code> 会话中进行,二十余个 wiki 页面 + 多张 hand-drawn SVG 作为本书的知识底库持续演化。感谢 Andrej Karpathy 的 autoresearch 原型、pi-autoresearch 的开源社区、Anthropic Managed Agents 团队、OpenAI Codex / Frontier 团队、Stanford IRIS Lab Meta-Harness 作者组,以及 Martin Fowler 持续不懈地命名这个学科的工作。</p>
+<p>特别感谢 Dan Ariely —— 他 2013 年那句关于 big data 的俏皮话,给了这本书一条贯穿始终的黑色幽默线索,它在楔子、第 10 章、结语三次回响。</p>
+<hr>
+<p><em>本书使用 <a href="https://github.com/ZhangHanDong/ascent-research">ascent-research</a> 进行素材调研,使用 <a href="https://rust-lang.github.io/mdBook/">mdbook</a> 进行组织与渲染。书写过程的 session 目录完整公开于 <code>~/.actionbook/research/harness-engineering/</code>,读者可 fork 该 session 作为自己的调研起点 —— 这本身是驾驭工程长程循环的一次公开演示。</em></p>
+<h4 id="来自-00-prologuemd楔子--十年前的-big-data今天的驾驭工程"><a class="header" href="#来自-00-prologuemd楔子--十年前的-big-data今天的驾驭工程">来自 <code>00-prologue.md</code>：楔子 · 十年前的 Big Data,今天的驾驭工程</a></h4>
+<p><em>源材料角色：larger-book opening argument and two-layer framing.</em></p>
+<h4 id="楔子--十年前的-big-data今天的驾驭工程"><a class="header" href="#楔子--十年前的-big-data今天的驾驭工程">楔子 · 十年前的 Big Data,今天的驾驭工程</a></h4>
+<blockquote>
+<p><em>“Big data is like teenage sex: everyone talks about it, nobody really knows how to do it, everyone thinks everyone else is doing it, so everyone claims they are doing it.”</em></p>
+<p>—— Dan Ariely,杜克大学,2013 年 1 月<sup class="footnote-reference" id="fr-1-1"><a href="#footnote-1">1</a></sup></p>
+</blockquote>
+<p>十三年过去了。</p>
+<p>把那句话里的 big data 换成 harness engineering,你今天仍然能发一条让所有人转发的推文。</p>
+<p>2026 年 4 月,Martin Fowler 的个人网站上出现了一篇题为《Harness engineering for coding agent users》的长文<sup class="footnote-reference" id="fr-2-1"><a href="#footnote-2">2</a></sup>。OpenAI 在两个月前发布了《Harness Engineering: Leveraging Codex in an Agent-First World》<sup class="footnote-reference" id="fr-3-1"><a href="#footnote-3">3</a></sup>,讲述三个工程师用五个月时间让 Codex 写出一百万行代码、一千五百个合并 PR、人类一行代码都没有写。Anthropic 几乎同一时间发布了两篇文章:一篇叫《Harness Design for Long-Running Application Development》<sup class="footnote-reference" id="fr-4-1"><a href="#footnote-4">4</a></sup>,一篇叫《Scaling Managed Agents: Decoupling the brain from the hands》<sup class="footnote-reference" id="fr-5-1"><a href="#footnote-5">5</a></sup>。Medium 上 Fisher Zhang 的一篇短文给这一系列爆发贴了个绝妙的标签 ——《Harness Engineering: The Oldest New Idea in AI》<sup class="footnote-reference" id="fr-6-1"><a href="#footnote-6">6</a></sup>。Neo4j、Milvus、MindStudio、Stanford IRIS Lab、甚至 AIOS Foundation 下面的学术社区都在同一个季节里发出了自己关于 harness 的论述<sup class="footnote-reference" id="fr-7-1"><a href="#footnote-7">7</a></sup>、<sup class="footnote-reference" id="fr-8-1"><a href="#footnote-8">8</a></sup>、<sup class="footnote-reference" id="fr-9-1"><a href="#footnote-9">9</a></sup>、<sup class="footnote-reference" id="fr-10-1"><a href="#footnote-10">10</a></sup>。</p>
+<p>如果你关心 LLM 应用工程,你已经无法不注意到这个词。如果你关心更深一层的事情,你大概已经开始困惑:harness 到底是<strong>一个新工具</strong>、<strong>一个新学科</strong>,还是<strong>只是一组我们本来就应该知道、只是现在终于有了名字</strong>的事情?</p>
+<h5 id="先划清两种完全不同的驾驭工程"><a class="header" href="#先划清两种完全不同的驾驭工程">先划清:两种完全不同的“驾驭工程“</a></h5>
+<p>最快让这个困惑消解的办法,不是争“harness 是什么“,是先<strong>看看这些文本讲的到底是同一件事吗</strong>。</p>
+<p>翻开 Fowler 和 OpenAI 两篇。他们讲的,是一种<strong>软件工程师的日常</strong> —— 团队三个人,用 Codex 写自己的 SaaS 产品,用 AGENTS.md 作知识目录,用 CI 做架构约束,用 property test 做质量门。agent 是<strong>他们的工具</strong>,产出是<strong>他们的代码</strong>。没有用户知道背后有 AI。</p>
+<p>翻开 Anthropic 的两篇、AIOS 那一篇、Neo4j、Milvus、Karpathy。他们讲的是<strong>另一件完全不同的事</strong> —— 他们的<strong>产品本身就是 agent</strong>。用户打开应用,和 agent 对话,让它帮自己完成任务。工程关注点是:session 怎么在客户 VPC 里跑、崩了怎么 resume、出事怎么审计、合规怎么签字。</p>
+<p><strong>这两件事不是同一件事</strong>。它们有共同的词汇 —— harness、tool、session、verification。但客户、产出、合规、时间尺度<strong>全不同</strong>。Fowler 的文章对着一家用 Codex 的团队有效,对着做 agent 产品的团队只是部分有用;Anthropic Managed Agents 讲的 session 三抽象,用在手工用 Codex 写代码的团队身上是 overkill。</p>
+<p>本书的第一件基础动作,是把这两层<strong>钉开</strong>。</p>
+<ul>
+<li><strong>Layer 1 · AI Coding 过程的驾驭工程</strong> —— 软件工程面向 AI 时代的进化</li>
+<li><strong>Layer 2 · AI Agent 自身的 Harness 工程</strong> —— agent 系统的运行时基础</li>
+</ul>
+<p>两层<strong>正交</strong>。同一家公司可以只在 Layer 1、只在 Layer 2、或两层都在;但不管哪种情况,<strong>先搞清楚自己站在哪层</strong>,是读任何 harness 文献的前置条件。第 1 章会用三问帮你定位。</p>
+<h5 id="三个常见回答都不完整"><a class="header" href="#三个常见回答都不完整">三个常见回答,都不完整</a></h5>
+<p>困惑的根源,其实在于业界已有的三种“harness 是什么“的回答,每一种都<strong>绕开了最难的问题</strong>。</p>
+<p><strong>第一个回答是“新工具“。</strong> 打开任何一篇介绍性文章,你会看到 harness 被描述成 agent 运行时环境里的那些具体东西:memory、tools、state、context、execution、evaluation。这种描述没错,但它不解释<strong>为什么这些东西突然一起变重要了</strong>。它们都不新。memory 是数据库的事,tools 是 RPC 的事,sandbox 是虚拟化的事。为什么 2023 年我们不这么写,2026 年我们必须这么写了?</p>
+<p><strong>第二个回答是“新学科“。</strong> Fisher Zhang 的三段论干净利落:2023 年叫 prompt engineering,2025 年叫 context engineering,2026 年叫 harness engineering<sup class="footnote-reference" id="fr-6-2"><a href="#footnote-6">6</a></sup>。每一代都不是替代,是<strong>超集</strong>。这个框架让 harness engineering 变成 prompt engineering 的自然延伸,但回避了一个更硬的问题:<strong>这个学科到底稳不稳?</strong> 如果下一代模型把现在 harness 里一半组件都做没了,它算学科吗?</p>
+<p><strong>第三个回答是“本来就应该知道的事“。</strong> Medium 那篇《oldest new idea》把 harness 放进人类技术史的长序列里 —— 火、炉子、蒸汽机,每次围绕一个“昂贵核心“ 搭脚手架的历史。LLM 只是新核心,脚手架本质重复我们四十年做编译器、操作系统、中间件、分布式时的所有套路。这个回答对到几乎不再是回答 —— 如果一切都是旧的,为什么今天还要再写一本书?</p>
+<p><strong>三个回答都不完整</strong>,因为它们都在描述“harness engineering 是什么“。本书关心的是一个更难的问题:<strong>harness engineering 到底要</strong>驾驭<strong>什么?</strong></p>
+<h5 id="驾驭而不是构建"><a class="header" href="#驾驭而不是构建">驾驭,而不是构建</a></h5>
+<p>“Harness“这个词在英文里的第一义不是“框架”,是“驾驭“ —— 给马套上辔头和缰绳,让它的力量变成可以驱动的方向。MindStudio 的那篇介绍文章特意把词源说得明白:马需要辔头和缰绳,才能把自己的力量用在正确的地方<sup class="footnote-reference" id="fr-8-2"><a href="#footnote-8">8</a></sup>。</p>
+<p>这是一个<strong>人机关系</strong> 的比喻,不是一个<strong>工具清单</strong>。没有驾驭者,辔头和缰绳是死物。你可以有世界上最精致的马具,把一匹已经放归草原的野马追到累死,什么成果都不会有。反过来,一个老练的驭手哪怕只有一根缰绳,也能让马拉车走上千里。</p>
+<p>这个词被挑中来命名 2026 年 LLM 工程的核心学科,不是偶然。它暗示的一件事,这个时代的工程师反复忽略 —— <strong>模型能力不等于系统能力</strong>。让模型“更强“ 是一件事,让一个包含模型的系统“更可靠、更可续、更可问责“ 是完全不同的另一件事。而后者,才是这本书的主题。</p>
+<h5 id="这本书的中心论点三句话"><a class="header" href="#这本书的中心论点三句话">这本书的中心论点,三句话</a></h5>
+<p><strong>第一</strong>,<strong>驾驭工程是面向意图的工程学</strong>,不是围绕 LLM 搭工具。代码是 AI 的输出,<strong>意图</strong>才是工程师的上游对象。AI 越强,意图误差越被放大到整个 codebase;spec-driven development、Design by Contract、可验证的意图表达,不是选择,是生存条件。</p>
+<p><strong>第二</strong>,<strong>驾驭工程押的是稳定抽象,不是当下实现</strong>。Anthropic Managed Agents 的那句 “The session is not Claude’s context window”<sup class="footnote-reference" id="fr-5-2"><a href="#footnote-5">5</a></sup> 是这个赌注最清晰的表达 —— 把 session、harness、sandbox 三件事解耦,承诺的是接口,不是内部。模型会变,harness 里很多零件都会被模型自己吃掉,但<strong>接口不会</strong> —— 就像 40 年里 Unix 的 read/write/open/close 没怎么变,尽管底层硬件、文件系统、网络协议翻天覆地。</p>
+<p><strong>第三</strong>,<strong>驾驭工程是反脆弱的</strong>。它的价值不绑在“AI 还不够好“ 上,恰恰相反 —— AI 越强,被部署到越深的地方,<strong>独立验证层、意图锚定、问责证据链、目标函数定义权</strong> 这四件事就越刚需。这不是技术问题,是结构性问题。</p>
+<p>三件事合起来,是一个位置:<strong>驾驭工程不是帮模型写得更好,是帮人在模型面前做出可问责的判断</strong>。</p>
+<h5 id="什么算真正在做驾驭工程"><a class="header" href="#什么算真正在做驾驭工程">什么算“真正在做“驾驭工程</a></h5>
+<p>Ariely 那句俏皮话,今天换皮就是每一场关于 agent 的会议里的氛围。每个人都在谈 harness,大多数人不知道自己在做什么,大家都以为别人在做,于是都说自己在做。</p>
+<p>要让这句话不再适用你,你需要具体能回答以下这些问题。<strong>两层各有几个</strong>:</p>
+<p><strong>Layer 1 读者</strong>(用 AI 写代码的工程团队):</p>
+<ul>
+<li>你们的 AGENTS.md 是目录(短)还是百科(长到塞爆 context)?</li>
+<li>你们用 CI-enforced 约束把 AI 代码的质量门从 PR 级挪到了机器级了吗?</li>
+<li>“0% human review” 在你们团队成立吗?不成立的场景里(医疗/金融/隐私)替代机制是什么?</li>
+</ul>
+<p><strong>Layer 2 读者</strong>(做 agent 产品的团队):</p>
+<ul>
+<li>我的 session 长什么样?它是 Claude 的 context window 的镜像,还是可查询、可回放、可恢复、可重组的事件流?<sup class="footnote-reference" id="fr-5-3"><a href="#footnote-5">5</a></sup></li>
+<li>我的 harness 是假设了什么模型缺陷?这些假设里有哪几条随着模型变强会变成技术债?<sup class="footnote-reference" id="fr-4-2"><a href="#footnote-4">4</a></sup></li>
+<li>我的工具词汇表谁定义、谁审计、谁能撤销?一个 <code>run_any_bash(cmd)</code> 是不是已经把“harness“ 的边界让渡给了模型?<sup class="footnote-reference" id="fr-8-3"><a href="#footnote-8">8</a></sup></li>
+<li>我的验证是<strong>谁</strong> 在验?是被验对象自己,还是一个位置上独立的东西?当监管者问“你怎么知道这是对的“ 时,我能拿出什么证据?</li>
+</ul>
+<p>凡是能具体回答这些问题的团队,都在<strong>真正做</strong>驾驭工程。凡是被问到这些问题开始讲“我们用了什么框架“ —— 抱歉,不是。</p>
+<h5 id="本书的走法"><a class="header" href="#本书的走法">本书的走法</a></h5>
+<p>接下来的十四章,分五个部分:</p>
+<ul>
+<li><strong>Part 0 · 定位与共享坐标(Ch 1–4)</strong> —— 先把两层钉开(Ch 1),建立三把尺的坐标系(Ch 2)、面向意图的第一性原理(Ch 3)、Oldest New Idea 的历史定位(Ch 4)。</li>
+<li><strong>Part A · AI Coding 过程的驾驭工程(Ch 5)</strong> —— Layer 1 专章。OpenAI 1M LOC / Fowler / MindStudio 的工程谱系合成一章。</li>
+<li><strong>Part B · AI Agent 自身的 Harness 工程(Ch 6–9)</strong> —— Layer 2 四柱:session / harness / tools / verification。本书字数密度最高的一部分。</li>
+<li><strong>Part C · 跨时间的驾驭(Ch 10–12)</strong> —— 两类循环(短程 vs 长程)、知识沉淀与 skills 晋升、reflexive harness 的三档边界。</li>
+<li><strong>Part D · 落地与未来(Ch 13–14)</strong> —— 失败模式博物馆 + 反脆弱四支柱、Many Brains Many Hands 的终局愿景。</li>
+</ul>
+<p>Ariely 的俏皮话在本书<strong>完整出现三次</strong>:楔子(现在)、第 10 章(mid-book callback)、结语。其他地方以意象回响,不重复引用。</p>
+<p>全书结尾处,我们会回到 Ariely。到那时,我希望你能具体说出 <strong>你的</strong> harness 是什么(Layer 1 的 AGENTS.md?还是 Layer 2 的 session 协议?还是两层都有?),并且知道,十年之后再回头看这句俏皮话,<strong>它讲的不是你</strong>。</p>
+<hr>
+<hr>
+<ol class="footnote-definition">
+<li id="footnote-1">
+<p>Dan Ariely, Twitter, Jan 2013. 此后被无数次引用,本书以它作为贯穿楔子、第 10 章、结语的隐线索。 <a href="#fr-1-1">↩</a></p>
+</li>
+<li id="footnote-2">
+<p>Birgitta Böckeler, <em>Harness engineering for coding agent users</em>, martinfowler.com, 2026-04-02. 见 [[fowler-on-harness]]。 <a href="#fr-2-1">↩</a></p>
+</li>
+<li id="footnote-3">
+<p>OpenAI, <em>Harness Engineering: Leveraging Codex in an Agent-First World</em>, Feb 2026. 见 [[openai-harness-engineering]]。 <a href="#fr-3-1">↩</a></p>
+</li>
+<li id="footnote-4">
+<p>Prithvi Rajasekaran (Anthropic Labs), <em>Harness Design for Long-Running Application Development</em>, 2026-03-24. 见 [[anthropic-harness-design]]。 <a href="#fr-4-1">↩</a> <a href="#fr-4-2">↩2</a></p>
+</li>
+<li id="footnote-5">
+<p>Lance Martin, Gabe Cemaj, Michael Cohen (Anthropic), <em>Scaling Managed Agents: Decoupling the brain from the hands</em>, Apr 2026. 见 [[anthropic-managed-agents]]。 <a href="#fr-5-1">↩</a> <a href="#fr-5-2">↩2</a> <a href="#fr-5-3">↩3</a></p>
+</li>
+<li id="footnote-6">
+<p>Fisher Zhang, <em>Harness Engineering: The Oldest New Idea in AI</em>, Medium, Apr 2026. 见 [[medium-oldest-new-idea]]。 <a href="#fr-6-1">↩</a> <a href="#fr-6-2">↩2</a></p>
+</li>
+<li id="footnote-7">
+<p>Nyah Macklin (Neo4j), <em>Context Engineering for AI Agents</em>, 2026-03-09. 见 [[neo4j-context-vs-prompt]]。 <a href="#fr-7-1">↩</a></p>
+</li>
+<li id="footnote-8">
+<p>NxCode, <em>What Is Harness Engineering? Complete Guide for AI Agent Development</em>, March 2026. 见 [[mindstudio-harness]]。 <a href="#fr-8-1">↩</a> <a href="#fr-8-2">↩2</a> <a href="#fr-8-3">↩3</a></p>
+</li>
+<li id="footnote-9">
+<p>Milvus, <em>Harness Engineering: The Execution Layer AI Agents Actually Need</em>, 2026. 见 [[milvus-execution-layer]]。 <a href="#fr-9-1">↩</a></p>
+</li>
+<li id="footnote-10">
+<p>AIOS Foundation / Mei et al., <em>AIOS: LLM Agent Operating System</em>, COLM 2025;以及 Stanford IRIS Lab, <em>Meta-Harness: End-to-End Optimization of Model Harnesses</em>, arxiv:2603.28052, 2026. 见 [[aios-foundation]] 和 [[stanford-meta-harness]]。 <a href="#fr-10-1">↩</a></p>
+</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="00-title.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="01-book-map.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="00-title.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="01-book-map.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

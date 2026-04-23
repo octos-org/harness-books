@@ -1,0 +1,52 @@
+# 10. 工作流到里程碑映射：务实路线图
+
+This mapping aligns with current M4 direction and remaining platformization gaps.
+
+## M4.1A — Parent-visible structured progress ABI
+
+- typed `octos.harness.event.v1`
+- sink + consumer + task_status bridge
+- deep-search migration from stderr status
+- UI/API replay parity
+- mini fleet live gate
+- non-Rust emitters
+
+## M4.2 — Developer contract productization
+
+- stable docs for manifest/policy/task fields
+- starter app templates across artifact classes
+- contract examples with failure modes
+
+## M4.3 — Typed validator runner
+
+- declarative validators with typed outcomes
+- timeout taxonomy and failure categories
+- replayable evidence and operator-facing provenance
+
+## M4.4 — Compatibility gate for third-party apps/skills
+
+- install from git
+- run harness flow
+- validate artifacts
+- reload and verify persistence
+- uninstall and verify no state bleed
+
+## M4.5 — Operator dashboard maturation
+
+- lifecycle + phase + validator + artifact surfaces
+- retry/timeout/orphan diagnostics
+- compact incident-ready views backed by canonical task summary
+
+## M4.6 — Explicit ABI versioning and migration policy
+
+- schema versions for events/hooks/policy/task fields
+- compatibility tests and deprecation windows
+- breaking-change protocol before external adoption
+
+This roadmap is ordered to match the failures above, not to satisfy backlog aesthetics. The first items repair truth propagation; the later items harden compatibility and governance once the truth model is stable. The next chapter is the necessary pause: harness fixes orchestration correctness, but it does not finish the product.
+
+---
+
+### 同步说明
+
+本节以 Octos 短纲要为准。较大的 mdBook 源材料中暂时没有直接映射到本节的章节，所以本节目前保留为纲要主导内容。

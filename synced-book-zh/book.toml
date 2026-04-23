@@ -1,0 +1,5 @@
+[book]
+title = "驾驭工程：Octos 纲要同步版"
+authors = ["Octos Harness Research"]
+language = "zh-CN"
+src = "src"

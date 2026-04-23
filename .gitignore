@@ -1,0 +1,10 @@
+.DS_Store
+__MACOSX/
+._*
+
+# Temporary extraction/work area. The durable source snapshots live in sources/.
+sync-work/
+
+# Local editor and tool state
+.idea/
+.vscode/
