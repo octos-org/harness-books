@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-87d8682b.js";
+            window.path_to_searchindex_js = "searchindex-7ad66507.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -193,7 +193,7 @@
 </ul>
 <p>Harness 就是这两种模式之间的转换机制。</p>
 <h2 id="21-openai-1m-loc-案例真正说明了什么"><a class="header" href="#21-openai-1m-loc-案例真正说明了什么">2.1 OpenAI 1M LOC 案例真正说明了什么</a></h2>
-<p>原书里最有冲击力的案例来自 OpenAI Codex 团队：从 2025 年 8 月第一次提交到 2026 年 2 月，约五个月时间，三位工程师驱动 Codex 产出约 1M LOC、1500+ 个已合并 PR，平均每位工程师每天 3.5 个 PR，并宣称人类不直接写应用代码。这个故事的重点不是“模型终于可以替代工程师”，而是工程师的工作对象上移了。</p>
+<p>原书里最有冲击力的案例来自 OpenAI Codex 团队：从 2025 年 8 月第一次提交到 2026 年 2 月，约五个月时间，三位工程师驱动 Codex 产出约 1M LOC、1500+ 个已合并 PR，平均每位工程师每天 3.5 个 PR，并宣称人类不直接写应用代码。<sup class="footnote-reference" id="fr-openai-factory-ch2-1"><a href="#footnote-openai-factory-ch2">1</a></sup> 这个故事的重点不是“模型终于可以替代工程师”，而是工程师的工作对象上移了。</p>
 <p>他们不再把主要时间花在逐行写业务代码，而是在设计让 agent 能持续产出正确代码的条件：</p>
 <ul>
 <li>可复现开发环境，让 agent 看到的失败信号稳定可信。</li>
@@ -204,12 +204,25 @@
 </ul>
 <p>这五件事合在一起，才是“工厂化输出”的骨架。没有这些条件，1M LOC 只会变成 1M 行没人敢合的文本。</p>
 <h2 id="22-agentsmd-应该是目录不是百科全书"><a class="header" href="#22-agentsmd-应该是目录不是百科全书">2.2 AGENTS.md 应该是目录，不是百科全书</a></h2>
-<p>原书对 <code>AGENTS.md</code> 的处理很值得 Octos 直接采用：它应该短、稳定、可常驻上下文，只放仓库定位、工具链版本、工作区拓扑、高频红线和指向 <code>docs/</code> 的目录。真正细节放在 <code>docs/</code> 里，按任务需要加载。</p>
+<p>原书对 <code>AGENTS.md</code> 的处理很值得 Octos 直接采用：它应该短、稳定、可常驻上下文，只放仓库定位、工具链版本、工作区拓扑、高频红线和指向 <code>docs/</code> 的目录。真正细节放在 <code>docs/</code> 里，按任务需要加载。<sup class="footnote-reference" id="fr-agents-catalog-ch2-1"><a href="#footnote-agents-catalog-ch2">2</a></sup></p>
 <p>反模式是把全部风格指南、API 手册、架构文档、on-call 流程塞进一个大 prompt。这样不仅浪费 token，更严重的是教会 agent 一种错误的上下文哲学：以为“上下文 = 曾经写下的全集”，而不是“上下文 = 当前任务需要的切片”。</p>
 <h2 id="23-0-人工审查的边界"><a class="header" href="#23-0-人工审查的边界">2.3 “0% 人工审查”的边界</a></h2>
-<p>OpenAI 的极端案例不能直接搬到所有场景。内部工具链、非合规关键路径、风险自吸收时，可以把大量人工审查下沉到 CI、性质测试、结构化验证和指标门禁。医疗、金融、隐私、客户数据路径则不同：实名人工 reviewer、审计记录、变更控制和合规签字是事实要求，不是工程偏好。</p>
+<p>OpenAI 的极端案例不能直接搬到所有场景。内部工具链、非合规关键路径、风险自吸收时，可以把大量人工审查下沉到 CI、性质测试、结构化验证和指标门禁。医疗、金融、隐私、客户数据路径则不同：实名人工 reviewer、审计记录、变更控制和合规签字是事实要求，不是工程偏好。<sup class="footnote-reference" id="fr-review-boundary-ch2-1"><a href="#footnote-review-boundary-ch2">3</a></sup></p>
 <p>因此 Octos 的目标不是追求“没有人看”，而是把人类从重复、低信号的逐行审查中解放出来，转向审查契约、门禁、失败分类和高风险边界。</p>
 <hr>
+<hr>
+<ol class="footnote-definition">
+<li id="footnote-openai-factory-ch2">
+<p>OpenAI, <em>Harness Engineering: Leveraging Codex in an Agent-First World.</em> 本节引用其关于 1M LOC、1500+ 已合并 PR、三位工程师与低人工写码比例的案例数字；见第 19 章参考文献 2。 <a href="#fr-openai-factory-ch2-1">↩</a></p>
+</li>
+<li id="footnote-agents-catalog-ch2">
+<p>本节关于 <code>AGENTS.md</code> 作为短目录、细节下沉到 <code>docs/</code> 的做法，综合 OpenAI 的 Codex harness 文章与 Fowler 对 coding-agent harness 的工程建议；见第 19 章参考文献 1、2。 <a href="#fr-agents-catalog-ch2-1">↩</a></p>
+</li>
+<li id="footnote-review-boundary-ch2">
+<p>本段前半关于 OpenAI 极端自动化案例的边界来自第 19 章参考文献 2；后半对医疗、金融、隐私与客户数据路径的要求，是本书针对高合规场景的工程外推。 <a href="#fr-review-boundary-ch2-1">↩</a></p>
+</li>
+</ol>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

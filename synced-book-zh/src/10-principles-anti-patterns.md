@@ -24,15 +24,18 @@
 
 ## 9.3 短循环和长循环
 
-所有 agent 都有短循环：生成、行动、观察，再生成。驾驭工程真正关心的是长循环：事故如何进入 wiki，wiki 如何晋升成 skill，skill 如何进入 `AGENTS.md` 或 docs，docs 中的约束如何变成 CI、validator 和 dashboard 信号。
+所有 agent 都有短循环：生成、行动、观察，再生成。驾驭工程真正关心的是长循环：事故如何进入 wiki，wiki 如何晋升成 skill，skill 如何进入 `AGENTS.md` 或 docs，docs 中的约束如何变成 CI、validator 和 dashboard 信号。[^long-loop-ch9]
 
 没有长循环，agent 每次都像从零开始的实习生。长循环跑起来之后，组织会把一次失败变成长期免疫力。
 
 ## 9.4 知识和 Skill 的晋升纪律
 
-不是所有经验都应该写进 `AGENTS.md`。原书给出的治理思路是 promotion / demotion：重复出现、跨任务稳定、能被验证的经验才晋升；过时、低频、无法验证或引起误导的经验要降级或删除。
+不是所有经验都应该写进 `AGENTS.md`。原书给出的治理思路是 promotion / demotion：重复出现、跨任务稳定、能被验证的经验才晋升；过时、低频、无法验证或引起误导的经验要降级或删除。[^promotion-discipline-ch9]
 
 Skill 也不是 prompt 集合。一个合格 skill 至少要有触发条件、输入输出契约、执行步骤和验证方式。对 Octos 来说，skill 的价值不在“让模型多知道一点”，而在“把组织经验变成可执行、可检查的流程”。
+
+[^long-loop-ch9]: 本段关于 wiki -> skill -> `AGENTS.md` / docs -> CI / validator / dashboard 的长循环，借鉴 Karpathy 的知识记账思路以及本书前述 harness 实践抽象；见第 19 章参考文献 9。
+[^promotion-discipline-ch9]: 本段关于经验的 promotion / demotion 与 `AGENTS.md` 保持短目录的治理方式，综合 OpenAI 的 `AGENTS.md + docs` 实践与 Karpathy 的知识治理思路；见第 19 章参考文献 2、9。
 
 ## 9.5 反身 harness 的边界
 

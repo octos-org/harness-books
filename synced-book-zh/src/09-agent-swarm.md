@@ -19,7 +19,7 @@ UI/API 负责人
 
 没有这种拆分，团队会合并通过本地测试、但破坏系统事实的局部真相。
 
-原书的“多脑多手”不是“多开几个 agent 并行干活”这么简单。它描述的是一种组织结构：多个“脑”可以规划、生成、验证、总结；多个“手”可以操作文件、浏览器、shell、API、数据库。但这一切必须共享同一个 session、同一套工具权限、同一组验证规则和同一个操作员视图。
+原书的“多脑多手”不是“多开几个 agent 并行干活”这么简单。它描述的是一种组织结构：多个“脑”可以规划、生成、验证、总结；多个“手”可以操作文件、浏览器、shell、API、数据库。但这一切必须共享同一个 session、同一套工具权限、同一组验证规则和同一个操作员视图。[^many-brains-ch8]
 
 没有 harness，多 agent 只会放大混乱。有 harness，多 agent 才能变成可分工、可审计、可回放的生产系统。
 
@@ -44,7 +44,7 @@ UI/API 负责人
 
 这样做的好处不是单一维度的，而是四个维度一起改善：
 
-- 质量上：减少位置偏置和“lost in the middle”效应，让每个 agent 都在更短、更密、更局部的工作区间里完成任务。
+- 质量上：减少位置偏置和“lost in the middle”效应，让每个 agent 都在更短、更密、更局部的工作区间里完成任务。[^swarm-econ-ch8]
 - 成本上：避免把同一百万 token 在每一轮对话里反复 prefill；可复用的公共材料可以缓存，不可复用的局部材料只喂给对应 agent。
 - 时延上：多个 200K 以内的 prefill 更容易并行、调度和提前结束，首 token 延迟也更容易控制。
 - 组织上：每个 agent 的失败边界更清晰，更适合绑到具体 validator、artifact policy 和 owner。
@@ -57,5 +57,8 @@ UI/API 负责人
 - 最后做全局汇总和验证。
 
 这正是 harness 要支持的 swarm 形态：不是把一个大脑塞得更满，而是把任务切成多个仍处于最佳工作区间的小脑，再用 session、contracts 和 verification 把它们重新编回一个系统。
+
+[^many-brains-ch8]: Anthropic, *Scaling Managed Agents: Decoupling the brain from the hands.* 本节借其 many brains / many hands 的组织视角来说明 coordinator、worker、verifier 的分工；见第 19 章参考文献 3。
+[^swarm-econ-ch8]: 本节关于 sub-agent / swarm 在质量、成本与时延上的优势，组织层借鉴 Anthropic 的 managed agents，长上下文质量与 prefill 成本部分综合第 1 章已引的长上下文文献；见第 19 章参考文献 3、11-20。
 
 ---

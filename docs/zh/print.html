@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-87d8682b.js";
+            window.path_to_searchindex_js = "searchindex-7ad66507.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -275,9 +275,9 @@ Harness 工程
 <p>“支持 1M token context”首先是能力上限，不是工程上可以无脑塞满的建议值。长上下文最容易误导团队的地方，在于大家把“能放进去”误当成“同样擅长用好”。</p>
 <p>这件事在事实层面已经很清楚：</p>
 <ul>
-<li>Google 在 2024 年发布 Gemini 1.5 时，报告它在单 needle 的 Needle-in-a-Haystack 测试里，在 1M token 下仍能达到 99% 命中率。</li>
-<li>但 Google 自己后续的 long context 开发文档也明确提醒：一旦从“单 needle”变成多个待检索信息点，表现就不会维持同样精度，而且会随上下文内容而大幅波动。</li>
-<li>Anthropic 的长上下文 prompting 文档则给出很务实的经验：长文档放前面、query 放最后面，复杂多文档输入里响应质量可提高到 30% 左右。</li>
+<li>Google 在 2024 年发布 Gemini 1.5 时，报告它在单 needle 的 Needle-in-a-Haystack 测试里，在 1M token 下仍能达到 99% 命中率。<sup class="footnote-reference" id="fr-gemini15-1"><a href="#footnote-gemini15">1</a></sup></li>
+<li>但 Google 自己后续的 long context 开发文档也明确提醒：一旦从“单 needle”变成多个待检索信息点，表现就不会维持同样精度，而且会随上下文内容而大幅波动。<sup class="footnote-reference" id="fr-google-long-context-1"><a href="#footnote-google-long-context">2</a></sup></li>
+<li>Anthropic 的长上下文 prompting 文档则给出很务实的经验：长文档放前面、query 放最后面，复杂多文档输入里响应质量可提高到 30% 左右。<sup class="footnote-reference" id="fr-anthropic-long-1"><a href="#footnote-anthropic-long">3</a></sup></li>
 </ul>
 <p>这说明同一个“1M context”里，不同位置、不同信息密度、不同任务形式的可用性并不均匀。上下文窗口更像一块可寻址的大内存，不像一条任何位置都等价的理想传送带。</p>
 <p>所以工程上应把 context window 分成两个概念：</p>
@@ -290,8 +290,8 @@ Harness 工程
 <p>这里先明确一个概念：所谓“最佳工作区间”，不是说所有模型都存在一个固定的 magic number，比如“128K 最好、256K 开始变差”。真实情况更像一个随任务结构变化的工作带宽。它描述的是：在多大范围内，模型还能稳定完成检索、遵循指令、保持多步推理、避免位置偏置，并且让系统在成本和时延上可接受。</p>
 <p>换句话说，最佳工作区间不是模型 brochure 上的容量数字，而是模型、任务、提示布局、信息密度和服务成本共同决定的工程区间。</p>
 <h3 id="151-位置偏置不是错觉而是长上下文的基本病灶"><a class="header" href="#151-位置偏置不是错觉而是长上下文的基本病灶">1.5.1 位置偏置不是错觉，而是长上下文的基本病灶</a></h3>
-<p>长上下文退化最经典的证据来自 <em>Lost in the Middle</em>。这项工作讨论的不是“模型能不能读到很长的输入”，而是“模型是否均匀地用好了整段输入”。它的核心发现可以概括为：相关信息放在开头或结尾时表现更好，放在中间时明显更差。<sup class="footnote-reference" id="fr-ltm-1"><a href="#footnote-ltm">1</a></sup></p>
-<p>后续 <em>Found in the Middle</em> 进一步把这个现象与注意力机制联系起来，直接给出短语级结论：模型存在 <code>"U-shaped attention bias"</code>。<sup class="footnote-reference" id="fr-fitm-1"><a href="#footnote-fitm">2</a></sup> 也就是说，序列两端会天然吃到更多注意力，即便它们并不是最相关的信息。</p>
+<p>长上下文退化最经典的证据来自 <em>Lost in the Middle</em>。这项工作讨论的不是“模型能不能读到很长的输入”，而是“模型是否均匀地用好了整段输入”。它的核心发现可以概括为：相关信息放在开头或结尾时表现更好，放在中间时明显更差。<sup class="footnote-reference" id="fr-ltm-1"><a href="#footnote-ltm">4</a></sup></p>
+<p>后续 <em>Found in the Middle</em> 进一步把这个现象与注意力机制联系起来，直接给出短语级结论：模型存在 <code>"U-shaped attention bias"</code>。<sup class="footnote-reference" id="fr-fitm-1"><a href="#footnote-fitm">5</a></sup> 也就是说，序列两端会天然吃到更多注意力，即便它们并不是最相关的信息。</p>
 <p>这件事很关键，因为它说明：</p>
 <ul>
 <li>上下文窗口不是平的，而是有地形的；</li>
@@ -299,7 +299,7 @@ Harness 工程
 <li>中间位置的信息天然更容易掉权；</li>
 <li>指令布局不是文案问题，而是推理成功率问题。</li>
 </ul>
-<p>这也是为什么 Anthropic 的官方长上下文文档会给出非常操作性的建议：<sup class="footnote-reference" id="fr-anthropic-long-1"><a href="#footnote-anthropic-long">3</a></sup></p>
+<p>这也是为什么 Anthropic 的官方长上下文文档会给出非常操作性的建议：<sup class="footnote-reference" id="fr-anthropic-long-2"><a href="#footnote-anthropic-long">3</a></sup></p>
 <blockquote>
 <p>“Put longform data at the top”</p>
 </blockquote>
@@ -308,8 +308,8 @@ Harness 工程
 </blockquote>
 <p>如果上下文窗口内部真的没有位置效应，那么这种布局建议就不该对质量产生这么大影响。恰恰因为位置偏置真实存在，所以 prompt 的空间编排本身已经成为性能变量。</p>
 <h3 id="152-1m-命中-needle不等于1m-适合真实任务"><a class="header" href="#152-1m-命中-needle不等于1m-适合真实任务">1.5.2 “1M 命中 needle”不等于“1M 适合真实任务”</a></h3>
-<p>长上下文宣传里最容易让人误判的一点，是把单 needle 检索成绩外推到真实 agent 工作流。Google 在 Gemini 1.5 的发布文中报告：在 NIAH 测试里，1.5 Pro 在 1M token 下能把嵌入文本找到 <code>"99% of the time"</code>。<sup class="footnote-reference" id="fr-gemini15-1"><a href="#footnote-gemini15">4</a></sup> 这个结果当然重要，因为它证明超长上下文不是纯噱头。</p>
-<p>但同一套官方资料其实也给出了边界条件。Google 的 long context 开发文档明确说：一旦问题从单一 needle 变成多个信息点，性能就不会保持同样精度；文档原话是：<sup class="footnote-reference" id="fr-google-long-context-1"><a href="#footnote-google-long-context">5</a></sup></p>
+<p>长上下文宣传里最容易让人误判的一点，是把单 needle 检索成绩外推到真实 agent 工作流。Google 在 Gemini 1.5 的发布文中报告：在 NIAH 测试里，1.5 Pro 在 1M token 下能把嵌入文本找到 <code>"99% of the time"</code>。<sup class="footnote-reference" id="fr-gemini15-2"><a href="#footnote-gemini15">1</a></sup> 这个结果当然重要，因为它证明超长上下文不是纯噱头。</p>
+<p>但同一套官方资料其实也给出了边界条件。Google 的 long context 开发文档明确说：一旦问题从单一 needle 变成多个信息点，性能就不会保持同样精度；文档原话是：<sup class="footnote-reference" id="fr-google-long-context-2"><a href="#footnote-google-long-context">2</a></sup></p>
 <blockquote>
 <p>“performance can vary to a wide degree depending on the context”</p>
 </blockquote>
@@ -361,7 +361,7 @@ Harness 工程
 </ul>
 <p>这也是本书一直强调 session、tool、verification 和 replay 的原因：不是所有信息都应该留在 prompt 里。很多信息应该变成结构化外部状态，再按需投喂。</p>
 <h3 id="156-工程结论最佳工作区间是一个设计目标不是自然礼物"><a class="header" href="#156-工程结论最佳工作区间是一个设计目标不是自然礼物">1.5.6 工程结论：最佳工作区间是一个设计目标，不是自然礼物</a></h3>
-<p>综合前述研究与厂商文档，已经可以得出一个足够强的工程判断：<sup class="footnote-reference" id="fr-ltm-2"><a href="#footnote-ltm">1</a></sup> <sup class="footnote-reference" id="fr-fitm-2"><a href="#footnote-fitm">2</a></sup> <sup class="footnote-reference" id="fr-anthropic-long-2"><a href="#footnote-anthropic-long">3</a></sup> <sup class="footnote-reference" id="fr-gemini15-2"><a href="#footnote-gemini15">4</a></sup> <sup class="footnote-reference" id="fr-google-long-context-2"><a href="#footnote-google-long-context">5</a></sup> <sup class="footnote-reference" id="fr-nolima-2"><a href="#footnote-nolima">6</a></sup> <sup class="footnote-reference" id="fr-longcodebench-2"><a href="#footnote-longcodebench">7</a></sup></p>
+<p>综合前述研究与厂商文档，已经可以得出一个足够强的工程判断：<sup class="footnote-reference" id="fr-ltm-2"><a href="#footnote-ltm">4</a></sup> <sup class="footnote-reference" id="fr-fitm-2"><a href="#footnote-fitm">5</a></sup> <sup class="footnote-reference" id="fr-anthropic-long-3"><a href="#footnote-anthropic-long">3</a></sup> <sup class="footnote-reference" id="fr-gemini15-3"><a href="#footnote-gemini15">1</a></sup> <sup class="footnote-reference" id="fr-google-long-context-3"><a href="#footnote-google-long-context">2</a></sup> <sup class="footnote-reference" id="fr-nolima-2"><a href="#footnote-nolima">6</a></sup> <sup class="footnote-reference" id="fr-longcodebench-2"><a href="#footnote-longcodebench">7</a></sup></p>
 <ul>
 <li>上下文窗口内部存在位置偏置；</li>
 <li>指令和 query 的相对位置会显著影响结果；</li>
@@ -391,7 +391,7 @@ Harness 工程
 <p>“Pricing above reflects standard processing rates for context lengths under 270K.”</p>
 </blockquote>
 <p>这句话的含义不是“270K 以上一定贵多少”，而是：连公开价格页都把超长上下文视为另一类服务条件。换句话说，提供方自己也承认，超长上下文不只是简单地把 token 数乘上单价那么朴素。</p>
-<p>Google 在 Gemini 1.5 发布时也表达了同样的信号。它一方面宣布会提供 <code>"pricing tiers that start at the standard 128,000 context window and scale up to 1 million tokens"</code>，另一方面又提醒早期测试者应预期 <code>"longer latency times"</code>。<sup class="footnote-reference" id="fr-gemini15-3"><a href="#footnote-gemini15">4</a></sup> 这说明在提供方视角里，长上下文从一开始就是“性能与成本要单独优化”的模式，而不是对普通请求做线性外推。</p>
+<p>Google 在 Gemini 1.5 发布时也表达了同样的信号。它一方面宣布会提供 <code>"pricing tiers that start at the standard 128,000 context window and scale up to 1 million tokens"</code>，另一方面又提醒早期测试者应预期 <code>"longer latency times"</code>。<sup class="footnote-reference" id="fr-gemini15-4"><a href="#footnote-gemini15">1</a></sup> 这说明在提供方视角里，长上下文从一开始就是“性能与成本要单独优化”的模式，而不是对普通请求做线性外推。</p>
 <h3 id="162-真正的-killer-常常是-prefill而不是-output-token"><a class="header" href="#162-真正的-killer-常常是-prefill而不是-output-token">1.6.2 真正的 killer 常常是 prefill，而不是 output token</a></h3>
 <p>从系统视角看，长上下文的核心痛点通常不在 decode，而在 prefill。原因很简单：在进入自回归生成前，模型先要把整段输入转成 KV cache 并完成注意力计算。输入越长，这一步越重。</p>
 <p><em>MInference</em> 的摘要给了一个足够刺眼的工程数字：<sup class="footnote-reference" id="fr-minference-1"><a href="#footnote-minference">9</a></sup></p>
@@ -410,12 +410,12 @@ Harness 工程
 </ul>
 <p><em>LongLLMLingua</em> 还给出一个非常有启发性的结果：在 NaturalQuestions 上，压缩后可以用 <code>"4x fewer tokens"</code> 取得更高表现；在 LooGLE 上，成本降幅达到 94.0%。<sup class="footnote-reference" id="fr-longllmlingua-2"><a href="#footnote-longllmlingua">10</a></sup> 这组结果的意义不是“所有项目都该先做 prompt compression”，而是它再次证明：更多 token 并不天然等于更好结果。很多时候，更短、更密、更有结构的上下文，反而同时赢下质量和成本。</p>
 <h3 id="164-google-官方文档其实已经把经济学结论说得很直白"><a class="header" href="#164-google-官方文档其实已经把经济学结论说得很直白">1.6.4 Google 官方文档其实已经把经济学结论说得很直白</a></h3>
-<p>Google 的 long context 文档在“限制”和“优化”部分给了两句很值得直接记进架构设计的提醒。<sup class="footnote-reference" id="fr-google-long-context-3"><a href="#footnote-google-long-context">5</a></sup></p>
+<p>Google 的 long context 文档在“限制”和“优化”部分给了两句很值得直接记进架构设计的提醒。<sup class="footnote-reference" id="fr-google-long-context-4"><a href="#footnote-google-long-context">2</a></sup></p>
 <p>第一句是：</p>
 <blockquote>
 <p>“there is an inherent tradeoff between getting the right information retrieved and cost”</p>
 </blockquote>
-<p>第二句是它后面的例子：如果你要取 100 条信息，并希望维持极高准确率，那往往意味着要发出很多次查询；文档给出的意思是，这时 caching 会显著影响总成本。<sup class="footnote-reference" id="fr-google-long-context-4"><a href="#footnote-google-long-context">5</a></sup></p>
+<p>第二句是它后面的例子：如果你要取 100 条信息，并希望维持极高准确率，那往往意味着要发出很多次查询；文档给出的意思是，这时 caching 会显著影响总成本。<sup class="footnote-reference" id="fr-google-long-context-5"><a href="#footnote-google-long-context">2</a></sup></p>
 <p>这段话可以翻成工程语言：长上下文不是“单次把大资料包交给模型”就万事大吉。真正花钱的往往是：</p>
 <ul>
 <li>你要问多少轮；</li>
@@ -481,7 +481,7 @@ Harness 工程
 <li>每轮失败重试的代价很高。</li>
 </ol>
 <h3 id="168-工程结论swarm-是长上下文经济学的自然产物"><a class="header" href="#168-工程结论swarm-是长上下文经济学的自然产物">1.6.8 工程结论：swarm 是长上下文经济学的自然产物</a></h3>
-<p>综合前述事实链，可以得出一个比“多 agent 更高级”更扎实的结论：<sup class="footnote-reference" id="fr-gemini15-4"><a href="#footnote-gemini15">4</a></sup> <sup class="footnote-reference" id="fr-google-long-context-5"><a href="#footnote-google-long-context">5</a></sup> <sup class="footnote-reference" id="fr-longllmlingua-3"><a href="#footnote-longllmlingua">10</a></sup> <sup class="footnote-reference" id="fr-minference-2"><a href="#footnote-minference">9</a></sup> <sup class="footnote-reference" id="fr-openai-pricing-2"><a href="#footnote-openai-pricing">8</a></sup></p>
+<p>综合前述事实链，可以得出一个比“多 agent 更高级”更扎实的结论：<sup class="footnote-reference" id="fr-gemini15-5"><a href="#footnote-gemini15">1</a></sup> <sup class="footnote-reference" id="fr-google-long-context-6"><a href="#footnote-google-long-context">2</a></sup> <sup class="footnote-reference" id="fr-longllmlingua-3"><a href="#footnote-longllmlingua">10</a></sup> <sup class="footnote-reference" id="fr-minference-2"><a href="#footnote-minference">9</a></sup> <sup class="footnote-reference" id="fr-openai-pricing-2"><a href="#footnote-openai-pricing">8</a></sup></p>
 <ul>
 <li>API 账单有时近似线性，但公开定价本身已把超长上下文单独对待；</li>
 <li>prefill 的计算和时延并不线性；</li>
@@ -536,26 +536,26 @@ Harness 工程
 <p>这就是 harness 的根因。它不是为了弥补某个模型“不够聪明”，而是为了给概率生成系统补上确定性的运行时边界。模型越强，能做的事越多，外部状态和副作用越复杂，harness 反而越重要。</p>
 <h2 id="111-两层驾驭工程先把对象分清"><a class="header" href="#111-两层驾驭工程先把对象分清">1.11 两层驾驭工程：先把对象分清</a></h2>
 <p>原书反复强调一个容易混淆的点：驾驭工程至少有两层。</p>
-<p>第 1 层是 AI 编码过程的驾驭工程。这里 agent 是工程团队的生产工具，最终产品仍然是代码、服务、应用或基础设施。OpenAI Codex 团队的 1M LOC 案例、Fowler 的代码 agent harness、AGENTS.md + docs 的知识注入模式，都属于这一层。</p>
-<p>第 2 层是 AI agent 自身的 harness 工程。这里产品本身就是 agent，用户直接把任务交给它。系统要处理 session 恢复、sandbox 权限、工具调用审计、长任务重启、客户环境隔离和合规签字。Anthropic 的 session / harness / sandbox 三抽象、Milvus 的执行层、Neo4j 的记忆层，更接近这一层。</p>
+<p>第 1 层是 AI 编码过程的驾驭工程。这里 agent 是工程团队的生产工具，最终产品仍然是代码、服务、应用或基础设施。OpenAI Codex 团队的 1M LOC 案例、Fowler 的代码 agent harness、AGENTS.md + docs 的知识注入模式，都属于这一层。<sup class="footnote-reference" id="fr-layer1-harness-ch1-1"><a href="#footnote-layer1-harness-ch1">11</a></sup></p>
+<p>第 2 层是 AI agent 自身的 harness 工程。这里产品本身就是 agent，用户直接把任务交给它。系统要处理 session 恢复、sandbox 权限、工具调用审计、长任务重启、客户环境隔离和合规签字。Anthropic 的 session / harness / sandbox 三抽象、Milvus 的执行层、Neo4j 的记忆层，更接近这一层。<sup class="footnote-reference" id="fr-layer2-harness-ch1-1"><a href="#footnote-layer2-harness-ch1">12</a></sup></p>
 <p>Octos 同时踩在两层上：团队用 AI 写代码，也在构建 agent 平台。因此本书采用 Octos 的故障和里程碑作为主线，但会借用原书中两层共同适用的稳定原则：状态持久化、工具可问责、验证独立、知识可晋升。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
+<li id="footnote-gemini15">
+<p>Google, <em>Introducing Gemini 1.5, Google’s next-generation AI model.</em> 本节引用其中关于 NIAH 命中率、1M context pricing tier 与长时延预期的表述；见第 19 章参考文献 14。 <a href="#fr-gemini15-1">↩</a> <a href="#fr-gemini15-2">↩2</a> <a href="#fr-gemini15-3">↩3</a> <a href="#fr-gemini15-4">↩4</a> <a href="#fr-gemini15-5">↩5</a></p>
+</li>
+<li id="footnote-google-long-context">
+<p>Google AI for Developers, <em>Long context.</em> 本节引用其关于 performance variability、retrieval-cost tradeoff 与 caching 的说明；见第 19 章参考文献 15。 <a href="#fr-google-long-context-1">↩</a> <a href="#fr-google-long-context-2">↩2</a> <a href="#fr-google-long-context-3">↩3</a> <a href="#fr-google-long-context-4">↩4</a> <a href="#fr-google-long-context-5">↩5</a> <a href="#fr-google-long-context-6">↩6</a></p>
+</li>
+<li id="footnote-anthropic-long">
+<p>Anthropic, <em>Prompting best practices: Long context prompting.</em> 本节引用其关于长文档前置、query 后置与约 30% 质量改进的建议；见第 19 章参考文献 13。 <a href="#fr-anthropic-long-1">↩</a> <a href="#fr-anthropic-long-2">↩2</a> <a href="#fr-anthropic-long-3">↩3</a></p>
+</li>
 <li id="footnote-ltm">
 <p>Nelson F. Liu et al., <em>Lost in the Middle: How Language Models Use Long Contexts.</em> 见第 19 章参考文献 11。 <a href="#fr-ltm-1">↩</a> <a href="#fr-ltm-2">↩2</a></p>
 </li>
 <li id="footnote-fitm">
 <p>Cheng-Yu Hsieh et al., <em>Found in the Middle: Calibrating Positional Attention Bias Improves Long Context Utilization.</em> 见第 19 章参考文献 12。 <a href="#fr-fitm-1">↩</a> <a href="#fr-fitm-2">↩2</a></p>
-</li>
-<li id="footnote-anthropic-long">
-<p>Anthropic, <em>Prompting best practices: Long context prompting.</em> 本节引用其关于长文档前置、query 后置与约 30% 质量改进的建议；见第 19 章参考文献 13。 <a href="#fr-anthropic-long-1">↩</a> <a href="#fr-anthropic-long-2">↩2</a></p>
-</li>
-<li id="footnote-gemini15">
-<p>Google, <em>Introducing Gemini 1.5, Google’s next-generation AI model.</em> 本节引用其中关于 NIAH 命中率、1M context pricing tier 与长时延预期的表述；见第 19 章参考文献 14。 <a href="#fr-gemini15-1">↩</a> <a href="#fr-gemini15-2">↩2</a> <a href="#fr-gemini15-3">↩3</a> <a href="#fr-gemini15-4">↩4</a></p>
-</li>
-<li id="footnote-google-long-context">
-<p>Google AI for Developers, <em>Long context.</em> 本节引用其关于 performance variability、retrieval-cost tradeoff 与 caching 的说明；见第 19 章参考文献 15。 <a href="#fr-google-long-context-1">↩</a> <a href="#fr-google-long-context-2">↩2</a> <a href="#fr-google-long-context-3">↩3</a> <a href="#fr-google-long-context-4">↩4</a> <a href="#fr-google-long-context-5">↩5</a></p>
 </li>
 <li id="footnote-nolima">
 <p>Ali Modarressi et al., <em>NoLiMa: Long-Context Evaluation Beyond Literal Matching.</em> 本节引用其 32K 条件下模型退化统计与 GPT-4o 从 99.3% 降至 69.7% 的结果；见第 19 章参考文献 16。 <a href="#fr-nolima-1">↩</a> <a href="#fr-nolima-2">↩2</a></p>
@@ -571,6 +571,12 @@ Harness 工程
 </li>
 <li id="footnote-longllmlingua">
 <p>Huiqiang Jiang et al., <em>LongLLMLingua: Accelerating and Enhancing LLMs in Long Context Scenarios via Prompt Compression.</em> 本节引用其对长上下文三类问题的总结，以及 NaturalQuestions 与 LooGLE 的压缩收益结果；见第 19 章参考文献 18。 <a href="#fr-longllmlingua-1">↩</a> <a href="#fr-longllmlingua-2">↩2</a> <a href="#fr-longllmlingua-3">↩3</a></p>
+</li>
+<li id="footnote-layer1-harness-ch1">
+<p>本段综合 Fowler 关于 coding agent harness 的框架，以及 OpenAI Codex 团队 1M LOC / <code>AGENTS.md + docs</code> 的工程实践；见第 19 章参考文献 1、2。 <a href="#fr-layer1-harness-ch1-1">↩</a></p>
+</li>
+<li id="footnote-layer2-harness-ch1">
+<p>本段综合 Anthropic 关于 managed agents 与 long-running harness 的接口抽象，以及 Milvus 的 execution layer、Neo4j 的 memory/context layer 视角；见第 19 章参考文献 3、4、6、7。 <a href="#fr-layer2-harness-ch1-1">↩</a></p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -593,7 +599,7 @@ Harness 工程
 </ul>
 <p>Harness 就是这两种模式之间的转换机制。</p>
 <h2 id="21-openai-1m-loc-案例真正说明了什么"><a class="header" href="#21-openai-1m-loc-案例真正说明了什么">2.1 OpenAI 1M LOC 案例真正说明了什么</a></h2>
-<p>原书里最有冲击力的案例来自 OpenAI Codex 团队：从 2025 年 8 月第一次提交到 2026 年 2 月，约五个月时间，三位工程师驱动 Codex 产出约 1M LOC、1500+ 个已合并 PR，平均每位工程师每天 3.5 个 PR，并宣称人类不直接写应用代码。这个故事的重点不是“模型终于可以替代工程师”，而是工程师的工作对象上移了。</p>
+<p>原书里最有冲击力的案例来自 OpenAI Codex 团队：从 2025 年 8 月第一次提交到 2026 年 2 月，约五个月时间，三位工程师驱动 Codex 产出约 1M LOC、1500+ 个已合并 PR，平均每位工程师每天 3.5 个 PR，并宣称人类不直接写应用代码。<sup class="footnote-reference" id="fr-openai-factory-ch2-1"><a href="#footnote-openai-factory-ch2">1</a></sup> 这个故事的重点不是“模型终于可以替代工程师”，而是工程师的工作对象上移了。</p>
 <p>他们不再把主要时间花在逐行写业务代码，而是在设计让 agent 能持续产出正确代码的条件：</p>
 <ul>
 <li>可复现开发环境，让 agent 看到的失败信号稳定可信。</li>
@@ -604,12 +610,25 @@ Harness 工程
 </ul>
 <p>这五件事合在一起，才是“工厂化输出”的骨架。没有这些条件，1M LOC 只会变成 1M 行没人敢合的文本。</p>
 <h2 id="22-agentsmd-应该是目录不是百科全书"><a class="header" href="#22-agentsmd-应该是目录不是百科全书">2.2 AGENTS.md 应该是目录，不是百科全书</a></h2>
-<p>原书对 <code>AGENTS.md</code> 的处理很值得 Octos 直接采用：它应该短、稳定、可常驻上下文，只放仓库定位、工具链版本、工作区拓扑、高频红线和指向 <code>docs/</code> 的目录。真正细节放在 <code>docs/</code> 里，按任务需要加载。</p>
+<p>原书对 <code>AGENTS.md</code> 的处理很值得 Octos 直接采用：它应该短、稳定、可常驻上下文，只放仓库定位、工具链版本、工作区拓扑、高频红线和指向 <code>docs/</code> 的目录。真正细节放在 <code>docs/</code> 里，按任务需要加载。<sup class="footnote-reference" id="fr-agents-catalog-ch2-1"><a href="#footnote-agents-catalog-ch2">2</a></sup></p>
 <p>反模式是把全部风格指南、API 手册、架构文档、on-call 流程塞进一个大 prompt。这样不仅浪费 token，更严重的是教会 agent 一种错误的上下文哲学：以为“上下文 = 曾经写下的全集”，而不是“上下文 = 当前任务需要的切片”。</p>
 <h2 id="23-0-人工审查的边界"><a class="header" href="#23-0-人工审查的边界">2.3 “0% 人工审查”的边界</a></h2>
-<p>OpenAI 的极端案例不能直接搬到所有场景。内部工具链、非合规关键路径、风险自吸收时，可以把大量人工审查下沉到 CI、性质测试、结构化验证和指标门禁。医疗、金融、隐私、客户数据路径则不同：实名人工 reviewer、审计记录、变更控制和合规签字是事实要求，不是工程偏好。</p>
+<p>OpenAI 的极端案例不能直接搬到所有场景。内部工具链、非合规关键路径、风险自吸收时，可以把大量人工审查下沉到 CI、性质测试、结构化验证和指标门禁。医疗、金融、隐私、客户数据路径则不同：实名人工 reviewer、审计记录、变更控制和合规签字是事实要求，不是工程偏好。<sup class="footnote-reference" id="fr-review-boundary-ch2-1"><a href="#footnote-review-boundary-ch2">3</a></sup></p>
 <p>因此 Octos 的目标不是追求“没有人看”，而是把人类从重复、低信号的逐行审查中解放出来，转向审查契约、门禁、失败分类和高风险边界。</p>
-<hr><div style="break-before: page; page-break-before: always;"></div>
+<hr>
+<hr>
+<ol class="footnote-definition">
+<li id="footnote-openai-factory-ch2">
+<p>OpenAI, <em>Harness Engineering: Leveraging Codex in an Agent-First World.</em> 本节引用其关于 1M LOC、1500+ 已合并 PR、三位工程师与低人工写码比例的案例数字；见第 19 章参考文献 2。 <a href="#fr-openai-factory-ch2-1">↩</a></p>
+</li>
+<li id="footnote-agents-catalog-ch2">
+<p>本节关于 <code>AGENTS.md</code> 作为短目录、细节下沉到 <code>docs/</code> 的做法，综合 OpenAI 的 Codex harness 文章与 Fowler 对 coding-agent harness 的工程建议；见第 19 章参考文献 1、2。 <a href="#fr-agents-catalog-ch2-1">↩</a></p>
+</li>
+<li id="footnote-review-boundary-ch2">
+<p>本段前半关于 OpenAI 极端自动化案例的边界来自第 19 章参考文献 2；后半对医疗、金融、隐私与客户数据路径的要求，是本书针对高合规场景的工程外推。 <a href="#fr-review-boundary-ch2-1">↩</a></p>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="3-octos-遇到的失败类别以及代价为何高"><a class="header" href="#3-octos-遇到的失败类别以及代价为何高">3. Octos 遇到的失败类别，以及代价为何高</a></h1>
 <h2 id="31-后台任务进度-bug"><a class="header" href="#31-后台任务进度-bug">3.1 后台任务进度 bug</a></h2>
 <p>观察到的类别：</p>
@@ -756,9 +775,16 @@ UI 状态气泡、页头与重载回放
 <p>Tools 是可问责的动作词汇表。每个工具调用都应该有明确职责、权限边界、输入输出 schema 和审计记录。工具不是“模型想干什么就给什么”，而是系统允许它采取的有边界动作。</p>
 <p>Verification 是独立于生成的判断层。生成器说“完成”不等于完成；验证器、产物策略、性质测试、验证器运行器和外部证据才决定能否进入终态成功。</p>
 <h2 id="45-为什么-sessionjsonl-这类朴素设计仍然重要"><a class="header" href="#45-为什么-sessionjsonl-这类朴素设计仍然重要">4.5 为什么 session.jsonl 这类朴素设计仍然重要</a></h2>
-<p>原书借 Karpathy 的 autoresearch 思路强调：长期知识系统最难的不是“让模型想起来”，而是 bookkeeping。<code>session.md</code> 提供人类可读的叙事，<code>session.jsonl</code> 提供机器可回放的事件。这个组合朴素，但非常抗变化：模型会换，前端会换，工具会换，事实流不应该轻易换。</p>
+<p>原书借 Karpathy 的 autoresearch 思路强调：长期知识系统最难的不是“让模型想起来”，而是 bookkeeping。<code>session.md</code> 提供人类可读的叙事，<code>session.jsonl</code> 提供机器可回放的事件。这个组合朴素，但非常抗变化：模型会换，前端会换，工具会换，事实流不应该轻易换。<sup class="footnote-reference" id="fr-karpathy-bookkeeping-ch4-1"><a href="#footnote-karpathy-bookkeeping-ch4">1</a></sup></p>
 <p>Octos 的任务状态、SSE 回放、操作员仪表盘，本质上都应该从这个事实流派生，而不是各自维护一份“看起来差不多”的状态。</p>
-<hr><div style="break-before: page; page-break-before: always;"></div>
+<hr>
+<hr>
+<ol class="footnote-definition">
+<li id="footnote-karpathy-bookkeeping-ch4">
+<p>Andrej Karpathy, <em>LLM Wiki.</em> 本节借其 autoresearch / wiki 的双文件与 bookkeeping 思路，说明 <code>session.md</code> + <code>session.jsonl</code> 这类事实流设计的价值；见第 19 章参考文献 9。 <a href="#fr-karpathy-bookkeeping-ch4-1">↩</a></p>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="5-非-rust-桥接平台现实的必需品"><a class="header" href="#5-非-rust-桥接平台现实的必需品">5. 非 Rust 桥接：平台现实的必需品</a></h1>
 <p>Octos 是以 Rust 为主的运行时，但 skill 生态是多语言的。</p>
 <p>如果进度/事件契约只在 Rust 中可用：</p>
@@ -841,7 +867,7 @@ UI/API 负责人
   -&gt; 负责线上门禁、诊断和回滚策略
 </code></pre>
 <p>没有这种拆分，团队会合并通过本地测试、但破坏系统事实的局部真相。</p>
-<p>原书的“多脑多手”不是“多开几个 agent 并行干活”这么简单。它描述的是一种组织结构：多个“脑”可以规划、生成、验证、总结；多个“手”可以操作文件、浏览器、shell、API、数据库。但这一切必须共享同一个 session、同一套工具权限、同一组验证规则和同一个操作员视图。</p>
+<p>原书的“多脑多手”不是“多开几个 agent 并行干活”这么简单。它描述的是一种组织结构：多个“脑”可以规划、生成、验证、总结；多个“手”可以操作文件、浏览器、shell、API、数据库。但这一切必须共享同一个 session、同一套工具权限、同一组验证规则和同一个操作员视图。<sup class="footnote-reference" id="fr-many-brains-ch8-1"><a href="#footnote-many-brains-ch8">1</a></sup></p>
 <p>没有 harness，多 agent 只会放大混乱。有 harness，多 agent 才能变成可分工、可审计、可回放的生产系统。</p>
 <h2 id="82-反混乱规则"><a class="header" href="#82-反混乱规则">8.2 反混乱规则</a></h2>
 <p>门禁激活后，任何工作流都不得单方面重定义契约语义。<br>任何 schema、生命周期语义或回放行为的变更，都必须在同一个 PR 切片中更新：</p>
@@ -861,7 +887,7 @@ UI/API 负责人
 </ol>
 <p>这样做的好处不是单一维度的，而是四个维度一起改善：</p>
 <ul>
-<li>质量上：减少位置偏置和“lost in the middle”效应，让每个 agent 都在更短、更密、更局部的工作区间里完成任务。</li>
+<li>质量上：减少位置偏置和“lost in the middle”效应，让每个 agent 都在更短、更密、更局部的工作区间里完成任务。<sup class="footnote-reference" id="fr-swarm-econ-ch8-1"><a href="#footnote-swarm-econ-ch8">2</a></sup></li>
 <li>成本上：避免把同一百万 token 在每一轮对话里反复 prefill；可复用的公共材料可以缓存，不可复用的局部材料只喂给对应 agent。</li>
 <li>时延上：多个 200K 以内的 prefill 更容易并行、调度和提前结束，首 token 延迟也更容易控制。</li>
 <li>组织上：每个 agent 的失败边界更清晰，更适合绑到具体 validator、artifact policy 和 owner。</li>
@@ -874,7 +900,17 @@ UI/API 负责人
 <li>最后做全局汇总和验证。</li>
 </ul>
 <p>这正是 harness 要支持的 swarm 形态：不是把一个大脑塞得更满，而是把任务切成多个仍处于最佳工作区间的小脑，再用 session、contracts 和 verification 把它们重新编回一个系统。</p>
-<hr><div style="break-before: page; page-break-before: always;"></div>
+<hr>
+<hr>
+<ol class="footnote-definition">
+<li id="footnote-many-brains-ch8">
+<p>Anthropic, <em>Scaling Managed Agents: Decoupling the brain from the hands.</em> 本节借其 many brains / many hands 的组织视角来说明 coordinator、worker、verifier 的分工；见第 19 章参考文献 3。 <a href="#fr-many-brains-ch8-1">↩</a></p>
+</li>
+<li id="footnote-swarm-econ-ch8">
+<p>本节关于 sub-agent / swarm 在质量、成本与时延上的优势，组织层借鉴 Anthropic 的 managed agents，长上下文质量与 prefill 成本部分综合第 1 章已引的长上下文文献；见第 19 章参考文献 3、11-20。 <a href="#fr-swarm-econ-ch8-1">↩</a></p>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="9-原则与反模式"><a class="header" href="#9-原则与反模式">9. 原则与反模式</a></h1>
 <h2 id="91-原则"><a class="header" href="#91-原则">9.1 原则</a></h2>
 <ol>
@@ -899,14 +935,24 @@ UI/API 负责人
 <li>发布切片中为了“再重构一下”而不增加用户可见不变量。</li>
 </ol>
 <h2 id="93-短循环和长循环"><a class="header" href="#93-短循环和长循环">9.3 短循环和长循环</a></h2>
-<p>所有 agent 都有短循环：生成、行动、观察，再生成。驾驭工程真正关心的是长循环：事故如何进入 wiki，wiki 如何晋升成 skill，skill 如何进入 <code>AGENTS.md</code> 或 docs，docs 中的约束如何变成 CI、validator 和 dashboard 信号。</p>
+<p>所有 agent 都有短循环：生成、行动、观察，再生成。驾驭工程真正关心的是长循环：事故如何进入 wiki，wiki 如何晋升成 skill，skill 如何进入 <code>AGENTS.md</code> 或 docs，docs 中的约束如何变成 CI、validator 和 dashboard 信号。<sup class="footnote-reference" id="fr-long-loop-ch9-1"><a href="#footnote-long-loop-ch9">1</a></sup></p>
 <p>没有长循环，agent 每次都像从零开始的实习生。长循环跑起来之后，组织会把一次失败变成长期免疫力。</p>
 <h2 id="94-知识和-skill-的晋升纪律"><a class="header" href="#94-知识和-skill-的晋升纪律">9.4 知识和 Skill 的晋升纪律</a></h2>
-<p>不是所有经验都应该写进 <code>AGENTS.md</code>。原书给出的治理思路是 promotion / demotion：重复出现、跨任务稳定、能被验证的经验才晋升；过时、低频、无法验证或引起误导的经验要降级或删除。</p>
+<p>不是所有经验都应该写进 <code>AGENTS.md</code>。原书给出的治理思路是 promotion / demotion：重复出现、跨任务稳定、能被验证的经验才晋升；过时、低频、无法验证或引起误导的经验要降级或删除。<sup class="footnote-reference" id="fr-promotion-discipline-ch9-1"><a href="#footnote-promotion-discipline-ch9">2</a></sup></p>
 <p>Skill 也不是 prompt 集合。一个合格 skill 至少要有触发条件、输入输出契约、执行步骤和验证方式。对 Octos 来说，skill 的价值不在“让模型多知道一点”，而在“把组织经验变成可执行、可检查的流程”。</p>
 <h2 id="95-反身-harness-的边界"><a class="header" href="#95-反身-harness-的边界">9.5 反身 harness 的边界</a></h2>
 <p>未来 harness 会越来越多地修改自己：更新文档、生成测试、补充验证器、建议 schema 迁移。但反身能力必须分级。低风险变更可以自动化；影响协议、权限、验证独立性和合规目标的变更必须保留人工决策。不能把目标函数、权限边界和验证器独立性也交给提案者自己定义。</p>
-<hr><div style="break-before: page; page-break-before: always;"></div>
+<hr>
+<hr>
+<ol class="footnote-definition">
+<li id="footnote-long-loop-ch9">
+<p>本段关于 wiki -&gt; skill -&gt; <code>AGENTS.md</code> / docs -&gt; CI / validator / dashboard 的长循环，借鉴 Karpathy 的知识记账思路以及本书前述 harness 实践抽象；见第 19 章参考文献 9。 <a href="#fr-long-loop-ch9-1">↩</a></p>
+</li>
+<li id="footnote-promotion-discipline-ch9">
+<p>本段关于经验的 promotion / demotion 与 <code>AGENTS.md</code> 保持短目录的治理方式，综合 OpenAI 的 <code>AGENTS.md + docs</code> 实践与 Karpathy 的知识治理思路；见第 19 章参考文献 2、9。 <a href="#fr-promotion-discipline-ch9-1">↩</a></p>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="10-工作流到里程碑映射务实路线图"><a class="header" href="#10-工作流到里程碑映射务实路线图">10. 工作流到里程碑映射：务实路线图</a></h1>
 <p>这份映射对齐当前 M4 方向和剩余平台化缺口。</p>
 <h2 id="m41a--父级可见的结构化进度-abi"><a class="header" href="#m41a--父级可见的结构化进度-abi">M4.1A — 父级可见的结构化进度 ABI</a></h2>

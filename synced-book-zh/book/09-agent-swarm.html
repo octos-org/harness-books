@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-87d8682b.js";
+            window.path_to_searchindex_js = "searchindex-7ad66507.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-90596f49.js"></script>
@@ -189,7 +189,7 @@ UI/API 负责人
   -&gt; 负责线上门禁、诊断和回滚策略
 </code></pre>
 <p>没有这种拆分，团队会合并通过本地测试、但破坏系统事实的局部真相。</p>
-<p>原书的“多脑多手”不是“多开几个 agent 并行干活”这么简单。它描述的是一种组织结构：多个“脑”可以规划、生成、验证、总结；多个“手”可以操作文件、浏览器、shell、API、数据库。但这一切必须共享同一个 session、同一套工具权限、同一组验证规则和同一个操作员视图。</p>
+<p>原书的“多脑多手”不是“多开几个 agent 并行干活”这么简单。它描述的是一种组织结构：多个“脑”可以规划、生成、验证、总结；多个“手”可以操作文件、浏览器、shell、API、数据库。但这一切必须共享同一个 session、同一套工具权限、同一组验证规则和同一个操作员视图。<sup class="footnote-reference" id="fr-many-brains-ch8-1"><a href="#footnote-many-brains-ch8">1</a></sup></p>
 <p>没有 harness，多 agent 只会放大混乱。有 harness，多 agent 才能变成可分工、可审计、可回放的生产系统。</p>
 <h2 id="82-反混乱规则"><a class="header" href="#82-反混乱规则">8.2 反混乱规则</a></h2>
 <p>门禁激活后，任何工作流都不得单方面重定义契约语义。<br>任何 schema、生命周期语义或回放行为的变更，都必须在同一个 PR 切片中更新：</p>
@@ -209,7 +209,7 @@ UI/API 负责人
 </ol>
 <p>这样做的好处不是单一维度的，而是四个维度一起改善：</p>
 <ul>
-<li>质量上：减少位置偏置和“lost in the middle”效应，让每个 agent 都在更短、更密、更局部的工作区间里完成任务。</li>
+<li>质量上：减少位置偏置和“lost in the middle”效应，让每个 agent 都在更短、更密、更局部的工作区间里完成任务。<sup class="footnote-reference" id="fr-swarm-econ-ch8-1"><a href="#footnote-swarm-econ-ch8">2</a></sup></li>
 <li>成本上：避免把同一百万 token 在每一轮对话里反复 prefill；可复用的公共材料可以缓存，不可复用的局部材料只喂给对应 agent。</li>
 <li>时延上：多个 200K 以内的 prefill 更容易并行、调度和提前结束，首 token 延迟也更容易控制。</li>
 <li>组织上：每个 agent 的失败边界更清晰，更适合绑到具体 validator、artifact policy 和 owner。</li>
@@ -223,6 +223,16 @@ UI/API 负责人
 </ul>
 <p>这正是 harness 要支持的 swarm 形态：不是把一个大脑塞得更满，而是把任务切成多个仍处于最佳工作区间的小脑，再用 session、contracts 和 verification 把它们重新编回一个系统。</p>
 <hr>
+<hr>
+<ol class="footnote-definition">
+<li id="footnote-many-brains-ch8">
+<p>Anthropic, <em>Scaling Managed Agents: Decoupling the brain from the hands.</em> 本节借其 many brains / many hands 的组织视角来说明 coordinator、worker、verifier 的分工；见第 19 章参考文献 3。 <a href="#fr-many-brains-ch8-1">↩</a></p>
+</li>
+<li id="footnote-swarm-econ-ch8">
+<p>本节关于 sub-agent / swarm 在质量、成本与时延上的优势，组织层借鉴 Anthropic 的 managed agents，长上下文质量与 prefill 成本部分综合第 1 章已引的长上下文文献；见第 19 章参考文献 3、11-20。 <a href="#fr-swarm-econ-ch8-1">↩</a></p>
+</li>
+</ol>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
