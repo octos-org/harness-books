@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-2776454b.js";
+            window.path_to_searchindex_js = "searchindex-579ff624.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-50f4af94.js"></script>
@@ -192,6 +192,25 @@ Session / Thread 事实流
 终态裁决（ready / failed）与可追责证据
 </code></pre>
 <p>关键规则只有一句：任何用户可见状态，都必须能沿着这张图一路回溯到同一条事实流。</p>
+<p>为了避免后文一会儿讲 Claude Code 的产品器官，一会儿讲 Codex 的协议骨架，到第 9 章又突然换成抽象原则，这里先固定一套贯穿全书的运行时词汇。后面凡是提到 Claude Code 的 <code>sessionStorage.ts</code>、<code>StreamingToolExecutor.ts</code>、<code>agentSummary.ts</code>，或 Codex 的 <code>Thread</code> / <code>Turn</code> / <code>Item</code>、<code>tools</code>、<code>thread-store</code>、<code>app-server</code>，都只是在这张表里占不同位置。<sup class="footnote-reference" id="fr-claudecode-codex-spine-ch4-2"><a href="#footnote-claudecode-codex-spine-ch4">1</a></sup></p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>统一术语</th><th>它回答的问题</th><th>Claude Code 的落点</th><th>Codex 的落点</th></tr>
+</thead>
+<tbody>
+<tr><td>事实流</td><td>什么真实发生过</td><td><code>sessionStorage.ts</code>、transcript、<code>resumeAgent.ts</code></td><td><code>Thread</code> / <code>Turn</code> / <code>Item</code>、<code>thread-store</code>、<code>rollout</code></td></tr>
+<tr><td>生命周期</td><td>系统现在推进到哪一步</td><td><code>query.ts</code> 主循环、compaction、resume 迁移</td><td><code>turn/start</code>、<code>turn/interrupt</code>、thread / turn notifications</td></tr>
+<tr><td>能力平面</td><td>系统能调用什么动作</td><td><code>ToolUseContext</code>、<code>StreamingToolExecutor.ts</code>、MCP、shell</td><td><code>tools</code> registry、<code>command/exec</code>、<code>fs/*</code>、<code>mcpServer/tool/call</code></td></tr>
+<tr><td>产物与验证</td><td>什么才算完成</td><td><code>diskOutput.ts</code>、产物外置、policy / hooks</td><td>artifact item、approval、sandbox、review / gate</td></tr>
+<tr><td>回放</td><td>用户与系统如何看到同一事实</td><td>transcript、<code>agentSummary.ts</code>、resume</td><td><code>app-server</code> notifications、rich interfaces</td></tr>
+<tr><td>隔离与恢复</td><td>长任务怎样不失稳</td><td><code>worktree.ts</code>、background task、resume</td><td><code>thread/fork</code>、<code>thread/resume</code>、sandboxing</td></tr>
+<tr><td>协作</td><td>多 agent 如何分工</td><td><code>AgentTool.tsx</code>、<code>loadAgentsDir.ts</code>、<code>teammateMailbox.ts</code></td><td><code>spawn_agent</code>、<code>send_input</code>、<code>wait_agent</code></td></tr>
+<tr><td>知识分层</td><td>经验怎样沉成长期资产</td><td>skills、hooks、memory scope</td><td><code>AGENTS.md</code>、<code>docs/agents_md.md</code>、plugins / skills</td></tr>
+<tr><td>操作员面</td><td>人怎样监督系统</td><td>summary、disk output、恢复入口</td><td>app-server rich interfaces、thread / project 视图</td></tr>
+</tbody>
+</table>
+</div>
 <h2 id="41-从失败反推最小可用-harness-至少要回答什么问题"><a class="header" href="#41-从失败反推最小可用-harness-至少要回答什么问题">4.1 从失败反推，最小可用 harness 至少要回答什么问题</a></h2>
 <p>第 3 章那六类事故，其实只是在追问六个更底层的问题：</p>
 <ol>
@@ -214,9 +233,9 @@ Session / Thread 事实流
 <li><code>failed</code></li>
 </ul>
 <p>内部当然可以存在更细粒度状态，但产品表面不应依赖一长串不断变化的内部标签。因为一旦 UI、API、replay、dashboard 各自解释一遍阶段，系统就会重新掉回第 3.2 节那种“每一层都没说错，但每一层说的不是同一件事”的状态。</p>
-<p>Codex 的 <code>Thread</code> / <code>Turn</code> / <code>Item</code> 把这件事表达得很清楚：线程承载持久历史，turn 承载一次执行，item 承载输入、输出和副作用。Claude Code 虽然没有用同一套名词，但 <code>query.ts</code>、<code>sessionStorage.ts</code>、<code>resumeAgent.ts</code>、<code>agentSummary.ts</code> 实际上也在做相同切分：一轮交互是什么、后台动作是什么、恢复时哪些事实要继续存在。成熟系统真正的共识不是术语相同，而是都不再把“一整段聊天记录”当成唯一状态机。<sup class="footnote-reference" id="fr-claudecode-codex-spine-ch4-2"><a href="#footnote-claudecode-codex-spine-ch4">1</a></sup></p>
-<h2 id="43-契约层把能力工作流和结果拆开"><a class="header" href="#43-契约层把能力工作流和结果拆开">4.3 契约层：把能力、工作流和结果拆开</a></h2>
-<p>要把 Claude Code / Codex 的经验移植到别的系统，最重要的不是照搬模块名，而是先把契约分层：</p>
+<p>如果用上面那张统一词汇表来重述，第 2 章里关于 Claude Code / Codex 的产品故事，首先都落在“事实流 + 生命周期”这两层。Codex 的 <code>Thread</code> / <code>Turn</code> / <code>Item</code> 把这件事表达得很清楚：线程承载持久历史，turn 承载一次执行，item 承载输入、输出和副作用。Claude Code 虽然没有用同一套名词，但 <code>query.ts</code>、<code>sessionStorage.ts</code>、<code>resumeAgent.ts</code>、<code>agentSummary.ts</code> 实际上也在做相同切分：一轮交互是什么、后台动作是什么、恢复时哪些事实要继续存在。成熟系统真正的共识不是术语相同，而是都不再把“一整段聊天记录”当成唯一状态机。<sup class="footnote-reference" id="fr-claudecode-codex-spine-ch4-3"><a href="#footnote-claudecode-codex-spine-ch4">1</a></sup></p>
+<h2 id="43-能力平面产物与验证把能力工作流和结果拆开"><a class="header" href="#43-能力平面产物与验证把能力工作流和结果拆开">4.3 能力平面、产物与验证：把能力、工作流和结果拆开</a></h2>
+<p>第 2 章里那些“Claude Code 为什么能既写代码又写文章、还能调 MCP 和多 agent”“Codex 为什么像 agent 内核”的故事，到了架构层其实只剩三件事：能力平面决定系统能做什么，工作流契约决定系统可以怎么做，产物与验证决定系统何时算完成。要把 Claude Code / Codex 的经验移植到别的系统，最重要的不是照搬模块名，而是先把契约分层：</p>
 <pre><code class="language-text">第 A 层：能力契约
   系统能调用哪些动作：shell、fs、web、MCP、sub-agent、human input
 
@@ -235,9 +254,9 @@ Session / Thread 事实流
 <li>Tools：带权限、带 schema、带审计边界的动作词汇表。</li>
 <li>Verification：独立于生成器的判断层，负责裁决 ready / failed。</li>
 </ul>
-<p>这四根支柱真正有价值的地方，在于它们对应了清晰的所有权边界。</p>
+<p>这四根支柱真正有价值的地方，在于它们对应了清晰的所有权边界。换句话说，九个维度描述的是运行时语义，四支柱描述的是团队如何持有这些语义。前者回答“系统必须有哪些真相边界”，后者回答“这些边界由谁实现、谁守住、谁裁决”。</p>
 <p>Session 团队负责“什么是真实发生过的”；Harness 团队负责“系统下一步怎么行动”；Tools 负责人负责“允许系统做哪些副作用”；Verification 负责人负责“什么才算真的完成”。只要这四件事被混在一个 prompt、一个巨型 controller 或一个前端状态树里，团队很快就会失去可维护性。</p>
-<p>Claude Code 在 <code>StreamingToolExecutor.ts</code>、<code>worktree.ts</code>、<code>sessionStorage.ts</code>、<code>diskOutput.ts</code>、<code>agentSummary.ts</code> 里，把这四根支柱做成产品器官；Codex 则在 <code>tools</code>、<code>thread-store</code>、<code>rollout</code>、<code>app-server-protocol</code> 里，把同一分工做成协议化边界。前者说明这些能力在真实产品里必须存在，后者说明这些能力可以被更清晰地组织。<sup class="footnote-reference" id="fr-claudecode-codex-spine-ch4-3"><a href="#footnote-claudecode-codex-spine-ch4">1</a></sup></p>
+<p>Claude Code 在 <code>StreamingToolExecutor.ts</code>、<code>worktree.ts</code>、<code>sessionStorage.ts</code>、<code>diskOutput.ts</code>、<code>agentSummary.ts</code> 里，把这四根支柱做成产品器官；Codex 则在 <code>tools</code>、<code>thread-store</code>、<code>rollout</code>、<code>app-server-protocol</code> 里，把同一分工做成协议化边界。前者说明这些能力在真实产品里必须存在，后者说明这些能力可以被更清晰地组织。第 9 章所谓“设计原则”，本质上就是把这里这套器官与边界，再翻译成团队可长期复用的规范语言。<sup class="footnote-reference" id="fr-claudecode-codex-spine-ch4-4"><a href="#footnote-claudecode-codex-spine-ch4">1</a></sup></p>
 <h2 id="45-朴素事实流为什么比聪明状态更可靠"><a class="header" href="#45-朴素事实流为什么比聪明状态更可靠">4.5 朴素事实流为什么比“聪明状态”更可靠</a></h2>
 <p>Karpathy 的 autoresearch 经验提醒过一个很朴素但很重要的事实：长期知识系统最难的不是“让模型想起来”，而是 bookkeeping。<code>session.md</code> 提供人类可读叙事，<code>session.jsonl</code> 提供机器可回放事件。这个组合看起来不花哨，但它有一个决定性优势：模型会换，UI 会换，工具会换，事实流最好不要跟着频繁换。<sup class="footnote-reference" id="fr-karpathy-bookkeeping-ch4-1"><a href="#footnote-karpathy-bookkeeping-ch4">2</a></sup></p>
 <p>很多系统一开始会尝试更“聪明”的状态层：把前端状态当事实、把聊天 transcript 当事实、把临时日志解析当事实、把缓存快照当事实。它们往往在 demo 阶段更轻，但一旦进入刷新恢复、跨设备继续、后台任务、子 agent 协作和事故排查，就会发现这些状态都不够硬。</p>
@@ -249,13 +268,13 @@ Session / Thread 事实流
 <li>第 6 章展开回放与用户事实：为什么 UI 只能投影事实，而不能自己发明生命周期。</li>
 <li>第 7 章展开操作员控制面与发布真实性：为什么 dashboard、门禁和事故归因必须共享同一条事实流。</li>
 <li>第 8 章展开 sub-agent / swarm：为什么多 agent 的关键不是并行，而是角色、隔离、通信和验证。</li>
-<li>第 9 章再把这些具体机制上升为可迁移原则，而不是停留在 Claude Code 或 Codex 的局部代码风格上。</li>
+<li>第 9 章再把同一套词汇表改写成九条设计原则和九组反模式，让“产品故事 -&gt; 架构维度 -&gt; 设计法则”成为一条连续论证，而不是三套散开的语言。</li>
 </ul>
 <hr>
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-claudecode-codex-spine-ch4">
-<p>本章在此处综合 Claude Code 本地源码镜像中 <code>sessionStorage.ts</code>、<code>query.ts</code>、<code>resumeAgent.ts</code>、<code>StreamingToolExecutor.ts</code>、<code>diskOutput.ts</code>、<code>agentSummary.ts</code>、<code>worktree.ts</code> 等模块所体现的运行时器官，以及 Codex 开源仓库中 <code>app-server-protocol</code>、<code>tools</code>、<code>thread-store</code>、<code>rollout</code> 所体现的模块边界，用来反推 agent harness 的通用总图；对应第 19 章参考文献 21、24。 <a href="#fr-claudecode-codex-spine-ch4-1">↩</a> <a href="#fr-claudecode-codex-spine-ch4-2">↩2</a> <a href="#fr-claudecode-codex-spine-ch4-3">↩3</a></p>
+<p>本章在此处综合 Claude Code 本地源码镜像中 <code>sessionStorage.ts</code>、<code>query.ts</code>、<code>resumeAgent.ts</code>、<code>StreamingToolExecutor.ts</code>、<code>diskOutput.ts</code>、<code>agentSummary.ts</code>、<code>worktree.ts</code> 等模块所体现的运行时器官，以及 Codex 开源仓库中 <code>app-server-protocol</code>、<code>tools</code>、<code>thread-store</code>、<code>rollout</code> 所体现的模块边界，用来反推 agent harness 的通用总图；对应第 19 章参考文献 21、24。 <a href="#fr-claudecode-codex-spine-ch4-1">↩</a> <a href="#fr-claudecode-codex-spine-ch4-2">↩2</a> <a href="#fr-claudecode-codex-spine-ch4-3">↩3</a> <a href="#fr-claudecode-codex-spine-ch4-4">↩4</a></p>
 </li>
 <li id="footnote-karpathy-bookkeeping-ch4">
 <p>Andrej Karpathy, <em>LLM Wiki.</em> 本章在此处使用其关于 autoresearch 双文件与 bookkeeping 的思路，说明 <code>session.md</code> + <code>session.jsonl</code> 这类事实流设计的价值；对应第 19 章参考文献 9。 <a href="#fr-karpathy-bookkeeping-ch4-1">↩</a></p>
