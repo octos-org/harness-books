@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>2. 成熟度鸿沟：灵光一闪 vs 工厂化输出 - 驾驭工程：纲要版</title>
+        <title>2. 成熟度鸿沟：灵光一闪 vs 工厂化输出 - 驾驭工程</title>
 
 
         <!-- Custom HTML head -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-13783fd7.js";
+            window.path_to_searchindex_js = "searchindex-197e14d9.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-84236073.js"></script>
+        <script src="toc-50f4af94.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +137,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">驾驭工程：纲要版</h1>
+                    <h1 class="menu-title">驾驭工程</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -251,12 +251,26 @@
 </ul>
 <p>这五件事合在一起，才是“工厂化输出”的骨架。没有这些条件，1M LOC 只会变成 1M 行没人敢合的文本。</p>
 <h2 id="25-agentsmd-应该是目录不是百科全书"><a class="header" href="#25-agentsmd-应该是目录不是百科全书">2.5 AGENTS.md 应该是目录，不是百科全书</a></h2>
-<p>原书对 <code>AGENTS.md</code> 的处理很值得直接采用：它应该短、稳定、可常驻上下文，只放仓库定位、工具链版本、工作区拓扑、高频红线和指向 <code>docs/</code> 的目录。真正细节放在 <code>docs/</code> 里，按任务需要加载。Codex 的公开文档也明确把 <code>AGENTS.md</code> 当成一个单独的能力层，而不是把所有知识都塞进系统提示。<sup class="footnote-reference" id="fr-agents-catalog-ch2-1"><a href="#footnote-agents-catalog-ch2">5</a></sup></p>
+<p>对 <code>AGENTS.md</code> 更稳妥的处理方式，是把它视为短目录、不是长百科。它应该短、稳定、可常驻上下文，只放仓库定位、工具链版本、工作区拓扑、高频红线和指向 <code>docs/</code> 的目录。真正细节放在 <code>docs/</code> 里，按任务需要加载。Codex 的公开文档也明确把 <code>AGENTS.md</code> 当成一个单独的能力层，而不是把所有知识都塞进系统提示。<sup class="footnote-reference" id="fr-agents-catalog-ch2-1"><a href="#footnote-agents-catalog-ch2">5</a></sup></p>
 <p>反模式是把全部风格指南、API 手册、架构文档、on-call 流程塞进一个大 prompt。这样不仅浪费 token，更严重的是教会 agent 一种错误的上下文哲学：以为“上下文 = 曾经写下的全集”，而不是“上下文 = 当前任务需要的切片”。</p>
 <h2 id="26-0-人工审查的边界"><a class="header" href="#26-0-人工审查的边界">2.6 “0% 人工审查”的边界</a></h2>
 <p>OpenAI 的极端案例不能直接搬到所有场景。内部工具链、非合规关键路径、风险自吸收时，可以把大量人工审查下沉到 CI、性质测试、结构化验证和指标门禁。医疗、金融、隐私、客户数据路径则不同：实名人工 reviewer、审计记录、变更控制和合规签字是事实要求，不是工程偏好。<sup class="footnote-reference" id="fr-review-boundary-ch2-1"><a href="#footnote-review-boundary-ch2">6</a></sup></p>
 <p>因此大多数团队的目标都不该是追求“没有人看”，而是把人类从重复、低信号的逐行审查中解放出来，转向审查契约、门禁、失败分类和高风险边界。</p>
-<p>下一章不再继续看成熟样本，而改用一组真实失败案例来回答另一个问题：当这些机制缺位时，系统具体会怎么坏。</p>
+<h2 id="27-把成熟样本压成全书的架构索引"><a class="header" href="#27-把成熟样本压成全书的架构索引">2.7 把成熟样本压成全书的架构索引</a></h2>
+<p>如果把 Claude Code 的“器官”与 Codex 的“骨架”叠在一起，再把 OpenClaw / Hermes 的 control plane 经验作为侧证，可以把全书后续章节统一压成九个架构维度：</p>
+<ol>
+<li>事实流维度：session / thread / transcript 必须是独立、可恢复、可回放的持久层。</li>
+<li>生命周期维度：任务必须有单调、公开、跨表面一致的状态阶梯。</li>
+<li>能力平面维度：工具、shell、MCP、外部应用、人工输入都必须进入统一调度面。</li>
+<li>产物与验证维度：主产物、验证器、失败证据和终态裁决必须显式绑定。</li>
+<li>回放维度：实时流、历史流、刷新恢复和 UI 投影必须共享同一事实模型。</li>
+<li>隔离与恢复维度：worktree、resume、background task、disk output 这类机制必须成为运行时能力，而不是异常补丁。</li>
+<li>协作维度：sub-agent / swarm 需要角色、通信、权限、汇总与验证，而不是“多开几个窗口”。</li>
+<li>知识分层维度：<code>AGENTS.md</code>、docs、skills、memory 需要按常驻层、按需层、晋升层治理。</li>
+<li>操作员维度：dashboard、门禁、回滚、故障归因必须建立在同一条运行时事实流上。</li>
+</ol>
+<p>第 4 章会先给出这九个维度如何组成最小可用 harness；第 5 到第 8 章分别展开能力平面、回放、操作员控制面和多 agent 编排；第 9 章把这些维度再上升为设计原则；第 10 到第 14 章则把原则压成路线图、边界、清单和收束。</p>
+<p>下一章不再继续看成熟样本，而改用一组真实失败案例来回答另一个问题：当这些维度缺位时，系统具体会怎么坏。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">

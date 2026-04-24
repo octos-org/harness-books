@@ -1,34 +1,44 @@
-# 4. 核心 Harness 架构：当前实用模型
+# 4. 核心 Harness 架构：把样本反推成可复用总图
 
-第 3 章已经把问题空间列清楚了。第 4 章开始给出解法：不是继续追加 prompt 规则，而是围绕状态、事件、验证和回放建立一套可运行的 harness 架构。
+第 2 章给了正向样本，第 3 章给了失败叙事。把两者叠在一起看，可以得到一个比“某个仓库的实现细节”更稳定的结论：成熟 agent 系统最终都会收敛到一条共同的运行时总图。Claude Code 把这张总图长成了一套丰满器官；Codex 把它拆成了一套更清楚的模块边界。我们真正要吸收的不是它们的代码排版，而是这张总图背后的责任分工。[^claudecode-codex-spine-ch4]
 
 ```text
-子工具或技能（Rust/Python/Node/shell）
-        |
-        | 发出 harness.event.v1（progress/error/info）
-        v
-事件入口（HARNESS_EVENT_SINK，file/socket/stdio）
+用户任务 / 外部触发
         |
         v
-运行时消费与校验
+Session / Thread 事实流
         |
-        +--> 任务监督器持久状态（task_status, lifecycle_state, detail）
+        +--> 调度循环（turn / tool / sub-agent / resume）
         |
-        +--> TaskStatusChanged 事件
+        +--> 能力平面（shell / fs / web / MCP / human input）
         |
-        +--> 会话事件流回放
+        +--> 产物与验证（artifact policy / validator / evidence）
+        |
+        +--> 回放与摘要（API / SSE / dashboard / operator summary）
         v
-API (/sessions/:id/tasks + /events/stream)
-        |
-        v
-UI 状态气泡、页头与重载回放
+终态裁决（ready / failed）与可追责证据
 ```
 
-关键规则：UI 永远是下游，不是权威。
+关键规则只有一句：任何用户可见状态，都必须能沿着这张图一路回溯到同一条事实流。
 
-## 4.1 生命周期模型
+## 4.1 从失败反推，最小可用 harness 至少要回答什么问题
 
-公开状态机：
+第 3 章那六类事故，其实只是在追问六个更底层的问题：
+
+1. 这条任务事实到底写在哪？
+2. 当前生命周期由谁裁决？
+3. 工具、副作用和外部系统由谁调度？
+4. 哪个产物算交付，谁来验证？
+5. 刷新页面或切换会话后，用户还能不能看到同一套事实？
+6. 出事时，操作员能不能在几十秒内拼出完整叙事？
+
+后台任务进度 bug、状态漂移、会话污染，逼我们承认“聊天文本”不是事实流；产物契约缺口和验证器不完整，逼我们承认“模型说完成”不是终态；操作员盲区则逼我们承认，没有摘要、回放和证据组织，系统就算内部做对了很多事，也仍然无法运营。
+
+因此，第 2 章末尾那九个维度并不是分析框架的装饰，而是从失败中被倒逼出来的最小系统边界。
+
+## 4.2 生命周期与事实流是第一层骨架
+
+公开状态机仍然应当保持简单：
 
 - `queued`
 - `running`
@@ -36,47 +46,61 @@ UI 状态气泡、页头与重载回放
 - `ready`
 - `failed`
 
-内部可以存在更细粒度状态，但产品表面不应依赖不稳定的内部标签。
+内部当然可以存在更细粒度状态，但产品表面不应依赖一长串不断变化的内部标签。因为一旦 UI、API、replay、dashboard 各自解释一遍阶段，系统就会重新掉回第 3.2 节那种“每一层都没说错，但每一层说的不是同一件事”的状态。
 
-Codex 的 `Thread` / `Turn` / `Item` 把这种生命周期分层表达得很清楚：线程承载持久历史，turn 承载一次执行，item 承载执行中的副作用与产物。Claude Code 虽然没有用同一套名词，但 `sessionStorage.ts`、`query.ts` 和 `resumeAgent.ts` 事实上也在做同样的事：把“用户看到的一轮交互”“后台真实发生的工具调用”“稍后还能恢复的事实流”拆成不同层级。成熟系统的共识并不是术语相同，而是都不再把一整段聊天文本当成唯一状态机。
+Codex 的 `Thread` / `Turn` / `Item` 把这件事表达得很清楚：线程承载持久历史，turn 承载一次执行，item 承载输入、输出和副作用。Claude Code 虽然没有用同一套名词，但 `query.ts`、`sessionStorage.ts`、`resumeAgent.ts`、`agentSummary.ts` 实际上也在做相同切分：一轮交互是什么、后台动作是什么、恢复时哪些事实要继续存在。成熟系统真正的共识不是术语相同，而是都不再把“一整段聊天记录”当成唯一状态机。[^claudecode-codex-spine-ch4]
 
-## 4.2 契约层
+## 4.3 契约层：把能力、工作流和结果拆开
+
+要把 Claude Code / Codex 的经验移植到别的系统，最重要的不是照搬模块名，而是先把契约分层：
 
 ```text
-第 A 层：能力清单       （app 能做什么）
-第 B 层：工作区策略     （产物、验证器、spawn 契约）
-第 C 层：运行时结果模型 （生命周期、任务状态、交付证据）
+第 A 层：能力契约
+  系统能调用哪些动作：shell、fs、web、MCP、sub-agent、human input
+
+第 B 层：工作流契约
+  这类任务允许什么路径：产物位置、spawn 规则、权限边界、验证前置条件
+
+第 C 层：结果契约
+  生命周期、主产物、验证结果、失败证据、终态裁决
 ```
 
-## 4.3 为什么类型化事件重要
+很多团队的问题，不是“没有契约”，而是把三层揉成一团。比如把工具描述写进 prompt，把验证要求埋在脚本里，把最终产物靠文件名猜。这种做法短期能跑，长期一定会在第 3.4 和第 3.5 节那两类事故里出问题。
 
-没有类型化事件，进度只是“类似聊天的提示”。  
-有了类型化事件，进度就是可以验证、回放和审计的数据产品。
+## 4.4 四支柱不是概念图，而是所有权边界
 
-## 4.4 四支柱：Session、Harness、Tools、Verification
+把上面三层契约落进系统实现，最后会自然收敛到四根支柱：
 
-原书把 Layer 2 的稳定基础拆成四根支柱，这也解释了为什么所有还在补控制平面的系统最后都得走向这一套设计。
+- Session：可恢复、可回放、append-only 的事实流。
+- Harness：读取事实、驱动循环、调度工具、处理失败与升级的脑干。
+- Tools：带权限、带 schema、带审计边界的动作词汇表。
+- Verification：独立于生成器的判断层，负责裁决 ready / failed。
 
-Session 是可恢复的事实流。它不是聊天历史，也不是模型上下文，而是 append-only 的任务事实记录。一个好的 session 让新 teammate、重启后的 worker、dashboard 和审计系统都能从同一条事实流重建发生了什么。
+这四根支柱真正有价值的地方，在于它们对应了清晰的所有权边界。
 
-Harness 是可替换的调度脑干。它负责读取 session、驱动 agent 循环、调度工具、处理失败和升级。它应该尽量小而稳定，避免把一次产品补丁写成永久运行时协议。
+Session 团队负责“什么是真实发生过的”；Harness 团队负责“系统下一步怎么行动”；Tools 负责人负责“允许系统做哪些副作用”；Verification 负责人负责“什么才算真的完成”。只要这四件事被混在一个 prompt、一个巨型 controller 或一个前端状态树里，团队很快就会失去可维护性。
 
-Tools 是可问责的动作词汇表。每个工具调用都应该有明确职责、权限边界、输入输出 schema 和审计记录。工具不是“模型想干什么就给什么”，而是系统允许它采取的有边界动作。
+Claude Code 在 `StreamingToolExecutor.ts`、`worktree.ts`、`sessionStorage.ts`、`diskOutput.ts`、`agentSummary.ts` 里，把这四根支柱做成产品器官；Codex 则在 `tools`、`thread-store`、`rollout`、`app-server-protocol` 里，把同一分工做成协议化边界。前者说明这些能力在真实产品里必须存在，后者说明这些能力可以被更清晰地组织。[^claudecode-codex-spine-ch4]
 
-Verification 是独立于生成的判断层。生成器说“完成”不等于完成；验证器、产物策略、性质测试、验证器运行器和外部证据才决定能否进入终态成功。
+## 4.5 朴素事实流为什么比“聪明状态”更可靠
 
-Claude Code 和 Codex 正好分别给这四根支柱提供了具体例证。Claude Code 在 `sessionStorage.ts`、`resumeAgent.ts`、`worktree.ts`、`StreamingToolExecutor.ts`、`agentSummary.ts` 中把 session、调度、隔离、协作和操作员摘要做成了产品器官；Codex 则在 `thread-store`、`rollout`、`tools`、`app-server-protocol` 里把同样的问题拆成清晰的可维护边界。一个偏运行时丰满度，一个偏协议清晰度，但都在证明四支柱不是理论分类，而是代码结构本身会收敛到的分工。
+Karpathy 的 autoresearch 经验提醒过一个很朴素但很重要的事实：长期知识系统最难的不是“让模型想起来”，而是 bookkeeping。`session.md` 提供人类可读叙事，`session.jsonl` 提供机器可回放事件。这个组合看起来不花哨，但它有一个决定性优势：模型会换，UI 会换，工具会换，事实流最好不要跟着频繁换。[^karpathy-bookkeeping-ch4]
 
-## 4.5 为什么 session.jsonl 这类朴素设计仍然重要
+很多系统一开始会尝试更“聪明”的状态层：把前端状态当事实、把聊天 transcript 当事实、把临时日志解析当事实、把缓存快照当事实。它们往往在 demo 阶段更轻，但一旦进入刷新恢复、跨设备继续、后台任务、子 agent 协作和事故排查，就会发现这些状态都不够硬。
 
-原书借 Karpathy 的 autoresearch 思路强调：长期知识系统最难的不是“让模型想起来”，而是 bookkeeping。`session.md` 提供人类可读的叙事，`session.jsonl` 提供机器可回放的事件。这个组合朴素，但非常抗变化：模型会换，前端会换，工具会换，事实流不应该轻易换。[^karpathy-bookkeeping-ch4]
+因此，任务状态、SSE 回放、操作员仪表盘，本质上都应从同一条 append-only 事实流派生，而不是各自维护一份“看起来差不多”的影子状态。
 
-任务状态、SSE 回放、操作员仪表盘，本质上都应该从这个事实流派生，而不是各自维护一份“看起来差不多”的状态。
+## 4.6 这张总图怎样展开成后续章节
 
-这也是为什么 Claude Code 会花很大篇幅实现 `sessionStorage.ts` 和 resume 逻辑，而 Codex 要单独抽出 `thread-store` 与 `rollout`。成熟系统最后都会承认一件事：只要任务要跨时间、跨设备、跨前端继续进行，事实流就必须脱离当前聊天窗口，成为独立、可回放、可迁移的持久层。
+从这里开始，后面的章节不再新增一个个并列概念，而是沿着这张总图把关键维度展开：
 
-接下来的第 5 到第 7 章，会把这套架构拆到几个最容易失真的现实表面：多语言桥接、UI 回放，以及线上操作员/mini-fleet 视角。
+- 第 5 章展开能力平面与生态桥接：为什么万用 agent 必然走向 MCP、外部应用和多语言工具。
+- 第 6 章展开回放与用户事实：为什么 UI 只能投影事实，而不能自己发明生命周期。
+- 第 7 章展开操作员控制面与发布真实性：为什么 dashboard、门禁和事故归因必须共享同一条事实流。
+- 第 8 章展开 sub-agent / swarm：为什么多 agent 的关键不是并行，而是角色、隔离、通信和验证。
+- 第 9 章再把这些具体机制上升为可迁移原则，而不是停留在 Claude Code 或 Codex 的局部代码风格上。
 
+[^claudecode-codex-spine-ch4]: 本章在此处综合 Claude Code 本地源码镜像中 `sessionStorage.ts`、`query.ts`、`resumeAgent.ts`、`StreamingToolExecutor.ts`、`diskOutput.ts`、`agentSummary.ts`、`worktree.ts` 等模块所体现的运行时器官，以及 Codex 开源仓库中 `app-server-protocol`、`tools`、`thread-store`、`rollout` 所体现的模块边界，用来反推 agent harness 的通用总图；对应第 19 章参考文献 21、24。
 [^karpathy-bookkeeping-ch4]: Andrej Karpathy, *LLM Wiki.* 本章在此处使用其关于 autoresearch 双文件与 bookkeeping 的思路，说明 `session.md` + `session.jsonl` 这类事实流设计的价值；对应第 19 章参考文献 9。
 
 ---

@@ -9,12 +9,12 @@
 | 1. LLM 的工作区间：为什么控制系统必不可少 | `01-two-layers.md` — Layer 1 / Layer 2 boundary<br>`02-from-prompt-to-harness.md` — prompt -> context -> harness progression<br>`04-oldest-new-idea.md` — stable abstraction and control-system lineage | 已映射 |
 | 2. 成熟度鸿沟：灵光一闪 vs 工厂化输出 | `03-intent-first-engineering.md` — intent/spec/harness loop<br>`05-ai-coding-harness.md` — OpenAI 1M LOC case and AI coding factory mechanics | 已映射 |
 | 3. 通用失败类别：一组真实失败案例如何把问题暴露出来 | `13-failure-and-antifragility.md` — failure museum, root-cause taxonomy, antifragile repair | 已映射 |
-| 4. 核心 Harness 架构：当前实用模型 | `06-session-pillar.md` — session as recoverable fact stream<br>`07-harness-pillar.md` — replaceable harness scheduler and runtime interface<br>`08-tools-pillar.md` — tools as accountable action vocabulary<br>`09-verification-pillar.md` — independent verification and audit trail | 已映射 |
-| 5. 非 Rust 桥接：平台现实的必需品 | _无_ | 纲要主导缺口 |
-| 6. UI 回放不是前端功能，而是可靠性功能 | _无_ | 纲要主导缺口 |
-| 7. 操作员仪表盘与小型 fleet 实测 | _无_ | 纲要主导缺口 |
-| 8. Agent 群体编排：Harness 如何扩展团队而不只是代码 | `14-many-brains-many-hands.md` — multi-agent orchestration and terminal vision | 已映射 |
-| 9. 原则与反模式 | `10-two-loops.md` — short-loop vs long-loop operating principles<br>`11-knowledge-and-skills.md` — knowledge/skill promotion and anti-patterns<br>`12-reflexive-harness.md` — self-modifying harness boundaries | 已映射 |
+| 4. 核心 Harness 架构：把样本反推成可复用总图 | `06-session-pillar.md` — session as recoverable fact stream<br>`07-harness-pillar.md` — replaceable harness scheduler and runtime interface<br>`08-tools-pillar.md` — tools as accountable action vocabulary<br>`09-verification-pillar.md` — independent verification and audit trail | 已映射 |
+| 5. 能力平面与生态桥接：不要把 agent 关在单一语言里 | _无_ | 纲要主导缺口 |
+| 6. 回放与用户事实：前端只能投影运行时真相 | _无_ | 纲要主导缺口 |
+| 7. 操作员控制面与发布真实性 | _无_ | 纲要主导缺口 |
+| 8. Agent 群体编排：把多脑多手变成可控系统 | `14-many-brains-many-hands.md` — multi-agent orchestration and terminal vision | 已映射 |
+| 9. 从抽象到原则：Harness Engineering 的设计法则 | `10-two-loops.md` — short-loop vs long-loop operating principles<br>`11-knowledge-and-skills.md` — knowledge/skill promotion and anti-patterns<br>`12-reflexive-harness.md` — self-modifying harness boundaries | 已映射 |
 | 10. 工作流到里程碑映射：务实路线图 | _无_ | 纲要主导缺口 |
 | 11. Harness 必要但不充分 | _无_ | 纲要主导缺口 |
 | 12. 可执行清单 | _无_ | 纲要主导缺口 |

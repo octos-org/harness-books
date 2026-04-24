@@ -117,12 +117,12 @@ ZH_HEADINGS: dict[str, str] = {
     "2. The maturity gap: genius moments vs factory output": "2. 成熟度鸿沟：灵光一闪 vs 工厂化输出",
     "3. Common failure classes: Octos exposed them clearly": "3. 通用失败类别：一组真实失败案例如何把问题暴露出来",
     "3. Failure classes Octos hit (and why they were expensive)": "3. 通用失败类别：一组真实失败案例如何把问题暴露出来",
-    "4. Core harness architecture (current practical model)": "4. 核心 Harness 架构：当前实用模型",
-    "5. Non-Rust bridge: mandatory for platform reality": "5. 非 Rust 桥接：平台现实的必需品",
-    "6. UI replay is not a frontend feature; it is a reliability feature": "6. UI 回放不是前端功能，而是可靠性功能",
-    "7. Operator dashboard and mini fleet live testing": "7. 操作员仪表盘与小型 fleet 实测",
-    "8. Agent swarm orchestration: how harness scales teams, not just code": "8. Agent 群体编排：Harness 如何扩展团队而不只是代码",
-    "9. Principles and anti-patterns": "9. 原则与反模式",
+    "4. Core harness architecture (current practical model)": "4. 核心 Harness 架构：把样本反推成可复用总图",
+    "5. Non-Rust bridge: mandatory for platform reality": "5. 能力平面与生态桥接：不要把 agent 关在单一语言里",
+    "6. UI replay is not a frontend feature; it is a reliability feature": "6. 回放与用户事实：前端只能投影运行时真相",
+    "7. Operator dashboard and mini fleet live testing": "7. 操作员控制面与发布真实性",
+    "8. Agent swarm orchestration: how harness scales teams, not just code": "8. Agent 群体编排：把多脑多手变成可控系统",
+    "9. Principles and anti-patterns": "9. 从抽象到原则：Harness Engineering 的设计法则",
     "10. Workstream to milestone mapping (pragmatic roadmap)": "10. 工作流到里程碑映射：务实路线图",
     "11. Harness is necessary but not sufficient": "11. Harness 必要但不充分",
     "12. Actionable checklists": "12. 可执行清单",
@@ -343,7 +343,7 @@ def write_zh_mdbook(title_block: str, zh_sections: list[tuple[str, str]]) -> Non
 
     (ZH_OUT_DIR / "book.toml").write_text(
         "[book]\n"
-        "title = \"驾驭工程：纲要版\"\n"
+        "title = \"驾驭工程\"\n"
         "authors = [\"Harness Research\"]\n"
         "language = \"zh-CN\"\n"
         "src = \"src\"\n",
@@ -351,9 +351,7 @@ def write_zh_mdbook(title_block: str, zh_sections: list[tuple[str, str]]) -> Non
     )
 
     frontmatter = (
-        "# 驾驭工程：纲要版\n\n"
-        "这个生成版本以当前提纲作为目录与结构，把较大的 harness-engineering mdBook 源材料折叠进对应章节。\n\n"
-        "## 原始纲要标题块\n\n"
+        "# 驾驭工程\n\n"
         + shift_headings(title_block, 1)
     )
     (src_dir / "00-title.md").write_text(frontmatter, encoding="utf-8")
@@ -372,10 +370,7 @@ def write_zh_mdbook(title_block: str, zh_sections: list[tuple[str, str]]) -> Non
 
 
 def write_zh_single_file(title_block: str, zh_sections: list[tuple[str, str]]) -> None:
-    parts = [
-        title_block.strip(),
-        "\n> 同步版说明：本文以当前提纲作为控制结构，并把较大的 mdBook 源材料插入到匹配章节下。\n",
-    ]
+    parts = [title_block.strip()]
     for heading, body in zh_sections:
         parts.append(body)
         parts.append(expansion_for_zh(heading))

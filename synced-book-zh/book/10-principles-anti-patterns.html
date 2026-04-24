@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>9. 原则与反模式 - 驾驭工程：纲要版</title>
+        <title>9. 从抽象到原则：Harness Engineering 的设计法则 - 驾驭工程</title>
 
 
         <!-- Custom HTML head -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-13783fd7.js";
+            window.path_to_searchindex_js = "searchindex-197e14d9.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-84236073.js"></script>
+        <script src="toc-50f4af94.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +137,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">驾驭工程：纲要版</h1>
+                    <h1 class="menu-title">驾驭工程</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -174,42 +174,54 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="9-原则与反模式"><a class="header" href="#9-原则与反模式">9. 原则与反模式</a></h1>
-<p>前面 1 到 8 章给的是论证、案例和架构部件；这一章把它们压缩成可执行原则和必须禁止的反模式。也可以把它看成前面整条论证链的工程压缩版。</p>
-<h2 id="91-原则"><a class="header" href="#91-原则">9.1 原则</a></h2>
+                        <h1 id="9-从抽象到原则harness-engineering-的设计法则"><a class="header" href="#9-从抽象到原则harness-engineering-的设计法则">9. 从抽象到原则：Harness Engineering 的设计法则</a></h1>
+<p>前面 1 到 8 章已经把根因、样本、失败、架构和协作面铺开了。第 9 章要做的不是再发明新部件，而是把这些观察压缩成一套更高层、但仍然能落地的设计法则。</p>
+<p>这里最值得借鉴的，不是某个仓库的代码排版，而是 Fowler / Thoughtworks 那条线对 harness engineering 的抽象：不要把 agent 的成功寄托在一次 prompt 奇迹上，而要把任务状态、反馈回路、工具边界和验证证据做成系统外部、可检查、可演化的控制层。<sup class="footnote-reference" id="fr-thoughtworks-principles-ch9-1"><a href="#footnote-thoughtworks-principles-ch9">1</a></sup></p>
+<h2 id="91-第一原则把模型能力和控制系统分开"><a class="header" href="#91-第一原则把模型能力和控制系统分开">9.1 第一原则：把模型能力和控制系统分开</a></h2>
+<p>Claude Code 和 Codex 都很强，但它们真正可迁移的启发不在于“某个 prompt 怎么写”，而在于都在做同一件事：把模型生成能力与控制系统分层。</p>
+<p>模型负责提出候选动作、生成候选产物、总结局部信息；控制系统负责持久化事实、调度动作、绑定权限、裁决终态、组织回放和支撑运营。只要这两层没有被切开，团队最终一定会重新回到第 3 章那类事故里。</p>
+<h2 id="92-九条可迁移原则"><a class="header" href="#92-九条可迁移原则">9.2 九条可迁移原则</a></h2>
+<p>把第 2.7 节那九个架构维度进一步压缩，可以得到九条可迁移原则：</p>
 <ol>
-<li>将契约状态持久化在 prompt/聊天上下文之外。</li>
-<li>优先使用显式产物归属，而不是启发式交付。</li>
-<li>把完成状态视为由验证器把关的终态契约。</li>
-<li>在 API/UI/操作员表面使用同一个规范生命周期阶梯。</li>
-<li>把 session/topic 作用域作为硬安全边界强制执行。</li>
-<li>让进度可回放、可诊断，而不只是实时可见。</li>
-<li>让传输通道可替换；让事件 schema 稳定并版本化。</li>
-<li>每个发布声明都必须绑定线上门禁证据，而不是轶事式运行。</li>
+<li>契约状态必须持久化在 prompt / 聊天上下文之外。</li>
+<li>生命周期必须单调、公开，并在 API / UI / operator 表面保持一致。</li>
+<li>所有外部能力都必须进入统一调度面，而不是各自维持私有状态机。</li>
+<li>主产物必须显式归属；交付不能依赖文件名或启发式猜测。</li>
+<li>ready / failed 必须由验证器和证据裁决，而不是由生成器自报完成。</li>
+<li>session / topic / worktree scope 必须被当成硬边界，而不是软约定。</li>
+<li>回放、摘要和 dashboard 必须都从同一条事实流派生。</li>
+<li>sub-agent / swarm 的价值来自角色化、隔离、汇总和验证，而不是单纯并行。</li>
+<li>每一个发布声明都必须绑定门禁证据和事故归档，而不是轶事式成功。</li>
 </ol>
-<h2 id="92-必须禁止的反模式"><a class="header" href="#92-必须禁止的反模式">9.2 必须禁止的反模式</a></h2>
+<p>这九条原则的价值在于，它们不依赖 Claude Code 用 TypeScript 还是 Codex 用 Rust，也不依赖团队是否采用 MCP、worktree 或某个特定 UI。它们描述的是控制系统必须守住的结构性边界。</p>
+<h2 id="93-必须禁止的反模式"><a class="header" href="#93-必须禁止的反模式">9.3 必须禁止的反模式</a></h2>
+<p>与上面九条原则一一对应，下面这些反模式必须被明确禁止：</p>
 <ol>
-<li>只有 prompt 的契约（“agent 应该记得发送文件”）。</li>
-<li>从 UI 反推事实（“气泡显示 done，所以任务完成”）。</li>
-<li>用文件名猜测主产物。</li>
-<li>不阻断终态成功的尽力而为式验证器。</li>
-<li>把自由格式 stderr 解析当作状态协议。</li>
-<li>无作用域回放流泄漏兄弟会话状态。</li>
-<li>仪表盘指标与运行时规范数据脱节。</li>
-<li>发布切片中为了“再重构一下”而不增加用户可见不变量。</li>
+<li>只有 prompt 的契约，例如“agent 应该记得发送文件”。</li>
+<li>从 UI 反推事实，例如“气泡显示 done，所以任务完成”。</li>
+<li>用 stderr 文本、自由格式日志或缓存快照充当状态协议。</li>
+<li>用文件名、最近修改时间或目录启发式猜主产物。</li>
+<li>让尽力而为式验证器不影响终态成功。</li>
+<li>让子 agent 直接宣布系统终态，或直接污染父任务事实。</li>
+<li>让 dashboard 指标和运行时事实流脱节。</li>
+<li>在协议变更时只改实现，不改 fixture、门禁、E2E 和文档。</li>
 </ol>
-<h2 id="93-短循环和长循环"><a class="header" href="#93-短循环和长循环">9.3 短循环和长循环</a></h2>
-<p>所有 agent 都有短循环：生成、行动、观察，再生成。驾驭工程真正关心的是长循环：事故如何进入 wiki，wiki 如何晋升成 skill，skill 如何进入 <code>AGENTS.md</code> 或 docs，docs 中的约束如何变成 CI、validator 和 dashboard 信号。<sup class="footnote-reference" id="fr-long-loop-ch9-1"><a href="#footnote-long-loop-ch9">1</a></sup></p>
+<p>这些反模式的共同点，是把“系统说真话”退化成“系统看起来差不多在工作”。一开始它们都节省代码，后来都会以事故成本把节省加倍收回来。</p>
+<h2 id="94-短循环和长循环"><a class="header" href="#94-短循环和长循环">9.4 短循环和长循环</a></h2>
+<p>所有 agent 都有短循环：生成、行动、观察，再生成。驾驭工程真正关心的是长循环：事故如何进入 wiki，wiki 如何晋升成 skill，skill 如何进入 <code>AGENTS.md</code> 或 docs，docs 中的约束如何再沉成 CI、validator 和 dashboard 信号。<sup class="footnote-reference" id="fr-long-loop-ch9-1"><a href="#footnote-long-loop-ch9">2</a></sup></p>
 <p>没有长循环，agent 每次都像从零开始的实习生。长循环跑起来之后，组织会把一次失败变成长期免疫力。</p>
-<h2 id="94-知识和-skill-的晋升纪律"><a class="header" href="#94-知识和-skill-的晋升纪律">9.4 知识和 Skill 的晋升纪律</a></h2>
-<p>不是所有经验都应该写进 <code>AGENTS.md</code>。原书给出的治理思路是 promotion / demotion：重复出现、跨任务稳定、能被验证的经验才晋升；过时、低频、无法验证或引起误导的经验要降级或删除。<sup class="footnote-reference" id="fr-promotion-discipline-ch9-1"><a href="#footnote-promotion-discipline-ch9">2</a></sup></p>
+<h2 id="95-知识和-skill-的晋升纪律"><a class="header" href="#95-知识和-skill-的晋升纪律">9.5 知识和 Skill 的晋升纪律</a></h2>
+<p>不是所有经验都应该写进 <code>AGENTS.md</code>。更稳妥的治理方式是 promotion / demotion：重复出现、跨任务稳定、能被验证的经验才晋升；过时、低频、无法验证或引起误导的经验要降级或删除。<sup class="footnote-reference" id="fr-promotion-discipline-ch9-1"><a href="#footnote-promotion-discipline-ch9">3</a></sup></p>
 <p>Skill 也不是 prompt 集合。一个合格 skill 至少要有触发条件、输入输出契约、执行步骤和验证方式。对这类系统来说，skill 的价值不在“让模型多知道一点”，而在“把组织经验变成可执行、可检查的流程”。</p>
-<p>Codex 的 <code>AGENTS.md</code> 文档化和分层作用域设计，正是把长循环里“什么应该常驻、什么应该按需加载”讲清楚的例子；Claude Code 的 <code>loadAgentsDir.ts</code>、skills、hooks、memory scope 则展示了另一面：这些知识一旦成熟，最终会以 agent 定义、技能包和可配置能力边界的形式沉到运行时里。知识治理不是单独的文档工作，而是会反过来塑造工具面和角色面。</p>
-<h2 id="95-反身-harness-的边界"><a class="header" href="#95-反身-harness-的边界">9.5 反身 harness 的边界</a></h2>
-<p>未来 harness 会越来越多地修改自己：更新文档、生成测试、补充验证器、建议 schema 迁移。但反身能力必须分级。低风险变更可以自动化；影响协议、权限、验证独立性和合规目标的变更必须保留人工决策。不能把目标函数、权限边界和验证器独立性也交给提案者自己定义。</p>
+<p>Codex 的 <code>AGENTS.md</code> 文档化和分层作用域设计，说明了什么应该常驻、什么应该按需加载；Claude Code 的 <code>loadAgentsDir.ts</code>、skills、hooks、memory scope 则说明了知识成熟后怎样沉进 agent 定义、技能包和能力边界。知识治理不是单独的文档工作，它会反过来塑造工具面、角色面和验证面。</p>
+<h2 id="96-反身-harness-的边界"><a class="header" href="#96-反身-harness-的边界">9.6 反身 harness 的边界</a></h2>
+<p>未来 harness 会越来越多地修改自己：更新文档、生成测试、补充验证器、建议 schema 迁移。这是趋势，但反身能力必须分级。低风险变更可以自动化；影响协议、权限、验证独立性和合规目标的变更，必须保留人工决策。不能把目标函数、权限边界和验证器独立性，也交给提案者自己定义。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
+<li id="footnote-thoughtworks-principles-ch9">
+<p>Birgitta Bockeler, <em>Harness engineering for coding agent users.</em> 本章在此处使用其关于把任务状态、工具边界、验证反馈与控制回路从 prompt 中外移出来的抽象，总结为本书的可迁移原则；对应第 19 章参考文献 1。 <a href="#fr-thoughtworks-principles-ch9-1">↩</a></p>
+</li>
 <li id="footnote-long-loop-ch9">
 <p>本章在此处使用 Karpathy 的知识记账思路，并结合本文前述 harness 实践，说明 wiki -&gt; skill -&gt; <code>AGENTS.md</code> / docs -&gt; CI / validator / dashboard 的长循环；对应第 19 章参考文献 9。 <a href="#fr-long-loop-ch9-1">↩</a></p>
 </li>

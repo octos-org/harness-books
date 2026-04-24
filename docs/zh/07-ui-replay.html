@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>6. UI 回放不是前端功能，而是可靠性功能 - 驾驭工程：纲要版</title>
+        <title>6. 回放与用户事实：前端只能投影运行时真相 - 驾驭工程</title>
 
 
         <!-- Custom HTML head -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-13783fd7.js";
+            window.path_to_searchindex_js = "searchindex-197e14d9.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-84236073.js"></script>
+        <script src="toc-50f4af94.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +137,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">驾驭工程：纲要版</h1>
+                    <h1 class="menu-title">驾驭工程</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -174,26 +174,54 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="6-ui-回放不是前端功能而是可靠性功能"><a class="header" href="#6-ui-回放不是前端功能而是可靠性功能">6. UI 回放不是前端功能，而是可靠性功能</a></h1>
-<p>如果第 5 章解决的是外部接入的一致性，第 6 章解决的就是用户表面的真实性。对 harness 来说，前端不是装饰层，而是运行时事实能否被用户正确看见的最后一跳。</p>
-<p>可靠的状态气泡必须承受：</p>
+                        <h1 id="6-回放与用户事实前端只能投影运行时真相"><a class="header" href="#6-回放与用户事实前端只能投影运行时真相">6. 回放与用户事实：前端只能投影运行时真相</a></h1>
+<p>如果第 5 章守的是能力入口，第 6 章守的就是用户表面的真实性。对 harness 来说，前端不是装饰层，而是运行时事实能否被用户正确看见的最后一跳。只要这一跳开始自作主张，系统很快就会掉回第 3.1 到第 3.3 节那些事故里。</p>
+<h2 id="61-回放真正要解决的不是刷新后保留聊天"><a class="header" href="#61-回放真正要解决的不是刷新后保留聊天">6.1 回放真正要解决的不是“刷新后保留聊天”</a></h2>
+<p>很多产品把 replay 理解成“把聊天记录再画一遍”。这远远不够。真正需要被保留下来的，不只是消息文本，而是任务生命周期、工具副作用、验证证据、子任务摘要、会话 scope 和终态裁决。</p>
+<p>因此，可靠的状态气泡至少要扛住这些情形：</p>
 <ul>
-<li>浏览器重载</li>
-<li>重新连接</li>
-<li>切走会话后再切回来</li>
-<li>部分 stream 中断</li>
+<li>浏览器重载；</li>
+<li>重新连接；</li>
+<li>切走会话后再切回来；</li>
+<li>页面和 worker 各自重启；</li>
+<li>部分 stream 中断后重新订阅。</li>
 </ul>
-<p>如果 replay 缺失或不一致，即使后端正确，用户也会看到“随机性”。</p>
-<p>设计规则：</p>
+<p>如果 replay 缺失或解释不一致，即使后端内部做对了很多事，用户看到的仍然会是“随机性”。</p>
+<h2 id="62-claude-code--codex-给出的共同约束"><a class="header" href="#62-claude-code--codex-给出的共同约束">6.2 Claude Code / Codex 给出的共同约束</a></h2>
+<p>Codex 的 <code>app-server</code> 把 <code>thread/started</code>、<code>turn/started</code>、<code>item/*</code>、<code>turn/completed</code> 这些通知做成统一事件流，这是在告诉我们：实时流和历史流必须共享一个对象模型。Claude Code 的 <code>query.ts</code>、transcript 持久化、resume 和子 agent 进度摘要，则从产品器官层面说明同一件事：无论 UI 看起来多像聊天，本体都不是聊天，而是一个可恢复执行体的事实投影。<sup class="footnote-reference" id="fr-replay-truth-ch6-1"><a href="#footnote-replay-truth-ch6">1</a></sup></p>
+<p>换句话说，UI 最多拥有三样东西：</p>
 <ul>
-<li>回放路径和实时路径必须共享规范事件/任务 schema</li>
-<li>UI 中不允许第二套解释层</li>
-<li>门禁测试必须断言任务 API 和 SSE 回放之间的一致性</li>
+<li>投影逻辑；</li>
+<li>展示逻辑；</li>
+<li>交互逻辑。</li>
 </ul>
-<p>Codex 的 <code>app-server</code> 之所以值得反复提，是因为它把 <code>thread/started</code>、<code>turn/started</code>、<code>item/*</code>、<code>turn/completed</code> 这些通知明确做成统一事件流；Claude Code 的 <code>query.ts</code>、transcript 持久化和子 agent 进度摘要，则说明另一个方向的同样结论：无论 UI 再怎么丰富，回放和实时都必须基于同一组后端事实。成熟系统不会让前端自己发明生命周期解释器。</p>
-<p>UI 回放的难点在于它横跨两种时间：实时流和历史回放。实时流让用户看到“正在发生什么”，历史回放让用户在刷新、断线、切会话后仍然看到“已经发生过什么”。如果这两条路径使用不同解释逻辑，系统迟早会出现“刚才显示 running，刷新后变 pending”这类体验。</p>
-<p>所以 UI 不应该拥有独立状态真相。它只负责把后端规范事实投影出来。前端可以做缓存、动画和布局，但不能发明生命周期。</p>
+<p>它不能拥有第四样东西：独立事实。</p>
+<h2 id="63-失败案例怎样变成回放设计规则"><a class="header" href="#63-失败案例怎样变成回放设计规则">6.3 失败案例怎样变成回放设计规则</a></h2>
+<p>第 3 章可以直接翻译成三条回放规则：</p>
+<ol>
+<li>为了避免 3.1 和 3.2 的进度漂移，实时路径和历史路径必须共享同一份任务 schema。</li>
+<li>为了避免 3.3 的会话污染，session / topic scope 必须从事件层一直贯穿到回放层和渲染层。</li>
+<li>为了避免 3.6 的操作员盲区，UI 不只要显示“当前状态”，还要显示最近行动、最近证据和最近失败原因。</li>
+</ol>
+<p>因此，前端里不应再存在第二套生命周期解释器，也不应允许某些气泡状态只来自本地推断。前端可以做缓存、动画和布局，但不能发明阶段。</p>
+<h2 id="64-实战落地把回放当作可靠性测试面"><a class="header" href="#64-实战落地把回放当作可靠性测试面">6.4 实战落地：把回放当作可靠性测试面</a></h2>
+<p>回放架构一旦定下来，测试策略也应跟着改：</p>
+<ul>
+<li>断言 <code>/api/sessions/:id/tasks</code> 快照与 SSE 回放在生命周期上完全一致；</li>
+<li>断言刷新前后、重连前后、切换会话前后，用户看到的是同一任务事实；</li>
+<li>断言历史回放不会把兄弟 session 的状态带进当前容器；</li>
+<li>断言子 agent 摘要、主产物状态和验证证据在刷新后仍然可见；</li>
+<li>断言 stream 中断后，UI 通过 replay 重建的状态与实时继续推送的状态不冲突。</li>
+</ul>
+<p>只要这些断言没有成为门禁，团队就还只是“实现了前端”，还没有实现真正的用户事实层。</p>
 <hr>
+<hr>
+<ol class="footnote-definition">
+<li id="footnote-replay-truth-ch6">
+<p>本章在此处综合 Codex <code>app-server</code> 中 thread / turn / item 的统一事件流设计，以及 Claude Code transcript、resume 与 agent summary 机制，说明 UI replay 必须建立在统一的后端事实模型之上；对应第 19 章参考文献 21、24。 <a href="#fr-replay-truth-ch6-1">↩</a></p>
+</li>
+</ol>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>13. 参考架构片段 - 驾驭工程：纲要版</title>
+        <title>13. 参考架构片段 - 驾驭工程</title>
 
 
         <!-- Custom HTML head -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-13783fd7.js";
+            window.path_to_searchindex_js = "searchindex-197e14d9.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-84236073.js"></script>
+        <script src="toc-50f4af94.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +137,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">驾驭工程：纲要版</h1>
+                    <h1 class="menu-title">驾驭工程</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -175,7 +175,7 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="13-参考架构片段"><a class="header" href="#13-参考架构片段">13. 参考架构片段</a></h1>
-<p>前面的章节已经给出原则、边界和检查表；这一章补两段最小架构片段，帮助团队把抽象要求落成具体事实流和契约执行流。</p>
+<p>前面的章节已经给出原则、边界和检查表；这一章补三段最小架构片段，帮助团队把抽象要求落成具体事实流、契约执行流和 swarm 控制流。</p>
 <h2 id="131-任务事实流"><a class="header" href="#131-任务事实流">13.1 任务事实流</a></h2>
 <pre><code class="language-text">工具发出进度事件 -&gt; 运行时校验事件 -&gt; 监督器持久化状态
 -&gt; TaskStatusChanged -&gt; API/SSE -&gt; UI 回放与状态气泡
@@ -190,6 +190,16 @@
   -&gt; 持久化交付证据
 </code></pre>
 <p>在这条流程完成前标记终态成功，是契约违例。</p>
+<h2 id="133-swarm-控制流"><a class="header" href="#133-swarm-控制流">13.3 Swarm 控制流</a></h2>
+<pre><code class="language-text">coordinator 接收总目标
+  -&gt; 拆成带 scope / owner / validator 的子任务
+  -&gt; spawn sub-agent 到隔离 worktree / context
+  -&gt; 子 agent 回传摘要、证据、diff、产物引用
+  -&gt; verifier 汇总跨 shard 冲突与遗漏
+  -&gt; coordinator 依据验证结果裁决 ready / failed
+  -&gt; dashboard / replay 投影同一条协作事实流
+</code></pre>
+<p>没有 summary、scope、validator 和终态裁决的并行，只是多窗口，不是 swarm。</p>
 <hr>
                     </main>
 

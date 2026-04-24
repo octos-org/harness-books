@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>3. 通用失败类别：一组真实失败案例如何把问题暴露出来 - 驾驭工程：纲要版</title>
+        <title>3. 通用失败类别：一组真实失败案例如何把问题暴露出来 - 驾驭工程</title>
 
 
         <!-- Custom HTML head -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-da9e75e0.js";
+            window.path_to_searchindex_js = "searchindex-197e14d9.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-84236073.js"></script>
+        <script src="toc-50f4af94.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +137,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">驾驭工程：纲要版</h1>
+                    <h1 class="menu-title">驾驭工程</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -212,7 +212,7 @@
 <li>多个状态通道，缺乏强一致协调</li>
 <li>UI/API/replay 没有强制使用单一规范阶段阶梯</li>
 </ul>
-<p>修复方向（M4.1A 契约）：</p>
+<p>修复方向（事实协议与生命周期契约）：</p>
 <ul>
 <li><code>harness.event.v1</code> 进度 schema</li>
 <li>运行时事件入口 -&gt; <code>TaskStatusChanged</code> -&gt; <code>/api/sessions/:id/tasks</code> + SSE</li>
@@ -285,7 +285,7 @@
 </ul>
 <p>合在一起，这些失败不是六个独立 bug。它们更像六种不同的事故叙事，但最后都指向同一个根因：系统把类似聊天的输出当成了运行时事实，于是每一层都在自己解释“现在到底发生了什么”。下一章会把这个模式转化为关于状态、事件、验证和回放的具体架构。</p>
 <h2 id="37-失败模式博物馆每个事故都要沉淀成结构"><a class="header" href="#37-失败模式博物馆每个事故都要沉淀成结构">3.7 失败模式博物馆：每个事故都要沉淀成结构</a></h2>
-<p>原书提出“失败模式博物馆”这个说法，价值在于强迫团队把事故从故事变成结构。注意，这不是要消灭“故事”，而是要把故事压缩成以后还能复用的结构。一个合格的失败条目至少包含三栏：症状、根因、修法。</p>
+<p>把事故做成“失败模式博物馆”的价值，在于强迫团队把故事变成结构。注意，这不是要消灭“故事”，而是要把故事压缩成以后还能复用的结构。一个合格的失败条目至少包含三栏：症状、根因、修法。</p>
 <p>症状是用户或操作员看到的表面，例如状态气泡冻结、产物丢失、会话串扰。根因必须落到四支柱之一：session 没有持久事实、harness 没有稳定协议、tool 没有问责边界、verification 不独立或不阻断。修法不能停留在“改 prompt”或“加日志”，而要转成 schema、gate、fixture、validator、dashboard 诊断或文档契约。</p>
 <p>更具体地说，一个好的条目应该能回答五个问题：用户当时看到了什么；系统底层实际在做什么；两者为什么会分叉；哪一层边界缺失了；以后怎样让同类事故在 CI、replay 或 dashboard 上更早暴露。只有这样，事故才会从一次性的火警变成组织的长期免疫力。</p>
 <p>任何团队后续每次遇到 harness 事故，都应该按这个格式归档。否则团队只是在修 bug，没有增长系统免疫力。</p>
