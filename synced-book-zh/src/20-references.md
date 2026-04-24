@@ -40,6 +40,8 @@
 36. Anthropic. *Claude Code by Anthropic.* Accessed 2026-04-23. https://www.anthropic.com/product/claude-code
 37. Anthropic. *How Anthropic teams use Claude Code.* 2025-07-24. Accessed 2026-04-23. https://www.anthropic.com/news/how-anthropic-teams-use-claude-code
 38. Kief Morris. *Humans and Agents in Software Engineering Loops.* Martin Fowler, 2026-03-04. Accessed 2026-04-23. https://martinfowler.com/articles/exploring-gen-ai/humans-and-agents.html
+39. OpenAI. *Introducing Codex.* 2025-05-16. Accessed 2026-04-23. https://openai.com/index/introducing-codex/
+40. OpenAI. *Introducing the Codex app.* 2026-02-02. Accessed 2026-04-23. https://openai.com/index/introducing-the-codex-app/
 
 ## 19.2 支持性参考
 
