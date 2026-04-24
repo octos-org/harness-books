@@ -82,11 +82,11 @@ def main() -> None:
 <body>
   <main>
     <h1>驾驭工程</h1>
-    <p>基于 Octos 短纲要和较大的 harness-engineering mdBook 源材料生成的纲要同步版。</p>
+    <p>基于当前提纲与较大的 harness-engineering mdBook 源材料生成的纲要版。</p>
     <section class="links" aria-label="Book editions">
       <a href="./en/">
         <strong>English Outline Edition</strong>
-        <span>English navigation edition with the Octos outline as the table of contents.</span>
+        <span>English navigation edition using the current outline as the table of contents.</span>
       </a>
       <a href="./zh/">
         <strong>中文纲要版</strong>

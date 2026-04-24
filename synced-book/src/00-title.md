@@ -1,6 +1,6 @@
-# Harness Engineering: Octos Outline-Synced Edition
+# Harness Engineering: Outline Edition
 
-This generated edition uses the Octos outline as the table of contents and folds in expanded material from the larger harness-engineering mdBook source.
+This generated edition uses the outline as the table of contents and folds in expanded material from the larger harness-engineering mdBook source.
 
 ## Original Outline Header
 

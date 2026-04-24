@@ -6,7 +6,7 @@
 
 ## M4.1A — 父级可见的结构化进度 ABI
 
-- 类型化 `octos.harness.event.v1`
+- 类型化 `harness.event.v1`
 - 事件入口、消费端和 task_status 桥接
 - deep-search 从 stderr 状态迁移
 - UI/API 回放一致性
@@ -48,5 +48,7 @@
 这条路线图按上面的失败排序，而不是按 backlog 美观排序。前几项修复事实传播；后几项在事实模型稳定后加强兼容性和治理。下一章是必要的停顿：harness 修复编排正确性，但它不能完成整个产品。
 
 这也是路线图排序的工程理由：先修真相，再修体验；先修单一事实流，再修 dashboard；先让内置 skill 守约，再开放第三方生态。否则平台会在还没有稳定协议时吸纳外部复杂度，后面每一步都会更贵。
+
+这条路线也不是凭空想象出来的。Claude Code 已经把 resume、worktree、sub-agent 摘要、外置 output 这些“深度能力”做进产品里；Codex 已经把 `thread-store`、`rollout`、`app-server`、tool registry 这些“骨架能力”做成显式模块。路线图真正要做的，不是发明一个全新范式，而是把这些成熟样本已经证明必要的部件，按依赖顺序补齐到自己的系统里。
 
 ---

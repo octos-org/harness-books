@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>11. Harness 必要但不充分 - 驾驭工程：Octos 纲要同步版</title>
+        <title>11. Harness 必要但不充分 - 驾驭工程：纲要版</title>
 
 
         <!-- Custom HTML head -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-8b973fcb.js";
+            window.path_to_searchindex_js = "searchindex-13783fd7.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-155d6106.js"></script>
+        <script src="toc-84236073.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +137,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">驾驭工程：Octos 纲要同步版</h1>
+                    <h1 class="menu-title">驾驭工程：纲要版</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -186,6 +186,7 @@
 <li>仓库感知的编辑质量和评审循环</li>
 <li>延迟/成本治理</li>
 </ul>
+<p>Claude Code 和 Codex 自己也在证明这条边界。前者即使已经有了很重的 harness 运行时，仍然花大量工程在权限、模型、MCP、session、worktree 和进度管理上；后者即使把 thread/turn/item、tools、sandboxing、approvals 抽得很清楚，也依然需要强模型、强测试和强治理来保证结果质量。Harness 能解决的是“系统说真话、状态一致、可恢复、可审计”；它不能替代模型能力、领域知识和组织纪律。</p>
 <p>可以把 harness 看成运行时事实层。<br>没有它，质量无法被信任。<br>只有它，质量仍然依赖模型、工具和产品纪律。</p>
 <p>也可以把它理解为“系统说真话”和“系统是好产品”之间的边界。前者是失败模式迫使我们构建的东西；后者仍然依赖模型路由、沙箱、提示词/策略对齐和评审纪律。</p>
 <p>这条边界很重要。Harness 能让系统不撒谎：没完成就不显示完成，产物无效就不交付，验证失败就不进入 ready，会话切换不串状态。但它不能保证产品判断正确、模型选择最优、用户需求被理解、成本足够低、交互体验足够好。把 harness 当成产品质量的全部，是另一种形式的过度工程。</p>

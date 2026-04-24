@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>6. UI 回放不是前端功能，而是可靠性功能 - 驾驭工程：Octos 纲要同步版</title>
+        <title>6. UI 回放不是前端功能，而是可靠性功能 - 驾驭工程：纲要版</title>
 
 
         <!-- Custom HTML head -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-8b973fcb.js";
+            window.path_to_searchindex_js = "searchindex-13783fd7.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-155d6106.js"></script>
+        <script src="toc-84236073.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +137,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">驾驭工程：Octos 纲要同步版</h1>
+                    <h1 class="menu-title">驾驭工程：纲要版</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -190,6 +190,7 @@
 <li>UI 中不允许第二套解释层</li>
 <li>门禁测试必须断言任务 API 和 SSE 回放之间的一致性</li>
 </ul>
+<p>Codex 的 <code>app-server</code> 之所以值得反复提，是因为它把 <code>thread/started</code>、<code>turn/started</code>、<code>item/*</code>、<code>turn/completed</code> 这些通知明确做成统一事件流；Claude Code 的 <code>query.ts</code>、transcript 持久化和子 agent 进度摘要，则说明另一个方向的同样结论：无论 UI 再怎么丰富，回放和实时都必须基于同一组后端事实。成熟系统不会让前端自己发明生命周期解释器。</p>
 <p>UI 回放的难点在于它横跨两种时间：实时流和历史回放。实时流让用户看到“正在发生什么”，历史回放让用户在刷新、断线、切会话后仍然看到“已经发生过什么”。如果这两条路径使用不同解释逻辑，系统迟早会出现“刚才显示 running，刷新后变 pending”这类体验。</p>
 <p>所以 UI 不应该拥有独立状态真相。它只负责把后端规范事实投影出来。前端可以做缓存、动画和布局，但不能发明生命周期。</p>
 <hr>

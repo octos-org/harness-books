@@ -23,6 +23,8 @@ UI/API 负责人
 
 原书的“多脑多手”不是“多开几个 agent 并行干活”这么简单。它描述的是一种组织结构：多个“脑”可以规划、生成、验证、总结；多个“手”可以操作文件、浏览器、shell、API、数据库。但这一切必须共享同一个 session、同一套工具权限、同一组验证规则和同一个操作员视图。[^many-brains-ch8]
 
+Claude Code 和 Codex 在这里再次给出了很实的实现例证。Claude Code 的 `AgentTool.tsx`、`loadAgentsDir.ts`、`teammateMailbox.ts`、`worktree.ts` 说明，多 agent 要成立，至少要有角色模板、命名通信、隔离工作区和后台摘要；Codex 的 `spawn_agent`、`send_input`、`wait_agent`、`resume_agent` 说明，另一条路线是把这些能力收敛成明确的工具与协议。无论走哪条路，多 agent 都不是多开几个模型窗口，而是要有一层真正的协作控制面。
+
 没有 harness，多 agent 只会放大混乱。有 harness，多 agent 才能变成可分工、可审计、可回放的生产系统。
 
 ## 8.2 反混乱规则

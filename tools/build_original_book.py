@@ -23,7 +23,7 @@ def main() -> None:
     (ORIGINAL / "book.toml").write_text(
         "[book]\n"
         "title = \"驾驭工程：原始完整书稿\"\n"
-        "authors = [\"Octos Harness Research\"]\n"
+        "authors = [\"Harness Research\"]\n"
         "language = \"zh-CN\"\n"
         "src = \"src\"\n",
         encoding="utf-8",

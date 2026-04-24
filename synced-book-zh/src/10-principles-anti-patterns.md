@@ -36,6 +36,8 @@
 
 Skill 也不是 prompt 集合。一个合格 skill 至少要有触发条件、输入输出契约、执行步骤和验证方式。对这类系统来说，skill 的价值不在“让模型多知道一点”，而在“把组织经验变成可执行、可检查的流程”。
 
+Codex 的 `AGENTS.md` 文档化和分层作用域设计，正是把长循环里“什么应该常驻、什么应该按需加载”讲清楚的例子；Claude Code 的 `loadAgentsDir.ts`、skills、hooks、memory scope 则展示了另一面：这些知识一旦成熟，最终会以 agent 定义、技能包和可配置能力边界的形式沉到运行时里。知识治理不是单独的文档工作，而是会反过来塑造工具面和角色面。
+
 [^long-loop-ch9]: 本章在此处使用 Karpathy 的知识记账思路，并结合本文前述 harness 实践，说明 wiki -> skill -> `AGENTS.md` / docs -> CI / validator / dashboard 的长循环；对应第 19 章参考文献 9。
 [^promotion-discipline-ch9]: 本章在此处综合 OpenAI 与 Karpathy 关于 `AGENTS.md` 保持短目录、经验 promotion / demotion 的治理思路；对应第 19 章参考文献 2、9。
 

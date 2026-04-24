@@ -5,7 +5,7 @@ Audience: Octos maintainers, app-skill developers, platform operators
 
 ---
 
-> Sync edition note: this file keeps the short Octos outline as the controlling structure and inserts expanded source material from the larger mdBook under the matching outline sections.
+> Sync edition note: this file keeps the short outline as the controlling structure and inserts expanded source material from the larger mdBook under the matching outline sections.
 
 ## Preface: Why this book exists
 
@@ -3156,7 +3156,7 @@ Principle: language diversity at emit edge, strict normalization at consume edge
 
 ### Sync Note
 
-The short Octos outline is canonical for this section. The larger mdBook source has no direct chapter mapped here yet, so this section currently remains outline-led.
+The outline is canonical for this section. The larger mdBook source has no direct chapter mapped here yet, so this section currently remains outline-led.
 
 ## 6. UI replay is not a frontend feature; it is a reliability feature
 
@@ -3179,7 +3179,7 @@ Design rule:
 
 ### Sync Note
 
-The short Octos outline is canonical for this section. The larger mdBook source has no direct chapter mapped here yet, so this section currently remains outline-led.
+The outline is canonical for this section. The larger mdBook source has no direct chapter mapped here yet, so this section currently remains outline-led.
 
 ## 7. Operator dashboard and mini fleet live testing
 
@@ -3216,7 +3216,7 @@ Canonical examples include:
 
 ### Sync Note
 
-The short Octos outline is canonical for this section. The larger mdBook source has no direct chapter mapped here yet, so this section currently remains outline-led.
+The outline is canonical for this section. The larger mdBook source has no direct chapter mapped here yet, so this section currently remains outline-led.
 
 ## 8. Agent swarm orchestration: how harness scales teams, not just code
 
@@ -4117,7 +4117,7 @@ This roadmap is ordered to match the failures above, not to satisfy backlog aest
 
 ### Sync Note
 
-The short Octos outline is canonical for this section. The larger mdBook source has no direct chapter mapped here yet, so this section currently remains outline-led.
+The outline is canonical for this section. The larger mdBook source has no direct chapter mapped here yet, so this section currently remains outline-led.
 
 ## 11. Harness is necessary but not sufficient
 
@@ -4142,7 +4142,7 @@ In Octos terms, this is the boundary between "the system tells the truth" and "t
 
 ### Sync Note
 
-The short Octos outline is canonical for this section. The larger mdBook source has no direct chapter mapped here yet, so this section currently remains outline-led.
+The outline is canonical for this section. The larger mdBook source has no direct chapter mapped here yet, so this section currently remains outline-led.
 
 ## 12. Actionable checklists
 
@@ -4184,7 +4184,7 @@ The short Octos outline is canonical for this section. The larger mdBook source 
 
 ### Sync Note
 
-The short Octos outline is canonical for this section. The larger mdBook source has no direct chapter mapped here yet, so this section currently remains outline-led.
+The outline is canonical for this section. The larger mdBook source has no direct chapter mapped here yet, so this section currently remains outline-led.
 
 ## 13. Reference architecture snippets
 
@@ -4214,7 +4214,7 @@ Marking terminal success before this flow completes is a contract violation.
 
 ### Sync Note
 
-The short Octos outline is canonical for this section. The larger mdBook source has no direct chapter mapped here yet, so this section currently remains outline-led.
+The outline is canonical for this section. The larger mdBook source has no direct chapter mapped here yet, so this section currently remains outline-led.
 
 ## 14. Closing: engineering stance for next phases
 

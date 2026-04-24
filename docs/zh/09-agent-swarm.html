@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>8. Agent 群体编排：Harness 如何扩展团队而不只是代码 - 驾驭工程：Octos 纲要同步版</title>
+        <title>8. Agent 群体编排：Harness 如何扩展团队而不只是代码 - 驾驭工程：纲要版</title>
 
 
         <!-- Custom HTML head -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-8b973fcb.js";
+            window.path_to_searchindex_js = "searchindex-13783fd7.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-155d6106.js"></script>
+        <script src="toc-84236073.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +137,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">驾驭工程：Octos 纲要同步版</h1>
+                    <h1 class="menu-title">驾驭工程：纲要版</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -191,6 +191,7 @@ UI/API 负责人
 </code></pre>
 <p>没有这种拆分，团队会合并通过本地测试、但破坏系统事实的局部真相。</p>
 <p>原书的“多脑多手”不是“多开几个 agent 并行干活”这么简单。它描述的是一种组织结构：多个“脑”可以规划、生成、验证、总结；多个“手”可以操作文件、浏览器、shell、API、数据库。但这一切必须共享同一个 session、同一套工具权限、同一组验证规则和同一个操作员视图。<sup class="footnote-reference" id="fr-many-brains-ch8-1"><a href="#footnote-many-brains-ch8">1</a></sup></p>
+<p>Claude Code 和 Codex 在这里再次给出了很实的实现例证。Claude Code 的 <code>AgentTool.tsx</code>、<code>loadAgentsDir.ts</code>、<code>teammateMailbox.ts</code>、<code>worktree.ts</code> 说明，多 agent 要成立，至少要有角色模板、命名通信、隔离工作区和后台摘要；Codex 的 <code>spawn_agent</code>、<code>send_input</code>、<code>wait_agent</code>、<code>resume_agent</code> 说明，另一条路线是把这些能力收敛成明确的工具与协议。无论走哪条路，多 agent 都不是多开几个模型窗口，而是要有一层真正的协作控制面。</p>
 <p>没有 harness，多 agent 只会放大混乱。有 harness，多 agent 才能变成可分工、可审计、可回放的生产系统。</p>
 <h2 id="82-反混乱规则"><a class="header" href="#82-反混乱规则">8.2 反混乱规则</a></h2>
 <p>门禁激活后，任何工作流都不得单方面重定义契约语义。<br>任何 schema、生命周期语义或回放行为的变更，都必须在同一个 PR 切片中更新：</p>

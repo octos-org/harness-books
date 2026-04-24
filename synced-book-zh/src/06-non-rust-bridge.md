@@ -22,6 +22,8 @@
 
 非 Rust 桥接的重点不是“让 Python/Node 也能打印进度”。重点是让第三方 skill 不管用什么语言实现，都进入同一个事实协议。发射端可以有轻量辅助库、CLI 兜底发射器，甚至 no-op 兼容；消费端必须严格验证 schema、scope、phase 和产物契约。
 
+Claude Code 和 Codex 的实现都支持这一判断。Claude Code 把 `mcpClients`、`mcpResources` 和异构工具放进 `ToolUseContext`，说明它默认系统边界外一定会有别的语言、别的进程、别的能力源；Codex 则直接把 `command/exec`、`fs/*`、`mcpServer/tool/call`、`mcpServer/resource/read` 做成协议面，说明它从一开始就不把核心行为局限在某个语言内核里。开放生态不是“以后再接”的事情，而是运行时的原始假设。
+
 平台生态一旦开放，最容易腐蚀的是边缘一致性：某个 Python skill 用 stderr 当状态，某个 Node app 用文件名猜主产物，某个 shell 脚本忘了 session id。非 Rust 桥接的价值就是把这些边缘行为统一收口到运行时规范层。
 
 ---

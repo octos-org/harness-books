@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>3. 通用失败类别：Octos 把它们暴露得很典型 - 驾驭工程：Octos 纲要同步版</title>
+        <title>3. 通用失败类别：一组真实失败案例如何把问题暴露出来 - 驾驭工程：纲要版</title>
 
 
         <!-- Custom HTML head -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-8b973fcb.js";
+            window.path_to_searchindex_js = "searchindex-13783fd7.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-155d6106.js"></script>
+        <script src="toc-84236073.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +137,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">驾驭工程：Octos 纲要同步版</h1>
+                    <h1 class="menu-title">驾驭工程：纲要版</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -174,8 +174,8 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="3-通用失败类别octos-把它们暴露得很典型"><a class="header" href="#3-通用失败类别octos-把它们暴露得很典型">3. 通用失败类别：Octos 把它们暴露得很典型</a></h1>
-<p>如果说第 2 章回答的是成熟系统在建设什么，那么这一章回答的是：一旦这些机制缺位，系统会怎样坏。这里用 Octos 当样本，不是因为 Octos 比别人更特殊，而是因为它把问题暴露得足够具体。我们不再讨论理念，而是把差距拆成可命名、可归档、可修复的失败类别。</p>
+                        <h1 id="3-通用失败类别一组真实失败案例如何把问题暴露出来"><a class="header" href="#3-通用失败类别一组真实失败案例如何把问题暴露出来">3. 通用失败类别：一组真实失败案例如何把问题暴露出来</a></h1>
+<p>如果说第 2 章回答的是成熟系统在建设什么，那么这一章回答的是：一旦这些机制缺位，系统会怎样坏。这里使用一组内部系统的真实失败案例，不点名，因为我们关心的是结构，不是品牌。与 Codex 把 <code>Thread</code> / <code>Turn</code> / <code>Item</code> 做成显式协议、Claude Code 把 transcript、resume、worktree 和多 agent 协调做成独立模块相对照，这组失败案例恰好暴露了另一面：事实流、回放、验证和调度一旦没有被系统化，系统就会重新滑回“看起来像聊天，其实不是运行时”的状态。我们不再讨论理念，而是把差距拆成可命名、可归档、可修复的失败类别。</p>
 <h2 id="31-后台任务进度-bug"><a class="header" href="#31-后台任务进度-bug">3.1 后台任务进度 bug</a></h2>
 <p>观察到的类别：</p>
 <ul>
@@ -208,7 +208,7 @@
 </ul>
 <p>修复方向（M4.1A 契约）：</p>
 <ul>
-<li><code>octos.harness.event.v1</code> 进度 schema</li>
+<li><code>harness.event.v1</code> 进度 schema</li>
 <li>运行时事件入口 -&gt; <code>TaskStatusChanged</code> -&gt; <code>/api/sessions/:id/tasks</code> + SSE</li>
 <li>UI 回放使用同一份后端事件事实</li>
 </ul>
@@ -269,7 +269,7 @@
 <li>操作员摘要和仪表盘都由规范任务/harness 状态驱动</li>
 <li>不允许只存在于仪表盘中的隐藏逻辑</li>
 </ul>
-<p>合在一起，这些失败不是六个独立 bug。它们是同一种模式在不同表面上的表现：Octos 把类似聊天的输出当成了运行时事实。下一章会把这个模式转化为关于状态、事件、验证和回放的具体架构。</p>
+<p>合在一起，这些失败不是六个独立 bug。它们是同一种模式在不同表面上的表现：系统把类似聊天的输出当成了运行时事实。下一章会把这个模式转化为关于状态、事件、验证和回放的具体架构。</p>
 <h2 id="37-失败模式博物馆每个事故都要沉淀成结构"><a class="header" href="#37-失败模式博物馆每个事故都要沉淀成结构">3.7 失败模式博物馆：每个事故都要沉淀成结构</a></h2>
 <p>原书提出“失败模式博物馆”这个说法，价值在于强迫团队把事故从故事变成结构。一个合格的失败条目至少包含三栏：症状、根因、修法。</p>
 <p>症状是用户或操作员看到的表面，例如状态气泡冻结、产物丢失、会话串扰。根因必须落到四支柱之一：session 没有持久事实、harness 没有稳定协议、tool 没有问责边界、verification 不独立或不阻断。修法不能停留在“改 prompt”或“加日志”，而要转成 schema、gate、fixture、validator、dashboard 诊断或文档契约。</p>

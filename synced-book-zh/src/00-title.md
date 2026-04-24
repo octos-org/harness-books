@@ -1,6 +1,6 @@
-# 驾驭工程：Octos 纲要同步版
+# 驾驭工程：纲要版
 
-这个生成版本以 Octos 短纲要作为目录与结构，把较大的 harness-engineering mdBook 源材料折叠进对应章节。
+这个生成版本以当前提纲作为目录与结构，把较大的 harness-engineering mdBook 源材料折叠进对应章节。
 
 ## 原始纲要标题块
 

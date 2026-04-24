@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>4. 核心 Harness 架构：当前实用模型 - 驾驭工程：Octos 纲要同步版</title>
+        <title>4. 核心 Harness 架构：当前实用模型 - 驾驭工程：纲要版</title>
 
 
         <!-- Custom HTML head -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-8b973fcb.js";
+            window.path_to_searchindex_js = "searchindex-13783fd7.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-155d6106.js"></script>
+        <script src="toc-84236073.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +137,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">驾驭工程：Octos 纲要同步版</h1>
+                    <h1 class="menu-title">驾驭工程：纲要版</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -178,9 +178,9 @@
 <p>第 3 章已经把问题空间列清楚了。第 4 章开始给出解法：不是继续追加 prompt 规则，而是围绕状态、事件、验证和回放建立一套可运行的 harness 架构。</p>
 <pre><code class="language-text">子工具或技能（Rust/Python/Node/shell）
         |
-        | 发出 octos.harness.event.v1（progress/error/info）
+        | 发出 harness.event.v1（progress/error/info）
         v
-事件入口（OCTOS_EVENT_SINK，file/socket/stdio）
+事件入口（HARNESS_EVENT_SINK，file/socket/stdio）
         |
         v
 运行时消费与校验
@@ -207,6 +207,7 @@ UI 状态气泡、页头与重载回放
 <li><code>failed</code></li>
 </ul>
 <p>内部可以存在更细粒度状态，但产品表面不应依赖不稳定的内部标签。</p>
+<p>Codex 的 <code>Thread</code> / <code>Turn</code> / <code>Item</code> 把这种生命周期分层表达得很清楚：线程承载持久历史，turn 承载一次执行，item 承载执行中的副作用与产物。Claude Code 虽然没有用同一套名词，但 <code>sessionStorage.ts</code>、<code>query.ts</code> 和 <code>resumeAgent.ts</code> 事实上也在做同样的事：把“用户看到的一轮交互”“后台真实发生的工具调用”“稍后还能恢复的事实流”拆成不同层级。成熟系统的共识并不是术语相同，而是都不再把一整段聊天文本当成唯一状态机。</p>
 <h2 id="42-契约层"><a class="header" href="#42-契约层">4.2 契约层</a></h2>
 <pre><code class="language-text">第 A 层：能力清单       （app 能做什么）
 第 B 层：工作区策略     （产物、验证器、spawn 契约）
@@ -215,14 +216,16 @@ UI 状态气泡、页头与重载回放
 <h2 id="43-为什么类型化事件重要"><a class="header" href="#43-为什么类型化事件重要">4.3 为什么类型化事件重要</a></h2>
 <p>没有类型化事件，进度只是“类似聊天的提示”。<br>有了类型化事件，进度就是可以验证、回放和审计的数据产品。</p>
 <h2 id="44-四支柱sessionharnesstoolsverification"><a class="header" href="#44-四支柱sessionharnesstoolsverification">4.4 四支柱：Session、Harness、Tools、Verification</a></h2>
-<p>原书把 Layer 2 的稳定基础拆成四根支柱，这也解释了为什么像 Octos 这样的系统最后都得走向这一套设计。</p>
+<p>原书把 Layer 2 的稳定基础拆成四根支柱，这也解释了为什么所有还在补控制平面的系统最后都得走向这一套设计。</p>
 <p>Session 是可恢复的事实流。它不是聊天历史，也不是模型上下文，而是 append-only 的任务事实记录。一个好的 session 让新 teammate、重启后的 worker、dashboard 和审计系统都能从同一条事实流重建发生了什么。</p>
 <p>Harness 是可替换的调度脑干。它负责读取 session、驱动 agent 循环、调度工具、处理失败和升级。它应该尽量小而稳定，避免把一次产品补丁写成永久运行时协议。</p>
 <p>Tools 是可问责的动作词汇表。每个工具调用都应该有明确职责、权限边界、输入输出 schema 和审计记录。工具不是“模型想干什么就给什么”，而是系统允许它采取的有边界动作。</p>
 <p>Verification 是独立于生成的判断层。生成器说“完成”不等于完成；验证器、产物策略、性质测试、验证器运行器和外部证据才决定能否进入终态成功。</p>
+<p>Claude Code 和 Codex 正好分别给这四根支柱提供了具体例证。Claude Code 在 <code>sessionStorage.ts</code>、<code>resumeAgent.ts</code>、<code>worktree.ts</code>、<code>StreamingToolExecutor.ts</code>、<code>agentSummary.ts</code> 中把 session、调度、隔离、协作和操作员摘要做成了产品器官；Codex 则在 <code>thread-store</code>、<code>rollout</code>、<code>tools</code>、<code>app-server-protocol</code> 里把同样的问题拆成清晰的可维护边界。一个偏运行时丰满度，一个偏协议清晰度，但都在证明四支柱不是理论分类，而是代码结构本身会收敛到的分工。</p>
 <h2 id="45-为什么-sessionjsonl-这类朴素设计仍然重要"><a class="header" href="#45-为什么-sessionjsonl-这类朴素设计仍然重要">4.5 为什么 session.jsonl 这类朴素设计仍然重要</a></h2>
 <p>原书借 Karpathy 的 autoresearch 思路强调：长期知识系统最难的不是“让模型想起来”，而是 bookkeeping。<code>session.md</code> 提供人类可读的叙事，<code>session.jsonl</code> 提供机器可回放的事件。这个组合朴素，但非常抗变化：模型会换，前端会换，工具会换，事实流不应该轻易换。<sup class="footnote-reference" id="fr-karpathy-bookkeeping-ch4-1"><a href="#footnote-karpathy-bookkeeping-ch4">1</a></sup></p>
 <p>任务状态、SSE 回放、操作员仪表盘，本质上都应该从这个事实流派生，而不是各自维护一份“看起来差不多”的状态。</p>
+<p>这也是为什么 Claude Code 会花很大篇幅实现 <code>sessionStorage.ts</code> 和 resume 逻辑，而 Codex 要单独抽出 <code>thread-store</code> 与 <code>rollout</code>。成熟系统最后都会承认一件事：只要任务要跨时间、跨设备、跨前端继续进行，事实流就必须脱离当前聊天窗口，成为独立、可回放、可迁移的持久层。</p>
 <p>接下来的第 5 到第 7 章，会把这套架构拆到几个最容易失真的现实表面：多语言桥接、UI 回放，以及线上操作员/mini-fleet 视角。</p>
 <hr>
 <hr>

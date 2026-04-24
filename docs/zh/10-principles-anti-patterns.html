@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>9. 原则与反模式 - 驾驭工程：Octos 纲要同步版</title>
+        <title>9. 原则与反模式 - 驾驭工程：纲要版</title>
 
 
         <!-- Custom HTML head -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-8b973fcb.js";
+            window.path_to_searchindex_js = "searchindex-13783fd7.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-155d6106.js"></script>
+        <script src="toc-84236073.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +137,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">驾驭工程：Octos 纲要同步版</h1>
+                    <h1 class="menu-title">驾驭工程：纲要版</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -204,6 +204,7 @@
 <h2 id="94-知识和-skill-的晋升纪律"><a class="header" href="#94-知识和-skill-的晋升纪律">9.4 知识和 Skill 的晋升纪律</a></h2>
 <p>不是所有经验都应该写进 <code>AGENTS.md</code>。原书给出的治理思路是 promotion / demotion：重复出现、跨任务稳定、能被验证的经验才晋升；过时、低频、无法验证或引起误导的经验要降级或删除。<sup class="footnote-reference" id="fr-promotion-discipline-ch9-1"><a href="#footnote-promotion-discipline-ch9">2</a></sup></p>
 <p>Skill 也不是 prompt 集合。一个合格 skill 至少要有触发条件、输入输出契约、执行步骤和验证方式。对这类系统来说，skill 的价值不在“让模型多知道一点”，而在“把组织经验变成可执行、可检查的流程”。</p>
+<p>Codex 的 <code>AGENTS.md</code> 文档化和分层作用域设计，正是把长循环里“什么应该常驻、什么应该按需加载”讲清楚的例子；Claude Code 的 <code>loadAgentsDir.ts</code>、skills、hooks、memory scope 则展示了另一面：这些知识一旦成熟，最终会以 agent 定义、技能包和可配置能力边界的形式沉到运行时里。知识治理不是单独的文档工作，而是会反过来塑造工具面和角色面。</p>
 <h2 id="95-反身-harness-的边界"><a class="header" href="#95-反身-harness-的边界">9.5 反身 harness 的边界</a></h2>
 <p>未来 harness 会越来越多地修改自己：更新文档、生成测试、补充验证器、建议 schema 迁移。但反身能力必须分级。低风险变更可以自动化；影响协议、权限、验证独立性和合规目标的变更必须保留人工决策。不能把目标函数、权限边界和验证器独立性也交给提案者自己定义。</p>
 <hr>

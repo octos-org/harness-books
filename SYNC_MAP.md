@@ -1,6 +1,6 @@
 # Sync Map
 
-The short Octos outline controls section order. The larger mdBook source is mapped into that outline as follows.
+The outline controls section order. The larger mdBook source is mapped into that outline as follows.
 
 | Outline section | Expanded source files | Status |
 |---|---|---|

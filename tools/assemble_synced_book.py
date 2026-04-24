@@ -115,8 +115,8 @@ ZH_HEADINGS: dict[str, str] = {
     "0. Book map and reading guide": "0. 全书地图与阅读指南",
     "1. LLM operating region and why control systems exist": "1. LLM 的工作区间：为什么控制系统必不可少",
     "2. The maturity gap: genius moments vs factory output": "2. 成熟度鸿沟：灵光一闪 vs 工厂化输出",
-    "3. Common failure classes: Octos exposed them clearly": "3. 通用失败类别：Octos 把它们暴露得很典型",
-    "3. Failure classes Octos hit (and why they were expensive)": "3. 通用失败类别：Octos 把它们暴露得很典型",
+    "3. Common failure classes: Octos exposed them clearly": "3. 通用失败类别：一组真实失败案例如何把问题暴露出来",
+    "3. Failure classes Octos hit (and why they were expensive)": "3. 通用失败类别：一组真实失败案例如何把问题暴露出来",
     "4. Core harness architecture (current practical model)": "4. 核心 Harness 架构：当前实用模型",
     "5. Non-Rust bridge: mandatory for platform reality": "5. 非 Rust 桥接：平台现实的必需品",
     "6. UI replay is not a frontend feature; it is a reliability feature": "6. UI 回放不是前端功能，而是可靠性功能",
@@ -227,7 +227,7 @@ def expansion_for(section_heading: str) -> str:
     if not sources:
         return (
             "\n### Sync Note\n\n"
-            "The short Octos outline is canonical for this section. The larger mdBook source has no direct chapter mapped here yet, so this section currently remains outline-led.\n"
+            "The outline is canonical for this section. The larger mdBook source has no direct chapter mapped here yet, so this section currently remains outline-led.\n"
         )
 
     parts = ["\n### Expanded Source Material\n"]
@@ -261,16 +261,16 @@ def write_mdbook(title_block: str, sections: list[tuple[str, str]]) -> None:
 
     (OUT_DIR / "book.toml").write_text(
         "[book]\n"
-        "title = \"Harness Engineering: Octos Outline-Synced Edition\"\n"
-        "authors = [\"Octos Harness Research\"]\n"
+        "title = \"Harness Engineering: Outline Edition\"\n"
+        "authors = [\"Harness Research\"]\n"
         "language = \"en\"\n"
         "src = \"src\"\n",
         encoding="utf-8",
     )
 
     frontmatter = (
-        "# Harness Engineering: Octos Outline-Synced Edition\n\n"
-        "This generated edition uses the Octos outline as the table of contents and folds in expanded material from the larger harness-engineering mdBook source.\n\n"
+        "# Harness Engineering: Outline Edition\n\n"
+        "This generated edition uses the outline as the table of contents and folds in expanded material from the larger harness-engineering mdBook source.\n\n"
         "## Original Outline Header\n\n"
         + shift_headings(title_block, 1)
     )
@@ -292,7 +292,7 @@ def write_mdbook(title_block: str, sections: list[tuple[str, str]]) -> None:
 def write_single_file(title_block: str, sections: list[tuple[str, str]]) -> None:
     parts = [
         title_block.strip(),
-        "\n> Sync edition note: this file keeps the short Octos outline as the controlling structure and inserts expanded source material from the larger mdBook under the matching outline sections.\n",
+        "\n> Sync edition note: this file keeps the short outline as the controlling structure and inserts expanded source material from the larger mdBook under the matching outline sections.\n",
     ]
     for heading, body in sections:
         parts.append(body)
@@ -304,7 +304,7 @@ def write_map(sections: list[tuple[str, str]]) -> None:
     lines = [
         "# Sync Map",
         "",
-        "The short Octos outline controls section order. The larger mdBook source is mapped into that outline as follows.",
+        "The outline controls section order. The larger mdBook source is mapped into that outline as follows.",
         "",
         "| Outline section | Expanded source files | Status |",
         "|---|---|---|",
@@ -343,16 +343,16 @@ def write_zh_mdbook(title_block: str, zh_sections: list[tuple[str, str]]) -> Non
 
     (ZH_OUT_DIR / "book.toml").write_text(
         "[book]\n"
-        "title = \"驾驭工程：Octos 纲要同步版\"\n"
-        "authors = [\"Octos Harness Research\"]\n"
+        "title = \"驾驭工程：纲要版\"\n"
+        "authors = [\"Harness Research\"]\n"
         "language = \"zh-CN\"\n"
         "src = \"src\"\n",
         encoding="utf-8",
     )
 
     frontmatter = (
-        "# 驾驭工程：Octos 纲要同步版\n\n"
-        "这个生成版本以 Octos 短纲要作为目录与结构，把较大的 harness-engineering mdBook 源材料折叠进对应章节。\n\n"
+        "# 驾驭工程：纲要版\n\n"
+        "这个生成版本以当前提纲作为目录与结构，把较大的 harness-engineering mdBook 源材料折叠进对应章节。\n\n"
         "## 原始纲要标题块\n\n"
         + shift_headings(title_block, 1)
     )
@@ -374,7 +374,7 @@ def write_zh_mdbook(title_block: str, zh_sections: list[tuple[str, str]]) -> Non
 def write_zh_single_file(title_block: str, zh_sections: list[tuple[str, str]]) -> None:
     parts = [
         title_block.strip(),
-        "\n> 同步版说明：本文以 Octos 短纲要作为控制结构，并把较大的 mdBook 源材料插入到匹配章节下。\n",
+        "\n> 同步版说明：本文以当前提纲作为控制结构，并把较大的 mdBook 源材料插入到匹配章节下。\n",
     ]
     for heading, body in zh_sections:
         parts.append(body)
@@ -386,7 +386,7 @@ def write_zh_map(sections: list[tuple[str, str]]) -> None:
     lines = [
         "# 同步映射表",
         "",
-        "Octos 短纲要控制章节顺序。较大的 mdBook 源材料按下表映射进中文纲要版。",
+        "当前提纲控制章节顺序。较大的 mdBook 源材料按下表映射进中文纲要版。",
         "",
         "| 纲要章节 | 扩展源文件 | 状态 |",
         "|---|---|---|",

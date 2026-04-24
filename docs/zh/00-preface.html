@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>前言：为什么需要这本书 - 驾驭工程：Octos 纲要同步版</title>
+        <title>前言：为什么需要这本书 - 驾驭工程：纲要版</title>
 
 
         <!-- Custom HTML head -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-8b973fcb.js";
+            window.path_to_searchindex_js = "searchindex-13783fd7.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-155d6106.js"></script>
+        <script src="toc-84236073.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +137,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">驾驭工程：Octos 纲要同步版</h1>
+                    <h1 class="menu-title">驾驭工程：纲要版</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -175,7 +175,7 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="前言为什么需要这本书"><a class="header" href="#前言为什么需要这本书">前言：为什么需要这本书</a></h1>
-<p>如果把过去一年里最有代表性的几类系统放在一起看，无论是 Claude Code、Codex，还是 OpenClaw、Hermes 乃至 Octos，都在证明同一个硬事实：强模型加提示词技巧，可以在演示里显得很聪明；但一旦进入真实流量、长任务、页面重载、多会话和多工具并发，瓶颈就会从“回答质量”迅速转移到“控制系统质量”。</p>
+<p>如果把过去一年里最有代表性的几类系统放在一起看，无论是 Claude Code、Codex，还是 OpenClaw、Hermes，都在证明同一个硬事实：强模型加提示词技巧，可以在演示里显得很聪明；但一旦进入真实流量、长任务、页面重载、多会话和多工具并发，瓶颈就会从“回答质量”迅速转移到“控制系统质量”。</p>
 <p>这本书记录的是把这种模式推向工厂化姿态的驾驭工程经验：</p>
 <ul>
 <li>确定性的任务生命周期</li>
@@ -185,7 +185,7 @@
 <li>可回放的 UI 事实</li>
 <li>操作员可见的失败原因</li>
 </ul>
-<p>这些经验并不抽象。Claude Code 和 Codex 提供了比较成熟的正向样本，OpenClaw 和 Hermes 提供了更广义 agent product 的相邻样本，Octos 则提供了一个失败样本：后台任务进度漂移、<code>run_pipeline</code> / <code>deep-search</code> 状态不一致、会话污染、产物契约缺口、验证器不完整，以及操作员盲区。本书会反复对照这些系统，不是为了做产品测评，而是为了说明同一个模式会怎样在不同系统表面重复出现：瓶颈不是模型，而是控制系统。</p>
+<p>这些经验并不抽象。Claude Code 和 Codex 提供了比较成熟的正向样本，OpenClaw 和 Hermes 提供了更广义 agent product 的相邻样本，而本文掌握的一组内部失败案例则提供了反证：后台任务进度漂移、<code>run_pipeline</code> / <code>deep-search</code> 状态不一致、会话污染、产物契约缺口、验证器不完整，以及操作员盲区。本书会反复对照这些系统，不是为了做产品测评，而是为了说明同一个模式会怎样在不同系统表面重复出现：瓶颈不是模型，而是控制系统。</p>
 <p>目标不是架构洁癖。目标是在模型、网络、插件、浏览器标签页和用户行为都很混乱的情况下，仍然能得到可靠结果。</p>
 <p>这本书只试图把一条论证链讲清楚：LLM 之所以需要 harness，不是因为它“不够强”，而是因为长任务里的质量、成本、时延和状态一致性都会在离开最佳工作区间后迅速恶化；一旦系统要跨会话、跨工具、跨时间地行动，就必须把状态、验证和回放从 prompt 外移到运行时契约里。后文所有案例、事故、架构和路线图，都是在展开这条主线。</p>
 <p>这一版的写法有一个明确取舍：不把“大书”的章节原样搬进来，而是沿着当前提纲，把原书中关于两层驾驭工程、OpenAI 1M LOC 案例、AGENTS.md 分层、四支柱、长程循环、skills 晋升和“多脑多手”组织方式的论证，和 Claude Code、Codex、OpenClaw、Hermes 的实际系统形态重新消化。读者先获得一条稳定主线，再按需去 <code>/original/</code> 查看完整原书。</p>

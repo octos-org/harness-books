@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>2. 成熟度鸿沟：灵光一闪 vs 工厂化输出 - 驾驭工程：Octos 纲要同步版</title>
+        <title>2. 成熟度鸿沟：灵光一闪 vs 工厂化输出 - 驾驭工程：纲要版</title>
 
 
         <!-- Custom HTML head -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-8b973fcb.js";
+            window.path_to_searchindex_js = "searchindex-13783fd7.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-155d6106.js"></script>
+        <script src="toc-84236073.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -137,7 +137,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">驾驭工程：Octos 纲要同步版</h1>
+                    <h1 class="menu-title">驾驭工程：纲要版</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -175,7 +175,7 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="2-成熟度鸿沟灵光一闪-vs-工厂化输出"><a class="header" href="#2-成熟度鸿沟灵光一闪-vs-工厂化输出">2. 成熟度鸿沟：灵光一闪 vs 工厂化输出</a></h1>
-<p>上一章回答的是“为什么必须有 harness”；这一章回答的是“成熟系统究竟在建设什么，才能从 demo 式聪明跨到工厂化输出”。这里会按重要性看四类样本：Claude Code 作为主分析对象，Codex 作为公开的开源结构样本，OpenClaw/Hermes 作为更广义 agent product 对照，而 OpenAI 1M LOC 案例则提供组织生产层的极端样本。Octos 不在这一章里做主角，它在下一章只作为失败样本出现。</p>
+<p>上一章回答的是“为什么必须有 harness”；这一章回答的是“成熟系统究竟在建设什么，才能从 demo 式聪明跨到工厂化输出”。这里会按重要性看四类样本：Claude Code 作为主分析对象，Codex 作为公开的开源结构样本，OpenClaw/Hermes 作为更广义 agent product 对照，而 OpenAI 1M LOC 案例则提供组织生产层的极端样本。那组内部失败案例不在这一章里做主角，它在下一章只作为反证样本出现。</p>
 <p>“灵光一闪的天才”模式有这些特征：</p>
 <ul>
 <li>成功依赖 prompt，且不可重复</li>
@@ -194,12 +194,48 @@
 </ul>
 <p>Harness 就是这两种模式之间的转换机制。</p>
 <h2 id="21-claude-codeharness-已经产品化"><a class="header" href="#21-claude-codeharness-已经产品化">2.1 Claude Code：harness 已经产品化</a></h2>
-<p>如果只看表面，Claude Code 像一个终端里的模型壳；但看源码，它更像一套为长运行 coding agent 准备的控制系统。2026-04-23 对本地源码镜像的审读里，光会话持久化 <code>sessionStorage.ts</code> 就约 5105 行，全量 compaction <code>compact.ts</code> 约 1705 行，worktree 管理 <code>worktree.ts</code> 约 1519 行，另有 <code>StreamingToolExecutor.ts</code>、<code>microCompact.ts</code>、<code>apiMicrocompact.ts</code>、<code>diskOutput.ts</code>、<code>agentSummary.ts</code>、<code>resumeAgent.ts</code> 等专门模块。这里最值得学的不是文件大，而是 Anthropic 把“长任务会坏在哪里”拆成了独立子系统。<sup class="footnote-reference" id="fr-claudecode-ch2-1"><a href="#footnote-claudecode-ch2">1</a></sup></p>
-<p>这套拆分至少说明了六件事。第一，tool execution 不是简单的“来一个就跑一个”；<code>StreamingToolExecutor</code> 明确区分 concurrency-safe 与 exclusive tool，把并发安全变成调度器的职责。第二，长上下文管理不是只有一次“大压缩”；Claude Code 事实上做了三层 compaction：<code>microCompact</code> 清理旧 tool result，<code>apiMicrocompact</code> 利用 provider 原生 context management，<code>compact.ts</code> 再做全量摘要并在压缩后补回最近文件与 skills。第三，session resume 不是简单地把 JSONL 重新读回来；恢复逻辑会过滤 unresolved tool uses、清理 orphaned thinking，并恢复 file history、context collapse snapshot 与 worktree 状态。第四，sub-agent 不是 fire-and-forget；每个子 agent 都可以有独立 disk-backed output、滚动摘要、后台恢复和继续发送消息。第五，worktree 不是方便功能，而是隔离副作用和保证恢复语义的一部分。第六，文件读取缓存、prompt cache、tool result 存储和任务输出文件，共同组成了长任务的外部工作记忆。</p>
-<p>Claude Code 真正证明的不是“模型够强就能写很多代码”，而是 coding agent 一旦进入多分钟、多子任务、可恢复、可继续派工的场景，就必须把并发、上下文、产物输出和子 agent 生命周期做成一等公民。否则所谓“长任务”只是把一次短聊天拖得更长。<sup class="footnote-reference" id="fr-claudecode-ch2-2"><a href="#footnote-claudecode-ch2">1</a></sup></p>
+<p>如果只看表面，Claude Code 像一个终端里的模型壳；但沿着 <code>Tool.ts -&gt; query.ts -&gt; services/tools -&gt; services/compact -&gt; sessionStorage -&gt; AgentTool -&gt; worktree</code> 这条链读下来，它其实是一套通用 agent runtime。2026-04-23 对本地源码镜像的审读里，仅会话持久化 <code>sessionStorage.ts</code> 就约 5105 行，全量 compaction <code>compact.ts</code> 约 1705 行，worktree 管理 <code>worktree.ts</code> 约 1519 行，另有 <code>StreamingToolExecutor.ts</code>、<code>diskOutput.ts</code>、<code>agentSummary.ts</code>、<code>resumeAgent.ts</code>、<code>teammateMailbox.ts</code> 等专门模块。这个体量本身就在说明：Claude Code 解决的主问题不是“如何让模型回答得更像程序员”，而是“如何让一个模型驱动的执行体在真实工作流里连续工作、可恢复、可委派、可审计”。<sup class="footnote-reference" id="fr-claudecode-ch2-1"><a href="#footnote-claudecode-ch2">1</a></sup></p>
+<h3 id="211-从代码反推claude-code-在解决什么问题"><a class="header" href="#211-从代码反推claude-code-在解决什么问题">2.1.1 从代码反推，Claude Code 在解决什么问题</a></h3>
+<p>从源码反推，Claude Code 的目标并不是把 IDE 补全做得更聪明，而是把“长任务代理”做成可运行的软件。这里的长任务不是一句 prompt 换一段代码，而是持续几十分钟甚至更久的工作：读仓库、读文档、调用 shell、改多类文件、向外部系统取数、拆给子 agent、等结果回来、恢复中断、继续推进。只要任务进入这个尺度，真正的问题就不再是“模型会不会写代码”，而是“这个执行体怎样管理状态、工具、副作用和恢复语义”。</p>
+<p>这也是为什么 Claude Code 可以从 coding agent 长成更广义的 agent 工具。它面对的对象并不局限于源代码，而是更一般的“有输入材料、有产物目标、有验证步骤的工作单元”。写代码只是其中一种；写文章、写 slide、整理研究摘要、本地批处理、调用外部 MCP 服务，本质上都落在同一个工作流里：收集上下文，组织任务，修改产物，运行检查，必要时继续委派。</p>
+<h3 id="212-为什么它可以成为万用的-agent-工具"><a class="header" href="#212-为什么它可以成为万用的-agent-工具">2.1.2 为什么它可以成为万用的 agent 工具</a></h3>
+<p><code>ToolUseContext</code> 已经把 Claude Code 的真实抽象暴露出来了：它同时持有 <code>commands</code>、<code>tools</code>、<code>thinkingConfig</code>、<code>mcpClients</code>、<code>mcpResources</code>、<code>agentDefinitions</code>、<code>AppState</code>、<code>notifications</code>、<code>FileStateCache</code>、权限上下文、file history、content replacement state 等对象。换句话说，它的核心单元不是“代码文件”，而是“一个会用工具、会恢复状态、会调用外部系统、会继续派工的任务线程”。<sup class="footnote-reference" id="fr-claudecode-ch2-2"><a href="#footnote-claudecode-ch2">1</a></sup></p>
+<p>这就是它为何能从“写代码”自然扩展到“写文章、写 slide、做研究、驱动外部 agent”。工具目录里同时存在 <code>FileReadTool</code>、<code>FileWriteTool</code>、<code>FileEditTool</code>、<code>NotebookEditTool</code>、<code>WebSearchTool</code>、<code>WebFetchTool</code>、<code>MCPTool</code>、<code>ReadMcpResourceTool</code>、<code>AgentTool</code>、<code>SendMessageTool</code>、<code>TeamCreateTool</code>、<code>CronCreateTool</code> 等模块。对于运行时来说，代码、Markdown 文稿、slide 源文件、notebook、甚至一份需要通过 shell 渲染出来的中间产物，并没有本质差别；差别只在于任务提示、工具组合和验证方式。<sup class="footnote-reference" id="fr-claudecode-ch2-3"><a href="#footnote-claudecode-ch2">1</a></sup></p>
+<p>因此，Claude Code 的“万能”并不是来自一个无所不能的大 prompt，而是来自一个更底层、与领域相对无关的动作底座：文件系统、shell、web、MCP、子 agent、权限、恢复、摘要、回放。只要某类工作能被还原成这套动作组合，它就可以被装进同一个 agent runtime。</p>
+<h3 id="213-这种广度能力提出了哪些系统要求"><a class="header" href="#213-这种广度能力提出了哪些系统要求">2.1.3 这种广度能力提出了哪些系统要求</a></h3>
+<p>第一，入口不能只有一个聊天框。<code>main.tsx</code> 在启动期同时装配 CLI、会话恢复、skills、plugins、MCP、policy limits、remote managed settings、direct connect、assistant mode、worktree mode、sandbox manager 等部件。源码里甚至明确写着 <code>main.tsx</code> 只是入口；真正的运行面在后面的状态、工具与会话系统里。这说明 Claude Code 把终端当成外壳，而不是唯一产品。<sup class="footnote-reference" id="fr-claudecode-ch2-4"><a href="#footnote-claudecode-ch2">1</a></sup></p>
+<p>第二，角色不能写死在主 prompt 里。<code>AgentTool.tsx</code> 允许调用者为子 agent 指定 <code>name</code>、<code>team_name</code>、<code>mode</code>、<code>isolation</code>、<code>cwd</code>、<code>run_in_background</code>；<code>loadAgentsDir.ts</code> 则允许 agent 定义声明 <code>tools</code>、<code>disallowedTools</code>、<code>model</code>、<code>effort</code>、<code>permissionMode</code>、<code>mcpServers</code>、<code>hooks</code>、<code>maxTurns</code>、<code>skills</code>、<code>memory</code>、<code>background</code>、<code>isolation</code> 等属性。也就是说，Claude Code 不是只有“一个智能体”，而是已经具备了角色模板、权限边界、工具包和记忆范围这些编排原语。<sup class="footnote-reference" id="fr-claudecode-ch2-5"><a href="#footnote-claudecode-ch2">1</a></sup></p>
+<p>第三，外部系统必须成为一等公民，而不是临时插件。<code>ToolUseContext</code> 直接持有 <code>mcpClients</code> 和 <code>mcpResources</code>；工具层里既有 MCP 调用，也有资源读取。对 Claude Code 来说，MCP 不是给 demo 做一点扩展，而是把外部能力接入统一运行面的方法。用户说“通过 CLI 调 API”或者“通过 MCP 调外部 agent”，在这套架构里其实是同一件事：都只是让当前任务线程获得另一个可调度能力源。<sup class="footnote-reference" id="fr-claudecode-ch2-6"><a href="#footnote-claudecode-ch2">1</a></sup></p>
+<p>第四，多 agent 不是多开几个窗口，而是要有真正的协调平面。<code>teammateMailbox.ts</code> 的文件头直接把自己定义为 <code>"File-based messaging system for agent swarms"</code>；它给每个 teammate 建 inbox，并用锁保证并发写入安全。再往上看，<code>AgentTool.tsx</code> 支持后台运行与独立 worktree，<code>agentSummary.ts</code> 周期性生成进度摘要。也就是说，Claude Code 已经把“谁在做什么、怎样传递中间信息、怎样让操作者看懂分工状态”做成了系统功能，而不是靠人类手工记忆。<sup class="footnote-reference" id="fr-claudecode-ch2-7"><a href="#footnote-claudecode-ch2">1</a></sup></p>
+<h3 id="214-这种深度能力提出了哪些可靠性要求"><a class="header" href="#214-这种深度能力提出了哪些可靠性要求">2.1.4 这种深度能力提出了哪些可靠性要求</a></h3>
+<p>广度回答的是“能做多少种事”；深度回答的是“能不能把一件事连续做完”。Claude Code 之所以不像普通聊天壳，关键在于它把深度问题拆成了若干个独立子系统。</p>
+<p>第一是调度问题。<code>StreamingToolExecutor.ts</code> 文件头明确写着，<code>"Concurrent-safe tools can execute in parallel"</code>，而非并发安全工具必须独占执行。这意味着工具调用不再是模型吐一个就跑一个，而是进入一个知道并发语义、能处理取消和错误传播的调度器。写代码、写文稿、做数据整理时都一样：一旦涉及 shell、文件编辑、外部请求并发，调度器就比 prompt 更接近真实问题。<sup class="footnote-reference" id="fr-claudecode-ch2-8"><a href="#footnote-claudecode-ch2">1</a></sup></p>
+<p>第二是上下文压力问题。Claude Code 不是只在窗口快满时做一次“摘要压缩”，而是分层处理：<code>microCompact</code> 清理旧 tool result，<code>apiMicrocompact</code> 利用 provider 原生 context management，<code>compact.ts</code> 做更重的全量压缩并在压缩后补回最近文件和 skills；<code>query.ts</code> 主循环还把 auto compact、reactive compact、context collapse、tool summary、token budget 都连在一起。这里真正表达的工程判断是：长任务的上下文维护必须是持续策略，而不是临门一脚的 emergency button。<sup class="footnote-reference" id="fr-claudecode-ch2-9"><a href="#footnote-claudecode-ch2">1</a></sup></p>
+<p>第三是持久化与恢复问题。<code>sessionStorage.ts</code> 不是简单日志文件帮助函数，而是整套 transcript、metadata、progress、history 的保存与读取层。<code>resumeAgent.ts</code> 恢复时会过滤 unresolved tool uses、清理 orphaned thinking、重建 content replacement state，并尽可能恢复 worktree 路径。这意味着 Claude Code 默认假定任务会中断、会切换、会稍后继续；resume 不是附属功能，而是核心语义。<sup class="footnote-reference" id="fr-claudecode-ch2-10"><a href="#footnote-claudecode-ch2">1</a></sup></p>
+<p>第四是产物外置问题。<code>diskOutput.ts</code> 给每个任务分配独立 output file，并设置 5GB 上限；<code>agentSummary.ts</code> 每约 30 秒从子 agent transcript 中生成一次简短进度摘要。前者解决“长输出不能都塞回聊天上下文”，后者解决“操作者和父 agent 不能盯着原始日志看”。一旦任务开始写大型文档、生成 slide、跑长时间命令、并行开多个 agent，这两件事就都变成硬需求。<sup class="footnote-reference" id="fr-claudecode-ch2-11"><a href="#footnote-claudecode-ch2">1</a></sup></p>
+<p>第五是副作用隔离问题。<code>worktree.ts</code> 负责隔离工作目录，<code>fileStateCache.ts</code> 负责把文件状态变成受控工作记忆。前者避免不同任务互相踩工作区，后者避免每轮都把大量文件重新塞回模型上下文。对通用 agent 来说，这两层分别对应“在哪里动手”和“脑子里记住什么”；两者都必须被 harness 显式管理。<sup class="footnote-reference" id="fr-claudecode-ch2-12"><a href="#footnote-claudecode-ch2">1</a></sup></p>
+<h3 id="215-工程结论claude-code-为什么足以成为主样本"><a class="header" href="#215-工程结论claude-code-为什么足以成为主样本">2.1.5 工程结论：Claude Code 为什么足以成为主样本</a></h3>
+<p>从代码反推，Claude Code 的代表性不在于“Anthropic 做了一个很大的 coding CLI”，而在于它证明了通用 agent 的真正内核是什么。它之所以既能写代码，也能写文章、写 slide、做研究、调用 MCP 服务、再进一步编排多个 agent，并不是因为这些场景有某个神奇共用 prompt，而是因为它们共享同一组运行时需求：可调度工具、可恢复会话、可外置产物、可隔离副作用、可委派协作、可让人类看懂当前状态。<sup class="footnote-reference" id="fr-claudecode-ch2-13"><a href="#footnote-claudecode-ch2">1</a></sup></p>
+<p>一旦把问题定义为这组需求，Claude Code 就不再只是“把 LLM 接到终端上”。它已经把 harness 做成了产品本体。模型很重要，但真正让它成为万用 agent 的，是这套围绕模型长出来的控制系统。</p>
 <h2 id="22-codex把-harness-边界显式模块化"><a class="header" href="#22-codex把-harness-边界显式模块化">2.2 Codex：把 harness 边界显式模块化</a></h2>
-<p>相较之下，Codex 的公开仓库暴露的是另一种成熟度。它没有把 Claude Code 那样多的产品内脏完整摊开，但它把 harness 的边界切得更显式：仓库里单独存在 <code>codex-rs/exec-server</code>、<code>hooks</code>、<code>tools</code>、<code>rollout</code>、<code>mcp-server</code>、<code>process-hardening</code> 等模块，文档里把 <code>AGENTS.md</code>、sandbox、approvals 单独立项，<code>AGENTS.md</code> 还明确要求控制 crate 边界、最小化 <code>codex-core</code> 膨胀，以及通过专门的 MCP connection manager 管理工具调用。<sup class="footnote-reference" id="fr-codex-oss-ch2-1"><a href="#footnote-codex-oss-ch2">2</a></sup></p>
-<p>这说明 Codex 的代表性不在于“已经把所有长会话产品细节都做完”，而在于它把 harness 先拆成一组可维护、可组合、可审计的运行时原语：执行、审批、MCP、rollout、sandbox、文档注入。Claude Code 更像一个重产品化的长任务 coding agent；Codex 更像一个把运行边界讲清楚的开源内核。两者不是谁替代谁，而是从不同方向证明 harness 已经是主体，而不是附属。<sup class="footnote-reference" id="fr-codex-oss-ch2-2"><a href="#footnote-codex-oss-ch2">2</a></sup></p>
+<p>如果说 Claude Code 展示的是一个重产品化 agent runtime 的内部器官，那么 Codex 公开仓库展示的是另一条路线：把同类能力拆成显式的模块和协议。只看 <code>codex-rs/cli/src/main.rs</code> 就知道，它面对的绝不只是一个交互式 coding CLI；同一个入口同时暴露 <code>exec</code>、<code>review</code>、<code>mcp</code>、<code>plugin</code>、<code>mcp-server</code>、<code>app-server</code>、<code>sandbox</code>、<code>resume</code>、<code>fork</code>、<code>cloud</code>、<code>exec-server</code>、<code>features</code> 等子命令。问题定义已经从“给命令行加一个写码助手”上升到“如何把 agent runtime 复用到多种运行面”。<sup class="footnote-reference" id="fr-codex-oss-ch2-1"><a href="#footnote-codex-oss-ch2">2</a></sup></p>
+<h3 id="221-从代码反推codex-在解决什么问题"><a class="header" href="#221-从代码反推codex-在解决什么问题">2.2.1 从代码反推，Codex 在解决什么问题</a></h3>
+<p>Codex 在解决的是一个更偏平台层的问题：怎样让同一个 agent 内核同时服务 CLI、IDE、桌面端、Web、非交互执行、云任务和插件生态，而不让每个表面各自发明一套状态机。Claude Code 更像把运行时做深，Codex 则更像先把边界讲清楚。它公开暴露的不是某个神秘 prompt，而是 thread、turn、tool、sandbox、approval、MCP、storage 这些可命名、可替换的部件。<sup class="footnote-reference" id="fr-codex-oss-ch2-2"><a href="#footnote-codex-oss-ch2">2</a></sup></p>
+<p>这也是为什么 Codex 对本书很重要。Claude Code 告诉我们，一套通用 agent 产品最后会长出哪些器官；Codex 则告诉我们，这些器官怎样被抽象成一套更清楚的内核接口。前者偏“运行得起来”，后者偏“边界讲得清楚”。</p>
+<h3 id="222-为什么说-codex-更像-agent-内核而不是单一-cli"><a class="header" href="#222-为什么说-codex-更像-agent-内核而不是单一-cli">2.2.2 为什么说 Codex 更像 agent 内核，而不是单一 CLI</a></h3>
+<p><code>codex app-server</code> 的 README 写得非常直白：它是 Codex 用来 <code>"power rich interfaces"</code> 的接口，并且把整个系统抽象成三个核心原语：<code>Thread</code>、<code>Turn</code>、<code>Item</code>。<code>Thread</code> 是对话级持久单元，<code>Turn</code> 是一次交互的执行单元，<code>Item</code> 是会被保存并进入未来上下文的输入输出与副作用。这个抽象一旦成立，CLI 就只是众多客户端之一，而不是系统本体。<sup class="footnote-reference" id="fr-codex-oss-ch2-3"><a href="#footnote-codex-oss-ch2">2</a></sup></p>
+<p>更关键的是，Codex 没有把这些对象留在内部实现里，而是通过 <code>thread/start</code>、<code>thread/resume</code>、<code>thread/fork</code>、<code>turn/start</code>、<code>turn/steer</code>、<code>turn/interrupt</code> 等接口公开出来。也就是说，它把“开始任务、继续任务、分叉任务、插话、打断”这些 agent 行为显式变成了协议能力。用户口中的“通过 CLI 调 API”，在 Codex 视角里只是一个前端；底下真正稳定的对象模型是 thread/turn/item。<sup class="footnote-reference" id="fr-codex-oss-ch2-4"><a href="#footnote-codex-oss-ch2">2</a></sup></p>
+<h3 id="223-这种广度能力在-codex-里是如何实现的"><a class="header" href="#223-这种广度能力在-codex-里是如何实现的">2.2.3 这种广度能力在 Codex 里是如何实现的</a></h3>
+<p>Codex 的广度，首先来自它把能力面协议化。<code>app-server</code> README 的 API 概览里，除了 thread/turn 管理，还有 <code>command/exec</code>、<code>fs/readFile</code>、<code>fs/writeFile</code>、<code>fs/watch</code>、<code>skills/list</code>、<code>plugin/list</code>、<code>plugin/install</code>、<code>app/list</code>、<code>mcpServer/resource/read</code>、<code>mcpServer/tool/call</code>、<code>tool/requestUserInput</code> 等接口。换句话说，文件系统、命令执行、技能、插件、外部应用、MCP、人工输入都不是附会功能，而是与对话本身并列的协议面。<sup class="footnote-reference" id="fr-codex-oss-ch2-5"><a href="#footnote-codex-oss-ch2">2</a></sup></p>
+<p><code>codex-rs/tools/src/lib.rs</code> 则把这些能力进一步落成统一工具注册面：本地 shell、<code>apply_patch</code>、code mode、MCP 资源与工具、<code>request_user_input</code>、<code>spawn_agent</code>、<code>send_input</code>、<code>wait_agent</code>、<code>resume_agent</code>、<code>close_agent</code>、图像查看、计划更新，都通过一个清晰的工具层暴露出来。这意味着 Codex 不是把“多 agent”“MCP”“人类确认”当特殊 case 处理，而是把它们纳入同一工具经济里。对一个广义 agent 来说，这比“把更多知识塞进 prompt”更接近真正的可扩展性。<sup class="footnote-reference" id="fr-codex-oss-ch2-6"><a href="#footnote-codex-oss-ch2">2</a></sup></p>
+<p>也正因为这样，Codex 可以自然承担从 coding 到 review，再到研究、批处理和外部系统编排的多种角色。只要任务能被表达为 thread/turn/item 上的历史，加上一组工具调用和少量人工干预，它就可以挂到同一个 runtime 里。广度不是来自模型知道所有领域，而是来自平台允许不同领域工作共用同一套控制栈。</p>
+<h3 id="224-这种深度能力在-codex-里是如何模块化的"><a class="header" href="#224-这种深度能力在-codex-里是如何模块化的">2.2.4 这种深度能力在 Codex 里是如何模块化的</a></h3>
+<p>如果说 Claude Code 倾向于把深度能力沉到一个大而完整的产品里，Codex 的做法是把它们拆散为更清楚的模块。<code>thread-store</code> 在文件头直接把自己定义为 <code>"Storage-neutral thread persistence interfaces"</code>；<code>rollout</code> 则是 <code>"Rollout persistence and discovery for Codex session files"</code>。这两个短句很关键，因为它们清楚表明：持久化不是聊天 UI 的附属，而是 agent runtime 的独立层；并且这层不应该被绑死在某一种本地文件实现上。<sup class="footnote-reference" id="fr-codex-oss-ch2-7"><a href="#footnote-codex-oss-ch2">2</a></sup></p>
+<p>同样的思路也体现在其他模块边界上。仓库单独拆出 <code>app-server</code>、<code>app-server-protocol</code>、<code>tools</code>、<code>thread-store</code>、<code>rollout</code>、<code>exec-server</code>、<code>sandboxing</code>、<code>process-hardening</code>、<code>mcp-server</code> 等 crate；根目录 <code>AGENTS.md</code> 又反复强调 crate 边界、sandbox 约束、MCP connection manager 和文档同步。它真正回答的是：当 agent 既广又深时，哪些责任必须成为清晰的所有权边界，才能避免整个系统退化成一个巨大且难以维护的核心包。<sup class="footnote-reference" id="fr-codex-oss-ch2-8"><a href="#footnote-codex-oss-ch2">2</a></sup></p>
+<p><code>docs/agents_md.md</code> 也说明了另一件事：连 <code>AGENTS.md</code> 这种“给 agent 的操作说明”都被当作正式能力层来设计，还考虑分层作用域与优先级。这和普通项目里把所有指令糊进一个系统提示完全不同。Codex 的选择是把文档注入、权限、持久化、工具注册、UI 连接协议全部做成可审计的显式结构，从而让 agent 行为更容易被不同客户端复用。<sup class="footnote-reference" id="fr-codex-oss-ch2-9"><a href="#footnote-codex-oss-ch2">2</a></sup></p>
+<h3 id="225-claude-code-与-codex-合起来说明了什么"><a class="header" href="#225-claude-code-与-codex-合起来说明了什么">2.2.5 Claude Code 与 Codex 合起来说明了什么</a></h3>
+<p>从代码反推，Claude Code 和 Codex 实际上在回答同一类需求，只是切入点不同。Claude Code 证明：如果你真想让 agent 做长任务、带副作用、可恢复、可协作，你最后一定会长出 compaction、resume、disk output、mailbox、worktree、角色模板这些器官。Codex 证明：这些器官可以进一步抽象成 thread/turn/item、tool registry、thread store、rollout、sandbox、approvals、app-server 这样的边界，从而形成一个更清楚的 agent kernel。<sup class="footnote-reference" id="fr-codex-oss-ch2-10"><a href="#footnote-codex-oss-ch2">2</a></sup></p>
+<p>因此，本书把 Claude Code 和 Codex 放在一起看，不是为了比较谁更强，而是为了看清同一条工程定律的两个侧面：一个侧面是产品化后的丰满器官，一个侧面是模块化后的清晰骨架。两者都在说明，harness 不是附属层，而是 agent 软件本体。</p>
 <h2 id="23-openclaw-与-hermes更广义-agent-product-也在重复同一规律"><a class="header" href="#23-openclaw-与-hermes更广义-agent-product-也在重复同一规律">2.3 OpenClaw 与 Hermes：更广义 agent product 也在重复同一规律</a></h2>
 <p>OpenClaw 和 Hermes 不以 coding agent 为中心，但恰好证明 harness 不是 coding-only 现象。OpenClaw 把 Gateway 明确称为 control plane，核心围绕 sessions、channels、skills、routing、web surfaces 和安全边界展开；Hermes 则把 gateway、SQLite session store、FTS5 memory、skills、delegate tool、cron、MCP 与多种 terminal backend 放到同一运行面。二者共同点都不是“提示词写得更会”，而是把 session、memory、skills、gateway、cron、sub-agent 当作系统事实。<sup class="footnote-reference" id="fr-openclaw-hermes-ch2-1"><a href="#footnote-openclaw-hermes-ch2">3</a></sup></p>
 <p>对本书而言，OpenClaw 和 Hermes 只需要简单分析，因为它们不是最贴近“AI 软件工厂”的主样本；但它们非常有价值，因为它们说明一旦 agent 要跨渠道、跨时段、跨环境连续行动，control plane 一定会长出来。也就是说，harness 不是 coding agent 的偶然补丁，而是 agent product 普遍会演化出来的外层系统。<sup class="footnote-reference" id="fr-openclaw-hermes-ch2-2"><a href="#footnote-openclaw-hermes-ch2">3</a></sup></p>
@@ -220,15 +256,15 @@
 <h2 id="26-0-人工审查的边界"><a class="header" href="#26-0-人工审查的边界">2.6 “0% 人工审查”的边界</a></h2>
 <p>OpenAI 的极端案例不能直接搬到所有场景。内部工具链、非合规关键路径、风险自吸收时，可以把大量人工审查下沉到 CI、性质测试、结构化验证和指标门禁。医疗、金融、隐私、客户数据路径则不同：实名人工 reviewer、审计记录、变更控制和合规签字是事实要求，不是工程偏好。<sup class="footnote-reference" id="fr-review-boundary-ch2-1"><a href="#footnote-review-boundary-ch2">6</a></sup></p>
 <p>因此大多数团队的目标都不该是追求“没有人看”，而是把人类从重复、低信号的逐行审查中解放出来，转向审查契约、门禁、失败分类和高风险边界。</p>
-<p>下一章不再继续看成熟样本，而改用 Octos 这个失败样本来回答另一个问题：当这些机制缺位时，系统具体会怎么坏。</p>
+<p>下一章不再继续看成熟样本，而改用一组真实失败案例来回答另一个问题：当这些机制缺位时，系统具体会怎么坏。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-claudecode-ch2">
-<p>本章在此处根据 2026-04-23 对 Claude Code 本地源码镜像的结构审读，使用其 <code>StreamingToolExecutor.ts</code>、<code>services/compact/*</code>、<code>utils/sessionStorage.ts</code>、<code>utils/fileStateCache.ts</code>、<code>utils/task/diskOutput.ts</code>、<code>services/AgentSummary/agentSummary.ts</code>、<code>tools/AgentTool/resumeAgent.ts</code> 与 <code>utils/worktree.ts</code> 所体现的并发控制、分层 compaction、resume、disk output、sub-agent summary 和 worktree 机制；对应第 19 章参考文献 24。 <a href="#fr-claudecode-ch2-1">↩</a> <a href="#fr-claudecode-ch2-2">↩2</a></p>
+<p>本章在此处根据 2026-04-23 对 Claude Code 本地源码镜像的结构审读，使用其 <code>Tool.ts</code>、<code>query.ts</code>、<code>main.tsx</code>、<code>services/tools/StreamingToolExecutor.ts</code>、<code>services/compact/*</code>、<code>tools/AgentTool/{AgentTool.tsx,loadAgentsDir.ts,resumeAgent.ts}</code>、<code>utils/{sessionStorage.ts,fileStateCache.ts,worktree.ts,teammateMailbox.ts}</code>、<code>utils/task/diskOutput.ts</code> 与 <code>services/AgentSummary/agentSummary.ts</code> 所体现的 tool context、主循环、MCP、技能/插件、子 agent、swarm mailbox、分层 compaction、resume、disk-backed output 和 worktree 机制；对应第 19 章参考文献 24。 <a href="#fr-claudecode-ch2-1">↩</a> <a href="#fr-claudecode-ch2-2">↩2</a> <a href="#fr-claudecode-ch2-3">↩3</a> <a href="#fr-claudecode-ch2-4">↩4</a> <a href="#fr-claudecode-ch2-5">↩5</a> <a href="#fr-claudecode-ch2-6">↩6</a> <a href="#fr-claudecode-ch2-7">↩7</a> <a href="#fr-claudecode-ch2-8">↩8</a> <a href="#fr-claudecode-ch2-9">↩9</a> <a href="#fr-claudecode-ch2-10">↩10</a> <a href="#fr-claudecode-ch2-11">↩11</a> <a href="#fr-claudecode-ch2-12">↩12</a> <a href="#fr-claudecode-ch2-13">↩13</a></p>
 </li>
 <li id="footnote-codex-oss-ch2">
-<p>OpenAI, <em>codex</em> 开源仓库。 本章在此处使用其 README、<code>AGENTS.md</code> 与 <code>docs/</code> 中关于 sandbox、approvals、MCP、rollout 与 <code>AGENTS.md</code> 的公开结构；对应第 19 章参考文献 21。 <a href="#fr-codex-oss-ch2-1">↩</a> <a href="#fr-codex-oss-ch2-2">↩2</a></p>
+<p>OpenAI, <em>openai/codex</em> 开源仓库。 本章在此处使用其 <code>codex-rs/cli/src/main.rs</code>、<code>codex-rs/app-server/README.md</code>、<code>codex-rs/app-server-protocol/src/protocol/v2.rs</code>、<code>codex-rs/tools/src/lib.rs</code>、<code>codex-rs/thread-store/src/lib.rs</code>、<code>codex-rs/rollout/src/lib.rs</code>、仓库根 <code>AGENTS.md</code> 与 <code>docs/agents_md.md</code> 中关于 CLI surfaces、Thread/Turn/Item、tool registry、thread persistence、rollout、sandbox、approvals 与 <code>AGENTS.md</code> 的公开结构；对应第 19 章参考文献 21。 <a href="#fr-codex-oss-ch2-1">↩</a> <a href="#fr-codex-oss-ch2-2">↩2</a> <a href="#fr-codex-oss-ch2-3">↩3</a> <a href="#fr-codex-oss-ch2-4">↩4</a> <a href="#fr-codex-oss-ch2-5">↩5</a> <a href="#fr-codex-oss-ch2-6">↩6</a> <a href="#fr-codex-oss-ch2-7">↩7</a> <a href="#fr-codex-oss-ch2-8">↩8</a> <a href="#fr-codex-oss-ch2-9">↩9</a> <a href="#fr-codex-oss-ch2-10">↩10</a></p>
 </li>
 <li id="footnote-openclaw-hermes-ch2">
 <p>本章在此处综合 OpenClaw README 中关于 Gateway control plane、sessions、channels、skills 与 routing 的描述，以及 Hermes README/AGENTS 中关于 gateway、SQLite session store、memory、skills、delegate tool、cron 与 MCP 的结构；对应第 19 章参考文献 22、23。 <a href="#fr-openclaw-hermes-ch2-1">↩</a> <a href="#fr-openclaw-hermes-ch2-2">↩2</a></p>
