@@ -31,6 +31,15 @@
 27. Michael Wooldridge, Nicholas R. Jennings. *Intelligent Agents: Theory and Practice.* 1995. Accessed 2026-04-23. https://citeseerx.ist.psu.edu/document?doi=181e0a027acc7f1e5fbfc35958985e0aa2207588&repid=rep1&type=pdf
 28. Chris Terman. *Computation Structures*, especially *L14: The Memory Hierarchy* and *L16: Virtual Memory.* Accessed 2026-04-23. https://computationstructures.org/lectures/caches/caches.html and https://computationstructures.org/lectures/vm/vm.html
 29. H. S. Black. *Stabilized Feedback Amplifiers.* Bell System Technical Journal / Bell Labs archive, 1934. Accessed 2026-04-23. https://www.nokia.com/bell-labs/publications-and-media/publications/stabilized-feedback-amplifiers/
+30. Encyclopaedia Britannica. *Norbert Wiener.* Accessed 2026-04-23. https://www.britannica.com/biography/Norbert-Wiener
+31. Steve Joshua Heims. *The Cybernetics Group.* MIT Press page for the Macy Conferences history. Accessed 2026-04-23. https://mitpress.mit.edu/9780262082006/the-cybernetics-group/
+32. Computer History Museum. *Main Memory*; *Delay Lines*; *Magnetic Core Memory.* Accessed 2026-04-23. https://www.computerhistory.org/revolution/memory-storage/8/251 , https://www.computerhistory.org/revolution/memory-storage/8/309 , https://www.computerhistory.org/revolution/memory-storage/8/253
+33. IBM. *The IBM System/370.* Accessed 2026-04-23. https://www.ibm.com/us-en/history/system-370
+34. Computer History Museum. *Bipolar RAMs in High Speed Applications.* Accessed 2026-04-23. https://www.computerhistory.org/revolution/memory-storage/8/313
+35. National Inventors Hall of Fame. *Harold Stephen Black and the Negative Feedback Amplifier.* Accessed 2026-04-23. https://www.invent.org/inductees/harold-stephen-black
+36. Anthropic. *Claude Code by Anthropic.* Accessed 2026-04-23. https://www.anthropic.com/product/claude-code
+37. Anthropic. *How Anthropic teams use Claude Code.* 2025-07-24. Accessed 2026-04-23. https://www.anthropic.com/news/how-anthropic-teams-use-claude-code
+38. Kief Morris. *Humans and Agents in Software Engineering Loops.* Martin Fowler, 2026-03-04. Accessed 2026-04-23. https://martinfowler.com/articles/exploring-gen-ai/humans-and-agents.html
 
 ## 19.2 支持性参考
 
