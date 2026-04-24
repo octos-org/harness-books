@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-197e14d9.js";
+            window.path_to_searchindex_js = "searchindex-845d1b7e.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-50f4af94.js"></script>
@@ -175,7 +175,7 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="12-可执行清单"><a class="header" href="#12-可执行清单">12. 可执行清单</a></h1>
-<p>边界讲清之后，剩下的工作就是把前面各章的要求压成能执行的检查项。第 12 章不是新观点，而是把第 2.7 节那九个维度压成可以拿来做合并前、上线前、事故后的动作清单。</p>
+<p>边界讲清之后，剩下的工作就是把前面各章的要求压成能执行的检查项。第 12 章不是新观点，而是把第 2.7 节那九个维度压成可以拿来做合并前、上线前、事故后的动作清单，并补上一条匿名失败链的逐层排查顺序。</p>
 <h2 id="121-维护者预合并清单影响-harness-的-pr"><a class="header" href="#121-维护者预合并清单影响-harness-的-pr">12.1 维护者预合并清单（影响 harness 的 PR）</a></h2>
 <ul>
 <li><input disabled="" type="checkbox"> 变更映射到显式用户可见不变量。</li>
@@ -212,6 +212,21 @@
 <li><input disabled="" type="checkbox"> 修补前捕获诊断 JSON 和 curl 提示。</li>
 <li><input disabled="" type="checkbox"> 修复后重新运行小型 fleet 门禁；不要接受仅本地验证。</li>
 </ul>
+<h2 id="124-匿名失败链的逐层落地检查"><a class="header" href="#124-匿名失败链的逐层落地检查">12.4 匿名失败链的逐层落地检查</a></h2>
+<p>如果你正在修第 11.1 节那类“看似完成、实际交错文件”的事故，可以直接按下面这条链检查，不要一上来就改 prompt。</p>
+<ul>
+<li><input disabled="" type="checkbox"> <code>session</code>：root task 是否显式声明 primary artifact、child task、owner、role 和 worktree。</li>
+<li><input disabled="" type="checkbox"> <code>session</code>：artifact 报告是否带 task id / session id，而不是只有自由文本路径。</li>
+<li><input disabled="" type="checkbox"> <code>capability plane</code>：Python / Node / shell / MCP 调用是否都通过统一事件入口回传状态与产物。</li>
+<li><input disabled="" type="checkbox"> <code>capability plane</code>：外部能力是否把引用、下载物、临时文件写进了声明过的 scope，而不是写进任意目录。</li>
+<li><input disabled="" type="checkbox"> <code>verifier</code>：是否同时验证“文件存在”“文件归属正确”“内容足够新”“关键业务约束达标”。</li>
+<li><input disabled="" type="checkbox"> <code>verifier</code>：失败时是否留下了 validator 名称、失败类别、证据路径和持续时间。</li>
+<li><input disabled="" type="checkbox"> <code>operator dashboard</code>：是否能直接看到 root / child task 关系、最近 summary、最近 artifact、最近 validator 结果。</li>
+<li><input disabled="" type="checkbox"> <code>operator dashboard</code>：是否存在只在 dashboard 里出现、却无法回指事实流的影子状态。</li>
+<li><input disabled="" type="checkbox"> <code>swarm</code>：coordinator 是否只做拆解与裁决，而不是自己悄悄替 child task 兜底宣布成功。</li>
+<li><input disabled="" type="checkbox"> <code>swarm</code>：child agent 的 summary 是否包含可验证产物引用，而不是一句模糊的 “done”。</li>
+</ul>
+<p>这组检查项的目的，是把“问题出在 session、能力平面、validator、dashboard 还是 swarm”快速切开。只要团队还在把这五层混成一个“agent 没做好”，修复成本就会始终过高。</p>
 <hr>
                     </main>
 
