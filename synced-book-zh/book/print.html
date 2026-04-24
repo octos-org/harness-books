@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-845d1b7e.js";
+            window.path_to_searchindex_js = "searchindex-00b3b7d5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-50f4af94.js"></script>
@@ -825,6 +825,22 @@ Harness 工程
 <p>症状是用户或操作员看到的表面，例如状态气泡冻结、产物丢失、会话串扰。根因必须落到四支柱之一：session 没有持久事实、harness 没有稳定协议、tool 没有问责边界、verification 不独立或不阻断。修法不能停留在“改 prompt”或“加日志”，而要转成 schema、gate、fixture、validator、dashboard 诊断或文档契约。</p>
 <p>更具体地说，一个好的条目应该能回答五个问题：用户当时看到了什么；系统底层实际在做什么；两者为什么会分叉；哪一层边界缺失了；以后怎样让同类事故在 CI、replay 或 dashboard 上更早暴露。只有这样，事故才会从一次性的火警变成组织的长期免疫力。</p>
 <p>任何团队后续每次遇到 harness 事故，都应该按这个格式归档。否则团队只是在修 bug，没有增长系统免疫力。</p>
+<h2 id="38-事故复盘章节模板从火警到组织免疫"><a class="header" href="#38-事故复盘章节模板从火警到组织免疫">3.8 事故复盘章节模板：从火警到组织免疫</a></h2>
+<p>如果要把“失败模式博物馆”真正变成一本能不断增厚的工程书，团队还需要统一的事故复盘章节模板。好的模板不是为了写得更像公文，而是为了保证每一篇复盘最后都能沉到 schema、validator、dashboard、runbook 或 skill，而不是停在“大家下次注意”。</p>
+<p>一个完整的 harness 事故复盘，至少应该包含下面十段：</p>
+<ol>
+<li><code>事故摘要</code>：一句话说清用户表面看到了什么，系统最终造成了什么错误裁决。</li>
+<li><code>用户影响与业务影响</code>：哪些用户或下游系统受影响，错误持续多久，是否有错误交付、重复执行、数据污染或合规风险。</li>
+<li><code>时间线</code>：从触发、发现、缓解到修复，按绝对时间列出关键事件，而不是只写模糊顺序。</li>
+<li><code>任务/agent 拓扑</code>：列出 root task、child task、role、worktree、外部能力和人工介入点，让读者知道这不是单进程 bug。</li>
+<li><code>五层断裂点解剖</code>：逐层分析 <code>session / capability plane / verifier / operator dashboard / swarm</code> 各自出了什么问题，哪些层是缺失，哪些层是误判，哪些层只是把错误放大了。</li>
+<li><code>证据包</code>：列出事件片段、artifact 路径、validator 输出、dashboard 截图、日志片段和 commit / deploy 边界。没有证据，复盘就只是回忆录。</li>
+<li><code>根因归类</code>：把问题落到四支柱和九个架构维度里，而不是写成“大模型抽风”或“偶发 race condition”。</li>
+<li><code>为什么现有防线没有拦住</code>：明确是没有 validator、validator 不阻断、scope 不完整、dashboard 不可读，还是 canary / mini-fleet 没覆盖到对应路径。</li>
+<li><code>修复与长期动作</code>：区分 hotfix、结构修复、发布门禁、知识晋升和组织流程调整，不把所有事情都塞成一个 patch。</li>
+<li><code>组织沉淀</code>：这次事故会变成什么长期资产，例如新的 validator、<code>AGENTS.md</code> 规则、skill、runbook、dashboard 信号、回放 fixture 或发布门禁。</li>
+</ol>
+<p>这样的模板之所以重要，是因为 harness 事故往往不是“哪一行代码错了”这么简单，而是多个表面一起说了不同的话。统一模板能逼团队每次都沿着同一条控制链回溯，从而让事故真正转化成组织免疫力。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="4-核心-harness-架构把样本反推成可复用总图"><a class="header" href="#4-核心-harness-架构把样本反推成可复用总图">4. 核心 Harness 架构：把样本反推成可复用总图</a></h1>
 <p>第 2 章给了正向样本，第 3 章给了失败叙事。把两者叠在一起看，可以得到一个比“某个仓库的实现细节”更稳定的结论：成熟 agent 系统最终都会收敛到一条共同的运行时总图。Claude Code 把这张总图长成了一套丰满器官；Codex 把它拆成了一套更清楚的模块边界。我们真正要吸收的不是它们的代码排版，而是这张总图背后的责任分工。<sup class="footnote-reference" id="fr-claudecode-codex-spine-ch4-1"><a href="#footnote-claudecode-codex-spine-ch4">1</a></sup></p>
@@ -1323,7 +1339,7 @@ UI / Operator 负责人
 <p>这组检查项的目的，是把“问题出在 session、能力平面、validator、dashboard 还是 swarm”快速切开。只要团队还在把这五层混成一个“agent 没做好”，修复成本就会始终过高。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="13-参考架构片段"><a class="header" href="#13-参考架构片段">13. 参考架构片段</a></h1>
-<p>前面的章节已经给出原则、边界和检查表；这一章补五段最小架构片段，帮助团队把抽象要求落成具体事实流、契约执行流、swarm 控制流，以及一条匿名失败链的端到端落地图和最小事件序列。</p>
+<p>前面的章节已经给出原则、边界和检查表；这一章补六段最小架构片段，帮助团队把抽象要求落成具体事实流、契约执行流、swarm 控制流，以及一条匿名失败链的端到端落地图、最小事件序列和可直接复用的复盘模板。</p>
 <h2 id="131-任务事实流"><a class="header" href="#131-任务事实流">13.1 任务事实流</a></h2>
 <pre><code class="language-text">工具发出进度事件 -&gt; 运行时校验事件 -&gt; 监督器持久化状态
 -&gt; TaskStatusChanged -&gt; API/SSE -&gt; UI 回放与状态气泡
@@ -1385,6 +1401,154 @@ task.failed          task=root-17 category=artifact_contract_violation
 <li><code>task.failed</code> 则把系统终态固定下来。</li>
 </ul>
 <p>没有这类最小事件序列，很多系统也能“看起来运行”。但只要出一次事故，团队就会发现自己没有真正的运行时事实，只剩聊天记录和猜测。</p>
+<h2 id="136-可直接复用的事故复盘-markdown-模板"><a class="header" href="#136-可直接复用的事故复盘-markdown-模板">13.6 可直接复用的事故复盘 Markdown 模板</a></h2>
+<p>下面这份模板可以直接作为团队的复盘章节骨架使用。它的重点不是格式统一，而是强制每一次事故都沿着同一条控制链写清楚。</p>
+<pre><code class="language-md"># 事故标题
+
+## 1. 事故摘要
+
+- 事故编号：
+- 首次发生时间：
+- 首次发现时间：
+- 当前状态：进行中 / 已缓解 / 已修复 / 已验证
+- 一句话摘要：
+  - 例如：root task 被错误标记为 `ready`，但交付的 `slides.pptx` 实际是旧模板文件。
+
+## 2. 用户影响与业务影响
+
+- 受影响用户 / 项目：
+- 受影响时间窗：
+- 用户表面症状：
+- 错误交付 / 重复执行 / 数据污染 / 合规风险：
+- 是否需要外部沟通或补偿：
+
+## 3. 时间线
+
+| 时间（绝对时间） | 事件 | 证据 |
+|---|---|---|
+| 2026-04-23 10:02 | 用户提交任务 | session id / request id |
+| 2026-04-23 10:05 | child task 开始拉资料 | event id / log path |
+| 2026-04-23 10:12 | root task 被标记为 `ready` | task snapshot |
+| 2026-04-23 10:18 | 用户报告交付文件错误 | support ticket |
+
+## 4. 任务 / Agent 拓扑
+
+- root task：
+- coordinator：
+- child tasks：
+  - child A：role / owner / worktree / expected artifact
+  - child B：role / owner / worktree / expected artifact
+- 外部能力：
+  - shell / MCP / Python / Node / browser / API
+- 人工介入点：
+
+## 5. 用户面与系统面如何分叉
+
+- 用户看到的事实：
+- UI / replay 呈现的事实：
+- operator dashboard 呈现的事实：
+- 底层运行时实际发生的事实：
+- 第一次分叉发生在哪个时刻：
+
+## 6. 五层断裂点解剖
+
+### 6.1 Session
+
+- root / child task 关系是否被显式持久化：
+- primary artifact 是否被显式声明：
+- scope / owner / role / worktree 是否完整：
+- 这里的缺口是什么：
+
+### 6.2 Capability Plane
+
+- 实际调用了哪些能力：
+- Python / Node / shell / MCP 是否走统一事件入口：
+- artifact / citation / temp file 是否按契约回传：
+- 这里的缺口是什么：
+
+### 6.3 Verifier
+
+- 哪些 validator 本应拦住问题：
+- 实际运行了哪些 validator：
+- 为什么没有阻断终态：
+- 证据路径：
+
+### 6.4 Operator Dashboard
+
+- 值班同学是否能直接看到 root/child 关系、artifact、validator 结果：
+- 哪些关键信息缺失：
+- 哪些状态只是影子状态：
+
+### 6.5 Swarm / Coordinator
+
+- coordinator 的职责是否越界：
+- child agent 是否回传了可验证 summary：
+- 是否存在局部成功伪装成系统成功：
+
+## 7. 证据包
+
+- session / task 快照：
+- 关键事件序列：
+- artifact 路径：
+- validator 输出：
+- dashboard 截图：
+- 相关 commit / deploy / feature flag：
+
+## 8. 根因归类
+
+- 四支柱归类：
+  - Session / Harness / Tools / Verification
+- 九维度归类：
+  - 事实流 / 生命周期 / 能力平面 / 产物与验证 / 回放 / 隔离与恢复 / 协作 / 知识分层 / 操作员面
+- 最终根因一句话：
+
+## 9. 为什么现有防线没有拦住
+
+- 哪个 validator 缺失：
+- 哪个门禁没有覆盖：
+- 哪个 dashboard 信号不够：
+- 哪个 runbook 或 skill 没有晋升：
+
+## 10. 修复动作
+
+### 10.1 已执行 Hotfix
+
+- [ ] 修复项
+- [ ] 影响范围
+- [ ] 回滚策略
+
+### 10.2 结构修复
+
+- [ ] session / schema 修复
+- [ ] capability plane 修复
+- [ ] validator 修复
+- [ ] dashboard / replay 修复
+- [ ] swarm / coordinator 修复
+
+### 10.3 发布门禁补强
+
+- [ ] mini-fleet case
+- [ ] replay fixture
+- [ ] validator evidence assertion
+- [ ] cross-session contamination check
+
+## 11. 组织沉淀
+
+- 会新增哪些 validator：
+- 会新增哪些 dashboard 信号：
+- 会新增哪些 runbook：
+- 会晋升哪些 `AGENTS.md` / docs / skills 规则：
+- 下次同类事故应被什么机制更早拦住：
+
+## 12. 完成定义
+
+- [ ] 用户面症状已消失
+- [ ] 根因层修复已上线
+- [ ] 对应 validator / gate / dashboard 已补齐
+- [ ] mini-fleet 已复现并验证通过
+- [ ] 复盘已归档到 failure museum
+</code></pre>
+<p>这个模板最重要的价值，不是让复盘文档更整齐，而是避免团队把 harness 事故再次写成“一个人记得的故事”。只要每次都沿着这份模板写，事故就会持续沉进 session 模型、能力平面、validator、dashboard 和 swarm 纪律里。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="14-结语下一阶段的工程姿态"><a class="header" href="#14-结语下一阶段的工程姿态">14. 结语：下一阶段的工程姿态</a></h1>
 <p>到这里，整本书的主线也就闭合了：从长上下文和长任务的根因出发，经由 Claude Code / Codex 反推出来的架构总纲，穿过真实失败案例、运行时总图、能力平面、回放、操作员控制面、多 agent 编排与治理原则，最后落回一套可执行的工程姿态。</p>

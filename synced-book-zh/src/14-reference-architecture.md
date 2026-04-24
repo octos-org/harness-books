@@ -1,6 +1,6 @@
 # 13. 参考架构片段
 
-前面的章节已经给出原则、边界和检查表；这一章补五段最小架构片段，帮助团队把抽象要求落成具体事实流、契约执行流、swarm 控制流，以及一条匿名失败链的端到端落地图和最小事件序列。
+前面的章节已经给出原则、边界和检查表；这一章补六段最小架构片段，帮助团队把抽象要求落成具体事实流、契约执行流、swarm 控制流，以及一条匿名失败链的端到端落地图、最小事件序列和可直接复用的复盘模板。
 
 ## 13.1 任务事实流
 
@@ -84,5 +84,158 @@ task.failed          task=root-17 category=artifact_contract_violation
 - `task.failed` 则把系统终态固定下来。
 
 没有这类最小事件序列，很多系统也能“看起来运行”。但只要出一次事故，团队就会发现自己没有真正的运行时事实，只剩聊天记录和猜测。
+
+## 13.6 可直接复用的事故复盘 Markdown 模板
+
+下面这份模板可以直接作为团队的复盘章节骨架使用。它的重点不是格式统一，而是强制每一次事故都沿着同一条控制链写清楚。
+
+```md
+# 事故标题
+
+## 1. 事故摘要
+
+- 事故编号：
+- 首次发生时间：
+- 首次发现时间：
+- 当前状态：进行中 / 已缓解 / 已修复 / 已验证
+- 一句话摘要：
+  - 例如：root task 被错误标记为 `ready`，但交付的 `slides.pptx` 实际是旧模板文件。
+
+## 2. 用户影响与业务影响
+
+- 受影响用户 / 项目：
+- 受影响时间窗：
+- 用户表面症状：
+- 错误交付 / 重复执行 / 数据污染 / 合规风险：
+- 是否需要外部沟通或补偿：
+
+## 3. 时间线
+
+| 时间（绝对时间） | 事件 | 证据 |
+|---|---|---|
+| 2026-04-23 10:02 | 用户提交任务 | session id / request id |
+| 2026-04-23 10:05 | child task 开始拉资料 | event id / log path |
+| 2026-04-23 10:12 | root task 被标记为 `ready` | task snapshot |
+| 2026-04-23 10:18 | 用户报告交付文件错误 | support ticket |
+
+## 4. 任务 / Agent 拓扑
+
+- root task：
+- coordinator：
+- child tasks：
+  - child A：role / owner / worktree / expected artifact
+  - child B：role / owner / worktree / expected artifact
+- 外部能力：
+  - shell / MCP / Python / Node / browser / API
+- 人工介入点：
+
+## 5. 用户面与系统面如何分叉
+
+- 用户看到的事实：
+- UI / replay 呈现的事实：
+- operator dashboard 呈现的事实：
+- 底层运行时实际发生的事实：
+- 第一次分叉发生在哪个时刻：
+
+## 6. 五层断裂点解剖
+
+### 6.1 Session
+
+- root / child task 关系是否被显式持久化：
+- primary artifact 是否被显式声明：
+- scope / owner / role / worktree 是否完整：
+- 这里的缺口是什么：
+
+### 6.2 Capability Plane
+
+- 实际调用了哪些能力：
+- Python / Node / shell / MCP 是否走统一事件入口：
+- artifact / citation / temp file 是否按契约回传：
+- 这里的缺口是什么：
+
+### 6.3 Verifier
+
+- 哪些 validator 本应拦住问题：
+- 实际运行了哪些 validator：
+- 为什么没有阻断终态：
+- 证据路径：
+
+### 6.4 Operator Dashboard
+
+- 值班同学是否能直接看到 root/child 关系、artifact、validator 结果：
+- 哪些关键信息缺失：
+- 哪些状态只是影子状态：
+
+### 6.5 Swarm / Coordinator
+
+- coordinator 的职责是否越界：
+- child agent 是否回传了可验证 summary：
+- 是否存在局部成功伪装成系统成功：
+
+## 7. 证据包
+
+- session / task 快照：
+- 关键事件序列：
+- artifact 路径：
+- validator 输出：
+- dashboard 截图：
+- 相关 commit / deploy / feature flag：
+
+## 8. 根因归类
+
+- 四支柱归类：
+  - Session / Harness / Tools / Verification
+- 九维度归类：
+  - 事实流 / 生命周期 / 能力平面 / 产物与验证 / 回放 / 隔离与恢复 / 协作 / 知识分层 / 操作员面
+- 最终根因一句话：
+
+## 9. 为什么现有防线没有拦住
+
+- 哪个 validator 缺失：
+- 哪个门禁没有覆盖：
+- 哪个 dashboard 信号不够：
+- 哪个 runbook 或 skill 没有晋升：
+
+## 10. 修复动作
+
+### 10.1 已执行 Hotfix
+
+- [ ] 修复项
+- [ ] 影响范围
+- [ ] 回滚策略
+
+### 10.2 结构修复
+
+- [ ] session / schema 修复
+- [ ] capability plane 修复
+- [ ] validator 修复
+- [ ] dashboard / replay 修复
+- [ ] swarm / coordinator 修复
+
+### 10.3 发布门禁补强
+
+- [ ] mini-fleet case
+- [ ] replay fixture
+- [ ] validator evidence assertion
+- [ ] cross-session contamination check
+
+## 11. 组织沉淀
+
+- 会新增哪些 validator：
+- 会新增哪些 dashboard 信号：
+- 会新增哪些 runbook：
+- 会晋升哪些 `AGENTS.md` / docs / skills 规则：
+- 下次同类事故应被什么机制更早拦住：
+
+## 12. 完成定义
+
+- [ ] 用户面症状已消失
+- [ ] 根因层修复已上线
+- [ ] 对应 validator / gate / dashboard 已补齐
+- [ ] mini-fleet 已复现并验证通过
+- [ ] 复盘已归档到 failure museum
+```
+
+这个模板最重要的价值，不是让复盘文档更整齐，而是避免团队把 harness 事故再次写成“一个人记得的故事”。只要每次都沿着这份模板写，事故就会持续沉进 session 模型、能力平面、validator、dashboard 和 swarm 纪律里。
 
 ---

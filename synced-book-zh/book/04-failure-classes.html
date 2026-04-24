@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-845d1b7e.js";
+            window.path_to_searchindex_js = "searchindex-00b3b7d5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-50f4af94.js"></script>
@@ -289,6 +289,22 @@
 <p>症状是用户或操作员看到的表面，例如状态气泡冻结、产物丢失、会话串扰。根因必须落到四支柱之一：session 没有持久事实、harness 没有稳定协议、tool 没有问责边界、verification 不独立或不阻断。修法不能停留在“改 prompt”或“加日志”，而要转成 schema、gate、fixture、validator、dashboard 诊断或文档契约。</p>
 <p>更具体地说，一个好的条目应该能回答五个问题：用户当时看到了什么；系统底层实际在做什么；两者为什么会分叉；哪一层边界缺失了；以后怎样让同类事故在 CI、replay 或 dashboard 上更早暴露。只有这样，事故才会从一次性的火警变成组织的长期免疫力。</p>
 <p>任何团队后续每次遇到 harness 事故，都应该按这个格式归档。否则团队只是在修 bug，没有增长系统免疫力。</p>
+<h2 id="38-事故复盘章节模板从火警到组织免疫"><a class="header" href="#38-事故复盘章节模板从火警到组织免疫">3.8 事故复盘章节模板：从火警到组织免疫</a></h2>
+<p>如果要把“失败模式博物馆”真正变成一本能不断增厚的工程书，团队还需要统一的事故复盘章节模板。好的模板不是为了写得更像公文，而是为了保证每一篇复盘最后都能沉到 schema、validator、dashboard、runbook 或 skill，而不是停在“大家下次注意”。</p>
+<p>一个完整的 harness 事故复盘，至少应该包含下面十段：</p>
+<ol>
+<li><code>事故摘要</code>：一句话说清用户表面看到了什么，系统最终造成了什么错误裁决。</li>
+<li><code>用户影响与业务影响</code>：哪些用户或下游系统受影响，错误持续多久，是否有错误交付、重复执行、数据污染或合规风险。</li>
+<li><code>时间线</code>：从触发、发现、缓解到修复，按绝对时间列出关键事件，而不是只写模糊顺序。</li>
+<li><code>任务/agent 拓扑</code>：列出 root task、child task、role、worktree、外部能力和人工介入点，让读者知道这不是单进程 bug。</li>
+<li><code>五层断裂点解剖</code>：逐层分析 <code>session / capability plane / verifier / operator dashboard / swarm</code> 各自出了什么问题，哪些层是缺失，哪些层是误判，哪些层只是把错误放大了。</li>
+<li><code>证据包</code>：列出事件片段、artifact 路径、validator 输出、dashboard 截图、日志片段和 commit / deploy 边界。没有证据，复盘就只是回忆录。</li>
+<li><code>根因归类</code>：把问题落到四支柱和九个架构维度里，而不是写成“大模型抽风”或“偶发 race condition”。</li>
+<li><code>为什么现有防线没有拦住</code>：明确是没有 validator、validator 不阻断、scope 不完整、dashboard 不可读，还是 canary / mini-fleet 没覆盖到对应路径。</li>
+<li><code>修复与长期动作</code>：区分 hotfix、结构修复、发布门禁、知识晋升和组织流程调整，不把所有事情都塞成一个 patch。</li>
+<li><code>组织沉淀</code>：这次事故会变成什么长期资产，例如新的 validator、<code>AGENTS.md</code> 规则、skill、runbook、dashboard 信号、回放 fixture 或发布门禁。</li>
+</ol>
+<p>这样的模板之所以重要，是因为 harness 事故往往不是“哪一行代码错了”这么简单，而是多个表面一起说了不同的话。统一模板能逼团队每次都沿着同一条控制链回溯，从而让事故真正转化成组织免疫力。</p>
 <hr>
                     </main>
 
