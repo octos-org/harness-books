@@ -26,6 +26,11 @@
 22. OpenClaw. *openclaw/openclaw* repository README and docs. Accessed 2026-04-23. https://github.com/openclaw/openclaw
 23. Nous Research. *NousResearch/hermes-agent* repository README and developer guide. Accessed 2026-04-23. https://github.com/NousResearch/hermes-agent
 24. Claude Code 本地源码镜像审读，关键模块包括 `Tool.ts`、`query.ts`、`main.tsx`、`services/tools/StreamingToolExecutor.ts`、`services/compact/{microCompact,compact,apiMicrocompact}.ts`、`tools/AgentTool/{AgentTool.tsx,loadAgentsDir.ts,resumeAgent.ts}`、`utils/{sessionStorage.ts,fileStateCache.ts,worktree.ts,teammateMailbox.ts}`、`utils/task/diskOutput.ts`、`services/AgentSummary/agentSummary.ts`。审读日期 2026-04-23。
+25. Norbert Wiener. *Cybernetics or Control and Communication in the Animal and the Machine.* MIT Press edition page and open-access description. Accessed 2026-04-23. https://mitpress.mit.edu/9780262537841/cybernetics-or-control-and-communication-in-the-animal-and-the-machine/
+26. Stan Franklin, Art Graesser. *Is it an Agent, or Just a Program?: A Taxonomy for Autonomous Agents.* 1996. Accessed 2026-04-23. https://faculty.sites.iastate.edu/tesfatsi/archive/tesfatsi/AgentOrProgram.SFranklin1996.htm
+27. Michael Wooldridge, Nicholas R. Jennings. *Intelligent Agents: Theory and Practice.* 1995. Accessed 2026-04-23. https://citeseerx.ist.psu.edu/document?doi=181e0a027acc7f1e5fbfc35958985e0aa2207588&repid=rep1&type=pdf
+28. Chris Terman. *Computation Structures*, especially *L14: The Memory Hierarchy* and *L16: Virtual Memory.* Accessed 2026-04-23. https://computationstructures.org/lectures/caches/caches.html and https://computationstructures.org/lectures/vm/vm.html
+29. H. S. Black. *Stabilized Feedback Amplifiers.* Bell System Technical Journal / Bell Labs archive, 1934. Accessed 2026-04-23. https://www.nokia.com/bell-labs/publications-and-media/publications/stabilized-feedback-amplifiers/
 
 ## 19.2 支持性参考
 
