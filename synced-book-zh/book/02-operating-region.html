@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-8bc89d02.js";
+            window.path_to_searchindex_js = "searchindex-5f276ace.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-50f4af94.js"></script>
@@ -558,7 +558,20 @@ Harness 工程
 <p>第 1 层是 AI 编码过程的驾驭工程。这里 agent 是工程团队的生产工具，最终产品仍然是代码、服务、应用或基础设施。OpenAI Codex 团队的 1M LOC 案例、Fowler 的代码 agent harness、Codex 开源仓库里对 sandbox、approval、MCP、rollout 和 <code>AGENTS.md</code> 的显式边界，都属于这一层。<sup class="footnote-reference" id="fr-layer1-harness-ch1-1"><a href="#footnote-layer1-harness-ch1">15</a></sup></p>
 <p>第 2 层是 AI agent 自身的 harness 工程。这里产品本身就是 agent，用户直接把任务交给它。系统要处理 session 恢复、sandbox 权限、工具调用审计、长任务重启、客户环境隔离、gateway 路由和合规签字。Anthropic 的 session / harness / sandbox 三抽象、Claude Code 源码里对 compaction、resume、worktree、sub-agent 的拆分，以及 OpenClaw/Hermes 在 gateway、memory、skills、cron 和多会话上的控制面，都更接近这一层。<sup class="footnote-reference" id="fr-layer2-harness-ch1-1"><a href="#footnote-layer2-harness-ch1">16</a></sup></p>
 <p>Claude Code 和 Codex 站在这两层的分界线附近：它们既是编码生产工具，也体现出长任务 harness 产品的形态。OpenClaw 和 Hermes 更明显属于 Layer 2：产品本身就是会话、记忆、gateway、skills、cron 和 sub-agent 的控制面。本文掌握的那组内部失败案例只承担一个角色：反证样本。它有价值，不是因为它代表行业，而是因为它把同一种结构性问题暴露得很具体。</p>
-<p>到这里，第 1 章只做了一件事：说明 harness 不是可选的产品装饰，而是让 LLM 长任务留在有效工作区间内的控制系统。接下来的第 2 到第 4 章会依次回答三个问题：成熟系统究竟在建设什么；当这些机制缺位时系统会怎样坏；这些问题最后应当落成什么样的运行时架构。</p>
+<h2 id="112-把控制论抽象落到-claude-code--codex-的运行时结构"><a class="header" href="#112-把控制论抽象落到-claude-code--codex-的运行时结构">1.12 把控制论抽象落到 Claude Code / Codex 的运行时结构</a></h2>
+<p>如果前面的控制论讨论只停留在“agent 是反馈系统”这个抽象层，那还不足以指导实现。真正有用的地方，在于把控制论里的几类角色，直接对照到成熟 agent runtime 里能看见的部件。一个能长期工作的 agent 系统，最终都要把下面五件事做成显式结构：</p>
+<ol>
+<li>受控对象：当前正在推进的 task / session / thread，而不是一段模糊聊天历史。</li>
+<li>目标与约束：用户目标、验收标准、artifact 契约、权限边界、预算边界。</li>
+<li>传感器：tool 回执、文件变化、validator 结果、child summary、turn/item 事件。</li>
+<li>控制器：负责决定继续、压缩、重试、派工、升级、打断、恢复的主循环。</li>
+<li>执行器：shell、文件系统、MCP、子 agent、worktree、外部 API、artifact 写入。</li>
+</ol>
+<p>按这个框架回看 Claude Code，它的运行时结构就很好读了。<code>ToolUseContext</code> 和 <code>query.ts</code> 在扮演控制器入口：它们握着当前任务线程可见的工具、权限、记忆、MCP 连接、agent 定义与状态。<code>StreamingToolExecutor.ts</code> 是执行器调度面，负责让并发安全工具并行，让非并发安全工具串行；<code>sessionStorage.ts</code>、<code>fileStateCache.ts</code>、<code>agentSummary.ts</code>、<code>diskOutput.ts</code> 则构成传感器与状态保持层，让系统持续知道“现在做到哪了、产物在哪、子 agent 在忙什么、哪些事实应该外置存储”。而 <code>microCompact</code> / <code>compact.ts</code> / <code>apiMicrocompact</code>、<code>resumeAgent.ts</code>、<code>worktree.ts</code> 做的事情，本质上都是稳定性控制：上下文快失真时压缩，任务被打断时恢复，副作用可能互相污染时隔离。<sup class="footnote-reference" id="fr-runtime-bridge-ch1-1"><a href="#footnote-runtime-bridge-ch1">17</a></sup></p>
+<p>Codex 则把同一套逻辑拆得更显式。<code>Thread</code> / <code>Turn</code> / <code>Item</code> 先把受控对象建模清楚：什么属于长期历史，什么属于一次执行，什么属于需要进入未来上下文的输入、输出与副作用。<code>thread-store</code> 与 <code>rollout</code> 负责持久层；<code>app-server</code> 协议和通知流负责把观测总线公开出来；<code>tools</code> registry、<code>command/exec</code>、<code>fs/*</code>、<code>mcpServer/tool/call</code>、<code>spawn_agent</code> 等接口则组成执行器平面。再往外一层，<code>sandboxing</code>、approval、<code>thread/resume</code>、<code>thread/fork</code>、<code>turn/interrupt</code> 这些边界，扮演的正是控制论里“限制增益、抑制失稳、允许系统在偏离后重新收敛”的控制机制。<sup class="footnote-reference" id="fr-runtime-bridge-ch1-2"><a href="#footnote-runtime-bridge-ch1">17</a></sup></p>
+<p>把这两套系统放在一起看，就能得到一个很实用的判断：所谓“Claude Code 为什么能成为万用 agent 工具”，并不是因为它找到了某个覆盖万事万物的 prompt；所谓“Codex 为什么像 agent 内核”，也不是因为它只是把 CLI 写得更模块化。真正的原因是，它们都把感知、决策、执行、状态保持、纠偏和恢复做成了 runtime 的一等对象。正因为这些对象存在，系统才有能力同时处理写代码、写文档、写 slides、调用 CLI / API、通过 MCP 接入外部能力、再进一步 orchestrate 多个 agent 共同完成任务。</p>
+<p>因此，下一章不该被当成产品介绍，而应被当成运行时解剖：Claude Code 让我们看到一套成熟 agent runtime 会长出哪些器官，Codex 让我们看到这些器官如何被压成更清楚的骨架和协议。第 2 章展开的是这套结构如何支撑“既广又深”的 agent 能力；第 3 章再用一组匿名失败链说明，一旦这些部件缺位，系统会怎样重新退化成不可靠的聊天壳。</p>
+<p>到这里，第 1 章只做了一件事：说明 harness 不是可选的产品装饰，而是让 LLM 长任务留在有效工作区间内的控制系统。第 1.12 节进一步把这个控制论抽象压到了运行时骨架上。接下来的第 2 到第 4 章会依次回答三个问题：成熟系统究竟在建设什么；当这些机制缺位时系统会怎样坏；这些问题最后应当落成什么样的运行时架构。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
@@ -609,6 +622,9 @@ Harness 工程
 </li>
 <li id="footnote-layer2-harness-ch1">
 <p>本章在此处综合 Anthropic 关于 managed agents 与 long-running harness 的接口抽象、Claude Code 本地源码镜像所体现的 session/compaction/sub-agent 机制，以及 OpenClaw/Hermes 在 gateway、memory、skills 与 sub-agent 上的产品形态；对应第 19 章参考文献 3、4、6、7、22、23、24。 <a href="#fr-layer2-harness-ch1-1">↩</a></p>
+</li>
+<li id="footnote-runtime-bridge-ch1">
+<p>本章在此处综合 Claude Code 本地源码镜像中 <code>Tool.ts</code>、<code>query.ts</code>、<code>services/tools/StreamingToolExecutor.ts</code>、<code>services/compact/*</code>、<code>utils/{sessionStorage.ts,fileStateCache.ts,worktree.ts,teammateMailbox.ts}</code>、<code>utils/task/diskOutput.ts</code>、<code>services/AgentSummary/agentSummary.ts</code>，以及 Codex 开源仓库中 <code>app-server</code>、<code>app-server-protocol</code>、<code>tools</code>、<code>thread-store</code>、<code>rollout</code>、<code>sandboxing</code> 与 thread/turn/item 相关接口，用来把控制论中的受控对象、传感器、控制器、执行器与稳定性边界，映射到现代 agent runtime 的具体器官；对应第 19 章参考文献 21、24。 <a href="#fr-runtime-bridge-ch1-1">↩</a> <a href="#fr-runtime-bridge-ch1-2">↩2</a></p>
 </li>
 </ol>
 
