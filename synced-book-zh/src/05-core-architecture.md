@@ -114,7 +114,7 @@ Karpathy 的 autoresearch 经验提醒过一个很朴素但很重要的事实：
 - 第 8 章展开 sub-agent / swarm：为什么多 agent 的关键不是并行，而是角色、隔离、通信和验证。
 - 第 9 章再把同一套词汇表改写成九条设计原则和九组反模式，让“产品故事 -> 架构维度 -> 设计法则”成为一条连续论证，而不是三套散开的语言。
 
-[^claudecode-codex-spine-ch4]: 本章在此处综合 Claude Code 本地源码镜像中 `sessionStorage.ts`、`query.ts`、`resumeAgent.ts`、`StreamingToolExecutor.ts`、`diskOutput.ts`、`agentSummary.ts`、`worktree.ts` 等模块所体现的运行时器官，以及 Codex 开源仓库中 `app-server-protocol`、`tools`、`thread-store`、`rollout` 所体现的模块边界，用来反推 agent harness 的通用总图；对应第 19 章参考文献 21、24。
+[^claudecode-codex-spine-ch4]: 本章在此处综合 Claude Code 本地源码镜像、*Dive into Claude Code* 中七组件与五层子系统分析，以及 Codex 开源仓库中 `app-server-protocol`、`tools`、`thread-store`、`rollout` 所体现的模块边界，用来反推 agent harness 的通用总图；对应第 19 章参考文献 21、24、41。
 [^karpathy-bookkeeping-ch4]: Andrej Karpathy, *LLM Wiki.* 本章在此处使用其关于 autoresearch 双文件与 bookkeeping 的思路，说明 `session.md` + `session.jsonl` 这类事实流设计的价值；对应第 19 章参考文献 9。
 
 ---

@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-579ff624.js";
+            window.path_to_searchindex_js = "searchindex-5b6905b7.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-50f4af94.js"></script>
@@ -177,14 +177,15 @@
                         <h1 id="0-全书地图与阅读指南"><a class="header" href="#0-全书地图与阅读指南">0. 全书地图与阅读指南</a></h1>
 <p>这本书围绕一条明确主线展开，但主分析线并不围绕某个具体产品品牌。它把前沿样本、失败案例、架构总结、路线图和附录压成一个连续论证，让读者在一个地方看清从根因到落地的完整链条。</p>
 <h2 id="01-先抓住这本书的主线"><a class="header" href="#01-先抓住这本书的主线">0.1 先抓住这本书的主线</a></h2>
-<p>为了避免章节多了以后主线发散，可以先把全书逻辑压成六步：</p>
+<p>为了避免章节多了以后主线发散，可以先把全书逻辑压成七步：</p>
 <ol>
-<li>LLM 有容量上限，但工程上真正重要的是有效工作区间，而不是 brochure 上的最大 context。</li>
-<li>一旦任务跨越长时间、多工具、多会话，质量、成本、时延和状态一致性会一起恶化，所以不能把 prompt 当系统。</li>
-<li>OpenAI、Anthropic 这类前沿团队之所以能把 agent 用到生产，不是因为 prompt 更花，而是因为有了 harness、验证、回放、知识分层和操作员控制面。</li>
-<li>像许多仍在补控制平面的系统一样，本文掌握的一组失败案例当前遇到的多数事故，本质上都能还原为同一类问题：系统把“类似聊天的输出”误当成“运行时事实”。</li>
-<li>因此解法必须围绕 session、harness、tools、verification 四支柱展开，并落到事件 ABI、UI replay、operator dashboard、mini-fleet 门禁、sub-agent/swarm 编排这些具体机制上。</li>
-<li>最后还要把这些机制沉淀成原则、路线图、清单和边界说明，避免系统只会“偶尔成功”，却不能稳定交付。</li>
+<li>LLM 的底层能力来自条件生成：它擅长在给定上下文里生成高质量候选，但它本身不是状态机、操作系统、数据库或验证器。</li>
+<li>一旦任务跨越长时间、多工具、多会话，目标保持、上下文选择、副作用隔离、事实持久化和结果验证都会离开单轮 prompt 能解决的范围。</li>
+<li>Agentic AI 的出现，本质上是给 LLM 补上感知、行动、反馈、记忆、工具和人类控制边界，让模型从“回答器”进入“闭环执行体”。</li>
+<li>从 cache system 看，harness 要管理工作集、分层记忆、准入和驱逐；从放大器系统看，harness 要用负反馈、限幅和锁存，让模型维持在可预测的工作区间。</li>
+<li>Claude Code、Codex 这类成熟样本说明，真正的产品化 agent 不是一个更长的 prompt，而是一套包含事实流、权限、工具、compaction、session、sub-agent、验证和操作员面的控制系统。</li>
+<li>一组真实失败案例反向证明：系统一旦把“类似聊天的输出”误当成“运行时事实”，就会出现进度漂移、会话污染、产物错交、验证失效和操作员盲区。</li>
+<li>因此解法必须围绕 session、harness、tools、verification 四支柱展开，并沉淀成原则、路线图、清单和边界说明，避免系统只会“偶尔成功”，却不能稳定交付。</li>
 </ol>
 <h2 id="02-这本书适合谁"><a class="header" href="#02-这本书适合谁">0.2 这本书适合谁</a></h2>
 <ul>
@@ -202,12 +203,12 @@
 <h2 id="04-这版书稿的组织方式"><a class="header" href="#04-这版书稿的组织方式">0.4 这版书稿的组织方式</a></h2>
 <ul>
 <li>面向中文工程读者的紧凑前置说明</li>
-<li>十篇奠基论文和文章的源文本附录</li>
+<li>奠基文本、系统样本和研究材料的源文本附录</li>
 <li>四根 harness 支柱的自查矩阵</li>
 <li>贯穿全书的核心术语表</li>
 <li>按角色组织的阅读指南和研究轨迹</li>
 </ul>
-<p>核心弧线保持不变：第 1 节提出控制系统视角，第 2 节先用 Claude Code、Codex、OpenClaw、Hermes 拉出成熟实践光谱，第 3 节再把一组真实失败案例转化为失败类别，第 4 节和第 7 节把这些失败转化为运行时架构，后续章节区分 harness 能解决什么，以及哪些仍然依赖模型质量、治理和操作纪律。</p>
+<p>核心弧线保持不变，但起手顺序更明确：第 1 节先讲 LLM 工作机理、agent 概念演化、控制论、cache 与负反馈，再落到 harness 为什么是外层控制系统；第 2 节用 Claude Code、Codex、OpenClaw、Hermes 拉出成熟实践光谱；第 3 节把一组真实失败案例转化为失败类别；第 4 节到第 9 节把这些失败转化为运行时架构和设计原则；后续章节区分 harness 能解决什么，以及哪些仍然依赖模型质量、治理和操作纪律。</p>
 <hr>
                     </main>
 
