@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-5b6905b7.js";
+            window.path_to_searchindex_js = "searchindex-18674b5a.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-50f4af94.js"></script>
@@ -229,7 +229,7 @@
 <li>贯穿全书的核心术语表</li>
 <li>按角色组织的阅读指南和研究轨迹</li>
 </ul>
-<p>核心弧线保持不变，但起手顺序更明确：第 1 节先讲 LLM 工作机理、agent 概念演化、控制论、cache 与负反馈，再落到 harness 为什么是外层控制系统；第 2 节用 Claude Code、Codex、OpenClaw、Hermes 拉出成熟实践光谱；第 3 节把一组真实失败案例转化为失败类别；第 4 节到第 9 节把这些失败转化为运行时架构和设计原则；后续章节区分 harness 能解决什么，以及哪些仍然依赖模型质量、治理和操作纪律。</p>
+<p>核心弧线改成更清楚的交替节奏：第 1 节只建立理论底座，讲 LLM 工作机理、agent 概念演化、控制论、cache、负反馈和最佳工作区间；第 2 节立刻进入 Claude Code、Codex、OpenClaw、Hermes 这些成熟实践样本；第 3 节用真实失败案例反证理论为什么必要；第 4 节再把理论和样本压成运行时架构；第 5 到第 8 节按能力平面、回放、操作员面、swarm 继续把理论和实践穿插展开。后续章节则把这些机制收束成原则、路线图、清单和边界。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="1-llm-的工作区间为什么控制系统必不可少"><a class="header" href="#1-llm-的工作区间为什么控制系统必不可少">1. LLM 的工作区间：为什么控制系统必不可少</a></h1>
 <p>核心工程目标不是“孤立地让模型更聪明”。<br>真正的实践目标，是让 LLM 在尽可能长的任务周期里停留在它最擅长的上下文和工作区间内。</p>
@@ -363,9 +363,7 @@
 <li>系统必须主动管理工作集，而不是把所有原始材料都塞进一个大窗口；</li>
 <li>系统必须愿意牺牲一部分自由度，换取更低漂移和更强可恢复性。</li>
 </ol>
-<p>这也正是今天几条最有代表性的 harness 实践线在做的事。OpenAI 的 Ryan Lopopolo 在讲 Codex 驱动的 1M LOC 实验时，最有信息量的一句话其实不是“零手写代码”，而是：<code>"When something failed, the fix was almost never 'try harder.'"</code> 团队真正做的，是不断补环境、补抽象、补反馈环，让 agent 变得既 legible 又 enforceable。<sup class="footnote-reference" id="fr-harness-story-ch1-4"><a href="#footnote-harness-story-ch1">8</a></sup></p>
-<p>Anthropic 这边给出的公开故事也很说明问题。产品页上写得很直接：公司里 <code>"majority of code is now written by Claude Code"</code>，工程师的重心转向 architecture、product thinking 与 continuous orchestration。另一篇内部案例更能说明“agent 能力为何会从 coding 扩到更广义工作”：律师拿它做电话树系统，设计师直接改大块 state management，数据科学家在“不太会 JavaScript/TypeScript”的情况下，用它写出 5000 行级别的前端可视化应用。<sup class="footnote-reference" id="fr-harness-story-ch1-5"><a href="#footnote-harness-story-ch1">8</a></sup></p>
-<p>这些故事之所以重要，不是因为它们很像宣传材料，而是因为它们提供了一个组织层面的证据：当 agent 真正离开 demo，进入跨文件、跨工具、跨角色、跨时段的工作场景时，系统瓶颈就会迅速从“模型够不够聪明”转到“控制环够不够好”。这时，prompt 工程仍然重要，但它已经退居为局部优化；真正决定系统上限的，是能不能把运行时做成下面这层控制栈：</p>
+<p>第 2 章会展开 Claude Code、Codex 和 OpenAI 1M LOC 案例。这里先只保留理论结论：当 agent 离开 demo，进入跨文件、跨工具、跨角色、跨时段的工作场景时，系统瓶颈会从“模型够不够聪明”转向“控制环够不够好”。这时，prompt 工程仍然重要，但它只是局部优化；真正决定系统上限的是下面这层控制栈：</p>
 <pre><code class="language-text">Prompt 工程
   -&gt; 改善局部单轮行为
 上下文工程
@@ -373,7 +371,7 @@
 Harness 工程
   -&gt; 用持久运行时契约稳定长周期自治行为
 </code></pre>
-<p>单靠 prompt 工程无法提供持久的状态事实。<br>上下文工程能改善这一点，但仍依赖概率性的遵守。<br>Harness 工程增加运行时级别的护栏和证据，使系统可以从模型漂移中恢复，而不是假装漂移不存在。</p>
+<p>单靠 prompt 工程无法提供持久的状态事实。上下文工程能改善多轮输入质量，但仍依赖概率性的遵守。Harness 工程增加运行时级别的护栏和证据，使系统可以从模型漂移中恢复，而不是假装漂移不存在。</p>
 <h2 id="12-上下文工程是-harness-的前置纪律"><a class="header" href="#12-上下文工程是-harness-的前置纪律">1.2 上下文工程是 harness 的前置纪律</a></h2>
 <p>在 harness 成熟之前，上下文工程承担大部分控制重量：</p>
 <ul>
@@ -409,273 +407,20 @@ Harness 工程
 </ul>
 <p>后者才是 harness 关心的对象。</p>
 <h2 id="15-为什么会出现最佳工作区间"><a class="header" href="#15-为什么会出现最佳工作区间">1.5 为什么会出现“最佳工作区间”</a></h2>
-<p>这里先明确一个概念：所谓“最佳工作区间”，不是说所有模型都存在一个固定的 magic number，比如“128K 最好、256K 开始变差”。真实情况更像一个随任务结构变化的工作带宽。它描述的是：在多大范围内，模型还能稳定完成检索、遵循指令、保持多步推理、避免位置偏置，并且让系统在成本和时延上可接受。</p>
-<p>换句话说，最佳工作区间不是模型 brochure 上的容量数字，而是模型、任务、提示布局、信息密度和服务成本共同决定的工程区间。</p>
-<h3 id="151-位置偏置不是错觉而是长上下文的基本病灶"><a class="header" href="#151-位置偏置不是错觉而是长上下文的基本病灶">1.5.1 位置偏置不是错觉，而是长上下文的基本病灶</a></h3>
-<p>长上下文退化最经典的证据来自 <em>Lost in the Middle</em>。这项工作讨论的不是“模型能不能读到很长的输入”，而是“模型是否均匀地用好了整段输入”。它的核心发现可以概括为：相关信息放在开头或结尾时表现更好，放在中间时明显更差。<sup class="footnote-reference" id="fr-ltm-1"><a href="#footnote-ltm">14</a></sup></p>
-<p>后续 <em>Found in the Middle</em> 进一步把这个现象与注意力机制联系起来，直接给出短语级结论：模型存在 <code>"U-shaped attention bias"</code>。<sup class="footnote-reference" id="fr-fitm-1"><a href="#footnote-fitm">15</a></sup> 也就是说，序列两端会天然吃到更多注意力，即便它们并不是最相关的信息。</p>
-<p>这件事很关键，因为它说明：</p>
-<ul>
-<li>上下文窗口不是平的，而是有地形的；</li>
-<li>token 不是“放进去就等价可用”；</li>
-<li>中间位置的信息天然更容易掉权；</li>
-<li>指令布局不是文案问题，而是推理成功率问题。</li>
-</ul>
-<p>这也是为什么 Anthropic 的官方长上下文文档会给出非常操作性的建议：<sup class="footnote-reference" id="fr-anthropic-long-2"><a href="#footnote-anthropic-long">13</a></sup></p>
-<blockquote>
-<p>“Put longform data at the top”</p>
-</blockquote>
-<blockquote>
-<p>“Queries at the end can improve response quality by up to 30% in tests.”</p>
-</blockquote>
-<p>如果上下文窗口内部真的没有位置效应，那么这种布局建议就不该对质量产生这么大影响。恰恰因为位置偏置真实存在，所以 prompt 的空间编排本身已经成为性能变量。</p>
-<h3 id="152-1m-命中-needle不等于1m-适合真实任务"><a class="header" href="#152-1m-命中-needle不等于1m-适合真实任务">1.5.2 “1M 命中 needle”不等于“1M 适合真实任务”</a></h3>
-<p>长上下文宣传里最容易让人误判的一点，是把单 needle 检索成绩外推到真实 agent 工作流。Google 在 Gemini 1.5 的发布文中报告：在 NIAH 测试里，1.5 Pro 在 1M token 下能把嵌入文本找到 <code>"99% of the time"</code>。<sup class="footnote-reference" id="fr-gemini15-2"><a href="#footnote-gemini15">11</a></sup> 这个结果当然重要，因为它证明超长上下文不是纯噱头。</p>
-<p>但同一套官方资料其实也给出了边界条件。Google 的 long context 开发文档明确说：一旦问题从单一 needle 变成多个信息点，性能就不会保持同样精度；文档原话是：<sup class="footnote-reference" id="fr-google-long-context-2"><a href="#footnote-google-long-context">12</a></sup></p>
-<blockquote>
-<p>“performance can vary to a wide degree depending on the context”</p>
-</blockquote>
-<p>这正是工程上最需要听懂的地方。单 needle 成绩回答的是“有没有基础寻址能力”；真实任务关心的是：</p>
-<ul>
-<li>多个候选证据之间能否稳定区分；</li>
-<li>相关信息跨越多段时能否稳定整合；</li>
-<li>query 自身是否被后续噪声稀释；</li>
-<li>指令、示例、工作记忆和正文之间是否互相竞争注意力。</li>
-</ul>
-<p>所以，“1M token 可用”与“1M token 最适合当前任务”之间，中间差了整整一层工作负载分析。</p>
-<h3 id="153-一旦去掉字面匹配真实长上下文理解会明显退化"><a class="header" href="#153-一旦去掉字面匹配真实长上下文理解会明显退化">1.5.3 一旦去掉字面匹配，真实长上下文理解会明显退化</a></h3>
-<p>如果说 <em>Lost in the Middle</em> 和 <em>Found in the Middle</em> 提供了理论上的位置偏置，那么更晚近的评测已经把问题推到更接近工程实战的地方。</p>
-<p><em>NoLiMa</em> 的设计很有价值，因为它专门去掉了传统 NIAH 里容易靠字面重合取巧的部分，逼模型做“没有明显表面线索的定位与关联”。结果是：在 32K 上下文时，13 个声称支持至少 128K 的模型里，有 11 个已经跌到各自短上下文强基线的一半以下；其中 GPT-4o 从 99.3% 掉到 69.7%。<sup class="footnote-reference" id="fr-nolima-1"><a href="#footnote-nolima">16</a></sup> 论文给出的解释也很直白：上下文一长、字面线索一弱，attention 更难把相关信息拉出来。</p>
-<p>这对 agent 场景几乎是一记正中靶心的提醒。因为 agent 的真实任务，恰恰很少是“把一句完全相同的话从大文档里找出来”。更常见的是：</p>
-<ul>
-<li>从代码、日志、配置、文档之间建立隐含关联；</li>
-<li>在不同证据之间做多跳推理；</li>
-<li>区分“当前有效事实”与“旧状态残留”；</li>
-<li>把系统提示、项目约束和任务目标同时保持在可执行状态。</li>
-</ul>
-<p>这些都更像 NoLiMa，而不是单 needle NIAH。</p>
-<h3 id="154-到代码任务里窗口越大也不代表理解越稳"><a class="header" href="#154-到代码任务里窗口越大也不代表理解越稳">1.5.4 到代码任务里，窗口越大也不代表理解越稳</a></h3>
-<p>如果用户任务是写代码、修 bug、跨仓库理解依赖关系，那么长上下文的真实挑战还要再上一个台阶。<em>LongCodeBench</em> 直接把问题放到了代码理解和修复上，而且评测的是 up to 1M context 的真实编码场景。作者的结论并不乐观：long-context 对所有模型仍是弱项；样例中，Claude 3.5 Sonnet 从 29% 降到 3%，Qwen2.5 从 70.2% 降到 40%。<sup class="footnote-reference" id="fr-longcodebench-1"><a href="#footnote-longcodebench">17</a></sup></p>
-<p>这说明一个非常实际的事实：代码不是长文档摘要。代码任务通常要求：</p>
-<ul>
-<li>精确定位局部符号与跨文件调用关系；</li>
-<li>保持严格语义，而不是大意相近；</li>
-<li>同时读取规范、测试、实现和错误信息；</li>
-<li>在修改时避免把不相关上下文带进来污染决策。</li>
-</ul>
-<p>这类任务对“相关 token 密度”和“局部因果链可见性”的要求更高，因此更容易在超长窗口里掉出最佳工作区间。</p>
-<h3 id="155-为什么-agent-比聊天更容易掉出最佳工作区间"><a class="header" href="#155-为什么-agent-比聊天更容易掉出最佳工作区间">1.5.5 为什么 agent 比聊天更容易掉出最佳工作区间</a></h3>
-<p>普通聊天应用的上下文通常比较单一：对话历史 + 当前用户问题。agent 不一样。agent 的上下文往往同时掺着六类东西：</p>
+<p>所谓“最佳工作区间”，不是说所有模型都存在一个固定 magic number，比如“128K 最好、256K 开始变差”。它更像一个随任务结构变化的工作带宽：在多大范围内，模型还能稳定检索、遵循指令、保持多步推理、避免位置偏置，并让系统在成本和时延上可接受。</p>
+<p>长上下文研究已经给出足够清楚的理论信号。<em>Lost in the Middle</em> 说明相关信息在开头或结尾时更容易被利用，放在中间时表现会下降；<em>Found in the Middle</em> 进一步把这种现象概括为 <code>"U-shaped attention bias"</code>。<sup class="footnote-reference" id="fr-ltm-1"><a href="#footnote-ltm">14</a></sup> <sup class="footnote-reference" id="fr-fitm-1"><a href="#footnote-fitm">15</a></sup> Anthropic 的长上下文文档也给出很工程化的建议：长文档放前面，query 放最后面，在测试中可显著改善复杂多文档任务质量。<sup class="footnote-reference" id="fr-anthropic-long-2"><a href="#footnote-anthropic-long">13</a></sup></p>
+<p>这说明上下文窗口不是一块平坦空间，而是有位置、密度和任务形态差异的工作区。Google 在 Gemini 1.5 发布时报告过 1M token 下很高的 needle 命中率，但它自己的 long context 文档也提醒，多信息点检索的表现会随上下文大幅波动。<sup class="footnote-reference" id="fr-gemini15-2"><a href="#footnote-gemini15">11</a></sup> <sup class="footnote-reference" id="fr-google-long-context-2"><a href="#footnote-google-long-context">12</a></sup> NoLiMa 和 LongCodeBench 又把问题推到更接近真实工作的场景：去掉字面匹配线索，或者进入代码理解和修复任务后，长上下文能力会明显变脆。<sup class="footnote-reference" id="fr-nolima-1"><a href="#footnote-nolima">16</a></sup> <sup class="footnote-reference" id="fr-longcodebench-1"><a href="#footnote-longcodebench">17</a></sup></p>
+<p>所以第 1 章只给出一个理论结论：最大 context 是容量上限，最佳工作区间才是设计目标。Agent 系统不能默认“把更多材料塞进窗口”就会更可靠，而应当反过来设计任务：让模型看到更短、更密、更靠近当前决策的证据切片，把状态、历史、产物和验证证据移到运行时事实流里，再按需调回 prompt。</p>
+<h2 id="16-从理论转入实践后文怎样穿插展开"><a class="header" href="#16-从理论转入实践后文怎样穿插展开">1.6 从理论转入实践：后文怎样穿插展开</a></h2>
+<p>到这里，第 1 章只需要完成一件事：说明 harness 不是可选的产品装饰，而是让 LLM 长任务留在有效工作区间内的控制系统。</p>
+<p>后文不再把所有理论一次性堆在开头，而采用交替推进：</p>
 <ol>
-<li>用户目标与验收标准；</li>
-<li>系统/开发者约束；</li>
-<li>计划和中间状态；</li>
-<li>工具调用回执与观察结果；</li>
-<li>原始工作材料，如代码、文档、日志、网页；</li>
-<li>失败后的修复线索与历史尝试。</li>
+<li>第 2 章先看成熟样本：Claude Code 和 Codex 把哪些控制器、传感器、执行器、记忆和权限边界做成了产品结构。</li>
+<li>第 3 章再看失败样本：当系统把聊天输出误当成运行时事实时，会怎样出现进度漂移、会话污染、产物错交和验证失效。</li>
+<li>第 4 章把理论和样本压成统一架构：事实流、生命周期、能力平面、产物验证、回放、隔离恢复、协作、知识分层和操作员面。</li>
+<li>第 5 到第 8 章逐个专题展开：每章都先给理论约束，再接 Claude Code / Codex 的实现例证和失败案例的反证。</li>
 </ol>
-<p>一旦把这些异质信息都堆进同一个窗口，模型面临的就不再只是“我有没有看过这段文字”，而是：</p>
-<ul>
-<li>哪些 token 属于当前任务的真约束；</li>
-<li>哪些只是历史痕迹；</li>
-<li>哪些应该进入当前推理链；</li>
-<li>哪些只该保存在外部状态里。</li>
-</ul>
-<p>这也是本书一直强调 session、tool、verification 和 replay 的原因：不是所有信息都应该留在 prompt 里。很多信息应该变成结构化外部状态，再按需投喂。</p>
-<h3 id="156-工程结论最佳工作区间是一个设计目标不是自然礼物"><a class="header" href="#156-工程结论最佳工作区间是一个设计目标不是自然礼物">1.5.6 工程结论：最佳工作区间是一个设计目标，不是自然礼物</a></h3>
-<p>综合前述研究与厂商文档，已经可以得出一个足够强的工程判断：<sup class="footnote-reference" id="fr-ltm-2"><a href="#footnote-ltm">14</a></sup> <sup class="footnote-reference" id="fr-fitm-2"><a href="#footnote-fitm">15</a></sup> <sup class="footnote-reference" id="fr-anthropic-long-3"><a href="#footnote-anthropic-long">13</a></sup> <sup class="footnote-reference" id="fr-gemini15-3"><a href="#footnote-gemini15">11</a></sup> <sup class="footnote-reference" id="fr-google-long-context-3"><a href="#footnote-google-long-context">12</a></sup> <sup class="footnote-reference" id="fr-nolima-2"><a href="#footnote-nolima">16</a></sup> <sup class="footnote-reference" id="fr-longcodebench-2"><a href="#footnote-longcodebench">17</a></sup></p>
-<ul>
-<li>上下文窗口内部存在位置偏置；</li>
-<li>指令和 query 的相对位置会显著影响结果；</li>
-<li>单 needle 成绩不能代表真实任务鲁棒性；</li>
-<li>随着任务从字面检索转向多证据整合、代码理解和多跳推理，长上下文退化会迅速放大。</li>
-</ul>
-<p>因此，“最佳工作区间”不是学术修辞，而是 agent 设计的第一原则。它要求我们反过来设计任务，而不是默认把任务适配到最大窗口：</p>
-<ul>
-<li>把 query、验收标准和当前约束放在高权重位置；</li>
-<li>不把原始语料、状态事实、失败记录和 UI 表面混成一锅 prompt；</li>
-<li>让模型看到尽可能高密度的相关证据，而不是最大体积的原始材料；</li>
-<li>当任务天然可拆时，优先分解成多个局部问题，而不是强迫单个大窗口承担所有工作。</li>
-</ul>
-<p>一句话总结：最佳工作区间不是“少喂一点 token”这么简单，而是“让每一段被喂进去的 token 都更接近当前决策所需的最小充分上下文”。</p>
-<h2 id="16-成本时延和吞吐也不是线性的"><a class="header" href="#16-成本时延和吞吐也不是线性的">1.6 成本、时延和吞吐也不是线性的</a></h2>
-<p>讨论长上下文成本时，最常见的误区是只看 token 账单。账单当然重要，但真正把系统压垮的，常常不是“单次请求又贵了几毛钱”，而是 prefill 变慢、首 token 延迟上升、KV cache 撑大、并发吞吐下降、重试变贵、以及任务调度越来越难。</p>
-<p>所以这一节要把“成本”拆成三本账：</p>
-<ol>
-<li>API 计费账；</li>
-<li>模型推理账；</li>
-<li>系统调度账。</li>
-</ol>
-<h3 id="161-计费视角常常近似线性但官方价格表本身也在提醒边界"><a class="header" href="#161-计费视角常常近似线性但官方价格表本身也在提醒边界">1.6.1 计费视角常常近似线性，但官方价格表本身也在提醒边界</a></h3>
-<p>以 OpenAI 2026 年 4 月 23 日公开价格页为例，GPT-5.4 标准输入价是 <code>$2.50 / 1M tokens</code>，缓存输入是 <code>$0.25 / 1M tokens</code>，GPT-5.4 mini 标准输入价是 <code>$0.75 / 1M tokens</code>。<sup class="footnote-reference" id="fr-openai-pricing-1"><a href="#footnote-openai-pricing">18</a></sup> 这说明在常规上下文范围内，账单通常可以先按“每百万 token 单价”来估。</p>
-<p>但同一页也有一句很值得工程团队注意的限定：</p>
-<blockquote>
-<p>“Pricing above reflects standard processing rates for context lengths under 270K.”</p>
-</blockquote>
-<p>这句话的含义不是“270K 以上一定贵多少”，而是：连公开价格页都把超长上下文视为另一类服务条件。换句话说，提供方自己也承认，超长上下文不只是简单地把 token 数乘上单价那么朴素。</p>
-<p>Google 在 Gemini 1.5 发布时也表达了同样的信号。它一方面宣布会提供 <code>"pricing tiers that start at the standard 128,000 context window and scale up to 1 million tokens"</code>，另一方面又提醒早期测试者应预期 <code>"longer latency times"</code>。<sup class="footnote-reference" id="fr-gemini15-4"><a href="#footnote-gemini15">11</a></sup> 这说明在提供方视角里，长上下文从一开始就是“性能与成本要单独优化”的模式，而不是对普通请求做线性外推。</p>
-<h3 id="162-真正的-killer-常常是-prefill而不是-output-token"><a class="header" href="#162-真正的-killer-常常是-prefill而不是-output-token">1.6.2 真正的 killer 常常是 prefill，而不是 output token</a></h3>
-<p>从系统视角看，长上下文的核心痛点通常不在 decode，而在 prefill。原因很简单：在进入自回归生成前，模型先要把整段输入转成 KV cache 并完成注意力计算。输入越长，这一步越重。</p>
-<p><em>MInference</em> 的摘要给了一个足够刺眼的工程数字：<sup class="footnote-reference" id="fr-minference-1"><a href="#footnote-minference">19</a></sup></p>
-<blockquote>
-<p>“30 minutes for an 8B LLM to process a prompt of 1M tokens”</p>
-</blockquote>
-<p>而且同一句里明确点出了根因：这是由 attention 的二次复杂度驱动的。只要你还是在用 dense attention 的基本形态，序列长度翻上去，prefill 代价就不会跟着“温柔地线性增长”。</p>
-<p>这也是为什么很多 long-context 优化论文其实都在打 prefill：不是大家都特别喜欢底层系统，而是因为这里是最直接的瓶颈。</p>
-<h3 id="163-长上下文的真实代价是高计算成本--性能退化--位置偏置联动"><a class="header" href="#163-长上下文的真实代价是高计算成本--性能退化--位置偏置联动">1.6.3 长上下文的真实代价是“高计算成本 + 性能退化 + 位置偏置”联动</a></h3>
-<p><em>LongLLMLingua</em> 的摘要把长上下文的三大问题总结得很准确：<code>"higher computational cost, performance reduction, and position bias"</code>。<sup class="footnote-reference" id="fr-longllmlingua-1"><a href="#footnote-longllmlingua">20</a></sup> 这句话很值钱，因为它把工程上常被拆开讨论的三个问题重新捆回了一起。</p>
-<p>也就是说，长上下文不是只会带来一种坏处，而是三个坏处经常同时发生：</p>
-<ul>
-<li>token 更多，prefill 更重；</li>
-<li>位置偏置更明显，中间信息更难被利用；</li>
-<li>在噪声增多后，任务表现本身也开始下滑。</li>
-</ul>
-<p><em>LongLLMLingua</em> 还给出一个非常有启发性的结果：在 NaturalQuestions 上，压缩后可以用 <code>"4x fewer tokens"</code> 取得更高表现；在 LooGLE 上，成本降幅达到 94.0%。<sup class="footnote-reference" id="fr-longllmlingua-2"><a href="#footnote-longllmlingua">20</a></sup> 这组结果的意义不是“所有项目都该先做 prompt compression”，而是它再次证明：更多 token 并不天然等于更好结果。很多时候，更短、更密、更有结构的上下文，反而同时赢下质量和成本。</p>
-<h3 id="164-google-官方文档其实已经把经济学结论说得很直白"><a class="header" href="#164-google-官方文档其实已经把经济学结论说得很直白">1.6.4 Google 官方文档其实已经把经济学结论说得很直白</a></h3>
-<p>Google 的 long context 文档在“限制”和“优化”部分给了两句很值得直接记进架构设计的提醒。<sup class="footnote-reference" id="fr-google-long-context-4"><a href="#footnote-google-long-context">12</a></sup></p>
-<p>第一句是：</p>
-<blockquote>
-<p>“there is an inherent tradeoff between getting the right information retrieved and cost”</p>
-</blockquote>
-<p>第二句是它后面的例子：如果你要取 100 条信息，并希望维持极高准确率，那往往意味着要发出很多次查询；文档给出的意思是，这时 caching 会显著影响总成本。<sup class="footnote-reference" id="fr-google-long-context-5"><a href="#footnote-google-long-context">12</a></sup></p>
-<p>这段话可以翻成工程语言：长上下文不是“单次把大资料包交给模型”就万事大吉。真正花钱的往往是：</p>
-<ul>
-<li>你要问多少轮；</li>
-<li>每一轮是不是都把大上下文重新 prefill 一遍；</li>
-<li>公共部分是否可缓存；</li>
-<li>局部问题是否值得拆到局部上下文里处理。</li>
-</ul>
-<p>这就是为什么 sub-agent 体系通常比单脑长上下文更省：它减少的是“重复把同一堆背景材料送进模型”的浪费，而不只是减少一次请求里的 token 数。</p>
-<h3 id="165-1m-和-5-个-200k不能只比总-token-一样多"><a class="header" href="#165-1m-和-5-个-200k不能只比总-token-一样多">1.6.5 1M 和 5 个 200K，不能只比“总 token 一样多”</a></h3>
-<p>书里可以把这个比较讲得更严一点。</p>
-<p>如果你做一个极端理想化假设：一个 1M 请求，和五个各 200K 的请求，总输入 token 恰好一样，而且没有任何重复背景、没有额外协调 token、也没有缓存，那么从“按 token 计费”的账单角度看，它们确实可能接近。</p>
-<p>但这个假设在真实 agent 系统里往往不成立。因为 5 个 200K agent 很少真的会做成“5 个完整副本的大 prompt”。更常见的结构是：</p>
-<ul>
-<li>coordinator 持有目标、计划、约束和最终验收；</li>
-<li>每个子 agent 只持有一个 shard 的原始材料；</li>
-<li>公共制度性上下文通过缓存或固定 system prompt 复用；</li>
-<li>向上汇报的是摘要、证据、diff、引用和中间产物，而不是整份原始语料。</li>
-</ul>
-<p>这时候 <code>5 x 200K</code> 的真实总 token 常常小于 <code>1 x 1M</code>，而不是等于它。</p>
-<p>更重要的是，就算总 token 恰好一样，prefill 计算量也不一样。若按 dense attention 做一阶量级估算：</p>
-<ul>
-<li>单次 1M 上下文的 attention 规模约为 <code>1,000,000^2 = 10^12</code></li>
-<li>五次 200K 的总 attention 规模约为 <code>5 * 200,000^2 = 2 * 10^11</code></li>
-</ul>
-<p>也就是说，在“总 token 相同”的理想化条件下，<code>1 x 1M</code> 的 attention 量级仍然大约是 <code>5 x 200K</code> 的 5 倍。这不是某家 API 的具体计费规则，而是由 dense attention 的长度平方项直接决定的。</p>
-<p>所以 1M 和 5 个 200K 的比较，至少要同时看三件事：</p>
-<ol>
-<li><strong>账单</strong>：是否真按总 token 近似线性结算。</li>
-<li><strong>时延</strong>：prefill 和 TTFT 是否被超长窗口拖垮。</li>
-<li><strong>可调度性</strong>：这些工作是否能拆成局部任务并行推进。</li>
-</ol>
-<p>如果只看第一件事，很容易得出“总 token 一样，所以没区别”的假结论。</p>
-<h3 id="166-sub-agent-的经济学不只是省钱而是更容易拿到可接受的质量"><a class="header" href="#166-sub-agent-的经济学不只是省钱而是更容易拿到可接受的质量">1.6.6 sub-agent 的经济学，不只是省钱，而是更容易拿到可接受的质量</a></h3>
-<p>很多团队把 sub-agent/swarm 只当成吞吐工具，这是低估了它。它真正带来的，是质量曲线和成本曲线的同时改善。</p>
-<p>单个超长上下文的失败模式往往是：</p>
-<ul>
-<li>原始材料过多，相关证据密度下降；</li>
-<li>中间状态和历史痕迹污染当前任务；</li>
-<li>query 位置不稳定，重要约束被长正文淹没；</li>
-<li>一次失败就要重做整段大 prefill。</li>
-</ul>
-<p>而分解成 sub-agent 之后，你得到的是：</p>
-<ul>
-<li>每个 agent 看到的上下文更短、更局部，位置偏置更可控；</li>
-<li>每个 agent 的输入类型更单纯，更接近单一任务；</li>
-<li>错误只需在局部 shard 重试，不必重灌整段全局上下文；</li>
-<li>coordinator 处理的是“证据摘要和冲突”，不是整个原始语料海洋。</li>
-</ul>
-<p>换句话说，sub-agent 不是为了炫耀架构复杂，而是为了把每个 agent 压回它更容易成功的工作区间，再把跨 shard 协调交给 harness、session 和 verification。</p>
-<h3 id="167-什么时候仍然该用单个超长上下文"><a class="header" href="#167-什么时候仍然该用单个超长上下文">1.6.7 什么时候仍然该用单个超长上下文</a></h3>
-<p>说到这里，也要把边界说清楚。不是所有任务都该拆成 swarm。以下几类任务，单个超长上下文仍然可能是合理选择：</p>
-<ul>
-<li>必须对全局原文做一次统一排序、比对或证据归并；</li>
-<li>任务主要是全局摘要，不涉及局部修改和重复迭代；</li>
-<li>原始材料高度相关，拆分后反而破坏语义连续性；</li>
-<li>上下文可以一次缓存，多轮查询主要复用同一大语料；</li>
-<li>你更在意一次性全局理解，而不是并行吞吐。</li>
-</ul>
-<p>但这些前提只要稍微动摇，sub-agent 方案往往就开始占优。尤其当任务同时满足以下三条时，几乎总该优先考虑分解：</p>
-<ol>
-<li>材料天然可分 shard；</li>
-<li>子问题之间可以先局部求解，再做全局汇总；</li>
-<li>每轮失败重试的代价很高。</li>
-</ol>
-<h3 id="168-工程结论swarm-是长上下文经济学的自然产物"><a class="header" href="#168-工程结论swarm-是长上下文经济学的自然产物">1.6.8 工程结论：swarm 是长上下文经济学的自然产物</a></h3>
-<p>综合前述事实链，可以得出一个比“多 agent 更高级”更扎实的结论：<sup class="footnote-reference" id="fr-gemini15-5"><a href="#footnote-gemini15">11</a></sup> <sup class="footnote-reference" id="fr-google-long-context-6"><a href="#footnote-google-long-context">12</a></sup> <sup class="footnote-reference" id="fr-longllmlingua-3"><a href="#footnote-longllmlingua">20</a></sup> <sup class="footnote-reference" id="fr-minference-2"><a href="#footnote-minference">19</a></sup> <sup class="footnote-reference" id="fr-openai-pricing-2"><a href="#footnote-openai-pricing">18</a></sup></p>
-<ul>
-<li>API 账单有时近似线性，但公开定价本身已把超长上下文单独对待；</li>
-<li>prefill 的计算和时延并不线性；</li>
-<li>长上下文还会叠加位置偏置和性能退化；</li>
-<li>压缩、缓存、分块、分工往往能同时改进成本和质量。</li>
-</ul>
-<p>因此，sub-agent 和 swarm 在很多工程系统里不是可选装饰，而是长上下文时代的一种自然经济形态。它们存在的原因并不是“让系统显得更聪明”，而是为了减少无效 prefill、提高证据密度、降低失败重试半径，并把每个 agent 留在更容易成功的上下文工作区间内。</p>
-<h2 id="17-让系统保持在区间内的关键机制"><a class="header" href="#17-让系统保持在区间内的关键机制">1.7 让系统保持在区间内的关键机制</a></h2>
-<ol>
-<li>可恢复、可追踪的工作区契约</li>
-<li>工具调用事件 hook（<code>before_*</code>、<code>after_*</code>、spawn hooks）用于可见性</li>
-<li>产物和验证器契约，用来确认输出事实</li>
-<li>从失败中更新 memory/skills 的自修复循环</li>
-<li>可回放状态 API，保证 UI/操作员表面保持一致</li>
-</ol>
-<p>这就是“偶尔输出好结果”变成“压力下稳定输出”的方式。</p>
-<h2 id="18-工作流约束与自由探索的取舍"><a class="header" href="#18-工作流约束与自由探索的取舍">1.8 工作流约束与自由探索的取舍</a></h2>
-<p>受工作流约束的执行能提供更强保证：</p>
-<ul>
-<li>更好的阶段单调性</li>
-<li>更好的产物可预测性</li>
-<li>更容易回放和操作员诊断</li>
-</ul>
-<p>自由探索在新颖问题解决上有更高上限，但方差更高。</p>
-<p>实践策略是混合式：</p>
-<ul>
-<li>对长时间/高成本/高风险片段使用工作流轨道</li>
-<li>在明确预算和检查内允许有边界的自由探索</li>
-</ul>
-<h2 id="19-多-agent-编排与自治等级"><a class="header" href="#19-多-agent-编排与自治等级">1.9 多 agent 编排与自治等级</a></h2>
-<p>当系统从 L2 走向 L3/L4 自治时，长周期稳定性比单轮聪明更重要。</p>
-<ul>
-<li>L2 式辅助行为可以容忍更多人工恢复。</li>
-<li>L3/L4 式委托执行需要自监控、修复和有边界的自治。</li>
-</ul>
-<p>多 agent 编排通过行为分解提供帮助：</p>
-<ul>
-<li>规划/协调 agent 管理阶段意图</li>
-<li>专项 agent 执行狭窄工具领域</li>
-<li>验证/操作员 agent 执行契约和升级</li>
-</ul>
-<p>Harness 是让这种分解长期可靠的底座。</p>
-<p>因此本书后续会在理论、成熟样本和一组内部失败案例之间来回切换。失败样本展示控制平面在哪里断裂；成熟样本展示哪些机制已经被工程化；理论解释为什么如果不把 session、tool、verification 和 replay 当作一个系统，同样的断裂会反复出现。</p>
-<h2 id="110-根因llm-不是状态机也不是操作系统"><a class="header" href="#110-根因llm-不是状态机也不是操作系统">1.10 根因：LLM 不是状态机，也不是操作系统</a></h2>
-<p>LLM 擅长在给定上下文中补全、推理和生成，但它本身不负责维护外部世界的真实状态。上下文窗口不是数据库，聊天历史不是事务日志，模型的自信也不是验证证据。只要任务跨越多个工具、多次重试、多个页面状态或多个 agent，系统就必须回答几个模型无法单独承担的问题：</p>
-<ul>
-<li>哪个任务是真正的当前任务？</li>
-<li>哪个产物是声明过、验证过、可交付的产物？</li>
-<li>哪个阶段已经完成，哪个阶段只是模型说“看起来完成”？</li>
-<li>失败时应该把哪类证据反馈给 agent、开发者和操作员？</li>
-</ul>
-<p>这就是 harness 的根因。它不是为了弥补某个模型“不够聪明”，而是为了给概率生成系统补上确定性的运行时边界。模型越强，能做的事越多，外部状态和副作用越复杂，harness 反而越重要。</p>
-<h2 id="111-两层驾驭工程先把对象分清"><a class="header" href="#111-两层驾驭工程先把对象分清">1.11 两层驾驭工程：先把对象分清</a></h2>
-<p>这里先把一个容易混淆的点拆开：驾驭工程至少有两层。</p>
-<p>第 1 层是 AI 编码过程的驾驭工程。这里 agent 是工程团队的生产工具，最终产品仍然是代码、服务、应用或基础设施。OpenAI Codex 团队的 1M LOC 案例、Fowler 的代码 agent harness、Codex 开源仓库里对 sandbox、approval、MCP、rollout 和 <code>AGENTS.md</code> 的显式边界，都属于这一层。<sup class="footnote-reference" id="fr-layer1-harness-ch1-1"><a href="#footnote-layer1-harness-ch1">21</a></sup></p>
-<p>第 2 层是 AI agent 自身的 harness 工程。这里产品本身就是 agent，用户直接把任务交给它。系统要处理 session 恢复、sandbox 权限、工具调用审计、长任务重启、客户环境隔离、gateway 路由和合规签字。Anthropic 的 session / harness / sandbox 三抽象、Claude Code 源码里对 compaction、resume、worktree、sub-agent 的拆分，以及 OpenClaw/Hermes 在 gateway、memory、skills、cron 和多会话上的控制面，都更接近这一层。<sup class="footnote-reference" id="fr-layer2-harness-ch1-1"><a href="#footnote-layer2-harness-ch1">22</a></sup></p>
-<p>Claude Code 和 Codex 站在这两层的分界线附近：它们既是编码生产工具，也体现出长任务 harness 产品的形态。OpenClaw 和 Hermes 更明显属于 Layer 2：产品本身就是会话、记忆、gateway、skills、cron 和 sub-agent 的控制面。本文掌握的那组内部失败案例只承担一个角色：反证样本。它有价值，不是因为它代表行业，而是因为它把同一种结构性问题暴露得很具体。</p>
-<h2 id="112-把控制论抽象落到-claude-code--codex-的运行时结构"><a class="header" href="#112-把控制论抽象落到-claude-code--codex-的运行时结构">1.12 把控制论抽象落到 Claude Code / Codex 的运行时结构</a></h2>
-<p>如果前面的控制论讨论只停留在“agent 是反馈系统”这个抽象层，那还不足以指导实现。真正有用的地方，在于把控制论里的几类角色，直接对照到成熟 agent runtime 里能看见的部件。一个能长期工作的 agent 系统，最终都要把下面五件事做成显式结构：</p>
-<ol>
-<li>受控对象：当前正在推进的 task / session / thread，而不是一段模糊聊天历史。</li>
-<li>目标与约束：用户目标、验收标准、artifact 契约、权限边界、预算边界。</li>
-<li>传感器：tool 回执、文件变化、validator 结果、child summary、turn/item 事件。</li>
-<li>控制器：负责决定继续、压缩、重试、派工、升级、打断、恢复的主循环。</li>
-<li>执行器：shell、文件系统、MCP、子 agent、worktree、外部 API、artifact 写入。</li>
-</ol>
-<p>按这个框架回看 Claude Code，它的运行时结构就很好读了。<code>ToolUseContext</code> 和 <code>query.ts</code> 在扮演控制器入口：它们握着当前任务线程可见的工具、权限、记忆、MCP 连接、agent 定义与状态。<code>StreamingToolExecutor.ts</code> 是执行器调度面，负责让并发安全工具并行，让非并发安全工具串行；<code>sessionStorage.ts</code>、<code>fileStateCache.ts</code>、<code>agentSummary.ts</code>、<code>diskOutput.ts</code> 则构成传感器与状态保持层，让系统持续知道“现在做到哪了、产物在哪、子 agent 在忙什么、哪些事实应该外置存储”。而 <code>microCompact</code> / <code>compact.ts</code> / <code>apiMicrocompact</code>、<code>resumeAgent.ts</code>、<code>worktree.ts</code> 做的事情，本质上都是稳定性控制：上下文快失真时压缩，任务被打断时恢复，副作用可能互相污染时隔离。<sup class="footnote-reference" id="fr-runtime-bridge-ch1-1"><a href="#footnote-runtime-bridge-ch1">23</a></sup></p>
-<p>Codex 则把同一套逻辑拆得更显式。<code>Thread</code> / <code>Turn</code> / <code>Item</code> 先把受控对象建模清楚：什么属于长期历史，什么属于一次执行，什么属于需要进入未来上下文的输入、输出与副作用。<code>thread-store</code> 与 <code>rollout</code> 负责持久层；<code>app-server</code> 协议和通知流负责把观测总线公开出来；<code>tools</code> registry、<code>command/exec</code>、<code>fs/*</code>、<code>mcpServer/tool/call</code>、<code>spawn_agent</code> 等接口则组成执行器平面。再往外一层，<code>sandboxing</code>、approval、<code>thread/resume</code>、<code>thread/fork</code>、<code>turn/interrupt</code> 这些边界，扮演的正是控制论里“限制增益、抑制失稳、允许系统在偏离后重新收敛”的控制机制。<sup class="footnote-reference" id="fr-runtime-bridge-ch1-2"><a href="#footnote-runtime-bridge-ch1">23</a></sup></p>
-<p>把这两套系统放在一起看，就能得到一个很实用的判断：所谓“Claude Code 为什么能成为万用 agent 工具”，并不是因为它找到了某个覆盖万事万物的 prompt；所谓“Codex 为什么像 agent 内核”，也不是因为它只是把 CLI 写得更模块化。真正的原因是，它们都把感知、决策、执行、状态保持、纠偏和恢复做成了 runtime 的一等对象。正因为这些对象存在，系统才有能力同时处理写代码、写文档、写 slides、调用 CLI / API、通过 MCP 接入外部能力、再进一步 orchestrate 多个 agent 共同完成任务。</p>
-<p>因此，下一章不该被当成产品介绍，而应被当成运行时解剖：Claude Code 让我们看到一套成熟 agent runtime 会长出哪些器官，Codex 让我们看到这些器官如何被压成更清楚的骨架和协议。第 2 章展开的是这套结构如何支撑“既广又深”的 agent 能力；第 3 章再用一组匿名失败链说明，一旦这些部件缺位，系统会怎样重新退化成不可靠的聊天壳。</p>
-<p>到这里，第 1 章只做了一件事：说明 harness 不是可选的产品装饰，而是让 LLM 长任务留在有效工作区间内的控制系统。第 1.12 节进一步把这个控制论抽象压到了运行时骨架上。接下来的第 2 到第 4 章会依次回答三个问题：成熟系统究竟在建设什么；当这些机制缺位时系统会怎样坏；这些问题最后应当落成什么样的运行时架构。</p>
-<hr>
+<p>这能避免“第一章把所有结论讲完，后面只剩展开”的头重脚轻。理论负责给读者建立判断坐标，实践负责不断校正这套坐标。</p>
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-agent-theory-ch1">
@@ -700,7 +445,7 @@ Harness 工程
 <p>本章在此处综合 National Inventors Hall of Fame 与 Bell Labs 对 Harold S. Black 负反馈放大器的历史描述，用来补足 Bell System 长距离电话失真、六年坚持与 ferry 灵感的故事线；对应第 19 章参考文献 29、35。 <a href="#fr-feedback-history-ch1-1">↩</a> <a href="#fr-feedback-history-ch1-2">↩2</a></p>
 </li>
 <li id="footnote-harness-story-ch1">
-<p>本章在此处综合 Birgitta Böckeler 关于 guides / sensors 的 harness 抽象、Kief Morris 关于 humans “on the loop” 的论述、OpenAI Ryan Lopopolo 的 harness 实践，以及 Anthropic 对 Claude Code 组织采用的公开描述，用来说明今天的 harness engineering 是一条带有人物、组织与实践演进的技术线，而不是新造术语；对应第 19 章参考文献 1、2、36、37、38。 <a href="#fr-harness-story-ch1-1">↩</a> <a href="#fr-harness-story-ch1-2">↩2</a> <a href="#fr-harness-story-ch1-3">↩3</a> <a href="#fr-harness-story-ch1-4">↩4</a> <a href="#fr-harness-story-ch1-5">↩5</a></p>
+<p>本章在此处综合 Birgitta Böckeler 关于 guides / sensors 的 harness 抽象、Kief Morris 关于 humans “on the loop” 的论述、OpenAI Ryan Lopopolo 的 harness 实践，以及 Anthropic 对 Claude Code 组织采用的公开描述，用来说明今天的 harness engineering 是一条带有人物、组织与实践演进的技术线，而不是新造术语；对应第 19 章参考文献 1、2、36、37、38。 <a href="#fr-harness-story-ch1-1">↩</a> <a href="#fr-harness-story-ch1-2">↩2</a> <a href="#fr-harness-story-ch1-3">↩3</a></p>
 </li>
 <li id="footnote-memory-hierarchy-ch1">
 <p>Chris Terman, <em>Computation Structures</em> 的 <em>The Memory Hierarchy</em> 与 <em>Virtual Memory</em> 讲义。 本章在此处使用 locality of reference、associativity、block / replacement / write policy，以及 SRAM 中 positive feedback loop 的解释，来建立 memory hierarchy 与稳定存储的类比；对应第 19 章参考文献 28。 <a href="#fr-memory-hierarchy-ch1-1">↩</a> <a href="#fr-memory-hierarchy-ch1-2">↩2</a></p>
@@ -709,48 +454,35 @@ Harness 工程
 <p>H. S. Black, <em>Stabilized Feedback Amplifiers.</em> 本章在此处使用其关于多级放大器稳定性、负反馈与非线性抑制的讨论，来类比长任务 agent 的漂移控制；对应第 19 章参考文献 29。 <a href="#fr-feedback-circuits-ch1-1">↩</a></p>
 </li>
 <li id="footnote-gemini15">
-<p>Google, <em>Introducing Gemini 1.5, Google’s next-generation AI model.</em> 本章在此处使用其关于 NIAH 命中率、1M context pricing tier 与时延预期的表述；对应第 19 章参考文献 14。 <a href="#fr-gemini15-1">↩</a> <a href="#fr-gemini15-2">↩2</a> <a href="#fr-gemini15-3">↩3</a> <a href="#fr-gemini15-4">↩4</a> <a href="#fr-gemini15-5">↩5</a></p>
+<p>Google, <em>Introducing Gemini 1.5, Google’s next-generation AI model.</em> 本章在此处使用其关于 NIAH 命中率、1M context pricing tier 与时延预期的表述；对应第 19 章参考文献 14。 <a href="#fr-gemini15-1">↩</a> <a href="#fr-gemini15-2">↩2</a></p>
 </li>
 <li id="footnote-google-long-context">
-<p>Google AI for Developers, <em>Long context.</em> 本章在此处使用其关于 performance variability、retrieval-cost tradeoff 与 caching 的说明；对应第 19 章参考文献 15。 <a href="#fr-google-long-context-1">↩</a> <a href="#fr-google-long-context-2">↩2</a> <a href="#fr-google-long-context-3">↩3</a> <a href="#fr-google-long-context-4">↩4</a> <a href="#fr-google-long-context-5">↩5</a> <a href="#fr-google-long-context-6">↩6</a></p>
+<p>Google AI for Developers, <em>Long context.</em> 本章在此处使用其关于 performance variability、retrieval-cost tradeoff 与 caching 的说明；对应第 19 章参考文献 15。 <a href="#fr-google-long-context-1">↩</a> <a href="#fr-google-long-context-2">↩2</a></p>
 </li>
 <li id="footnote-anthropic-long">
-<p>Anthropic, <em>Prompting best practices: Long context prompting.</em> 本章在此处使用其关于长文档前置、query 后置与约 30% 质量提升的建议；对应第 19 章参考文献 13。 <a href="#fr-anthropic-long-1">↩</a> <a href="#fr-anthropic-long-2">↩2</a> <a href="#fr-anthropic-long-3">↩3</a></p>
+<p>Anthropic, <em>Prompting best practices: Long context prompting.</em> 本章在此处使用其关于长文档前置、query 后置与约 30% 质量提升的建议；对应第 19 章参考文献 13。 <a href="#fr-anthropic-long-1">↩</a> <a href="#fr-anthropic-long-2">↩2</a></p>
 </li>
 <li id="footnote-ltm">
-<p>Nelson F. Liu et al., <em>Lost in the Middle: How Language Models Use Long Contexts.</em> 本章在此处使用其关于长上下文位置偏置与中段退化的结果；对应第 19 章参考文献 11。 <a href="#fr-ltm-1">↩</a> <a href="#fr-ltm-2">↩2</a></p>
+<p>Nelson F. Liu et al., <em>Lost in the Middle: How Language Models Use Long Contexts.</em> 本章在此处使用其关于长上下文位置偏置与中段退化的结果；对应第 19 章参考文献 11。 <a href="#fr-ltm-1">↩</a></p>
 </li>
 <li id="footnote-fitm">
-<p>Cheng-Yu Hsieh et al., <em>Found in the Middle: Calibrating Positional Attention Bias Improves Long Context Utilization.</em> 本章在此处使用其关于 <code>"U-shaped attention bias"</code> 的分析；对应第 19 章参考文献 12。 <a href="#fr-fitm-1">↩</a> <a href="#fr-fitm-2">↩2</a></p>
+<p>Cheng-Yu Hsieh et al., <em>Found in the Middle: Calibrating Positional Attention Bias Improves Long Context Utilization.</em> 本章在此处使用其关于 <code>"U-shaped attention bias"</code> 的分析；对应第 19 章参考文献 12。 <a href="#fr-fitm-1">↩</a></p>
 </li>
 <li id="footnote-nolima">
-<p>Ali Modarressi et al., <em>NoLiMa: Long-Context Evaluation Beyond Literal Matching.</em> 本章在此处使用其关于 32K 条件下模型退化统计，以及 GPT-4o 从 99.3% 降至 69.7% 的结果；对应第 19 章参考文献 16。 <a href="#fr-nolima-1">↩</a> <a href="#fr-nolima-2">↩2</a></p>
+<p>Ali Modarressi et al., <em>NoLiMa: Long-Context Evaluation Beyond Literal Matching.</em> 本章在此处使用其关于 32K 条件下模型退化统计，以及 GPT-4o 从 99.3% 降至 69.7% 的结果；对应第 19 章参考文献 16。 <a href="#fr-nolima-1">↩</a></p>
 </li>
 <li id="footnote-longcodebench">
-<p>Stefano Rando et al., <em>LongCodeBench: Evaluating Coding LLMs at 1M Context Windows.</em> 本章在此处使用其关于代码任务长上下文退化的样例数据；对应第 19 章参考文献 17。 <a href="#fr-longcodebench-1">↩</a> <a href="#fr-longcodebench-2">↩2</a></p>
-</li>
-<li id="footnote-openai-pricing">
-<p>OpenAI, <em>API Pricing.</em> 本章在此处使用 2026-04-23 价格页中的 GPT-5.4 / GPT-5.4 mini 输入价格与 <code>under 270K</code> 限定；对应第 19 章参考文献 20。 <a href="#fr-openai-pricing-1">↩</a> <a href="#fr-openai-pricing-2">↩2</a></p>
-</li>
-<li id="footnote-minference">
-<p>Huiqiang Jiang et al., <em>MInference: Accelerating Pre-filling for Long-Context LLMs via Dynamic Sparse Attention.</em> 本章在此处使用其关于 8B 模型处理 1M tokens 需 30 分钟的摘要数字；对应第 19 章参考文献 19。 <a href="#fr-minference-1">↩</a> <a href="#fr-minference-2">↩2</a></p>
-</li>
-<li id="footnote-longllmlingua">
-<p>Huiqiang Jiang et al., <em>LongLLMLingua: Accelerating and Enhancing LLMs in Long Context Scenarios via Prompt Compression.</em> 本章在此处使用其关于长上下文三类问题与压缩收益的结果；对应第 19 章参考文献 18。 <a href="#fr-longllmlingua-1">↩</a> <a href="#fr-longllmlingua-2">↩2</a> <a href="#fr-longllmlingua-3">↩3</a></p>
-</li>
-<li id="footnote-layer1-harness-ch1">
-<p>本章在此处综合 Fowler 关于 coding agent harness 的框架，以及 OpenAI 与 Codex 开源仓库关于 1M LOC、<code>AGENTS.md</code>、sandbox、approval、MCP 与 rollout 的工程边界；对应第 19 章参考文献 1、2、21。 <a href="#fr-layer1-harness-ch1-1">↩</a></p>
-</li>
-<li id="footnote-layer2-harness-ch1">
-<p>本章在此处综合 Anthropic 关于 managed agents 与 long-running harness 的接口抽象、Claude Code 本地源码镜像所体现的 session/compaction/sub-agent 机制，以及 OpenClaw/Hermes 在 gateway、memory、skills 与 sub-agent 上的产品形态；对应第 19 章参考文献 3、4、6、7、22、23、24。 <a href="#fr-layer2-harness-ch1-1">↩</a></p>
-</li>
-<li id="footnote-runtime-bridge-ch1">
-<p>本章在此处综合 Claude Code 本地源码镜像、<em>Dive into Claude Code</em> 对 Claude Code 五层架构的公开分析，以及 Codex 开源仓库中 <code>app-server</code>、<code>app-server-protocol</code>、<code>tools</code>、<code>thread-store</code>、<code>rollout</code>、<code>sandboxing</code> 与 thread/turn/item 相关接口，用来把控制论中的受控对象、传感器、控制器、执行器与稳定性边界，映射到现代 agent runtime 的具体器官；对应第 19 章参考文献 21、24、41。 <a href="#fr-runtime-bridge-ch1-1">↩</a> <a href="#fr-runtime-bridge-ch1-2">↩2</a></p>
+<p>Stefano Rando et al., <em>LongCodeBench: Evaluating Coding LLMs at 1M Context Windows.</em> 本章在此处使用其关于代码任务长上下文退化的样例数据；对应第 19 章参考文献 17。 <a href="#fr-longcodebench-1">↩</a></p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="2-成熟度鸿沟灵光一闪-vs-工厂化输出"><a class="header" href="#2-成熟度鸿沟灵光一闪-vs-工厂化输出">2. 成熟度鸿沟：灵光一闪 vs 工厂化输出</a></h1>
 <p>上一章回答的是“为什么必须有 harness”；这一章回答的是“成熟系统究竟在建设什么，才能从 demo 式聪明跨到工厂化输出”。这里会按重要性看四类样本：Claude Code 作为主分析对象，Codex 作为公开的开源结构样本，OpenClaw/Hermes 作为更广义 agent product 对照，而 OpenAI 1M LOC 案例则提供组织生产层的极端样本。那组内部失败案例不在这一章里做主角，它在下一章只作为反证样本出现。</p>
+<h2 id="21-两层驾驭工程先把实践对象分清"><a class="header" href="#21-两层驾驭工程先把实践对象分清">2.1 两层驾驭工程：先把实践对象分清</a></h2>
+<p>进入样本之前，必须先把“驾驭工程”分成两层，否则读者会把 OpenAI 1M LOC、Claude Code、Codex、OpenClaw、Hermes 和失败案例混成一类东西。</p>
+<p>第 1 层是 AI 编码过程的驾驭工程。这里 agent 是工程团队的生产工具，最终产品仍然是代码、服务、应用或基础设施。OpenAI Codex 团队的 1M LOC 案例、Fowler 的代码 agent harness、Codex 开源仓库里对 sandbox、approval、MCP、rollout 和 <code>AGENTS.md</code> 的显式边界，都属于这一层。<sup class="footnote-reference" id="fr-layer1-harness-ch2-1"><a href="#footnote-layer1-harness-ch2">1</a></sup></p>
+<p>第 2 层是 AI agent 自身的 harness 工程。这里产品本身就是 agent，用户直接把任务交给它。系统要处理 session 恢复、sandbox 权限、工具调用审计、长任务重启、客户环境隔离、gateway 路由和合规签字。Anthropic 的 session / harness / sandbox 三抽象、Claude Code 源码里对 compaction、resume、worktree、sub-agent 的拆分，以及 OpenClaw/Hermes 在 gateway、memory、skills、cron 和多会话上的控制面，都更接近这一层。<sup class="footnote-reference" id="fr-layer2-harness-ch2-1"><a href="#footnote-layer2-harness-ch2">2</a></sup></p>
+<p>Claude Code 和 Codex 站在这两层的分界线附近：它们既是编码生产工具，也体现出长任务 harness 产品的形态。OpenClaw 和 Hermes 更明显属于 Layer 2。下一章的失败案例只承担一个角色：反证样本。它有价值，不是因为它代表行业，而是因为它把同一种结构性问题暴露得很具体。</p>
 <p>“灵光一闪的天才”模式有这些特征：</p>
 <ul>
 <li>成功依赖 prompt，且不可重复</li>
@@ -768,94 +500,94 @@ Harness 工程
 <li>每次事故都有操作员级证据</li>
 </ul>
 <p>Harness 就是这两种模式之间的转换机制。</p>
-<h2 id="21-claude-codeharness-已经产品化"><a class="header" href="#21-claude-codeharness-已经产品化">2.1 Claude Code：harness 已经产品化</a></h2>
-<p>如果只看 Anthropic 对外讲 Claude Code 的方式，很容易把它误判成一个更强的 coding CLI。但把两条官方叙事并起来看，事情就变了。产品页直接写着，公司里 <code>"majority of code is now written by Claude Code"</code>，工程师的工作重心转向 architecture、product thinking 和 continuous orchestration。另一篇内部案例更有画面感：律师拿它做电话树系统，设计师开始做原本不太会碰的大块 state management 变更，数据科学家在“几乎不会 JavaScript/TypeScript”的情况下，用它搭出生产级可视化应用。<sup class="footnote-reference" id="fr-claudecode-story-ch2-1"><a href="#footnote-claudecode-story-ch2">1</a></sup></p>
+<h2 id="22-claude-codeharness-已经产品化"><a class="header" href="#22-claude-codeharness-已经产品化">2.2 Claude Code：harness 已经产品化</a></h2>
+<p>如果只看 Anthropic 对外讲 Claude Code 的方式，很容易把它误判成一个更强的 coding CLI。但把两条官方叙事并起来看，事情就变了。产品页直接写着，公司里 <code>"majority of code is now written by Claude Code"</code>，工程师的工作重心转向 architecture、product thinking 和 continuous orchestration。另一篇内部案例更有画面感：律师拿它做电话树系统，设计师开始做原本不太会碰的大块 state management 变更，数据科学家在“几乎不会 JavaScript/TypeScript”的情况下，用它搭出生产级可视化应用。<sup class="footnote-reference" id="fr-claudecode-story-ch2-1"><a href="#footnote-claudecode-story-ch2">3</a></sup></p>
 <p>这些故事的意义不是“人人都能一键写软件”，而是 Claude Code 已经越过了传统 coding assistant 的边界，开始充当一个更通用的任务 runtime：只要工作能被还原成“收集上下文 -&gt; 规划 -&gt; 调工具 -&gt; 生成产物 -&gt; 跑检查 -&gt; 继续迭代”这条链，它就不再局限于写代码。下面再回到源码去看，就更容易理解它为什么必须长出那么多看似“与写代码无关”的运行时器官。</p>
-<p>如果只看表面，Claude Code 像一个终端里的模型壳；但沿着 <code>Tool.ts -&gt; query.ts -&gt; services/tools -&gt; services/compact -&gt; sessionStorage -&gt; AgentTool -&gt; worktree</code> 这条链读下来，它其实是一套通用 agent runtime。2026-04-23 对本地源码镜像的审读里，仅会话持久化 <code>sessionStorage.ts</code> 就约 5105 行，全量 compaction <code>compact.ts</code> 约 1705 行，worktree 管理 <code>worktree.ts</code> 约 1519 行，另有 <code>StreamingToolExecutor.ts</code>、<code>diskOutput.ts</code>、<code>agentSummary.ts</code>、<code>resumeAgent.ts</code>、<code>teammateMailbox.ts</code> 等专门模块。这个体量本身就在说明：Claude Code 解决的主问题不是“如何让模型回答得更像程序员”，而是“如何让一个模型驱动的执行体在真实工作流里连续工作、可恢复、可委派、可审计”。<sup class="footnote-reference" id="fr-claudecode-ch2-1"><a href="#footnote-claudecode-ch2">2</a></sup></p>
-<p>2026 年 4 月的论文 <em>Dive into Claude Code</em> 给这条判断提供了一个更公开、可审计的版本。论文基于公开可获得的 TypeScript 源码分析，把 Claude Code 拆成五类价值目标：human decision authority、safety and security、reliable execution、capability amplification、contextual adaptability；再把它们落到十三条设计原则上。最重要的是，论文也得出同一个结构性结论：核心 agent loop 可以很简单，真正庞大的部分是 loop 周围的权限系统、上下文压缩、扩展机制、subagent 编排和 append-oriented session storage。<sup class="footnote-reference" id="fr-claude-code-paper-ch2-1"><a href="#footnote-claude-code-paper-ch2">3</a></sup> 这正好把本书前面的 cache / 负反馈类比落成了具体系统：Claude Code 不是把 LLM 当作孤立智能体，而是把它放进一套持续限制、补偿、恢复和放大的控制环境里。</p>
-<h3 id="211-从代码反推claude-code-在解决什么问题"><a class="header" href="#211-从代码反推claude-code-在解决什么问题">2.1.1 从代码反推，Claude Code 在解决什么问题</a></h3>
+<p>如果只看表面，Claude Code 像一个终端里的模型壳；但沿着 <code>Tool.ts -&gt; query.ts -&gt; services/tools -&gt; services/compact -&gt; sessionStorage -&gt; AgentTool -&gt; worktree</code> 这条链读下来，它其实是一套通用 agent runtime。2026-04-23 对本地源码镜像的审读里，仅会话持久化 <code>sessionStorage.ts</code> 就约 5105 行，全量 compaction <code>compact.ts</code> 约 1705 行，worktree 管理 <code>worktree.ts</code> 约 1519 行，另有 <code>StreamingToolExecutor.ts</code>、<code>diskOutput.ts</code>、<code>agentSummary.ts</code>、<code>resumeAgent.ts</code>、<code>teammateMailbox.ts</code> 等专门模块。这个体量本身就在说明：Claude Code 解决的主问题不是“如何让模型回答得更像程序员”，而是“如何让一个模型驱动的执行体在真实工作流里连续工作、可恢复、可委派、可审计”。<sup class="footnote-reference" id="fr-claudecode-ch2-1"><a href="#footnote-claudecode-ch2">4</a></sup></p>
+<p>2026 年 4 月的论文 <em>Dive into Claude Code</em> 给这条判断提供了一个更公开、可审计的版本。论文基于公开可获得的 TypeScript 源码分析，把 Claude Code 拆成五类价值目标：human decision authority、safety and security、reliable execution、capability amplification、contextual adaptability；再把它们落到十三条设计原则上。最重要的是，论文也得出同一个结构性结论：核心 agent loop 可以很简单，真正庞大的部分是 loop 周围的权限系统、上下文压缩、扩展机制、subagent 编排和 append-oriented session storage。<sup class="footnote-reference" id="fr-claude-code-paper-ch2-1"><a href="#footnote-claude-code-paper-ch2">5</a></sup> 这正好把本书前面的 cache / 负反馈类比落成了具体系统：Claude Code 不是把 LLM 当作孤立智能体，而是把它放进一套持续限制、补偿、恢复和放大的控制环境里。</p>
+<h3 id="221-从代码反推claude-code-在解决什么问题"><a class="header" href="#221-从代码反推claude-code-在解决什么问题">2.2.1 从代码反推，Claude Code 在解决什么问题</a></h3>
 <p>从源码反推，Claude Code 的目标并不是把 IDE 补全做得更聪明，而是把“长任务代理”做成可运行的软件。这里的长任务不是一句 prompt 换一段代码，而是持续几十分钟甚至更久的工作：读仓库、读文档、调用 shell、改多类文件、向外部系统取数、拆给子 agent、等结果回来、恢复中断、继续推进。只要任务进入这个尺度，真正的问题就不再是“模型会不会写代码”，而是“这个执行体怎样管理状态、工具、副作用和恢复语义”。</p>
 <p>这也是为什么 Claude Code 可以从 coding agent 长成更广义的 agent 工具。它面对的对象并不局限于源代码，而是更一般的“有输入材料、有产物目标、有验证步骤的工作单元”。写代码只是其中一种；写文章、写 slide、整理研究摘要、本地批处理、调用外部 MCP 服务，本质上都落在同一个工作流里：收集上下文，组织任务，修改产物，运行检查，必要时继续委派。</p>
-<h3 id="212-为什么它可以成为万用的-agent-工具"><a class="header" href="#212-为什么它可以成为万用的-agent-工具">2.1.2 为什么它可以成为万用的 agent 工具</a></h3>
-<p><code>ToolUseContext</code> 已经把 Claude Code 的真实抽象暴露出来了：它同时持有 <code>commands</code>、<code>tools</code>、<code>thinkingConfig</code>、<code>mcpClients</code>、<code>mcpResources</code>、<code>agentDefinitions</code>、<code>AppState</code>、<code>notifications</code>、<code>FileStateCache</code>、权限上下文、file history、content replacement state 等对象。换句话说，它的核心单元不是“代码文件”，而是“一个会用工具、会恢复状态、会调用外部系统、会继续派工的任务线程”。<sup class="footnote-reference" id="fr-claudecode-ch2-2"><a href="#footnote-claudecode-ch2">2</a></sup></p>
-<p>这就是它为何能从“写代码”自然扩展到“写文章、写 slide、做研究、驱动外部 agent”。工具目录里同时存在 <code>FileReadTool</code>、<code>FileWriteTool</code>、<code>FileEditTool</code>、<code>NotebookEditTool</code>、<code>WebSearchTool</code>、<code>WebFetchTool</code>、<code>MCPTool</code>、<code>ReadMcpResourceTool</code>、<code>AgentTool</code>、<code>SendMessageTool</code>、<code>TeamCreateTool</code>、<code>CronCreateTool</code> 等模块。对于运行时来说，代码、Markdown 文稿、slide 源文件、notebook、甚至一份需要通过 shell 渲染出来的中间产物，并没有本质差别；差别只在于任务提示、工具组合和验证方式。<sup class="footnote-reference" id="fr-claudecode-ch2-3"><a href="#footnote-claudecode-ch2">2</a></sup></p>
+<h3 id="222-为什么它可以成为万用的-agent-工具"><a class="header" href="#222-为什么它可以成为万用的-agent-工具">2.2.2 为什么它可以成为万用的 agent 工具</a></h3>
+<p><code>ToolUseContext</code> 已经把 Claude Code 的真实抽象暴露出来了：它同时持有 <code>commands</code>、<code>tools</code>、<code>thinkingConfig</code>、<code>mcpClients</code>、<code>mcpResources</code>、<code>agentDefinitions</code>、<code>AppState</code>、<code>notifications</code>、<code>FileStateCache</code>、权限上下文、file history、content replacement state 等对象。换句话说，它的核心单元不是“代码文件”，而是“一个会用工具、会恢复状态、会调用外部系统、会继续派工的任务线程”。<sup class="footnote-reference" id="fr-claudecode-ch2-2"><a href="#footnote-claudecode-ch2">4</a></sup></p>
+<p>这就是它为何能从“写代码”自然扩展到“写文章、写 slide、做研究、驱动外部 agent”。工具目录里同时存在 <code>FileReadTool</code>、<code>FileWriteTool</code>、<code>FileEditTool</code>、<code>NotebookEditTool</code>、<code>WebSearchTool</code>、<code>WebFetchTool</code>、<code>MCPTool</code>、<code>ReadMcpResourceTool</code>、<code>AgentTool</code>、<code>SendMessageTool</code>、<code>TeamCreateTool</code>、<code>CronCreateTool</code> 等模块。对于运行时来说，代码、Markdown 文稿、slide 源文件、notebook、甚至一份需要通过 shell 渲染出来的中间产物，并没有本质差别；差别只在于任务提示、工具组合和验证方式。<sup class="footnote-reference" id="fr-claudecode-ch2-3"><a href="#footnote-claudecode-ch2">4</a></sup></p>
 <p>因此，Claude Code 的“万能”并不是来自一个无所不能的大 prompt，而是来自一个更底层、与领域相对无关的动作底座：文件系统、shell、web、MCP、子 agent、权限、恢复、摘要、回放。只要某类工作能被还原成这套动作组合，它就可以被装进同一个 agent runtime。</p>
-<h3 id="213-这种广度能力提出了哪些系统要求"><a class="header" href="#213-这种广度能力提出了哪些系统要求">2.1.3 这种广度能力提出了哪些系统要求</a></h3>
-<p>第一，入口不能只有一个聊天框。<code>main.tsx</code> 在启动期同时装配 CLI、会话恢复、skills、plugins、MCP、policy limits、remote managed settings、direct connect、assistant mode、worktree mode、sandbox manager 等部件。源码里甚至明确写着 <code>main.tsx</code> 只是入口；真正的运行面在后面的状态、工具与会话系统里。这说明 Claude Code 把终端当成外壳，而不是唯一产品。<sup class="footnote-reference" id="fr-claudecode-ch2-4"><a href="#footnote-claudecode-ch2">2</a></sup></p>
-<p>第二，角色不能写死在主 prompt 里。<code>AgentTool.tsx</code> 允许调用者为子 agent 指定 <code>name</code>、<code>team_name</code>、<code>mode</code>、<code>isolation</code>、<code>cwd</code>、<code>run_in_background</code>；<code>loadAgentsDir.ts</code> 则允许 agent 定义声明 <code>tools</code>、<code>disallowedTools</code>、<code>model</code>、<code>effort</code>、<code>permissionMode</code>、<code>mcpServers</code>、<code>hooks</code>、<code>maxTurns</code>、<code>skills</code>、<code>memory</code>、<code>background</code>、<code>isolation</code> 等属性。也就是说，Claude Code 不是只有“一个智能体”，而是已经具备了角色模板、权限边界、工具包和记忆范围这些编排原语。<sup class="footnote-reference" id="fr-claudecode-ch2-5"><a href="#footnote-claudecode-ch2">2</a></sup></p>
-<p>第三，外部系统必须成为一等公民，而不是临时插件。<code>ToolUseContext</code> 直接持有 <code>mcpClients</code> 和 <code>mcpResources</code>；工具层里既有 MCP 调用，也有资源读取。对 Claude Code 来说，MCP 不是给 demo 做一点扩展，而是把外部能力接入统一运行面的方法。用户说“通过 CLI 调 API”或者“通过 MCP 调外部 agent”，在这套架构里其实是同一件事：都只是让当前任务线程获得另一个可调度能力源。<sup class="footnote-reference" id="fr-claudecode-ch2-6"><a href="#footnote-claudecode-ch2">2</a></sup></p>
-<p>第四，多 agent 不是多开几个窗口，而是要有真正的协调平面。<code>teammateMailbox.ts</code> 的文件头直接把自己定义为 <code>"File-based messaging system for agent swarms"</code>；它给每个 teammate 建 inbox，并用锁保证并发写入安全。再往上看，<code>AgentTool.tsx</code> 支持后台运行与独立 worktree，<code>agentSummary.ts</code> 周期性生成进度摘要。也就是说，Claude Code 已经把“谁在做什么、怎样传递中间信息、怎样让操作者看懂分工状态”做成了系统功能，而不是靠人类手工记忆。<sup class="footnote-reference" id="fr-claudecode-ch2-7"><a href="#footnote-claudecode-ch2">2</a></sup></p>
-<p>这也能和 <em>Dive into Claude Code</em> 的五层分解对上：surface layer 负责入口和渲染，core layer 负责 agent loop 与 compaction，safety/action layer 负责权限、hooks、工具、sandbox 和 subagent，state layer 负责 context assembly、session persistence、memory 和 sidechain transcripts，backend layer 负责 shell、MCP、remote execution 和外部资源。<sup class="footnote-reference" id="fr-claude-code-paper-ch2-2"><a href="#footnote-claude-code-paper-ch2">3</a></sup> 也就是说，第 4 章后面总结出的“事实流、生命周期、能力平面、产物与验证、回放、隔离与恢复、协作、知识分层、操作员面”，不是本书凭空造出来的分类，而是可以在一个成熟产品的公开源码分析中看到对应物。</p>
-<h3 id="214-这种深度能力提出了哪些可靠性要求"><a class="header" href="#214-这种深度能力提出了哪些可靠性要求">2.1.4 这种深度能力提出了哪些可靠性要求</a></h3>
+<h3 id="223-这种广度能力提出了哪些系统要求"><a class="header" href="#223-这种广度能力提出了哪些系统要求">2.2.3 这种广度能力提出了哪些系统要求</a></h3>
+<p>第一，入口不能只有一个聊天框。<code>main.tsx</code> 在启动期同时装配 CLI、会话恢复、skills、plugins、MCP、policy limits、remote managed settings、direct connect、assistant mode、worktree mode、sandbox manager 等部件。源码里甚至明确写着 <code>main.tsx</code> 只是入口；真正的运行面在后面的状态、工具与会话系统里。这说明 Claude Code 把终端当成外壳，而不是唯一产品。<sup class="footnote-reference" id="fr-claudecode-ch2-4"><a href="#footnote-claudecode-ch2">4</a></sup></p>
+<p>第二，角色不能写死在主 prompt 里。<code>AgentTool.tsx</code> 允许调用者为子 agent 指定 <code>name</code>、<code>team_name</code>、<code>mode</code>、<code>isolation</code>、<code>cwd</code>、<code>run_in_background</code>；<code>loadAgentsDir.ts</code> 则允许 agent 定义声明 <code>tools</code>、<code>disallowedTools</code>、<code>model</code>、<code>effort</code>、<code>permissionMode</code>、<code>mcpServers</code>、<code>hooks</code>、<code>maxTurns</code>、<code>skills</code>、<code>memory</code>、<code>background</code>、<code>isolation</code> 等属性。也就是说，Claude Code 不是只有“一个智能体”，而是已经具备了角色模板、权限边界、工具包和记忆范围这些编排原语。<sup class="footnote-reference" id="fr-claudecode-ch2-5"><a href="#footnote-claudecode-ch2">4</a></sup></p>
+<p>第三，外部系统必须成为一等公民，而不是临时插件。<code>ToolUseContext</code> 直接持有 <code>mcpClients</code> 和 <code>mcpResources</code>；工具层里既有 MCP 调用，也有资源读取。对 Claude Code 来说，MCP 不是给 demo 做一点扩展，而是把外部能力接入统一运行面的方法。用户说“通过 CLI 调 API”或者“通过 MCP 调外部 agent”，在这套架构里其实是同一件事：都只是让当前任务线程获得另一个可调度能力源。<sup class="footnote-reference" id="fr-claudecode-ch2-6"><a href="#footnote-claudecode-ch2">4</a></sup></p>
+<p>第四，多 agent 不是多开几个窗口，而是要有真正的协调平面。<code>teammateMailbox.ts</code> 的文件头直接把自己定义为 <code>"File-based messaging system for agent swarms"</code>；它给每个 teammate 建 inbox，并用锁保证并发写入安全。再往上看，<code>AgentTool.tsx</code> 支持后台运行与独立 worktree，<code>agentSummary.ts</code> 周期性生成进度摘要。也就是说，Claude Code 已经把“谁在做什么、怎样传递中间信息、怎样让操作者看懂分工状态”做成了系统功能，而不是靠人类手工记忆。<sup class="footnote-reference" id="fr-claudecode-ch2-7"><a href="#footnote-claudecode-ch2">4</a></sup></p>
+<p>这也能和 <em>Dive into Claude Code</em> 的五层分解对上：surface layer 负责入口和渲染，core layer 负责 agent loop 与 compaction，safety/action layer 负责权限、hooks、工具、sandbox 和 subagent，state layer 负责 context assembly、session persistence、memory 和 sidechain transcripts，backend layer 负责 shell、MCP、remote execution 和外部资源。<sup class="footnote-reference" id="fr-claude-code-paper-ch2-2"><a href="#footnote-claude-code-paper-ch2">5</a></sup> 也就是说，第 4 章后面总结出的“事实流、生命周期、能力平面、产物与验证、回放、隔离与恢复、协作、知识分层、操作员面”，不是本书凭空造出来的分类，而是可以在一个成熟产品的公开源码分析中看到对应物。</p>
+<h3 id="224-这种深度能力提出了哪些可靠性要求"><a class="header" href="#224-这种深度能力提出了哪些可靠性要求">2.2.4 这种深度能力提出了哪些可靠性要求</a></h3>
 <p>广度回答的是“能做多少种事”；深度回答的是“能不能把一件事连续做完”。Claude Code 之所以不像普通聊天壳，关键在于它把深度问题拆成了若干个独立子系统。</p>
-<p>第一是调度问题。<code>StreamingToolExecutor.ts</code> 文件头明确写着，<code>"Concurrent-safe tools can execute in parallel"</code>，而非并发安全工具必须独占执行。这意味着工具调用不再是模型吐一个就跑一个，而是进入一个知道并发语义、能处理取消和错误传播的调度器。写代码、写文稿、做数据整理时都一样：一旦涉及 shell、文件编辑、外部请求并发，调度器就比 prompt 更接近真实问题。<sup class="footnote-reference" id="fr-claudecode-ch2-8"><a href="#footnote-claudecode-ch2">2</a></sup></p>
-<p>第二是上下文压力问题。Claude Code 不是只在窗口快满时做一次“摘要压缩”，而是分层处理：<code>microCompact</code> 清理旧 tool result，<code>apiMicrocompact</code> 利用 provider 原生 context management，<code>compact.ts</code> 做更重的全量压缩并在压缩后补回最近文件和 skills；<code>query.ts</code> 主循环还把 auto compact、reactive compact、context collapse、tool summary、token budget 都连在一起。这里真正表达的工程判断是：长任务的上下文维护必须是持续策略，而不是临门一脚的 emergency button。<sup class="footnote-reference" id="fr-claudecode-ch2-9"><a href="#footnote-claudecode-ch2">2</a></sup></p>
-<p>第三是持久化与恢复问题。<code>sessionStorage.ts</code> 不是简单日志文件帮助函数，而是整套 transcript、metadata、progress、history 的保存与读取层。<code>resumeAgent.ts</code> 恢复时会过滤 unresolved tool uses、清理 orphaned thinking、重建 content replacement state，并尽可能恢复 worktree 路径。这意味着 Claude Code 默认假定任务会中断、会切换、会稍后继续；resume 不是附属功能，而是核心语义。<sup class="footnote-reference" id="fr-claudecode-ch2-10"><a href="#footnote-claudecode-ch2">2</a></sup></p>
-<p>第四是产物外置问题。<code>diskOutput.ts</code> 给每个任务分配独立 output file，并设置 5GB 上限；<code>agentSummary.ts</code> 每约 30 秒从子 agent transcript 中生成一次简短进度摘要。前者解决“长输出不能都塞回聊天上下文”，后者解决“操作者和父 agent 不能盯着原始日志看”。一旦任务开始写大型文档、生成 slide、跑长时间命令、并行开多个 agent，这两件事就都变成硬需求。<sup class="footnote-reference" id="fr-claudecode-ch2-11"><a href="#footnote-claudecode-ch2">2</a></sup></p>
-<p>第五是副作用隔离问题。<code>worktree.ts</code> 负责隔离工作目录，<code>fileStateCache.ts</code> 负责把文件状态变成受控工作记忆。前者避免不同任务互相踩工作区，后者避免每轮都把大量文件重新塞回模型上下文。对通用 agent 来说，这两层分别对应“在哪里动手”和“脑子里记住什么”；两者都必须被 harness 显式管理。<sup class="footnote-reference" id="fr-claudecode-ch2-12"><a href="#footnote-claudecode-ch2">2</a></sup></p>
-<h3 id="215-工程结论claude-code-为什么足以成为主样本"><a class="header" href="#215-工程结论claude-code-为什么足以成为主样本">2.1.5 工程结论：Claude Code 为什么足以成为主样本</a></h3>
-<p>从代码反推，Claude Code 的代表性不在于“Anthropic 做了一个很大的 coding CLI”，而在于它证明了通用 agent 的真正内核是什么。它之所以既能写代码，也能写文章、写 slide、做研究、调用 MCP 服务、再进一步编排多个 agent，并不是因为这些场景有某个神奇共用 prompt，而是因为它们共享同一组运行时需求：可调度工具、可恢复会话、可外置产物、可隔离副作用、可委派协作、可让人类看懂当前状态。<sup class="footnote-reference" id="fr-claudecode-ch2-13"><a href="#footnote-claudecode-ch2">2</a></sup></p>
+<p>第一是调度问题。<code>StreamingToolExecutor.ts</code> 文件头明确写着，<code>"Concurrent-safe tools can execute in parallel"</code>，而非并发安全工具必须独占执行。这意味着工具调用不再是模型吐一个就跑一个，而是进入一个知道并发语义、能处理取消和错误传播的调度器。写代码、写文稿、做数据整理时都一样：一旦涉及 shell、文件编辑、外部请求并发，调度器就比 prompt 更接近真实问题。<sup class="footnote-reference" id="fr-claudecode-ch2-8"><a href="#footnote-claudecode-ch2">4</a></sup></p>
+<p>第二是上下文压力问题。Claude Code 不是只在窗口快满时做一次“摘要压缩”，而是分层处理：<code>microCompact</code> 清理旧 tool result，<code>apiMicrocompact</code> 利用 provider 原生 context management，<code>compact.ts</code> 做更重的全量压缩并在压缩后补回最近文件和 skills；<code>query.ts</code> 主循环还把 auto compact、reactive compact、context collapse、tool summary、token budget 都连在一起。这里真正表达的工程判断是：长任务的上下文维护必须是持续策略，而不是临门一脚的 emergency button。<sup class="footnote-reference" id="fr-claudecode-ch2-9"><a href="#footnote-claudecode-ch2">4</a></sup></p>
+<p>第三是持久化与恢复问题。<code>sessionStorage.ts</code> 不是简单日志文件帮助函数，而是整套 transcript、metadata、progress、history 的保存与读取层。<code>resumeAgent.ts</code> 恢复时会过滤 unresolved tool uses、清理 orphaned thinking、重建 content replacement state，并尽可能恢复 worktree 路径。这意味着 Claude Code 默认假定任务会中断、会切换、会稍后继续；resume 不是附属功能，而是核心语义。<sup class="footnote-reference" id="fr-claudecode-ch2-10"><a href="#footnote-claudecode-ch2">4</a></sup></p>
+<p>第四是产物外置问题。<code>diskOutput.ts</code> 给每个任务分配独立 output file，并设置 5GB 上限；<code>agentSummary.ts</code> 每约 30 秒从子 agent transcript 中生成一次简短进度摘要。前者解决“长输出不能都塞回聊天上下文”，后者解决“操作者和父 agent 不能盯着原始日志看”。一旦任务开始写大型文档、生成 slide、跑长时间命令、并行开多个 agent，这两件事就都变成硬需求。<sup class="footnote-reference" id="fr-claudecode-ch2-11"><a href="#footnote-claudecode-ch2">4</a></sup></p>
+<p>第五是副作用隔离问题。<code>worktree.ts</code> 负责隔离工作目录，<code>fileStateCache.ts</code> 负责把文件状态变成受控工作记忆。前者避免不同任务互相踩工作区，后者避免每轮都把大量文件重新塞回模型上下文。对通用 agent 来说，这两层分别对应“在哪里动手”和“脑子里记住什么”；两者都必须被 harness 显式管理。<sup class="footnote-reference" id="fr-claudecode-ch2-12"><a href="#footnote-claudecode-ch2">4</a></sup></p>
+<h3 id="225-工程结论claude-code-为什么足以成为主样本"><a class="header" href="#225-工程结论claude-code-为什么足以成为主样本">2.2.5 工程结论：Claude Code 为什么足以成为主样本</a></h3>
+<p>从代码反推，Claude Code 的代表性不在于“Anthropic 做了一个很大的 coding CLI”，而在于它证明了通用 agent 的真正内核是什么。它之所以既能写代码，也能写文章、写 slide、做研究、调用 MCP 服务、再进一步编排多个 agent，并不是因为这些场景有某个神奇共用 prompt，而是因为它们共享同一组运行时需求：可调度工具、可恢复会话、可外置产物、可隔离副作用、可委派协作、可让人类看懂当前状态。<sup class="footnote-reference" id="fr-claudecode-ch2-13"><a href="#footnote-claudecode-ch2">4</a></sup></p>
 <p>一旦把问题定义为这组需求，Claude Code 就不再只是“把 LLM 接到终端上”。它已经把 harness 做成了产品本体。模型很重要，但真正让它成为万用 agent 的，是这套围绕模型长出来的控制系统。</p>
-<h2 id="22-codex把-harness-边界显式模块化"><a class="header" href="#22-codex把-harness-边界显式模块化">2.2 Codex：把 harness 边界显式模块化</a></h2>
-<p>如果把 Codex 只看成一个开源 CLI，读法会偏得很厉害。官方产品线自己已经把问题说得很清楚。2025 年 5 月 OpenAI 首次公开 Codex 时，把它定义成 <code>"a cloud-based software engineering agent that can work on many tasks in parallel"</code>；每个任务都在独立、隔离、预装仓库的环境里运行。到了 2026 年 2 月发布 Codex app 时，OpenAI 又把同一条线往前推了一步：真正的挑战已经从“agent 能做什么”转向“人怎样在规模上去指挥、监督、协作多个 agent”，于是 app 被直接定义成 <code>"a command center for agents"</code>。<sup class="footnote-reference" id="fr-codex-story-ch2-1"><a href="#footnote-codex-story-ch2">4</a></sup></p>
-<p>这条演进线对本书很重要，因为它说明 Codex 的本体从来不是“终端里更聪明的补全工具”，而是一套跨云端、桌面、本地 CLI、IDE 和 rich interface 的 agent runtime。也正因为这样，开源仓库最值得读的不是某个 prompt，而是 OpenAI 愿意公开暴露出来的那些边界：线程、回合、事件、工具、存储、sandbox、approval、app-server、skills、agent control。这些不是实现细节，而是产品形态倒逼出来的内核语法。<sup class="footnote-reference" id="fr-codex-story-ch2-2"><a href="#footnote-codex-story-ch2">4</a></sup></p>
-<p>如果说 Claude Code 展示的是一个重产品化 agent runtime 的内部器官，那么 Codex 公开仓库展示的是另一条路线：把同类能力拆成显式的模块和协议。只看 <code>codex-rs/cli/src/main.rs</code> 就知道，它面对的绝不只是一个交互式 coding CLI；同一个入口同时暴露 <code>exec</code>、<code>review</code>、<code>mcp</code>、<code>plugin</code>、<code>mcp-server</code>、<code>app-server</code>、<code>sandbox</code>、<code>resume</code>、<code>fork</code>、<code>cloud</code>、<code>exec-server</code>、<code>features</code> 等子命令。问题定义已经从“给命令行加一个写码助手”上升到“如何把 agent runtime 复用到多种运行面”。<sup class="footnote-reference" id="fr-codex-oss-ch2-1"><a href="#footnote-codex-oss-ch2">5</a></sup></p>
-<h3 id="221-从代码反推codex-在解决什么问题"><a class="header" href="#221-从代码反推codex-在解决什么问题">2.2.1 从代码反推，Codex 在解决什么问题</a></h3>
-<p>Codex 在解决的是一个更偏平台层的问题：怎样让同一个 agent 内核同时服务 CLI、IDE、桌面端、Web、非交互执行、云任务和插件生态，而不让每个表面各自发明一套状态机。OpenAI 在 GitHub README 里对 CLI 的一句定义就已经很说明问题：<code>"Codex CLI is a coding agent from OpenAI that runs locally on your computer."</code> 这句话的价值不在“本地”，而在“agent”。它暗示这不是 shell 包装器，而是一个可以带着工具、状态、权限和恢复语义运行在本机上的执行体。<sup class="footnote-reference" id="fr-codex-story-ch2-3"><a href="#footnote-codex-story-ch2">4</a></sup></p>
-<p>再往上接产品线，Codex cloud、Codex app、CLI、IDE extension 并不是彼此独立的四样东西，而是同一运行时在不同表面的展开：云端强调异步委派和隔离环境，本地强调与真实工作区、真实工具链和真实权限体系的贴身集成，桌面 app 则强调如何同时管理多个 agent、多个线程和更长时间的工作。Claude Code 更像把运行时做深，Codex 则更像先把边界讲清楚。它公开暴露的不是某个神秘 prompt，而是 thread、turn、tool、sandbox、approval、MCP、storage 这些可命名、可替换的部件。<sup class="footnote-reference" id="fr-codex-oss-ch2-2"><a href="#footnote-codex-oss-ch2">5</a></sup> <sup class="footnote-reference" id="fr-codex-story-ch2-4"><a href="#footnote-codex-story-ch2">4</a></sup></p>
+<h2 id="23-codex把-harness-边界显式模块化"><a class="header" href="#23-codex把-harness-边界显式模块化">2.3 Codex：把 harness 边界显式模块化</a></h2>
+<p>如果把 Codex 只看成一个开源 CLI，读法会偏得很厉害。官方产品线自己已经把问题说得很清楚。2025 年 5 月 OpenAI 首次公开 Codex 时，把它定义成 <code>"a cloud-based software engineering agent that can work on many tasks in parallel"</code>；每个任务都在独立、隔离、预装仓库的环境里运行。到了 2026 年 2 月发布 Codex app 时，OpenAI 又把同一条线往前推了一步：真正的挑战已经从“agent 能做什么”转向“人怎样在规模上去指挥、监督、协作多个 agent”，于是 app 被直接定义成 <code>"a command center for agents"</code>。<sup class="footnote-reference" id="fr-codex-story-ch2-1"><a href="#footnote-codex-story-ch2">6</a></sup></p>
+<p>这条演进线对本书很重要，因为它说明 Codex 的本体从来不是“终端里更聪明的补全工具”，而是一套跨云端、桌面、本地 CLI、IDE 和 rich interface 的 agent runtime。也正因为这样，开源仓库最值得读的不是某个 prompt，而是 OpenAI 愿意公开暴露出来的那些边界：线程、回合、事件、工具、存储、sandbox、approval、app-server、skills、agent control。这些不是实现细节，而是产品形态倒逼出来的内核语法。<sup class="footnote-reference" id="fr-codex-story-ch2-2"><a href="#footnote-codex-story-ch2">6</a></sup></p>
+<p>如果说 Claude Code 展示的是一个重产品化 agent runtime 的内部器官，那么 Codex 公开仓库展示的是另一条路线：把同类能力拆成显式的模块和协议。只看 <code>codex-rs/cli/src/main.rs</code> 就知道，它面对的绝不只是一个交互式 coding CLI；同一个入口同时暴露 <code>exec</code>、<code>review</code>、<code>mcp</code>、<code>plugin</code>、<code>mcp-server</code>、<code>app-server</code>、<code>sandbox</code>、<code>resume</code>、<code>fork</code>、<code>cloud</code>、<code>exec-server</code>、<code>features</code> 等子命令。问题定义已经从“给命令行加一个写码助手”上升到“如何把 agent runtime 复用到多种运行面”。<sup class="footnote-reference" id="fr-codex-oss-ch2-1"><a href="#footnote-codex-oss-ch2">7</a></sup></p>
+<h3 id="231-从代码反推codex-在解决什么问题"><a class="header" href="#231-从代码反推codex-在解决什么问题">2.3.1 从代码反推，Codex 在解决什么问题</a></h3>
+<p>Codex 在解决的是一个更偏平台层的问题：怎样让同一个 agent 内核同时服务 CLI、IDE、桌面端、Web、非交互执行、云任务和插件生态，而不让每个表面各自发明一套状态机。OpenAI 在 GitHub README 里对 CLI 的一句定义就已经很说明问题：<code>"Codex CLI is a coding agent from OpenAI that runs locally on your computer."</code> 这句话的价值不在“本地”，而在“agent”。它暗示这不是 shell 包装器，而是一个可以带着工具、状态、权限和恢复语义运行在本机上的执行体。<sup class="footnote-reference" id="fr-codex-story-ch2-3"><a href="#footnote-codex-story-ch2">6</a></sup></p>
+<p>再往上接产品线，Codex cloud、Codex app、CLI、IDE extension 并不是彼此独立的四样东西，而是同一运行时在不同表面的展开：云端强调异步委派和隔离环境，本地强调与真实工作区、真实工具链和真实权限体系的贴身集成，桌面 app 则强调如何同时管理多个 agent、多个线程和更长时间的工作。Claude Code 更像把运行时做深，Codex 则更像先把边界讲清楚。它公开暴露的不是某个神秘 prompt，而是 thread、turn、tool、sandbox、approval、MCP、storage 这些可命名、可替换的部件。<sup class="footnote-reference" id="fr-codex-oss-ch2-2"><a href="#footnote-codex-oss-ch2">7</a></sup> <sup class="footnote-reference" id="fr-codex-story-ch2-4"><a href="#footnote-codex-story-ch2">6</a></sup></p>
 <p>这也是为什么 Codex 对本书很重要。Claude Code 告诉我们，一套通用 agent 产品最后会长出哪些器官；Codex 则告诉我们，这些器官怎样被抽象成一套更清楚的内核接口。前者偏“运行得起来”，后者偏“边界讲得清楚”。</p>
-<h3 id="222-为什么说-codex-更像-agent-内核而不是单一-cli"><a class="header" href="#222-为什么说-codex-更像-agent-内核而不是单一-cli">2.2.2 为什么说 Codex 更像 agent 内核，而不是单一 CLI</a></h3>
-<p><code>codex app-server</code> 的 README 写得非常直白：它是 Codex 用来 <code>"power rich interfaces"</code> 的接口，并且把整个系统抽象成三个核心原语：<code>Thread</code>、<code>Turn</code>、<code>Item</code>。<code>Thread</code> 是对话级持久单元，<code>Turn</code> 是一次交互的执行单元，<code>Item</code> 是会被保存并进入未来上下文的输入输出与副作用。这个抽象一旦成立，CLI 就只是众多客户端之一，而不是系统本体。<sup class="footnote-reference" id="fr-codex-oss-ch2-3"><a href="#footnote-codex-oss-ch2">5</a></sup></p>
-<p>这和 OpenAI 在 Codex app 里讲的产品现实是完全对得上的。官方写得很直白：agents 在 separate threads 里按 project 组织，开发者要能在多个任务之间无缝切换而不丢上下文；app 内置 worktrees，让多个 agent 能在同一 repo 上并行工作而不互相踩状态。<sup class="footnote-reference" id="fr-codex-story-ch2-5"><a href="#footnote-codex-story-ch2">4</a></sup> 这实际上就是把 <code>Thread</code> / <code>Turn</code> / <code>Item</code> 这种协议对象，落实成多 agent 编排、项目切换和长任务监督的用户界面。</p>
-<p>更关键的是，Codex 没有把这些对象留在内部实现里，而是通过 <code>thread/start</code>、<code>thread/resume</code>、<code>thread/fork</code>、<code>turn/start</code>、<code>turn/steer</code>、<code>turn/interrupt</code> 等接口公开出来。也就是说，它把“开始任务、继续任务、分叉任务、插话、打断”这些 agent 行为显式变成了协议能力。用户口中的“通过 CLI 调 API”，在 Codex 视角里只是一个前端；底下真正稳定的对象模型是 thread/turn/item。<sup class="footnote-reference" id="fr-codex-oss-ch2-4"><a href="#footnote-codex-oss-ch2">5</a></sup></p>
-<h3 id="223-这种广度能力在-codex-里是如何实现的"><a class="header" href="#223-这种广度能力在-codex-里是如何实现的">2.2.3 这种广度能力在 Codex 里是如何实现的</a></h3>
-<p>Codex 的广度，首先来自它把能力面协议化。<code>app-server</code> README 的 API 概览里，除了 thread/turn 管理，还有 <code>command/exec</code>、<code>fs/readFile</code>、<code>fs/writeFile</code>、<code>fs/watch</code>、<code>skills/list</code>、<code>plugin/list</code>、<code>plugin/install</code>、<code>app/list</code>、<code>mcpServer/resource/read</code>、<code>mcpServer/tool/call</code>、<code>tool/requestUserInput</code> 等接口。换句话说，文件系统、命令执行、技能、插件、外部应用、MCP、人工输入都不是附会功能，而是与对话本身并列的协议面。<sup class="footnote-reference" id="fr-codex-oss-ch2-5"><a href="#footnote-codex-oss-ch2">5</a></sup></p>
-<p>如果把这件事和 2026 年的 Codex app 产品叙事合起来看，意图就更明显了。OpenAI 已经明确说 Codex 正在从“写代码的 agent”变成“用代码把工作做完的 agent”：skills 不只是补充件，而是让它能去做信息收集、问题求解、写作、部署、文档、自动化等更广义知识工作的桥。<sup class="footnote-reference" id="fr-codex-story-ch2-6"><a href="#footnote-codex-story-ch2">4</a></sup> 这正是为什么开源仓库里会同时出现 <code>plugin</code>、<code>mcp-server</code>、<code>skills</code>、<code>app-server</code>、<code>spawn_agent</code> 这类看起来比“写代码”更大的部件。</p>
-<p><code>codex-rs/tools/src/lib.rs</code> 则把这些能力进一步落成统一工具注册面：本地 shell、<code>apply_patch</code>、code mode、MCP 资源与工具、<code>request_user_input</code>、<code>spawn_agent</code>、<code>send_input</code>、<code>wait_agent</code>、<code>resume_agent</code>、<code>close_agent</code>、图像查看、计划更新，都通过一个清晰的工具层暴露出来。这意味着 Codex 不是把“多 agent”“MCP”“人类确认”当特殊 case 处理，而是把它们纳入同一工具经济里。对一个广义 agent 来说，这比“把更多知识塞进 prompt”更接近真正的可扩展性。<sup class="footnote-reference" id="fr-codex-oss-ch2-6"><a href="#footnote-codex-oss-ch2">5</a></sup></p>
+<h3 id="232-为什么说-codex-更像-agent-内核而不是单一-cli"><a class="header" href="#232-为什么说-codex-更像-agent-内核而不是单一-cli">2.3.2 为什么说 Codex 更像 agent 内核，而不是单一 CLI</a></h3>
+<p><code>codex app-server</code> 的 README 写得非常直白：它是 Codex 用来 <code>"power rich interfaces"</code> 的接口，并且把整个系统抽象成三个核心原语：<code>Thread</code>、<code>Turn</code>、<code>Item</code>。<code>Thread</code> 是对话级持久单元，<code>Turn</code> 是一次交互的执行单元，<code>Item</code> 是会被保存并进入未来上下文的输入输出与副作用。这个抽象一旦成立，CLI 就只是众多客户端之一，而不是系统本体。<sup class="footnote-reference" id="fr-codex-oss-ch2-3"><a href="#footnote-codex-oss-ch2">7</a></sup></p>
+<p>这和 OpenAI 在 Codex app 里讲的产品现实是完全对得上的。官方写得很直白：agents 在 separate threads 里按 project 组织，开发者要能在多个任务之间无缝切换而不丢上下文；app 内置 worktrees，让多个 agent 能在同一 repo 上并行工作而不互相踩状态。<sup class="footnote-reference" id="fr-codex-story-ch2-5"><a href="#footnote-codex-story-ch2">6</a></sup> 这实际上就是把 <code>Thread</code> / <code>Turn</code> / <code>Item</code> 这种协议对象，落实成多 agent 编排、项目切换和长任务监督的用户界面。</p>
+<p>更关键的是，Codex 没有把这些对象留在内部实现里，而是通过 <code>thread/start</code>、<code>thread/resume</code>、<code>thread/fork</code>、<code>turn/start</code>、<code>turn/steer</code>、<code>turn/interrupt</code> 等接口公开出来。也就是说，它把“开始任务、继续任务、分叉任务、插话、打断”这些 agent 行为显式变成了协议能力。用户口中的“通过 CLI 调 API”，在 Codex 视角里只是一个前端；底下真正稳定的对象模型是 thread/turn/item。<sup class="footnote-reference" id="fr-codex-oss-ch2-4"><a href="#footnote-codex-oss-ch2">7</a></sup></p>
+<h3 id="233-这种广度能力在-codex-里是如何实现的"><a class="header" href="#233-这种广度能力在-codex-里是如何实现的">2.3.3 这种广度能力在 Codex 里是如何实现的</a></h3>
+<p>Codex 的广度，首先来自它把能力面协议化。<code>app-server</code> README 的 API 概览里，除了 thread/turn 管理，还有 <code>command/exec</code>、<code>fs/readFile</code>、<code>fs/writeFile</code>、<code>fs/watch</code>、<code>skills/list</code>、<code>plugin/list</code>、<code>plugin/install</code>、<code>app/list</code>、<code>mcpServer/resource/read</code>、<code>mcpServer/tool/call</code>、<code>tool/requestUserInput</code> 等接口。换句话说，文件系统、命令执行、技能、插件、外部应用、MCP、人工输入都不是附会功能，而是与对话本身并列的协议面。<sup class="footnote-reference" id="fr-codex-oss-ch2-5"><a href="#footnote-codex-oss-ch2">7</a></sup></p>
+<p>如果把这件事和 2026 年的 Codex app 产品叙事合起来看，意图就更明显了。OpenAI 已经明确说 Codex 正在从“写代码的 agent”变成“用代码把工作做完的 agent”：skills 不只是补充件，而是让它能去做信息收集、问题求解、写作、部署、文档、自动化等更广义知识工作的桥。<sup class="footnote-reference" id="fr-codex-story-ch2-6"><a href="#footnote-codex-story-ch2">6</a></sup> 这正是为什么开源仓库里会同时出现 <code>plugin</code>、<code>mcp-server</code>、<code>skills</code>、<code>app-server</code>、<code>spawn_agent</code> 这类看起来比“写代码”更大的部件。</p>
+<p><code>codex-rs/tools/src/lib.rs</code> 则把这些能力进一步落成统一工具注册面：本地 shell、<code>apply_patch</code>、code mode、MCP 资源与工具、<code>request_user_input</code>、<code>spawn_agent</code>、<code>send_input</code>、<code>wait_agent</code>、<code>resume_agent</code>、<code>close_agent</code>、图像查看、计划更新，都通过一个清晰的工具层暴露出来。这意味着 Codex 不是把“多 agent”“MCP”“人类确认”当特殊 case 处理，而是把它们纳入同一工具经济里。对一个广义 agent 来说，这比“把更多知识塞进 prompt”更接近真正的可扩展性。<sup class="footnote-reference" id="fr-codex-oss-ch2-6"><a href="#footnote-codex-oss-ch2">7</a></sup></p>
 <p>也正因为这样，Codex 可以自然承担从 coding 到 review，再到研究、批处理和外部系统编排的多种角色。只要任务能被表达为 thread/turn/item 上的历史，加上一组工具调用和少量人工干预，它就可以挂到同一个 runtime 里。广度不是来自模型知道所有领域，而是来自平台允许不同领域工作共用同一套控制栈。</p>
-<h3 id="224-这种深度能力在-codex-里是如何模块化的"><a class="header" href="#224-这种深度能力在-codex-里是如何模块化的">2.2.4 这种深度能力在 Codex 里是如何模块化的</a></h3>
-<p>如果说 Claude Code 倾向于把深度能力沉到一个大而完整的产品里，Codex 的做法是把它们拆散为更清楚的模块。<code>thread-store</code> 在文件头直接把自己定义为 <code>"Storage-neutral thread persistence interfaces"</code>；<code>rollout</code> 则是 <code>"Rollout persistence and discovery for Codex session files"</code>。这两个短句很关键，因为它们清楚表明：持久化不是聊天 UI 的附属，而是 agent runtime 的独立层；并且这层不应该被绑死在某一种本地文件实现上。<sup class="footnote-reference" id="fr-codex-oss-ch2-7"><a href="#footnote-codex-oss-ch2">5</a></sup></p>
-<p>这种模块化不是学院式洁癖，而是被真实产品约束逼出来的。OpenAI 在 Codex app 文章里把要求列得很直：默认 secure by default，多个 agent 要能并行，worktree 要能隔离，线程要能跨 CLI / app / IDE 继承历史和配置，技能要能跨这些表面复用。<sup class="footnote-reference" id="fr-codex-story-ch2-7"><a href="#footnote-codex-story-ch2">4</a></sup> 一旦这些要求同时成立，系统就不可能继续靠一个会话对象加一堆隐式状态往前堆，而必须把持久化、通知总线、sandbox、approval、tooling、线程历史都拆成可审计、可替换的独立层。</p>
-<p>同样的思路也体现在其他模块边界上。仓库单独拆出 <code>app-server</code>、<code>app-server-protocol</code>、<code>tools</code>、<code>thread-store</code>、<code>rollout</code>、<code>exec-server</code>、<code>sandboxing</code>、<code>process-hardening</code>、<code>mcp-server</code> 等 crate；根目录 <code>AGENTS.md</code> 又反复强调 crate 边界、sandbox 约束、MCP connection manager 和文档同步。它真正回答的是：当 agent 既广又深时，哪些责任必须成为清晰的所有权边界，才能避免整个系统退化成一个巨大且难以维护的核心包。<sup class="footnote-reference" id="fr-codex-oss-ch2-8"><a href="#footnote-codex-oss-ch2">5</a></sup></p>
-<p><code>docs/agents_md.md</code> 也说明了另一件事：连 <code>AGENTS.md</code> 这种“给 agent 的操作说明”都被当作正式能力层来设计，还考虑分层作用域与优先级。这和普通项目里把所有指令糊进一个系统提示完全不同。Codex 的选择是把文档注入、权限、持久化、工具注册、UI 连接协议全部做成可审计的显式结构，从而让 agent 行为更容易被不同客户端复用。<sup class="footnote-reference" id="fr-codex-oss-ch2-9"><a href="#footnote-codex-oss-ch2">5</a></sup></p>
-<h3 id="225-claude-code-与-codex-合起来说明了什么"><a class="header" href="#225-claude-code-与-codex-合起来说明了什么">2.2.5 Claude Code 与 Codex 合起来说明了什么</a></h3>
-<p>从代码反推，Claude Code 和 Codex 实际上在回答同一类需求，只是切入点不同。Claude Code 证明：如果你真想让 agent 做长任务、带副作用、可恢复、可协作，你最后一定会长出 compaction、resume、disk output、mailbox、worktree、角色模板这些器官。Codex 证明：这些器官可以进一步抽象成 thread/turn/item、tool registry、thread store、rollout、sandbox、approvals、app-server 这样的边界，从而形成一个更清楚的 agent kernel。<sup class="footnote-reference" id="fr-codex-oss-ch2-10"><a href="#footnote-codex-oss-ch2">5</a></sup></p>
-<p>如果再把产品演进线补进来，这个结论会更完整：Codex 不是“先有一个 CLI，后来加了 app”，而是先遇到多任务并行、异步委派、隔离环境、跨表面会话延续这些真实问题，然后才不得不长出今天这套开放出来的对象模型。也就是说，Codex 开源仓库最值得学的，不是某一版目录结构，而是它如何把产品压力压缩成一组长期稳定的 runtime 边界。<sup class="footnote-reference" id="fr-codex-story-ch2-8"><a href="#footnote-codex-story-ch2">4</a></sup></p>
+<h3 id="234-这种深度能力在-codex-里是如何模块化的"><a class="header" href="#234-这种深度能力在-codex-里是如何模块化的">2.3.4 这种深度能力在 Codex 里是如何模块化的</a></h3>
+<p>如果说 Claude Code 倾向于把深度能力沉到一个大而完整的产品里，Codex 的做法是把它们拆散为更清楚的模块。<code>thread-store</code> 在文件头直接把自己定义为 <code>"Storage-neutral thread persistence interfaces"</code>；<code>rollout</code> 则是 <code>"Rollout persistence and discovery for Codex session files"</code>。这两个短句很关键，因为它们清楚表明：持久化不是聊天 UI 的附属，而是 agent runtime 的独立层；并且这层不应该被绑死在某一种本地文件实现上。<sup class="footnote-reference" id="fr-codex-oss-ch2-7"><a href="#footnote-codex-oss-ch2">7</a></sup></p>
+<p>这种模块化不是学院式洁癖，而是被真实产品约束逼出来的。OpenAI 在 Codex app 文章里把要求列得很直：默认 secure by default，多个 agent 要能并行，worktree 要能隔离，线程要能跨 CLI / app / IDE 继承历史和配置，技能要能跨这些表面复用。<sup class="footnote-reference" id="fr-codex-story-ch2-7"><a href="#footnote-codex-story-ch2">6</a></sup> 一旦这些要求同时成立，系统就不可能继续靠一个会话对象加一堆隐式状态往前堆，而必须把持久化、通知总线、sandbox、approval、tooling、线程历史都拆成可审计、可替换的独立层。</p>
+<p>同样的思路也体现在其他模块边界上。仓库单独拆出 <code>app-server</code>、<code>app-server-protocol</code>、<code>tools</code>、<code>thread-store</code>、<code>rollout</code>、<code>exec-server</code>、<code>sandboxing</code>、<code>process-hardening</code>、<code>mcp-server</code> 等 crate；根目录 <code>AGENTS.md</code> 又反复强调 crate 边界、sandbox 约束、MCP connection manager 和文档同步。它真正回答的是：当 agent 既广又深时，哪些责任必须成为清晰的所有权边界，才能避免整个系统退化成一个巨大且难以维护的核心包。<sup class="footnote-reference" id="fr-codex-oss-ch2-8"><a href="#footnote-codex-oss-ch2">7</a></sup></p>
+<p><code>docs/agents_md.md</code> 也说明了另一件事：连 <code>AGENTS.md</code> 这种“给 agent 的操作说明”都被当作正式能力层来设计，还考虑分层作用域与优先级。这和普通项目里把所有指令糊进一个系统提示完全不同。Codex 的选择是把文档注入、权限、持久化、工具注册、UI 连接协议全部做成可审计的显式结构，从而让 agent 行为更容易被不同客户端复用。<sup class="footnote-reference" id="fr-codex-oss-ch2-9"><a href="#footnote-codex-oss-ch2">7</a></sup></p>
+<h3 id="235-claude-code-与-codex-合起来说明了什么"><a class="header" href="#235-claude-code-与-codex-合起来说明了什么">2.3.5 Claude Code 与 Codex 合起来说明了什么</a></h3>
+<p>从代码反推，Claude Code 和 Codex 实际上在回答同一类需求，只是切入点不同。Claude Code 证明：如果你真想让 agent 做长任务、带副作用、可恢复、可协作，你最后一定会长出 compaction、resume、disk output、mailbox、worktree、角色模板这些器官。Codex 证明：这些器官可以进一步抽象成 thread/turn/item、tool registry、thread store、rollout、sandbox、approvals、app-server 这样的边界，从而形成一个更清楚的 agent kernel。<sup class="footnote-reference" id="fr-codex-oss-ch2-10"><a href="#footnote-codex-oss-ch2">7</a></sup></p>
+<p>如果再把产品演进线补进来，这个结论会更完整：Codex 不是“先有一个 CLI，后来加了 app”，而是先遇到多任务并行、异步委派、隔离环境、跨表面会话延续这些真实问题，然后才不得不长出今天这套开放出来的对象模型。也就是说，Codex 开源仓库最值得学的，不是某一版目录结构，而是它如何把产品压力压缩成一组长期稳定的 runtime 边界。<sup class="footnote-reference" id="fr-codex-story-ch2-8"><a href="#footnote-codex-story-ch2">6</a></sup></p>
 <p>因此，本书把 Claude Code 和 Codex 放在一起看，不是为了比较谁更强，而是为了看清同一条工程定律的两个侧面：一个侧面是产品化后的丰满器官，一个侧面是模块化后的清晰骨架。两者都在说明，harness 不是附属层，而是 agent 软件本体。</p>
-<h2 id="23-openclaw-与-hermes更广义-agent-product-也在重复同一规律"><a class="header" href="#23-openclaw-与-hermes更广义-agent-product-也在重复同一规律">2.3 OpenClaw 与 Hermes：更广义 agent product 也在重复同一规律</a></h2>
-<p>OpenClaw 和 Hermes 不以 coding agent 为中心，但恰好证明 harness 不是 coding-only 现象。OpenClaw 把 Gateway 明确称为 control plane，核心围绕 sessions、channels、skills、routing、web surfaces 和安全边界展开；Hermes 则把 gateway、SQLite session store、FTS5 memory、skills、delegate tool、cron、MCP 与多种 terminal backend 放到同一运行面。二者共同点都不是“提示词写得更会”，而是把 session、memory、skills、gateway、cron、sub-agent 当作系统事实。<sup class="footnote-reference" id="fr-openclaw-hermes-ch2-1"><a href="#footnote-openclaw-hermes-ch2">6</a></sup></p>
-<p>对本书而言，OpenClaw 和 Hermes 只需要简单分析，因为它们不是最贴近“AI 软件工厂”的主样本；但它们非常有价值，因为它们说明一旦 agent 要跨渠道、跨时段、跨环境连续行动，control plane 一定会长出来。也就是说，harness 不是 coding agent 的偶然补丁，而是 agent product 普遍会演化出来的外层系统。<sup class="footnote-reference" id="fr-openclaw-hermes-ch2-2"><a href="#footnote-openclaw-hermes-ch2">6</a></sup></p>
-<h2 id="24-openai-1m-loc-案例真正说明了什么"><a class="header" href="#24-openai-1m-loc-案例真正说明了什么">2.4 OpenAI 1M LOC 案例真正说明了什么</a></h2>
-<p>相比 Claude Code 和 Codex 主要展示产品或仓库层面的运行时结构，OpenAI 的 1M LOC 案例展示的是组织生产层发生了什么变化：从 2025 年 8 月第一次提交到 2026 年 2 月，约五个月时间，三位工程师驱动 Codex 产出约 1M LOC、1500+ 个已合并 PR，平均每位工程师每天 3.5 个 PR，并宣称人类不直接写应用代码。<sup class="footnote-reference" id="fr-openai-factory-ch2-1"><a href="#footnote-openai-factory-ch2">7</a></sup> 这个故事的重点不是“模型终于可以替代工程师”，而是工程师的工作对象上移了。</p>
-<h3 id="241-这不是炫耀案例而是一场强制约束实验"><a class="header" href="#241-这不是炫耀案例而是一场强制约束实验">2.4.1 这不是炫耀案例，而是一场强制约束实验</a></h3>
-<p>Ryan Lopopolo 在文章开头给出的设定非常有信息量：这支团队从一开始就刻意施加了 <code>0 lines of manually-written code</code> 的强约束，并用一句很像组织原则的话把它钉死了：<code>"Humans steer. Agents execute."</code><sup class="footnote-reference" id="fr-openai-factory-story-ch2-1"><a href="#footnote-openai-factory-story-ch2">8</a></sup> 这不是营销 stunt，而是一种 forcing function。它逼团队承认一件很多组织还不愿正视的事：如果 agent 真要成为主生产力，你就不能在关键时刻偷偷靠人工把洞补上，否则你永远不知道系统到底缺了什么。</p>
-<p>正因为有这个约束，文章里的很多结论才可信。第一份 commit 是空仓库上的 late August 2025；初始 scaffold、CI、格式规则、包管理、应用框架，甚至最早那份 <code>AGENTS.md</code> 都是 Codex 自己写的。<sup class="footnote-reference" id="fr-openai-factory-story-ch2-2"><a href="#footnote-openai-factory-story-ch2">8</a></sup> 换句话说，这不是“人类写好骨架、agent 负责填肉”，而是连骨架本身都在 agent 驱动下长出来。对本书来说，最关键的启发是：只有当人类不能直接接管实现时，组织才会被迫去建设真正的 harness。</p>
-<h3 id="242-工程师角色为什么会上移"><a class="header" href="#242-工程师角色为什么会上移">2.4.2 工程师角色为什么会上移</a></h3>
-<p>这篇文章最该反复读的，不是 1M LOC 这个数字，而是 OpenAI 对工程师新角色的定义。Lopopolo 写得很直接：早期进展慢，不是因为 Codex 不行，而是因为 environment was underspecified；真正缺的是 tools、abstractions 和 internal structure。于是工程师的主要工作，不再是亲手写每一行代码，而是不断追问：“缺了什么能力，怎样把它做得既 legible 又 enforceable for the agent？”<sup class="footnote-reference" id="fr-openai-factory-story-ch2-3"><a href="#footnote-openai-factory-story-ch2">8</a></sup></p>
+<h2 id="24-openclaw-与-hermes更广义-agent-product-也在重复同一规律"><a class="header" href="#24-openclaw-与-hermes更广义-agent-product-也在重复同一规律">2.4 OpenClaw 与 Hermes：更广义 agent product 也在重复同一规律</a></h2>
+<p>OpenClaw 和 Hermes 不以 coding agent 为中心，但恰好证明 harness 不是 coding-only 现象。OpenClaw 把 Gateway 明确称为 control plane，核心围绕 sessions、channels、skills、routing、web surfaces 和安全边界展开；Hermes 则把 gateway、SQLite session store、FTS5 memory、skills、delegate tool、cron、MCP 与多种 terminal backend 放到同一运行面。二者共同点都不是“提示词写得更会”，而是把 session、memory、skills、gateway、cron、sub-agent 当作系统事实。<sup class="footnote-reference" id="fr-openclaw-hermes-ch2-1"><a href="#footnote-openclaw-hermes-ch2">8</a></sup></p>
+<p>对本书而言，OpenClaw 和 Hermes 只需要简单分析，因为它们不是最贴近“AI 软件工厂”的主样本；但它们非常有价值，因为它们说明一旦 agent 要跨渠道、跨时段、跨环境连续行动，control plane 一定会长出来。也就是说，harness 不是 coding agent 的偶然补丁，而是 agent product 普遍会演化出来的外层系统。<sup class="footnote-reference" id="fr-openclaw-hermes-ch2-2"><a href="#footnote-openclaw-hermes-ch2">8</a></sup></p>
+<h2 id="25-openai-1m-loc-案例真正说明了什么"><a class="header" href="#25-openai-1m-loc-案例真正说明了什么">2.5 OpenAI 1M LOC 案例真正说明了什么</a></h2>
+<p>相比 Claude Code 和 Codex 主要展示产品或仓库层面的运行时结构，OpenAI 的 1M LOC 案例展示的是组织生产层发生了什么变化：从 2025 年 8 月第一次提交到 2026 年 2 月，约五个月时间，三位工程师驱动 Codex 产出约 1M LOC、1500+ 个已合并 PR，平均每位工程师每天 3.5 个 PR，并宣称人类不直接写应用代码。<sup class="footnote-reference" id="fr-openai-factory-ch2-1"><a href="#footnote-openai-factory-ch2">9</a></sup> 这个故事的重点不是“模型终于可以替代工程师”，而是工程师的工作对象上移了。</p>
+<h3 id="251-这不是炫耀案例而是一场强制约束实验"><a class="header" href="#251-这不是炫耀案例而是一场强制约束实验">2.5.1 这不是炫耀案例，而是一场强制约束实验</a></h3>
+<p>Ryan Lopopolo 在文章开头给出的设定非常有信息量：这支团队从一开始就刻意施加了 <code>0 lines of manually-written code</code> 的强约束，并用一句很像组织原则的话把它钉死了：<code>"Humans steer. Agents execute."</code><sup class="footnote-reference" id="fr-openai-factory-story-ch2-1"><a href="#footnote-openai-factory-story-ch2">10</a></sup> 这不是营销 stunt，而是一种 forcing function。它逼团队承认一件很多组织还不愿正视的事：如果 agent 真要成为主生产力，你就不能在关键时刻偷偷靠人工把洞补上，否则你永远不知道系统到底缺了什么。</p>
+<p>正因为有这个约束，文章里的很多结论才可信。第一份 commit 是空仓库上的 late August 2025；初始 scaffold、CI、格式规则、包管理、应用框架，甚至最早那份 <code>AGENTS.md</code> 都是 Codex 自己写的。<sup class="footnote-reference" id="fr-openai-factory-story-ch2-2"><a href="#footnote-openai-factory-story-ch2">10</a></sup> 换句话说，这不是“人类写好骨架、agent 负责填肉”，而是连骨架本身都在 agent 驱动下长出来。对本书来说，最关键的启发是：只有当人类不能直接接管实现时，组织才会被迫去建设真正的 harness。</p>
+<h3 id="252-工程师角色为什么会上移"><a class="header" href="#252-工程师角色为什么会上移">2.5.2 工程师角色为什么会上移</a></h3>
+<p>这篇文章最该反复读的，不是 1M LOC 这个数字，而是 OpenAI 对工程师新角色的定义。Lopopolo 写得很直接：早期进展慢，不是因为 Codex 不行，而是因为 environment was underspecified；真正缺的是 tools、abstractions 和 internal structure。于是工程师的主要工作，不再是亲手写每一行代码，而是不断追问：“缺了什么能力，怎样把它做得既 legible 又 enforceable for the agent？”<sup class="footnote-reference" id="fr-openai-factory-story-ch2-3"><a href="#footnote-openai-factory-story-ch2">10</a></sup></p>
 <p>这和传统工程管理的差异非常大。过去一个 senior engineer 遇到问题，常见反应是自己下场把关键路径写掉；在这个实验里，那条路被刻意封死了。于是团队被迫做 depth-first 的 enablement：先让 agent 会设计、会测试、会 review、会操作环境，再用这些中间能力解锁更复杂的任务。换句话说，工程师从“代码作者”转成了“能力供给者”“环境设计者”“反馈环建筑师”。这正是 harness engineering 的组织学含义。</p>
-<h3 id="243-为什么-legibility-会先于-intelligence"><a class="header" href="#243-为什么-legibility-会先于-intelligence">2.4.3 为什么 legibility 会先于 intelligence</a></h3>
+<h3 id="253-为什么-legibility-会先于-intelligence"><a class="header" href="#253-为什么-legibility-会先于-intelligence">2.5.3 为什么 legibility 会先于 intelligence</a></h3>
 <p>OpenAI 在这篇文章里反复强调的一个词是 legibility。这里的意思不是“代码写得漂亮”，而是 agent 能不能看懂、验证、继续沿着现有结构工作。文章给出的做法几乎是一套控制面样板：</p>
 <ul>
 <li>app 必须 bootable per git worktree，这样每个变更都有自己隔离的运行实例；</li>
 <li>Chrome DevTools Protocol 直接接进 agent runtime，让它能自己看 DOM snapshot、截图、导航和 UI 行为；</li>
 <li>日志、指标、trace 通过本地 observability stack 暴露给 agent；</li>
-<li>长任务可以持续数小时，文章里明确说经常看到单次 Codex run 工作六小时以上。<sup class="footnote-reference" id="fr-openai-factory-story-ch2-4"><a href="#footnote-openai-factory-story-ch2">8</a></sup></li>
+<li>长任务可以持续数小时，文章里明确说经常看到单次 Codex run 工作六小时以上。<sup class="footnote-reference" id="fr-openai-factory-story-ch2-4"><a href="#footnote-openai-factory-story-ch2">10</a></sup></li>
 </ul>
-<p>这组做法的共同点是：它们都在把系统状态从“人类肉眼可见”转成“agent 也可直接读取并利用”。这正是为什么文章会把一节标题直接写成 <code>Agent legibility is the goal</code>。<sup class="footnote-reference" id="fr-openai-factory-story-ch2-5"><a href="#footnote-openai-factory-story-ch2">8</a></sup> 只有当 UI、日志、指标、线程状态、执行历史都变成 agent 可读事实，反馈环才真正闭合；否则系统再强，也只是把人类换成了一个更快但更盲的执行者。</p>
-<h3 id="244-为什么文档架构约束和-merge-哲学都变了"><a class="header" href="#244-为什么文档架构约束和-merge-哲学都变了">2.4.4 为什么文档、架构约束和 merge 哲学都变了</a></h3>
-<p>这篇文章真正成熟的地方，在于它没有把问题收缩成“多写点提示词”。OpenAI 团队很早就试过“one big AGENTS.md”，结论是 predictable 地失败：上下文挤占、重点失焦、快速腐烂、不可验证。最后他们把 <code>AGENTS.md</code> 降回目录，把 <code>docs/</code> 提升成 system of record。<sup class="footnote-reference" id="fr-openai-factory-story-ch2-6"><a href="#footnote-openai-factory-story-ch2">8</a></sup> 这和本书前文关于 <code>AGENTS.md</code> 的判断完全一致：它必须短、稳定、常驻，上下文里只放地图，不放百科全书。</p>
-<p>更重要的是，OpenAI 没把“好架构”停留在文档层。他们明确写到：documentation alone 不足以维持 agent-generated codebase 的 coherent；真正有效的是 enforcing invariants, not micromanaging implementations。<sup class="footnote-reference" id="fr-openai-factory-story-ch2-7"><a href="#footnote-openai-factory-story-ch2">8</a></sup> 于是 business domain 分层、依赖方向、可允许边、数据 shape 边界、知识库 freshness、文档 cross-link、甚至“golden principles” 都被做成机器可检查的规则。</p>
-<p>这会直接改变 merge 哲学。文章里有一段非常值得抄在团队墙上：随着 Codex throughput 上升，很多传统工程规范会变得 counterproductive；仓库采用 minimal blocking merge gates，PR 生命周期变短，test flake 更常通过 follow-up run 解决，因为在“agent throughput far exceeds human attention”的系统里，corrections are cheap，而 waiting is expensive。<sup class="footnote-reference" id="fr-openai-factory-story-ch2-8"><a href="#footnote-openai-factory-story-ch2">8</a></sup> 这不是鼓吹降低质量，而是在说明：当产能模型变了，质量控制点也必须重排。</p>
-<h3 id="245-1m-loc-真正说明了什么"><a class="header" href="#245-1m-loc-真正说明了什么">2.4.5 1M LOC 真正说明了什么</a></h3>
+<p>这组做法的共同点是：它们都在把系统状态从“人类肉眼可见”转成“agent 也可直接读取并利用”。这正是为什么文章会把一节标题直接写成 <code>Agent legibility is the goal</code>。<sup class="footnote-reference" id="fr-openai-factory-story-ch2-5"><a href="#footnote-openai-factory-story-ch2">10</a></sup> 只有当 UI、日志、指标、线程状态、执行历史都变成 agent 可读事实，反馈环才真正闭合；否则系统再强，也只是把人类换成了一个更快但更盲的执行者。</p>
+<h3 id="254-为什么文档架构约束和-merge-哲学都变了"><a class="header" href="#254-为什么文档架构约束和-merge-哲学都变了">2.5.4 为什么文档、架构约束和 merge 哲学都变了</a></h3>
+<p>这篇文章真正成熟的地方，在于它没有把问题收缩成“多写点提示词”。OpenAI 团队很早就试过“one big AGENTS.md”，结论是 predictable 地失败：上下文挤占、重点失焦、快速腐烂、不可验证。最后他们把 <code>AGENTS.md</code> 降回目录，把 <code>docs/</code> 提升成 system of record。<sup class="footnote-reference" id="fr-openai-factory-story-ch2-6"><a href="#footnote-openai-factory-story-ch2">10</a></sup> 这和本书前文关于 <code>AGENTS.md</code> 的判断完全一致：它必须短、稳定、常驻，上下文里只放地图，不放百科全书。</p>
+<p>更重要的是，OpenAI 没把“好架构”停留在文档层。他们明确写到：documentation alone 不足以维持 agent-generated codebase 的 coherent；真正有效的是 enforcing invariants, not micromanaging implementations。<sup class="footnote-reference" id="fr-openai-factory-story-ch2-7"><a href="#footnote-openai-factory-story-ch2">10</a></sup> 于是 business domain 分层、依赖方向、可允许边、数据 shape 边界、知识库 freshness、文档 cross-link、甚至“golden principles” 都被做成机器可检查的规则。</p>
+<p>这会直接改变 merge 哲学。文章里有一段非常值得抄在团队墙上：随着 Codex throughput 上升，很多传统工程规范会变得 counterproductive；仓库采用 minimal blocking merge gates，PR 生命周期变短，test flake 更常通过 follow-up run 解决，因为在“agent throughput far exceeds human attention”的系统里，corrections are cheap，而 waiting is expensive。<sup class="footnote-reference" id="fr-openai-factory-story-ch2-8"><a href="#footnote-openai-factory-story-ch2">10</a></sup> 这不是鼓吹降低质量，而是在说明：当产能模型变了，质量控制点也必须重排。</p>
+<h3 id="255-1m-loc-真正说明了什么"><a class="header" href="#255-1m-loc-真正说明了什么">2.5.5 1M LOC 真正说明了什么</a></h3>
 <p>如果把这篇文章只读成“OpenAI 用 AI 写了 1M LOC”，结论会非常浅。它真正说明的是，AI 软件工厂并不是把人拿掉，而是把人的位置往外推：人不再主要承担逐行实现，而是负责搭环境、写约束、造反馈、设计知识系统、定义架构边界、安排 merge 节奏、持续做 garbage collection。</p>
-<p>文章最后一段几乎已经把本书主线说完了：他们最难的问题，现在都集中在 designing environments, feedback loops, and control systems 上。<sup class="footnote-reference" id="fr-openai-factory-story-ch2-9"><a href="#footnote-openai-factory-story-ch2">8</a></sup> 这正是为什么 1M LOC 案例对本书有决定性意义。它不是在证明“模型自己会造软件”，而是在证明：当 agent 进入真实生产，真正稀缺的能力不是生成代码，而是构造一个让代码生成、验证、回放、纠偏和治理都能持续运转的 harness。</p>
-<h2 id="25-agentsmd-应该是目录不是百科全书"><a class="header" href="#25-agentsmd-应该是目录不是百科全书">2.5 AGENTS.md 应该是目录，不是百科全书</a></h2>
-<p>对 <code>AGENTS.md</code> 更稳妥的处理方式，是把它视为短目录、不是长百科。它应该短、稳定、可常驻上下文，只放仓库定位、工具链版本、工作区拓扑、高频红线和指向 <code>docs/</code> 的目录。真正细节放在 <code>docs/</code> 里，按任务需要加载。Codex 的公开文档也明确把 <code>AGENTS.md</code> 当成一个单独的能力层，而不是把所有知识都塞进系统提示。<sup class="footnote-reference" id="fr-agents-catalog-ch2-1"><a href="#footnote-agents-catalog-ch2">9</a></sup></p>
+<p>文章最后一段几乎已经把本书主线说完了：他们最难的问题，现在都集中在 designing environments, feedback loops, and control systems 上。<sup class="footnote-reference" id="fr-openai-factory-story-ch2-9"><a href="#footnote-openai-factory-story-ch2">10</a></sup> 这正是为什么 1M LOC 案例对本书有决定性意义。它不是在证明“模型自己会造软件”，而是在证明：当 agent 进入真实生产，真正稀缺的能力不是生成代码，而是构造一个让代码生成、验证、回放、纠偏和治理都能持续运转的 harness。</p>
+<h2 id="26-agentsmd-应该是目录不是百科全书"><a class="header" href="#26-agentsmd-应该是目录不是百科全书">2.6 AGENTS.md 应该是目录，不是百科全书</a></h2>
+<p>对 <code>AGENTS.md</code> 更稳妥的处理方式，是把它视为短目录、不是长百科。它应该短、稳定、可常驻上下文，只放仓库定位、工具链版本、工作区拓扑、高频红线和指向 <code>docs/</code> 的目录。真正细节放在 <code>docs/</code> 里，按任务需要加载。Codex 的公开文档也明确把 <code>AGENTS.md</code> 当成一个单独的能力层，而不是把所有知识都塞进系统提示。<sup class="footnote-reference" id="fr-agents-catalog-ch2-1"><a href="#footnote-agents-catalog-ch2">11</a></sup></p>
 <p>反模式是把全部风格指南、API 手册、架构文档、on-call 流程塞进一个大 prompt。这样不仅浪费 token，更严重的是教会 agent 一种错误的上下文哲学：以为“上下文 = 曾经写下的全集”，而不是“上下文 = 当前任务需要的切片”。</p>
-<h2 id="26-0-人工审查的边界"><a class="header" href="#26-0-人工审查的边界">2.6 “0% 人工审查”的边界</a></h2>
-<p>OpenAI 的极端案例不能直接搬到所有场景。内部工具链、非合规关键路径、风险自吸收时，可以把大量人工审查下沉到 CI、性质测试、结构化验证和指标门禁。医疗、金融、隐私、客户数据路径则不同：实名人工 reviewer、审计记录、变更控制和合规签字是事实要求，不是工程偏好。<sup class="footnote-reference" id="fr-review-boundary-ch2-1"><a href="#footnote-review-boundary-ch2">10</a></sup></p>
+<h2 id="27-0-人工审查的边界"><a class="header" href="#27-0-人工审查的边界">2.7 “0% 人工审查”的边界</a></h2>
+<p>OpenAI 的极端案例不能直接搬到所有场景。内部工具链、非合规关键路径、风险自吸收时，可以把大量人工审查下沉到 CI、性质测试、结构化验证和指标门禁。医疗、金融、隐私、客户数据路径则不同：实名人工 reviewer、审计记录、变更控制和合规签字是事实要求，不是工程偏好。<sup class="footnote-reference" id="fr-review-boundary-ch2-1"><a href="#footnote-review-boundary-ch2">12</a></sup></p>
 <p>因此大多数团队的目标都不该是追求“没有人看”，而是把人类从重复、低信号的逐行审查中解放出来，转向审查契约、门禁、失败分类和高风险边界。</p>
-<h2 id="27-把成熟样本压成全书的架构索引"><a class="header" href="#27-把成熟样本压成全书的架构索引">2.7 把成熟样本压成全书的架构索引</a></h2>
+<h2 id="28-把成熟样本压成全书的架构索引"><a class="header" href="#28-把成熟样本压成全书的架构索引">2.8 把成熟样本压成全书的架构索引</a></h2>
 <p>如果把 Claude Code 的“器官”与 Codex 的“骨架”叠在一起，再把 OpenClaw / Hermes 的 control plane 经验作为侧证，可以把全书后续章节统一压成九个架构维度：</p>
 <ol>
 <li>事实流维度：session / thread / transcript 必须是独立、可恢复、可回放的持久层。</li>
@@ -873,6 +605,12 @@ Harness 工程
 <hr>
 <hr>
 <ol class="footnote-definition">
+<li id="footnote-layer1-harness-ch2">
+<p>本章在此处综合 Fowler 关于 coding agent harness 的框架，以及 OpenAI 与 Codex 开源仓库关于 1M LOC、<code>AGENTS.md</code>、sandbox、approval、MCP 与 rollout 的工程边界；对应第 19 章参考文献 1、2、21。 <a href="#fr-layer1-harness-ch2-1">↩</a></p>
+</li>
+<li id="footnote-layer2-harness-ch2">
+<p>本章在此处综合 Anthropic 关于 managed agents 与 long-running harness 的接口抽象、Claude Code 本地源码镜像所体现的 session/compaction/sub-agent 机制，以及 OpenClaw/Hermes 在 gateway、memory、skills 与 sub-agent 上的产品形态；对应第 19 章参考文献 3、4、6、7、22、23、24。 <a href="#fr-layer2-harness-ch2-1">↩</a></p>
+</li>
 <li id="footnote-claudecode-story-ch2">
 <p>本章在此处综合 Anthropic Claude Code 产品页关于 “majority of code is now written by Claude Code” 的表述，以及 Anthropic 内部团队案例中关于律师、设计师和数据科学家使用 Claude Code 的故事，用来说明 Claude Code 已经超出传统 coding assistant 的边界；对应第 19 章参考文献 36、37。 <a href="#fr-claudecode-story-ch2-1">↩</a></p>
 </li>
@@ -1039,6 +777,8 @@ Harness 工程
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="4-核心-harness-架构把样本反推成可复用总图"><a class="header" href="#4-核心-harness-架构把样本反推成可复用总图">4. 核心 Harness 架构：把样本反推成可复用总图</a></h1>
 <p>第 2 章给了正向样本，第 3 章给了失败叙事。把两者叠在一起看，可以得到一个比“某个仓库的实现细节”更稳定的结论：成熟 agent 系统最终都会收敛到一条共同的运行时总图。Claude Code 把这张总图长成了一套丰满器官；Codex 把它拆成了一套更清楚的模块边界。我们真正要吸收的不是它们的代码排版，而是这张总图背后的责任分工。<sup class="footnote-reference" id="fr-claudecode-codex-spine-ch4-1"><a href="#footnote-claudecode-codex-spine-ch4">1</a></sup></p>
+<p>把第 1 章的控制论语言落到运行时，可以先看五个角色：受控对象是 task / session / thread；目标与约束是用户目标、验收标准、artifact 契约、权限和预算；传感器是 tool 回执、文件变化、validator 结果、child summary 和 turn/item 事件；控制器负责继续、压缩、重试、派工、升级、打断、恢复；执行器则是 shell、文件系统、MCP、子 agent、worktree、外部 API 和 artifact 写入。</p>
+<p>按这个框架回看 Claude Code，<code>ToolUseContext</code> 和 <code>query.ts</code> 是控制器入口，<code>StreamingToolExecutor.ts</code> 是执行器调度面，<code>sessionStorage.ts</code>、<code>fileStateCache.ts</code>、<code>agentSummary.ts</code>、<code>diskOutput.ts</code> 是传感器与状态保持层，<code>microCompact</code> / <code>compact.ts</code> / <code>resumeAgent.ts</code> / <code>worktree.ts</code> 则负责稳定性控制。Codex 把同一逻辑拆得更显式：<code>Thread</code> / <code>Turn</code> / <code>Item</code> 建模受控对象，<code>thread-store</code> 与 <code>rollout</code> 负责持久层，<code>app-server</code> 与 notifications 公开观测总线，<code>tools</code> registry、sandbox、approval、<code>thread/resume</code>、<code>thread/fork</code>、<code>turn/interrupt</code> 构成执行与稳定边界。<sup class="footnote-reference" id="fr-claudecode-codex-spine-ch4-2"><a href="#footnote-claudecode-codex-spine-ch4">1</a></sup></p>
 <pre><code class="language-text">用户任务 / 外部触发
         |
         v
@@ -1055,7 +795,7 @@ Session / Thread 事实流
 终态裁决（ready / failed）与可追责证据
 </code></pre>
 <p>关键规则只有一句：任何用户可见状态，都必须能沿着这张图一路回溯到同一条事实流。</p>
-<p>为了避免后文一会儿讲 Claude Code 的产品器官，一会儿讲 Codex 的协议骨架，到第 9 章又突然换成抽象原则，这里先固定一套贯穿全书的运行时词汇。后面凡是提到 Claude Code 的 <code>sessionStorage.ts</code>、<code>StreamingToolExecutor.ts</code>、<code>agentSummary.ts</code>，或 Codex 的 <code>Thread</code> / <code>Turn</code> / <code>Item</code>、<code>tools</code>、<code>thread-store</code>、<code>app-server</code>，都只是在这张表里占不同位置。<sup class="footnote-reference" id="fr-claudecode-codex-spine-ch4-2"><a href="#footnote-claudecode-codex-spine-ch4">1</a></sup></p>
+<p>为了避免后文一会儿讲 Claude Code 的产品器官，一会儿讲 Codex 的协议骨架，到第 9 章又突然换成抽象原则，这里先固定一套贯穿全书的运行时词汇。后面凡是提到 Claude Code 的 <code>sessionStorage.ts</code>、<code>StreamingToolExecutor.ts</code>、<code>agentSummary.ts</code>，或 Codex 的 <code>Thread</code> / <code>Turn</code> / <code>Item</code>、<code>tools</code>、<code>thread-store</code>、<code>app-server</code>，都只是在这张表里占不同位置。<sup class="footnote-reference" id="fr-claudecode-codex-spine-ch4-3"><a href="#footnote-claudecode-codex-spine-ch4">1</a></sup></p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -1096,7 +836,7 @@ Session / Thread 事实流
 <li><code>failed</code></li>
 </ul>
 <p>内部当然可以存在更细粒度状态，但产品表面不应依赖一长串不断变化的内部标签。因为一旦 UI、API、replay、dashboard 各自解释一遍阶段，系统就会重新掉回第 3.2 节那种“每一层都没说错，但每一层说的不是同一件事”的状态。</p>
-<p>如果用上面那张统一词汇表来重述，第 2 章里关于 Claude Code / Codex 的产品故事，首先都落在“事实流 + 生命周期”这两层。Codex 的 <code>Thread</code> / <code>Turn</code> / <code>Item</code> 把这件事表达得很清楚：线程承载持久历史，turn 承载一次执行，item 承载输入、输出和副作用。Claude Code 虽然没有用同一套名词，但 <code>query.ts</code>、<code>sessionStorage.ts</code>、<code>resumeAgent.ts</code>、<code>agentSummary.ts</code> 实际上也在做相同切分：一轮交互是什么、后台动作是什么、恢复时哪些事实要继续存在。成熟系统真正的共识不是术语相同，而是都不再把“一整段聊天记录”当成唯一状态机。<sup class="footnote-reference" id="fr-claudecode-codex-spine-ch4-3"><a href="#footnote-claudecode-codex-spine-ch4">1</a></sup></p>
+<p>如果用上面那张统一词汇表来重述，第 2 章里关于 Claude Code / Codex 的产品故事，首先都落在“事实流 + 生命周期”这两层。Codex 的 <code>Thread</code> / <code>Turn</code> / <code>Item</code> 把这件事表达得很清楚：线程承载持久历史，turn 承载一次执行，item 承载输入、输出和副作用。Claude Code 虽然没有用同一套名词，但 <code>query.ts</code>、<code>sessionStorage.ts</code>、<code>resumeAgent.ts</code>、<code>agentSummary.ts</code> 实际上也在做相同切分：一轮交互是什么、后台动作是什么、恢复时哪些事实要继续存在。成熟系统真正的共识不是术语相同，而是都不再把“一整段聊天记录”当成唯一状态机。<sup class="footnote-reference" id="fr-claudecode-codex-spine-ch4-4"><a href="#footnote-claudecode-codex-spine-ch4">1</a></sup></p>
 <h2 id="43-能力平面产物与验证把能力工作流和结果拆开"><a class="header" href="#43-能力平面产物与验证把能力工作流和结果拆开">4.3 能力平面、产物与验证：把能力、工作流和结果拆开</a></h2>
 <p>第 2 章里那些“Claude Code 为什么能既写代码又写文章、还能调 MCP 和多 agent”“Codex 为什么像 agent 内核”的故事，到了架构层其实只剩三件事：能力平面决定系统能做什么，工作流契约决定系统可以怎么做，产物与验证决定系统何时算完成。要把 Claude Code / Codex 的经验移植到别的系统，最重要的不是照搬模块名，而是先把契约分层：</p>
 <pre><code class="language-text">第 A 层：能力契约
@@ -1119,7 +859,7 @@ Session / Thread 事实流
 </ul>
 <p>这四根支柱真正有价值的地方，在于它们对应了清晰的所有权边界。换句话说，九个维度描述的是运行时语义，四支柱描述的是团队如何持有这些语义。前者回答“系统必须有哪些真相边界”，后者回答“这些边界由谁实现、谁守住、谁裁决”。</p>
 <p>Session 团队负责“什么是真实发生过的”；Harness 团队负责“系统下一步怎么行动”；Tools 负责人负责“允许系统做哪些副作用”；Verification 负责人负责“什么才算真的完成”。只要这四件事被混在一个 prompt、一个巨型 controller 或一个前端状态树里，团队很快就会失去可维护性。</p>
-<p>Claude Code 在 <code>StreamingToolExecutor.ts</code>、<code>worktree.ts</code>、<code>sessionStorage.ts</code>、<code>diskOutput.ts</code>、<code>agentSummary.ts</code> 里，把这四根支柱做成产品器官；Codex 则在 <code>tools</code>、<code>thread-store</code>、<code>rollout</code>、<code>app-server-protocol</code> 里，把同一分工做成协议化边界。前者说明这些能力在真实产品里必须存在，后者说明这些能力可以被更清晰地组织。第 9 章所谓“设计原则”，本质上就是把这里这套器官与边界，再翻译成团队可长期复用的规范语言。<sup class="footnote-reference" id="fr-claudecode-codex-spine-ch4-4"><a href="#footnote-claudecode-codex-spine-ch4">1</a></sup></p>
+<p>Claude Code 在 <code>StreamingToolExecutor.ts</code>、<code>worktree.ts</code>、<code>sessionStorage.ts</code>、<code>diskOutput.ts</code>、<code>agentSummary.ts</code> 里，把这四根支柱做成产品器官；Codex 则在 <code>tools</code>、<code>thread-store</code>、<code>rollout</code>、<code>app-server-protocol</code> 里，把同一分工做成协议化边界。前者说明这些能力在真实产品里必须存在，后者说明这些能力可以被更清晰地组织。第 9 章所谓“设计原则”，本质上就是把这里这套器官与边界，再翻译成团队可长期复用的规范语言。<sup class="footnote-reference" id="fr-claudecode-codex-spine-ch4-5"><a href="#footnote-claudecode-codex-spine-ch4">1</a></sup></p>
 <h2 id="45-朴素事实流为什么比聪明状态更可靠"><a class="header" href="#45-朴素事实流为什么比聪明状态更可靠">4.5 朴素事实流为什么比“聪明状态”更可靠</a></h2>
 <p>Karpathy 的 autoresearch 经验提醒过一个很朴素但很重要的事实：长期知识系统最难的不是“让模型想起来”，而是 bookkeeping。<code>session.md</code> 提供人类可读叙事，<code>session.jsonl</code> 提供机器可回放事件。这个组合看起来不花哨，但它有一个决定性优势：模型会换，UI 会换，工具会换，事实流最好不要跟着频繁换。<sup class="footnote-reference" id="fr-karpathy-bookkeeping-ch4-1"><a href="#footnote-karpathy-bookkeeping-ch4">2</a></sup></p>
 <p>很多系统一开始会尝试更“聪明”的状态层：把前端状态当事实、把聊天 transcript 当事实、把临时日志解析当事实、把缓存快照当事实。它们往往在 demo 阶段更轻，但一旦进入刷新恢复、跨设备继续、后台任务、子 agent 协作和事故排查，就会发现这些状态都不够硬。</p>
@@ -1137,7 +877,7 @@ Session / Thread 事实流
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-claudecode-codex-spine-ch4">
-<p>本章在此处综合 Claude Code 本地源码镜像、<em>Dive into Claude Code</em> 中七组件与五层子系统分析，以及 Codex 开源仓库中 <code>app-server-protocol</code>、<code>tools</code>、<code>thread-store</code>、<code>rollout</code> 所体现的模块边界，用来反推 agent harness 的通用总图；对应第 19 章参考文献 21、24、41。 <a href="#fr-claudecode-codex-spine-ch4-1">↩</a> <a href="#fr-claudecode-codex-spine-ch4-2">↩2</a> <a href="#fr-claudecode-codex-spine-ch4-3">↩3</a> <a href="#fr-claudecode-codex-spine-ch4-4">↩4</a></p>
+<p>本章在此处综合 Claude Code 本地源码镜像、<em>Dive into Claude Code</em> 中七组件与五层子系统分析，以及 Codex 开源仓库中 <code>app-server-protocol</code>、<code>tools</code>、<code>thread-store</code>、<code>rollout</code> 所体现的模块边界，用来反推 agent harness 的通用总图；对应第 19 章参考文献 21、24、41。 <a href="#fr-claudecode-codex-spine-ch4-1">↩</a> <a href="#fr-claudecode-codex-spine-ch4-2">↩2</a> <a href="#fr-claudecode-codex-spine-ch4-3">↩3</a> <a href="#fr-claudecode-codex-spine-ch4-4">↩4</a> <a href="#fr-claudecode-codex-spine-ch4-5">↩5</a></p>
 </li>
 <li id="footnote-karpathy-bookkeeping-ch4">
 <p>Andrej Karpathy, <em>LLM Wiki.</em> 本章在此处使用其关于 autoresearch 双文件与 bookkeeping 的思路，说明 <code>session.md</code> + <code>session.jsonl</code> 这类事实流设计的价值；对应第 19 章参考文献 9。 <a href="#fr-karpathy-bookkeeping-ch4-1">↩</a></p>
@@ -1321,21 +1061,42 @@ UI / Operator 负责人
 </code></pre>
 <p>没有这种角色化拆分，团队很容易出现一种危险假象：局部 worker 都“各自成功了”，但系统级事实已经被破坏，比如主产物没有唯一归属、多个子任务修改了同一工作区、汇总结论没有经过 validator，或者父任务根本不知道哪个子任务已经失联。</p>
 <h2 id="83-为什么-sub-agent--swarm-往往比单个-1m-上下文更优"><a class="header" href="#83-为什么-sub-agent--swarm-往往比单个-1m-上下文更优">8.3 为什么 sub-agent / swarm 往往比单个 1M 上下文更优</a></h2>
-<p>如果任务天然可以分块，那么把全部材料一次性塞进单个超长上下文，往往不是最优解。更常见的高收益结构是：</p>
+<p>第 1 章已经给出理论结论：最大上下文窗口不是平坦工作区。到了第 8 章，这个理论要落成实践判断：什么时候应该用单个超长上下文，什么时候应该拆成多个局部 agent。</p>
+<p>如果任务天然可以分块，把全部材料一次性塞进单个超长上下文，往往不是最优解。更常见的高收益结构是：</p>
 <ol>
 <li>coordinator 只持有总目标、拆解计划、共享约束和最终验收标准；</li>
 <li>每个 sub-agent 只拿自己那一块原始材料或代码域；</li>
 <li>子 agent 产出的是摘要、证据、diff、引用和待验证结论，而不是把整个大海捞针窗口一路向上传递；</li>
 <li>verifier 再把跨 shard 的冲突和遗漏拦下来。</li>
 </ol>
-<p>这样做的好处不是单一维度的，而是四个维度一起改善：</p>
+<h3 id="831-成本不能只看-token-账单"><a class="header" href="#831-成本不能只看-token-账单">8.3.1 成本不能只看 token 账单</a></h3>
+<p>讨论 1M context 成本时，最常见的误区是只看 token 单价。账单当然重要，但真正把系统压垮的，常常是 prefill 变慢、首 token 延迟上升、KV cache 撑大、并发吞吐下降、重试变贵，以及任务调度越来越难。</p>
+<p>OpenAI 公开价格页按百万 token 标价，但也把标准处理费率限定在 <code>under 270K</code> context lengths；Google 在 Gemini 1.5 发布时一方面宣布 128K 到 1M 的 pricing tiers，另一方面提醒早期测试者应预期更长 latency。<sup class="footnote-reference" id="fr-swarm-econ-ch8-1"><a href="#footnote-swarm-econ-ch8">3</a></sup> 这些信号说明，超长上下文不是普通请求的线性放大版。</p>
+<p>从系统计算看，痛点通常不在 output token，而在 prefill。MInference 摘要里给过一个足够刺眼的数字：8B LLM 处理 1M token prompt 可以到 30 分钟量级，并把根因指向 attention 的二次复杂度。<sup class="footnote-reference" id="fr-swarm-econ-ch8-2"><a href="#footnote-swarm-econ-ch8">3</a></sup> 这不是某家 API 的具体实现细节，而是长序列计算的基础压力。</p>
+<h3 id="832-1m-和-5-个-200k-不能只比总-token"><a class="header" href="#832-1m-和-5-个-200k-不能只比总-token">8.3.2 1M 和 5 个 200K 不能只比总 token</a></h3>
+<p>如果做一个极端理想化假设：一个 1M 请求，和五个各 200K 的请求，总输入 token 恰好一样，没有重复背景、没有协调 token、没有缓存，那么从“按 token 计费”的账单角度看，它们可能接近。</p>
+<p>但真实 agent 系统很少这么运行。更常见的是：coordinator 持有目标、计划、约束和最终验收；每个子 agent 只持有一个 shard 的原始材料；公共制度性上下文通过缓存或固定 system prompt 复用；向上汇报的是摘要、证据、diff、引用和中间产物，而不是整份原始语料。这时 <code>5 x 200K</code> 的真实总 token 常常小于 <code>1 x 1M</code>。</p>
+<p>即使总 token 恰好一样，prefill 计算量也不一样。若按 dense attention 做一阶量级估算：</p>
 <ul>
-<li>质量上：减少位置偏置和 “lost in the middle” 效应，让每个 agent 都在更短、更密、更局部的工作区间里完成任务。<sup class="footnote-reference" id="fr-swarm-econ-ch8-1"><a href="#footnote-swarm-econ-ch8">3</a></sup></li>
-<li>成本上：避免把同一百万 token 在每一轮对话里反复 prefill；可复用的公共材料可以缓存，不可复用的局部材料只喂给对应 agent。</li>
-<li>时延上：多个 200K 以内的 prefill 更容易并行、调度和提前结束，首 token 延迟也更容易控制。</li>
-<li>组织上：每个 agent 的失败边界更清晰，更适合绑到具体 validator、artifact policy 和 owner。</li>
+<li>单次 1M 上下文的 attention 规模约为 <code>1,000,000^2 = 10^12</code>；</li>
+<li>五次 200K 的总 attention 规模约为 <code>5 * 200,000^2 = 2 * 10^11</code>。</li>
 </ul>
-<p>当然，这不是说“永远不要用 1M 上下文”。如果问题确实需要对全局原文做一次统一视野下的比对、排序或证据整合，超长上下文仍然有价值。但在大多数工程任务里，真正需要的是局部阅读、局部推理、局部修改，最后再做全局汇总和验证。</p>
+<p>也就是说，在“总 token 相同”的理想化条件下，<code>1 x 1M</code> 的 attention 量级仍然大约是 <code>5 x 200K</code> 的 5 倍。工程上要同时看三本账：账单、时延、可调度性。</p>
+<h3 id="833-sub-agent-的收益不是只省钱"><a class="header" href="#833-sub-agent-的收益不是只省钱">8.3.3 sub-agent 的收益不是只省钱</a></h3>
+<p>很多团队把 sub-agent / swarm 只当成吞吐工具，这是低估了它。它真正带来的，是质量曲线和成本曲线的同时改善。</p>
+<p>单个超长上下文的失败模式往往是：原始材料过多，相关证据密度下降；中间状态和历史痕迹污染当前任务；query 位置不稳定，重要约束被长正文淹没；一次失败就要重做整段大 prefill。</p>
+<p>分解成 sub-agent 之后，系统得到的是另一种工作形态：每个 agent 看到的上下文更短、更局部，位置偏置更可控；每个 agent 的输入类型更单纯，更接近单一任务；错误只需在局部 shard 重试，不必重灌整段全局上下文；coordinator 处理的是证据摘要和冲突，而不是整个原始语料海洋。</p>
+<p>换句话说，sub-agent 不是为了炫耀架构复杂，而是为了把每个 agent 压回它更容易成功的工作区间，再把跨 shard 协调交给 harness、session 和 verification。</p>
+<h3 id="834-什么时候仍然该用单个超长上下文"><a class="header" href="#834-什么时候仍然该用单个超长上下文">8.3.4 什么时候仍然该用单个超长上下文</a></h3>
+<p>不是所有任务都该拆成 swarm。以下几类任务，单个超长上下文仍然可能是合理选择：</p>
+<ul>
+<li>必须对全局原文做一次统一排序、比对或证据归并；</li>
+<li>任务主要是全局摘要，不涉及局部修改和重复迭代；</li>
+<li>原始材料高度相关，拆分后反而破坏语义连续性；</li>
+<li>上下文可以一次缓存，多轮查询主要复用同一大语料；</li>
+<li>你更在意一次性全局理解，而不是并行吞吐。</li>
+</ul>
+<p>但这些前提只要稍微动摇，sub-agent 方案往往就开始占优。尤其当任务同时满足三条：材料天然可分 shard；子问题可以先局部求解再全局汇总；每轮失败重试代价很高，就应当优先考虑分解。</p>
 <h2 id="84-让-swarm-不失控的四条硬规则"><a class="header" href="#84-让-swarm-不失控的四条硬规则">8.4 让 swarm 不失控的四条硬规则</a></h2>
 <p>多 agent 一旦上线，最容易失控的不是模型质量，而是控制面纪律。因此至少要守住四条硬规则：</p>
 <ol>
@@ -1355,7 +1116,7 @@ UI / Operator 负责人
 <p>本章在此处综合 Claude Code 的 <code>AgentTool.tsx</code>、<code>loadAgentsDir.ts</code>、<code>teammateMailbox.ts</code>、<code>worktree.ts</code> 等实现，以及 Codex <code>spawn_agent</code> / <code>send_input</code> / <code>wait_agent</code> / <code>resume_agent</code> 等工具原语，用来说明多 agent 需要角色、通信、隔离、汇总与恢复这些一等能力；对应第 19 章参考文献 21、24。 <a href="#fr-claudecode-codex-multiagent-ch8-1">↩</a></p>
 </li>
 <li id="footnote-swarm-econ-ch8">
-<p>本章在此处综合 Anthropic 的 managed agents 视角与第 1 章长上下文文献，用于说明 sub-agent / swarm 在质量、成本与时延上的优势；对应第 19 章参考文献 3、11-20。 <a href="#fr-swarm-econ-ch8-1">↩</a></p>
+<p>本章在此处综合 Anthropic 的 managed agents 视角、OpenAI API Pricing 关于 <code>under 270K</code> 标准费率的限定、Google Gemini 1.5 关于 1M context pricing tiers 与 latency 的说明、Google long context 文档关于 retrieval-cost tradeoff 与 caching 的说明、LongLLMLingua 关于 higher computational cost / performance reduction / position bias 的概括，以及 MInference 关于 1M token prefill 代价的摘要数字，用于说明 sub-agent / swarm 在质量、成本与时延上的优势；对应第 19 章参考文献 3、14、15、18、19、20。 <a href="#fr-swarm-econ-ch8-1">↩</a> <a href="#fr-swarm-econ-ch8-2">↩2</a></p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -1366,7 +1127,7 @@ UI / Operator 负责人
 <p>Claude Code 和 Codex 都很强，但它们真正可迁移的启发不在于“某个 prompt 怎么写”，而在于都在做同一件事：把模型生成能力与控制系统分层。</p>
 <p>模型负责提出候选动作、生成候选产物、总结局部信息；控制系统负责守住事实流、生命周期、能力平面、产物与验证、回放、隔离与恢复、协作、知识分层和操作员面。只要这两层没有被切开，团队最终一定会重新回到第 3 章那类事故里。</p>
 <h2 id="92-九条可迁移原则"><a class="header" href="#92-九条可迁移原则">9.2 九条可迁移原则</a></h2>
-<p>把第 2.7 节的九个架构维度和第 4 章的统一词汇表进一步压缩，可以得到九条可迁移原则。读者可以把它直接看成一条映射链：Claude Code 的产品器官和 Codex 的协议骨架，在原则层分别对应下面九条约束。</p>
+<p>把第 2.8 节的九个架构维度和第 4 章的统一词汇表进一步压缩，可以得到九条可迁移原则。读者可以把它直接看成一条映射链：Claude Code 的产品器官和 Codex 的协议骨架，在原则层分别对应下面九条约束。</p>
 <ol>
 <li><code>事实流原则</code>：契约状态必须持久化在 prompt / 聊天上下文之外。</li>
 <li><code>生命周期原则</code>：生命周期必须单调、公开，并在 API / UI / operator 表面保持一致。</li>
@@ -1417,7 +1178,7 @@ UI / Operator 负责人
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="10-工作流到里程碑映射务实路线图"><a class="header" href="#10-工作流到里程碑映射务实路线图">10. 工作流到里程碑映射：务实路线图</a></h1>
-<p>如果第 4 到第 9 章回答的是“目标架构应该是什么”，第 10 章回答的就是“工程上先做什么、后做什么”。路线图的作用不是展示 backlog，而是把第 2.7 节那九个架构维度按依赖关系排成实施顺序。</p>
+<p>如果第 4 到第 9 章回答的是“目标架构应该是什么”，第 10 章回答的就是“工程上先做什么、后做什么”。路线图的作用不是展示 backlog，而是把第 2.8 节那九个架构维度按依赖关系排成实施顺序。</p>
 <p>更直接地说：先修真相，再修体验；先把事实流、生命周期和验证守住，再开放生态、丰富协作、提升运营面。</p>
 <h2 id="r1--事实流先建立唯一运行时真相"><a class="header" href="#r1--事实流先建立唯一运行时真相">R1 — 事实流：先建立唯一运行时真相</a></h2>
 <ul>
@@ -1513,7 +1274,7 @@ UI / Operator 负责人
 <p>这条边界很重要。Harness 能让系统不撒谎：没完成就不显示完成，产物无效就不交付，验证失败就不进入 ready，会话切换不串状态。但它不能保证产品判断正确、模型选择最优、用户需求被理解、成本足够低、交互体验足够好。把 harness 当成产品质量的全部，是另一种形式的过度工程。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="12-可执行清单"><a class="header" href="#12-可执行清单">12. 可执行清单</a></h1>
-<p>边界讲清之后，剩下的工作就是把前面各章的要求压成能执行的检查项。第 12 章不是新观点，而是把第 2.7 节那九个维度压成可以拿来做合并前、上线前、事故后的动作清单，并补上一条匿名失败链的逐层排查顺序。</p>
+<p>边界讲清之后，剩下的工作就是把前面各章的要求压成能执行的检查项。第 12 章不是新观点，而是把第 2.8 节那九个维度压成可以拿来做合并前、上线前、事故后的动作清单，并补上一条匿名失败链的逐层排查顺序。</p>
 <h2 id="121-维护者预合并清单影响-harness-的-pr"><a class="header" href="#121-维护者预合并清单影响-harness-的-pr">12.1 维护者预合并清单（影响 harness 的 PR）</a></h2>
 <ul>
 <li><input disabled="" type="checkbox"> 变更映射到显式用户可见不变量。</li>

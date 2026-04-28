@@ -2,6 +2,10 @@
 
 第 2 章给了正向样本，第 3 章给了失败叙事。把两者叠在一起看，可以得到一个比“某个仓库的实现细节”更稳定的结论：成熟 agent 系统最终都会收敛到一条共同的运行时总图。Claude Code 把这张总图长成了一套丰满器官；Codex 把它拆成了一套更清楚的模块边界。我们真正要吸收的不是它们的代码排版，而是这张总图背后的责任分工。[^claudecode-codex-spine-ch4]
 
+把第 1 章的控制论语言落到运行时，可以先看五个角色：受控对象是 task / session / thread；目标与约束是用户目标、验收标准、artifact 契约、权限和预算；传感器是 tool 回执、文件变化、validator 结果、child summary 和 turn/item 事件；控制器负责继续、压缩、重试、派工、升级、打断、恢复；执行器则是 shell、文件系统、MCP、子 agent、worktree、外部 API 和 artifact 写入。
+
+按这个框架回看 Claude Code，`ToolUseContext` 和 `query.ts` 是控制器入口，`StreamingToolExecutor.ts` 是执行器调度面，`sessionStorage.ts`、`fileStateCache.ts`、`agentSummary.ts`、`diskOutput.ts` 是传感器与状态保持层，`microCompact` / `compact.ts` / `resumeAgent.ts` / `worktree.ts` 则负责稳定性控制。Codex 把同一逻辑拆得更显式：`Thread` / `Turn` / `Item` 建模受控对象，`thread-store` 与 `rollout` 负责持久层，`app-server` 与 notifications 公开观测总线，`tools` registry、sandbox、approval、`thread/resume`、`thread/fork`、`turn/interrupt` 构成执行与稳定边界。[^claudecode-codex-spine-ch4]
+
 ```text
 用户任务 / 外部触发
         |

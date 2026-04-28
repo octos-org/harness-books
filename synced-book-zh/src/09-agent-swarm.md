@@ -37,21 +37,57 @@ UI / Operator 负责人
 
 ## 8.3 为什么 sub-agent / swarm 往往比单个 1M 上下文更优
 
-如果任务天然可以分块，那么把全部材料一次性塞进单个超长上下文，往往不是最优解。更常见的高收益结构是：
+第 1 章已经给出理论结论：最大上下文窗口不是平坦工作区。到了第 8 章，这个理论要落成实践判断：什么时候应该用单个超长上下文，什么时候应该拆成多个局部 agent。
+
+如果任务天然可以分块，把全部材料一次性塞进单个超长上下文，往往不是最优解。更常见的高收益结构是：
 
 1. coordinator 只持有总目标、拆解计划、共享约束和最终验收标准；
 2. 每个 sub-agent 只拿自己那一块原始材料或代码域；
 3. 子 agent 产出的是摘要、证据、diff、引用和待验证结论，而不是把整个大海捞针窗口一路向上传递；
 4. verifier 再把跨 shard 的冲突和遗漏拦下来。
 
-这样做的好处不是单一维度的，而是四个维度一起改善：
+### 8.3.1 成本不能只看 token 账单
 
-- 质量上：减少位置偏置和 “lost in the middle” 效应，让每个 agent 都在更短、更密、更局部的工作区间里完成任务。[^swarm-econ-ch8]
-- 成本上：避免把同一百万 token 在每一轮对话里反复 prefill；可复用的公共材料可以缓存，不可复用的局部材料只喂给对应 agent。
-- 时延上：多个 200K 以内的 prefill 更容易并行、调度和提前结束，首 token 延迟也更容易控制。
-- 组织上：每个 agent 的失败边界更清晰，更适合绑到具体 validator、artifact policy 和 owner。
+讨论 1M context 成本时，最常见的误区是只看 token 单价。账单当然重要，但真正把系统压垮的，常常是 prefill 变慢、首 token 延迟上升、KV cache 撑大、并发吞吐下降、重试变贵，以及任务调度越来越难。
 
-当然，这不是说“永远不要用 1M 上下文”。如果问题确实需要对全局原文做一次统一视野下的比对、排序或证据整合，超长上下文仍然有价值。但在大多数工程任务里，真正需要的是局部阅读、局部推理、局部修改，最后再做全局汇总和验证。
+OpenAI 公开价格页按百万 token 标价，但也把标准处理费率限定在 `under 270K` context lengths；Google 在 Gemini 1.5 发布时一方面宣布 128K 到 1M 的 pricing tiers，另一方面提醒早期测试者应预期更长 latency。[^swarm-econ-ch8] 这些信号说明，超长上下文不是普通请求的线性放大版。
+
+从系统计算看，痛点通常不在 output token，而在 prefill。MInference 摘要里给过一个足够刺眼的数字：8B LLM 处理 1M token prompt 可以到 30 分钟量级，并把根因指向 attention 的二次复杂度。[^swarm-econ-ch8] 这不是某家 API 的具体实现细节，而是长序列计算的基础压力。
+
+### 8.3.2 1M 和 5 个 200K 不能只比总 token
+
+如果做一个极端理想化假设：一个 1M 请求，和五个各 200K 的请求，总输入 token 恰好一样，没有重复背景、没有协调 token、没有缓存，那么从“按 token 计费”的账单角度看，它们可能接近。
+
+但真实 agent 系统很少这么运行。更常见的是：coordinator 持有目标、计划、约束和最终验收；每个子 agent 只持有一个 shard 的原始材料；公共制度性上下文通过缓存或固定 system prompt 复用；向上汇报的是摘要、证据、diff、引用和中间产物，而不是整份原始语料。这时 `5 x 200K` 的真实总 token 常常小于 `1 x 1M`。
+
+即使总 token 恰好一样，prefill 计算量也不一样。若按 dense attention 做一阶量级估算：
+
+- 单次 1M 上下文的 attention 规模约为 `1,000,000^2 = 10^12`；
+- 五次 200K 的总 attention 规模约为 `5 * 200,000^2 = 2 * 10^11`。
+
+也就是说，在“总 token 相同”的理想化条件下，`1 x 1M` 的 attention 量级仍然大约是 `5 x 200K` 的 5 倍。工程上要同时看三本账：账单、时延、可调度性。
+
+### 8.3.3 sub-agent 的收益不是只省钱
+
+很多团队把 sub-agent / swarm 只当成吞吐工具，这是低估了它。它真正带来的，是质量曲线和成本曲线的同时改善。
+
+单个超长上下文的失败模式往往是：原始材料过多，相关证据密度下降；中间状态和历史痕迹污染当前任务；query 位置不稳定，重要约束被长正文淹没；一次失败就要重做整段大 prefill。
+
+分解成 sub-agent 之后，系统得到的是另一种工作形态：每个 agent 看到的上下文更短、更局部，位置偏置更可控；每个 agent 的输入类型更单纯，更接近单一任务；错误只需在局部 shard 重试，不必重灌整段全局上下文；coordinator 处理的是证据摘要和冲突，而不是整个原始语料海洋。
+
+换句话说，sub-agent 不是为了炫耀架构复杂，而是为了把每个 agent 压回它更容易成功的工作区间，再把跨 shard 协调交给 harness、session 和 verification。
+
+### 8.3.4 什么时候仍然该用单个超长上下文
+
+不是所有任务都该拆成 swarm。以下几类任务，单个超长上下文仍然可能是合理选择：
+
+- 必须对全局原文做一次统一排序、比对或证据归并；
+- 任务主要是全局摘要，不涉及局部修改和重复迭代；
+- 原始材料高度相关，拆分后反而破坏语义连续性；
+- 上下文可以一次缓存，多轮查询主要复用同一大语料；
+- 你更在意一次性全局理解，而不是并行吞吐。
+
+但这些前提只要稍微动摇，sub-agent 方案往往就开始占优。尤其当任务同时满足三条：材料天然可分 shard；子问题可以先局部求解再全局汇总；每轮失败重试代价很高，就应当优先考虑分解。
 
 ## 8.4 让 swarm 不失控的四条硬规则
 
@@ -66,6 +102,6 @@ UI / Operator 负责人
 
 [^many-brains-ch8]: Anthropic, *Scaling Managed Agents: Decoupling the brain from the hands.* 本章在此处使用其 many brains / many hands 的组织视角，说明 coordinator、worker 与 verifier 的分工；对应第 19 章参考文献 3。
 [^claudecode-codex-multiagent-ch8]: 本章在此处综合 Claude Code 的 `AgentTool.tsx`、`loadAgentsDir.ts`、`teammateMailbox.ts`、`worktree.ts` 等实现，以及 Codex `spawn_agent` / `send_input` / `wait_agent` / `resume_agent` 等工具原语，用来说明多 agent 需要角色、通信、隔离、汇总与恢复这些一等能力；对应第 19 章参考文献 21、24。
-[^swarm-econ-ch8]: 本章在此处综合 Anthropic 的 managed agents 视角与第 1 章长上下文文献，用于说明 sub-agent / swarm 在质量、成本与时延上的优势；对应第 19 章参考文献 3、11-20。
+[^swarm-econ-ch8]: 本章在此处综合 Anthropic 的 managed agents 视角、OpenAI API Pricing 关于 `under 270K` 标准费率的限定、Google Gemini 1.5 关于 1M context pricing tiers 与 latency 的说明、Google long context 文档关于 retrieval-cost tradeoff 与 caching 的说明、LongLLMLingua 关于 higher computational cost / performance reduction / position bias 的概括，以及 MInference 关于 1M token prefill 代价的摘要数字，用于说明 sub-agent / swarm 在质量、成本与时延上的优势；对应第 19 章参考文献 3、14、15、18、19、20。
 
 ---
