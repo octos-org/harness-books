@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-3f9bb3c5.js";
+            window.path_to_searchindex_js = "searchindex-c0c089e2.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-50f4af94.js"></script>
@@ -252,14 +252,71 @@
 <li>长周期一致性断裂</li>
 <li>自信语言和真实正确性分离</li>
 </ul>
-<h2 id="11-从-llm-工作机理到-agentic-ai为什么必须有外层工作环境"><a class="header" href="#11-从-llm-工作机理到-agentic-ai为什么必须有外层工作环境">1.1 从 LLM 工作机理到 Agentic AI：为什么必须有外层工作环境</a></h2>
-<p>这本书的开端不能直接跳到“harness 很重要”。那样会让读者误以为 harness 是某种新框架、新中间件，或者更精致的 prompt 工程。真正的起点应该更低一层：LLM 是什么样的机器，它天然缺什么；agent 这个概念怎样从 AI 理论里的自治系统，演化成今天围绕 LLM 的工具执行体；如果把 LLM 当成一个需要工作集管理的 cache system，或者一个高增益但会漂移的放大器系统，外层到底要补什么机制。</p>
+<p>要理解这个工作区间为什么存在、它的边界从哪里来，必须先看清模型在架构层面天然会怎样失效。所以本章先讲机理（§1.1）与它的实测印证（§1.2），把每条机理对应到后续的 harness 能力（§1.3），再展开“外层控制系统”到底是什么、从哪来（§1.4 起）。换句话说：<strong>先讲模型为什么必然失效，再讲控制系统如何回应。</strong> 这条顺序不是叙事偏好，而是因为 harness 的整个设计，都是从这些失效机理推导出来的。</p>
+<h2 id="11-模型时空失效的机理自回归是一个有限预算的时空滤波器"><a class="header" href="#11-模型时空失效的机理自回归是一个有限预算的时空滤波器">1.1 模型时空失效的机理：自回归是一个有限预算的时空滤波器</a></h2>
+<p>本章开头给了两个类比：CPU 缓存的局部性、放大器的线性区。它们看起来分属存储与电路两个世界，其实是同一件事的两个影子。把这件事讲透，就是本节的任务：<strong>有效工作区间的存在，是 Transformer 加自回归这套架构在有限算力与显存预算下的数学必然，而不是“模型还不够好、以后会修好”的暂时缺陷。</strong> 讲透机理很重要，因为后文每一项 harness 能力，都是对其中某一条失效机理的对症补偿；不先讲清楚模型天然缺什么，harness 就会被误读成一袋经验技巧。</p>
+<p>把那两个类比收束成一句话：<strong>自回归加 attention，本质上就是一个有限预算下的时空滤波器。</strong> 它对“位置远”（空间）和“时间旧”（时间）的信号都会衰减——cache 局部性说的是空间维度上的工作集，放大器线性区说的是不失真的稳定带宽，而它们各自的电路与历史，会在 §1.4 展开。</p>
+<h3 id="111-空间轴位置越远有效敏感度越低"><a class="header" href="#111-空间轴位置越远有效敏感度越低">1.1.1 空间轴：位置越远，有效敏感度越低</a></h3>
+<p>沿上下文方向，至少有四条机理在同时压低远端 token 的有效权重，外加一条“非均匀分辨率”把它做进了今天的架构。</p>
+<p>第一，<code>softmax 的注意力质量守恒导致稀释</code>。attention 输出是对窗口内所有 token 的凸组合，权重之和恒为 1；窗口里有 n 个 token，平均每个只分到 1/n 的“注意力预算”。要让模型把权重牢牢压在某一个远端关键 token 上，它的 logit 必须显著高过其余，量级大约是 ln n。但 logit 是有界的——RMSNorm、QK-Norm，以及像 Kimi 报告里专门设计的 QK-Clip，都在压制它；不封顶时，attention logit 会冲过 1000 量级、训练直接发散。logit 被一个与 n 无关的常数卡住，单个 token 能拿到的最大权重就随 n 增大趋于零。结论几乎是算术而非调参：<strong>窗口越满，对任意单个远端证据的“最锐检索”越弱。</strong><sup class="footnote-reference" id="fr-softmax-dilution-ch1-1"><a href="#footnote-softmax-dilution-ch1">1</a></sup> <sup class="footnote-reference" id="fr-bounded-logit-ch1-1"><a href="#footnote-bounded-logit-ch1">2</a></sup></p>
+<p>第二，<code>RoPE 的距离衰减包络</code>。主流位置编码 RoPE 在数学上自带一条随相对距离衰减的包络：两个 token 距离越远，其注意力内积的上界越低；而一旦超过训练长度，旋转相位会退相干，外推直接失效。需要诚实标注的是，这条衰减的严格证明假设 query 与 key 为常向量，实际中它更像一个先验偏置而非铁律——但偏置方向是确定的。<sup class="footnote-reference" id="fr-rope-decay-ch1-1"><a href="#footnote-rope-decay-ch1">3</a></sup></p>
+<p>第三，<code>有限残差维度等于有限信道容量</code>。残差流是固定宽度的向量，却要承载整段上下文里的相关信息。由信息论，一个定宽状态无法无损保存无界上下文——越旧、越远的细节越会被压缩、覆盖。这正是 §1.4.1 将展开的“LLM 看起来记得、却没有持久事实”在数值层面的根。</p>
+<p>第四，<code>over-squashing 与表示坍缩</code>。把一个远端 token 的信息送到“当前预测位点”，要跨越多层 attention；而因果掩码让信息单向汇聚到最后一个 token，逐层 softmax 平均会把任何单一来源指数稀释，以致不同的长输入会在末位表示上坍缩成几乎一样（低精度浮点会让情况更糟）。这解释了一个反直觉现象：长上下文里“计数、复制、区分”这类看似简单的任务反而最先退化。<sup class="footnote-reference" id="fr-oversquash-ch1-1"><a href="#footnote-oversquash-ch1">4</a></sup></p>
+<p>把这四条叠起来，下一节（§1.2）将给出的经验现象——U 形偏置、NoLiMa 等——就有了机理解释：<strong>上下文窗口不是一块平坦内存，它的“有效分辨率”从光标附近向远处递减。</strong></p>
+<p>而工业界已经把这条“非均匀分辨率”直接做进了架构。为了在百万 token 上还付得起算力，新一代模型不再对全程做均匀的全注意力：滑窗注意力是字面上的矩形窗，窗外直接置零；线性注意力与 SSM（如 MiniMax 的做法）是字面上的指数衰减核；KV 压缩（DeepSeek V4 的 CSA 与 HCA、Kimi 的 MLA）则是有损降采样——近端最近的 token 保留高分辨率、不压缩，越往远端、KV 被越激进地聚合：CSA 把每 m 个 token 压成一条，HCA 把每 m′（远大于 m）个 token 压成一条。换句话说，<strong>所谓“1M context”不是一条处处等价的传送带，而是一组分辨率非均匀的滤波器：近端细、远端粗。</strong> 这恰好把 §1.2 “容量上限不等于有效工作区间”从经验建议升级成了架构事实——连模型厂商自己，都在用压缩换取这个容量上限。<sup class="footnote-reference" id="fr-nonuniform-kv-ch1-1"><a href="#footnote-nonuniform-kv-ch1">5</a></sup></p>
+<p>这里要专门强调一句，免得读者误以为“换个更强的闭源前沿模型就没事了”：<strong>闭源前沿也不例外。</strong> 第三方系统评测（如 Chroma 对 18 个前沿模型的 <em>Context Rot</em> 测试）显示，每一个模型都在每一个长度增量上掉点；前沿模型只是 rolloff 更缓，而非豁免。更说明问题的是，lost-in-the-middle 与干扰项这类退化，在大概率使用全注意力的模型上照样出现——说明它来自上面这些基本面地板，而不只是压缩作弊。Anthropic 自己的工程文档也直说，context rot 在远未触达容量上限时就已经开始。<sup class="footnote-reference" id="fr-context-rot-ch1-1"><a href="#footnote-context-rot-ch1">6</a></sup></p>
+<h3 id="112-时间轴时间越旧有效敏感度越低"><a class="header" href="#112-时间轴时间越旧有效敏感度越低">1.1.2 时间轴：时间越旧，有效敏感度越低</a></h3>
+<p>长任务的失效看起来是“时间”问题——跑得越久越偏——但要拆成两半才讲得透：一半可约为空间问题，另一半不可约。</p>
+<p><code>记忆老化可约为空间衰减</code>。vanilla Transformer 除 KV cache 外没有跨步状态——“k 步前还记不记得”这件事，等价于“那个 token 还在不在窗口里、当前 token 还 attend 得到它吗”。随着生成推进，一个旧事实与当前光标的相对位置距离单调增大，于是按 §1.1.1 的四条空间机理被衰减，最终被窗口、压缩或逐出淘汰。所以“随时间遗忘”在机理上就是“随相对距离衰减”——时间问题塌缩成了空间问题。这正是 §1.4.1 将展开的“看起来记得、却没有持久事实”的来源。</p>
+<p><code>误差复合不可约</code>。即便给一个完美、无限、均匀的窗口（空间衰减为零），自回归仍然会随任务变长而劣化：每生成一个 token 都是一次采样，且它会成为后续所有 token 的条件；每步有一个小错误率 ε，长 T 步全对的概率约为 (1−ε) 的 T 次方——可靠性随 horizon 几何衰减。再叠加 exposure bias：训练时模型条件于正确前缀，推理时却条件于自己越来越偏离分布的输出。这一半是反馈回路自身的性质，<strong>延长上下文救不了它</strong>——只能靠降低单步 ε、缩短 horizon、独立验证、重采样。</p>
+<p>用电路语言收口最干净：一个递归（IIR）系统有两种相互独立的退化——<code>冲激响应衰减</code>（远端输入被衰减，等于记忆与空间衰减，可约）和<code>回路噪声累积</code>（把自己带噪的输出回灌，等于误差复合，不可约）。这正对应两类互补的反馈器件：<code>正反馈锁存器</code>把关键事实锁住、对抗记忆衰减，<code>负反馈环</code>把错误送回纠偏、对抗误差复合——它们的电路史（Black 的负反馈放大器、SRAM 的双稳态锁存）会在 §1.4.8 展开。本节先把“为什么需要这两类器件”从机理上立住。</p>
+<p>这里给出一个后文会反复使用的可操作判据：<strong>把丢失的信息重新塞回光标附近——如果失效被修复，它是空间问题，可由上下文工程补偿；如果模型本来就拿到了信息却仍然漂移、越错越多，它是不可约的时间核，只能由验证、缩短 horizon 和人在环上来兜住。</strong></p>
+<h2 id="12-容量上限不等于有效工作区间理论预测实测印证"><a class="header" href="#12-容量上限不等于有效工作区间理论预测实测印证">1.2 容量上限不等于有效工作区间：理论预测，实测印证</a></h2>
+<p>§1.1 的机理预测了一个直接后果：同一个上下文窗口，越往远端越不可用。这一节把它落到事实，并给出工程上该怎样对待它。</p>
+<p>“支持 1M token context”首先是能力上限，不是工程上可以无脑塞满的建议值。长上下文最容易误导团队的地方，在于大家把“能放进去”误当成“同样擅长用好”。事实层面已经很清楚：</p>
+<ul>
+<li>Google 在 2024 年发布 Gemini 1.5 时，报告它在单 needle 的 Needle-in-a-Haystack 测试里，在 1M token 下仍能达到 99% 命中率；但它自己后续的 long context 开发文档也明确提醒：一旦从“单 needle”变成多个待检索信息点，表现就不会维持同样精度，而且会随上下文内容大幅波动。<sup class="footnote-reference" id="fr-gemini15-1"><a href="#footnote-gemini15">7</a></sup> <sup class="footnote-reference" id="fr-google-long-context-1"><a href="#footnote-google-long-context">8</a></sup></li>
+<li><em>Lost in the Middle</em> 说明相关信息在开头或结尾时更容易被利用，放在中间时表现会下降；<em>Found in the Middle</em> 进一步把这种现象概括为 <code>"U-shaped attention bias"</code>——这正是 §1.1 那条“有效分辨率从光标附近向远处递减”曲线在检索任务上的形状。<sup class="footnote-reference" id="fr-ltm-1"><a href="#footnote-ltm">9</a></sup> <sup class="footnote-reference" id="fr-fitm-1"><a href="#footnote-fitm">10</a></sup></li>
+<li>NoLiMa 和 LongCodeBench 又把问题推到更接近真实工作的场景：去掉字面匹配线索、或进入代码理解与修复任务后，长上下文能力会明显变脆——NoLiMa 在 32K 上就把 GPT-4o 从 99.3% 打到 69.7%。<sup class="footnote-reference" id="fr-nolima-1"><a href="#footnote-nolima">11</a></sup> <sup class="footnote-reference" id="fr-longcodebench-1"><a href="#footnote-longcodebench">12</a></sup></li>
+<li>Anthropic 的长上下文 prompting 文档则给出很务实的经验：长文档放前面、query 放最后面，复杂多文档输入里响应质量可提高到 30% 左右。<sup class="footnote-reference" id="fr-anthropic-long-1"><a href="#footnote-anthropic-long">13</a></sup></li>
+</ul>
+<p>这说明同一个“1M context”里，不同位置、不同信息密度、不同任务形式的可用性并不均匀。上下文窗口更像一块可寻址的大内存，不像一条任何位置都等价的理想传送带；所谓“最佳工作区间”也不是某个固定 magic number（比如“128K 最好、256K 变差”），而是一个随任务结构变化的工作带宽：在多大范围内，模型还能稳定检索、遵循指令、保持多步推理、避免位置偏置，并让系统在成本和时延上可接受。</p>
+<p>所以工程上要把 context window 分成两个概念：</p>
+<ul>
+<li>容量上限：模型最多能接收多少 token。</li>
+<li>有效工作区间：在当前任务形态下，模型还能稳定检索、遵循指令、维持推理链的那一段上下文工作区——这才是 harness 关心的对象。</li>
+</ul>
+<p>结论是：最大 context 是容量上限，最佳工作区间才是设计目标。Agent 系统不能默认“把更多材料塞进窗口”就会更可靠，而应当反过来设计任务：让模型看到更短、更密、更靠近当前决策的证据切片，把状态、历史、产物和验证证据移到运行时事实流里，再按需调回 prompt。</p>
+<h2 id="13-机理对应能力本书后续章节的提纲"><a class="header" href="#13-机理对应能力本书后续章节的提纲">1.3 机理对应能力：本书后续章节的提纲</a></h2>
+<p>把 §1.1 的六条机理排开，本书后续的每一项 harness 能力，都可以被读成“对某一条失效机理的对症补偿”。下面这张表就是全书的提纲：左边是模型层“天然缺什么”，右边是 harness 层“补什么、在哪一章展开”。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>失效机理（模型层）</th><th>失效表现</th><th>对症的 harness 能力</th><th>展开章节</th></tr>
+</thead>
+<tbody>
+<tr><td>softmax 稀释</td><td>上下文越长，关键证据越被“平均掉”</td><td>认知层级缓存控制：admission / eviction、compaction、检索式“短密近”证据切片</td><td>§1.4.7、第 4 章（事实流）、第 9 章</td></tr>
+<tr><td>RoPE 距离衰减 / 外推退相干</td><td>远距离关联弱、超长外推失效</td><td>上下文分层加按需调入（L1 prompt / L2 <code>AGENTS.md</code>·skills·memory / L3 事实流）；把关键事实重新拉回光标附近</td><td>§1.4.7、第 4 章、第 6 章</td></tr>
+<tr><td>有限残差维度</td><td>长历史细节被压缩、陈旧假设增多</td><td>持久事实流：把状态移出 prompt、写回运行时，而不是让模型“记住”</td><td>第 4 章（session 支柱）、第 6 章</td></tr>
+<tr><td>over-squashing / 表示坍缩</td><td>长输入里“分不清”、计数与复制类退化</td><td>结构化证据加产物契约加独立验证：不靠模型在巨大上下文里自己看出来</td><td>第 4 章（验证支柱）、第 9 章</td></tr>
+<tr><td>非均匀 KV 分辨率</td><td>同一窗口不同位置可用性不均（U 形）</td><td>把容量上限与有效工作区间分开设计；短密近证据加检索加分层缓存，不默认塞满</td><td>§1.2、第 4 章</td></tr>
+<tr><td>记忆老化（时间⊆空间）</td><td>跨小时、跨会话目标漂移，陈旧上下文</td><td>目标保持加锁存：目标、约束、产物锁进 session 与 artifact；compaction 时保留关键决策并定期回注</td><td>第 4 章（session）、第 9 章（短回路与长回路）</td></tr>
+<tr><td>不可约误差复合</td><td>长任务越跑越偏，自信但错误累积</td><td>负反馈环：独立验证、终态裁决、回放、重试与升级、人在环上；并用子 agent 分解缩短单链 horizon</td><td>第 4 章（验证）、第 7 章（操作员面）、第 8 章（群体编排）、第 9 章</td></tr>
+</tbody>
+</table>
+</div>
+<p>读这张表有两个要点。</p>
+<p>第一，<strong>harness 不是一袋经验技巧，而是一组针对已知失效机理的控制器件。</strong> 这正是把 §1.4.6 “harness 是外层反馈控制器”落到实处的方式：<code>AGENTS.md</code>、skills、memory、hooks、validators、dashboard、swarm 协作，分别是这套反馈控制器上的不同传感器、执行器和约束器件，而每一个都对准一条具体的失效机理。</p>
+<p>第二，<strong>空间类机理大多能被上下文工程“补偿”，但时间轴上那条“不可约误差复合”补偿不了、只能被“兜住”。</strong> 这条边界不是修辞，而是工程事实：它正是 §1.5–1.6 将给出的“上下文工程必要但不充分、必须上升到 harness 工程”的根本原因，也是为什么第 8 章要用群体编排去缩短单链 horizon、第 9 章要把系统拆成短回路与长回路。把更大的窗口当成解药，只能缓解空间类机理；时间类的不可约核，必须靠运行时的验证与人的监督来关闭。</p>
+<p>这条边界还顺带解释了一个产业层面的判断：既然时空失效是架构的必然、连前沿模型都只能“缓”而不能“消”，那么“把上下文窗口做得更大”就永远只是缓解而非根治。真正决定长任务可靠性上限的，是模型之外这套控制系统——这也是本书把 harness engineering 当作工程主战场，而不是把希望寄托在“等下一代模型”的根本理由。</p>
+<h2 id="14-从-llm-工作机理到-agentic-ai为什么必须有外层工作环境"><a class="header" href="#14-从-llm-工作机理到-agentic-ai为什么必须有外层工作环境">1.4 从 LLM 工作机理到 Agentic AI：为什么必须有外层工作环境</a></h2>
+<p>§1.1–1.3 已经说清楚模型天然缺什么、以及每条缺陷对应哪项 harness 能力。接下来的问题是：这套“外层控制系统”到底从哪来、为什么偏偏是它。答案要从更低一层讲起：LLM 是什么样的机器，它天然缺什么；agent 这个概念怎样从 AI 理论里的自治系统，演化成今天围绕 LLM 的工具执行体；如果把 LLM 当成一个需要工作集管理的 cache system，或者一个高增益但会漂移的放大器系统，外层到底要补什么机制。</p>
 <p>答案会自然落到 agentic AI。所谓 agentic AI，不是“让模型自己想办法”的浪漫说法，而是给 LLM 搭一个能感知、行动、记忆、验证、恢复和被人类监督的工作环境。这个环境提供的负反馈循环，才是 LLM 能稳定高效工作的前提。</p>
-<h3 id="111-llm-的能力来自条件生成不来自内置状态机"><a class="header" href="#111-llm-的能力来自条件生成不来自内置状态机">1.1.1 LLM 的能力来自条件生成，不来自内置状态机</a></h3>
+<h3 id="141-llm-的能力来自条件生成不来自内置状态机"><a class="header" href="#141-llm-的能力来自条件生成不来自内置状态机">1.4.1 LLM 的能力来自条件生成，不来自内置状态机</a></h3>
 <p>LLM 的核心能力，是在给定上下文条件下生成下一段高概率、高相关性的文本或结构化动作。这个能力非常强：它可以吸收大量语言模式、代码模式、工具调用模式和领域知识，在短时间内给出候选解释、候选计划、候选代码和候选产物。但从系统角度看，它仍然不是状态机、操作系统、数据库或验证器。</p>
 <p>这一区分很关键。一个 LLM 可以在当前上下文里“看起来记得”某个约束，但它并不天然拥有持久事实；它可以生成一个 shell 命令，但它不会天然知道这个命令是否越权、是否破坏工作区、是否影响另一个会话；它可以说“完成了”，但这句话本身不等于产物存在、测试通过、引用完整或用户目标达成。</p>
-<p>因此，LLM 的强项和弱项来自同一件事：它是高能力的条件生成器。只要上下文切片合适、目标明确、反馈短且可验证，它会表现得非常聪明；一旦上下文过长、目标漂移、工具副作用复杂、反馈延迟拉长，它就会开始把概率上的连贯性误当成运行时事实。后文所谓“最佳工作区间”，首先就是这个条件生成器能稳定工作的区间。</p>
-<h3 id="112-单轮智能面对长任务时会遇到五类系统挑战"><a class="header" href="#112-单轮智能面对长任务时会遇到五类系统挑战">1.1.2 单轮智能面对长任务时会遇到五类系统挑战</a></h3>
+<p>因此，LLM 的强项和弱项来自同一件事：它是高能力的条件生成器。只要上下文切片合适、目标明确、反馈短且可验证，它会表现得非常聪明；一旦上下文过长、目标漂移、工具副作用复杂、反馈延迟拉长，它就会开始把概率上的连贯性误当成运行时事实。前文所谓“最佳工作区间”，首先就是这个条件生成器能稳定工作的区间。</p>
+<h3 id="142-单轮智能面对长任务时会遇到五类系统挑战"><a class="header" href="#142-单轮智能面对长任务时会遇到五类系统挑战">1.4.2 单轮智能面对长任务时会遇到五类系统挑战</a></h3>
 <p>把 LLM 放进真实工作流后，问题很快就不再是“模型能不能回答”。真正的问题会变成下面五类：</p>
 <ol>
 <li><code>目标保持</code>：用户目标会被拆成多个子目标，子目标之间会有依赖、冲突和优先级。模型可以复述目标，但不天然拥有跨小时、跨会话的目标保持机制。</li>
@@ -269,10 +326,10 @@
 <li><code>人类控制</code>：用户需要授权、打断、恢复、审计和接管。一个不能被看懂、不能被暂停、不能复盘的 agent，即使短期能完成任务，也很难进入生产。</li>
 </ol>
 <p>这些挑战都不是单个 prompt 能彻底解决的。prompt 可以提高局部成功率，却不能提供持久状态、权限边界、工具隔离、回放证据和终态裁决。它们必须进入运行时。</p>
-<h3 id="113-agent-概念的演化从自治系统到-llm-工具执行体"><a class="header" href="#113-agent-概念的演化从自治系统到-llm-工具执行体">1.1.3 Agent 概念的演化：从自治系统到 LLM 工具执行体</a></h3>
-<p>早期 agent 理论并不是从 LLM 开始的。Franklin 和 Graesser 对 autonomous agent 的定义，直到今天都非常适合拿来做起点：agent 不是一次性运行的程序，而是会 <code>"senses that environment and acts on it, over time"</code> 的系统；他们甚至故意举了一个有点刺耳的例子，说 thermostat 也满足这个定义。<sup class="footnote-reference" id="fr-agent-theory-ch1-1"><a href="#footnote-agent-theory-ch1">1</a></sup></p>
+<h3 id="143-agent-概念的演化从自治系统到-llm-工具执行体"><a class="header" href="#143-agent-概念的演化从自治系统到-llm-工具执行体">1.4.3 Agent 概念的演化：从自治系统到 LLM 工具执行体</a></h3>
+<p>早期 agent 理论并不是从 LLM 开始的。Franklin 和 Graesser 对 autonomous agent 的定义，直到今天都非常适合拿来做起点：agent 不是一次性运行的程序，而是会 <code>"senses that environment and acts on it, over time"</code> 的系统；他们甚至故意举了一个有点刺耳的例子，说 thermostat 也满足这个定义。<sup class="footnote-reference" id="fr-agent-theory-ch1-1"><a href="#footnote-agent-theory-ch1">14</a></sup></p>
 <p>这句话初看很“降格”，因为现代人一说 agent，脑海里往往先出现一个会说话、会规划、会调工具的复杂体。但 Franklin / Graesser 的用意恰好相反：他们是想提醒我们，不要把 agent 的本体误认成语言表面。只要一个系统会感知环境、根据当前状态调整行为、并把自己的行动回写到下一轮感知条件里，它就已经进入了 agent 的问题域。</p>
-<p>Wooldridge / Jennings 那条经典线进一步把 agent 的弱定义压成几项可工程化特征：自主性、反应性、主动性和社会性。<sup class="footnote-reference" id="fr-agent-theory-ch1-2"><a href="#footnote-agent-theory-ch1">1</a></sup> 到了 LLM 时代，ReAct 把这条线重新接到语言模型上：模型不只是一次性回答，而是在 reasoning 和 acting 之间循环，让观察结果进入下一步推理。<sup class="footnote-reference" id="fr-llm-agent-evolution-ch1-1"><a href="#footnote-llm-agent-evolution-ch1">2</a></sup> Claude Code 论文也把现代 coding agent 的演化路径说得很清楚：从 autocomplete，到 IDE assistant，再到可以计划多步修改、执行 shell、读写文件、迭代自己输出的 agentic system。<sup class="footnote-reference" id="fr-claude-code-design-space-ch1-1"><a href="#footnote-claude-code-design-space-ch1">3</a></sup></p>
+<p>Wooldridge / Jennings 那条经典线进一步把 agent 的弱定义压成几项可工程化特征：自主性、反应性、主动性和社会性。<sup class="footnote-reference" id="fr-agent-theory-ch1-2"><a href="#footnote-agent-theory-ch1">14</a></sup> 到了 LLM 时代，ReAct 把这条线重新接到语言模型上：模型不只是一次性回答，而是在 reasoning 和 acting 之间循环，让观察结果进入下一步推理。<sup class="footnote-reference" id="fr-llm-agent-evolution-ch1-1"><a href="#footnote-llm-agent-evolution-ch1">15</a></sup> Claude Code 论文也把现代 coding agent 的演化路径说得很清楚：从 autocomplete，到 IDE assistant，再到可以计划多步修改、执行 shell、读写文件、迭代自己输出的 agentic system。<sup class="footnote-reference" id="fr-claude-code-design-space-ch1-1"><a href="#footnote-claude-code-design-space-ch1">16</a></sup></p>
 <p>把这些概念翻成工程语言，一个现代 LLM agent 至少包含下面这个循环：</p>
 <pre><code class="language-text">用户目标 / 环境 / 工具 / 运行时事实
   -&gt; 感知（读取上下文、工具回执、session 状态）
@@ -282,7 +339,7 @@
   -&gt; 新环境 / 新事实
 </code></pre>
 <p>这也是为什么 agent 和普通聊天程序在工程上完全不是一回事。普通程序的输入和输出常常是一锤子买卖；agent 的当前行动会改变它下一次能感知到什么，所以它天然是闭环系统，而不是单轮映射函数。语言模型在这里只是判断器或策略生成器的一部分，不是整个系统。</p>
-<h3 id="114-agentic-ai-做的事给-llm-建一个稳定工作环境"><a class="header" href="#114-agentic-ai-做的事给-llm-建一个稳定工作环境">1.1.4 Agentic AI 做的事：给 LLM 建一个稳定工作环境</a></h3>
+<h3 id="144-agentic-ai-做的事给-llm-建一个稳定工作环境"><a class="header" href="#144-agentic-ai-做的事给-llm-建一个稳定工作环境">1.4.4 Agentic AI 做的事：给 LLM 建一个稳定工作环境</a></h3>
 <p>如果把上一节的闭环拆开，agentic AI 的工作就很清楚了：它不是替代 LLM，而是为 LLM 建工作环境。</p>
 <ul>
 <li><code>感知层</code> 负责把用户目标、文件、日志、网页、MCP 资源、历史事实和工具回执组织成当前可用上下文。</li>
@@ -291,8 +348,8 @@
 <li><code>验证层</code> 负责把“看起来完成”改成“证据证明完成”。</li>
 <li><code>控制层</code> 负责压缩、恢复、打断、升级、分派子 agent，并把错误反馈回下一轮。</li>
 </ul>
-<p>Claude Code 论文对这一点的概括非常有价值：核心 agent loop 可以简单到只是一个“call model, run tools, repeat”的 while-loop，但绝大多数代码并不在这个 loop 里，而在 loop 周围的系统：权限、compaction、MCP / plugins / skills / hooks、subagent delegation 和 append-oriented session storage。<sup class="footnote-reference" id="fr-claude-code-design-space-ch1-2"><a href="#footnote-claude-code-design-space-ch1">3</a></sup> 这正好说明，agentic AI 的本体不是“模型多聪明”，而是模型周围那套让它能持续工作的控制系统。</p>
-<p>如果把这一节写成一句抽象口号，比如“LLM 需要反馈控制”，读者很容易把它听成事后拔高的比喻。更准确的写法是：今天我们在 agent 上遇到的问题，本来就是三段老工程史在新的计算介质里重演。第一段是 Wiener 与控制论，讨论的是系统如何在噪声、延迟和不完全观测下继续对准目标；第二段是主存与 cache 的演化，讨论的是为什么系统必须主动管理工作集，而不能把全部材料都塞到最快层；第三段是 Bell System 的负反馈放大器，讨论的是为什么想要稳定，往往必须主动牺牲一部分裸增益与自由度。把这三段历史叠起来，现代 harness engineering 的轮廓才会变得立体。<sup class="footnote-reference" id="fr-cybernetics-foundation-ch1-1"><a href="#footnote-cybernetics-foundation-ch1">4</a></sup> <sup class="footnote-reference" id="fr-cybernetics-history-ch1-1"><a href="#footnote-cybernetics-history-ch1">5</a></sup> <sup class="footnote-reference" id="fr-cache-history-ch1-1"><a href="#footnote-cache-history-ch1">6</a></sup> <sup class="footnote-reference" id="fr-feedback-history-ch1-1"><a href="#footnote-feedback-history-ch1">7</a></sup></p>
+<p>Claude Code 论文对这一点的概括非常有价值：核心 agent loop 可以简单到只是一个“call model, run tools, repeat”的 while-loop，但绝大多数代码并不在这个 loop 里，而在 loop 周围的系统：权限、compaction、MCP / plugins / skills / hooks、subagent delegation 和 append-oriented session storage。<sup class="footnote-reference" id="fr-claude-code-design-space-ch1-2"><a href="#footnote-claude-code-design-space-ch1">16</a></sup> 这正好说明，agentic AI 的本体不是“模型多聪明”，而是模型周围那套让它能持续工作的控制系统。</p>
+<p>如果把这一节写成一句抽象口号，比如“LLM 需要反馈控制”，读者很容易把它听成事后拔高的比喻。更准确的写法是：今天我们在 agent 上遇到的问题，本来就是三段老工程史在新的计算介质里重演。第一段是 Wiener 与控制论，讨论的是系统如何在噪声、延迟和不完全观测下继续对准目标；第二段是主存与 cache 的演化，讨论的是为什么系统必须主动管理工作集，而不能把全部材料都塞到最快层；第三段是 Bell System 的负反馈放大器，讨论的是为什么想要稳定，往往必须主动牺牲一部分裸增益与自由度。把这三段历史叠起来，现代 harness engineering 的轮廓才会变得立体。<sup class="footnote-reference" id="fr-cybernetics-foundation-ch1-1"><a href="#footnote-cybernetics-foundation-ch1">17</a></sup> <sup class="footnote-reference" id="fr-cybernetics-history-ch1-1"><a href="#footnote-cybernetics-history-ch1">18</a></sup> <sup class="footnote-reference" id="fr-cache-history-ch1-1"><a href="#footnote-cache-history-ch1">19</a></sup> <sup class="footnote-reference" id="fr-feedback-history-ch1-1"><a href="#footnote-feedback-history-ch1">20</a></sup></p>
 <p>对 LLM agent 来说，这个框架几乎是直接可用的：</p>
 <ul>
 <li>用户目标、工具回执、session 事实、validator 证据，都是闭环里的消息；</li>
@@ -300,20 +357,20 @@
 <li>所谓“最佳工作区间”，本质上就是让系统维持在一个高信噪比、低漂移、可纠偏的稳定区间。</li>
 </ul>
 <p>所以后文的 harness，不应被理解成一层外挂脚手架，而应被理解成 agent 的外层反馈控制系统。它的任务不是让模型显得更聪明，而是持续感知偏差、校正偏差，并把系统重新拉回可用区间。</p>
-<h3 id="115-wiener-与控制论从战时问题到战后范式"><a class="header" href="#115-wiener-与控制论从战时问题到战后范式">1.1.5 Wiener 与控制论：从战时问题到战后范式</a></h3>
-<p>Norbert Wiener 之所以重要，不只是因为他写了一本题目里带 <code>Cybernetics</code> 的书，更因为他把一个后来会深刻影响计算机、认知科学和自动化的工程问题，第一次讲成了一种统一语言。Britannica 对这段历史的概括很关键：Wiener 在二战期间处理“如何瞄准移动目标”这类控制问题，他在预测、滤波和目标保持上的思考，后来直接通向了 cybernetics。<sup class="footnote-reference" id="fr-cybernetics-history-ch1-2"><a href="#footnote-cybernetics-history-ch1">5</a></sup></p>
-<p>很多人第一次接触 Wiener，会先记住“神童”“MIT 数学家”这些标签；但对本书更重要的，是他的问题意识不是“机器会不会像人一样思考”，而是“一个系统怎样在持续变化的环境里保持方向”。MIT Press 对《Cybernetics》的概括很简洁：控制论研究的是带有 <code>"feedback loops"</code> 的系统中信息如何被控制，噪声会破坏系统的 <code>homeostasis</code>。<sup class="footnote-reference" id="fr-cybernetics-foundation-ch1-2"><a href="#footnote-cybernetics-foundation-ch1">4</a></sup></p>
-<p>这件事在战后迅速从军工问题外溢成更广的智识运动。MIT Press 对 Macy Conferences 的介绍提到，1946 到 1953 年间，一群风格迥异的人定期开会，试图把 war years 里长出来的 cybernetics、information theory、computer theory 变成跨学科联盟的共同语言；Wiener、von Neumann、Margaret Mead、Gregory Bateson、Warren McCulloch 都在这张桌子上。<sup class="footnote-reference" id="fr-cybernetics-history-ch1-3"><a href="#footnote-cybernetics-history-ch1">5</a></sup> 这段故事值得记住，因为它说明控制论从一开始就不是单一学科里的局部技巧，而是一种关于复杂系统的工作语言。</p>
+<h3 id="145-wiener-与控制论从战时问题到战后范式"><a class="header" href="#145-wiener-与控制论从战时问题到战后范式">1.4.5 Wiener 与控制论：从战时问题到战后范式</a></h3>
+<p>Norbert Wiener 之所以重要，不只是因为他写了一本题目里带 <code>Cybernetics</code> 的书，更因为他把一个后来会深刻影响计算机、认知科学和自动化的工程问题，第一次讲成了一种统一语言。Britannica 对这段历史的概括很关键：Wiener 在二战期间处理“如何瞄准移动目标”这类控制问题，他在预测、滤波和目标保持上的思考，后来直接通向了 cybernetics。<sup class="footnote-reference" id="fr-cybernetics-history-ch1-2"><a href="#footnote-cybernetics-history-ch1">18</a></sup></p>
+<p>很多人第一次接触 Wiener，会先记住“神童”“MIT 数学家”这些标签；但对本书更重要的，是他的问题意识不是“机器会不会像人一样思考”，而是“一个系统怎样在持续变化的环境里保持方向”。MIT Press 对《Cybernetics》的概括很简洁：控制论研究的是带有 <code>"feedback loops"</code> 的系统中信息如何被控制，噪声会破坏系统的 <code>homeostasis</code>。<sup class="footnote-reference" id="fr-cybernetics-foundation-ch1-2"><a href="#footnote-cybernetics-foundation-ch1">17</a></sup></p>
+<p>这件事在战后迅速从军工问题外溢成更广的智识运动。MIT Press 对 Macy Conferences 的介绍提到，1946 到 1953 年间，一群风格迥异的人定期开会，试图把 war years 里长出来的 cybernetics、information theory、computer theory 变成跨学科联盟的共同语言；Wiener、von Neumann、Margaret Mead、Gregory Bateson、Warren McCulloch 都在这张桌子上。<sup class="footnote-reference" id="fr-cybernetics-history-ch1-3"><a href="#footnote-cybernetics-history-ch1">18</a></sup> 这段故事值得记住，因为它说明控制论从一开始就不是单一学科里的局部技巧，而是一种关于复杂系统的工作语言。</p>
 <p>把这段历史翻回今天的 LLM agent，会得到一个非常直接的结论：真正困难的问题，不是让模型偶尔答出一个漂亮答案，而是让系统在任务持续推进、外界不断反馈、约束持续变化时仍然不丢目标。换句话说，控制论关心的“目标保持”，恰好就是 agent 产品在真实环境里最缺的能力。</p>
-<h3 id="116-harness-为什么是外层反馈控制器"><a class="header" href="#116-harness-为什么是外层反馈控制器">1.1.6 Harness 为什么是外层反馈控制器</a></h3>
+<h3 id="146-harness-为什么是外层反馈控制器"><a class="header" href="#146-harness-为什么是外层反馈控制器">1.4.6 Harness 为什么是外层反馈控制器</a></h3>
 <p>一旦承认 agent 是闭环系统，harness 的角色也就清楚了。模型本身只负责生成下一步候选动作；真正把闭环关上的，是 harness：</p>
 <ul>
 <li>它通过 session、tool 回执、validator、dashboard 与 replay 感知系统状态；</li>
 <li>它通过 compaction、检索、角色路由、权限边界、重试与升级来调节系统；</li>
 <li>它通过 artifact 契约、终态裁决和人工介入把错误行动拦在用户可见表面之前。</li>
 </ul>
-<p>2026 年 Thoughtworks 这一波关于 harness engineering 的讨论，很值得作为现代实践的起点来读。Birgitta Böckeler 在正式文章里公开致谢 Kief Morris，说是他把 cybernetics 带进了这场讨论；这不是花絮，而是一个信号：今天的软件团队重新谈 harness，本质上是在重新发现一个老控制问题。<sup class="footnote-reference" id="fr-harness-story-ch1-1"><a href="#footnote-harness-story-ch1">8</a></sup></p>
-<p>Böckeler 对 coding agent 的判断很准确：工程团队对 AI 生成代码有一种 <code>"natural trust barrier"</code>。她给出的翻译不是玄学，而是非常控制论：前馈的 guides 负责在行动前提高成功概率，反馈的 sensors 负责在行动后帮助系统自纠。<sup class="footnote-reference" id="fr-harness-story-ch1-2"><a href="#footnote-harness-story-ch1">8</a></sup> Kief Morris 在另一篇文章里则把人的位置重新定义成 <code>"on the loop"</code>：人的工作不是盯住每一行生成代码，而是设计和改进那个会持续产生代码、测试、文档和验证结果的工作回路。<sup class="footnote-reference" id="fr-harness-story-ch1-3"><a href="#footnote-harness-story-ch1">8</a></sup></p>
+<p>2026 年 Thoughtworks 这一波关于 harness engineering 的讨论，很值得作为现代实践的起点来读。Birgitta Böckeler 在正式文章里公开致谢 Kief Morris，说是他把 cybernetics 带进了这场讨论；这不是花絮，而是一个信号：今天的软件团队重新谈 harness，本质上是在重新发现一个老控制问题。<sup class="footnote-reference" id="fr-harness-story-ch1-1"><a href="#footnote-harness-story-ch1">21</a></sup></p>
+<p>Böckeler 对 coding agent 的判断很准确：工程团队对 AI 生成代码有一种 <code>"natural trust barrier"</code>。她给出的翻译不是玄学，而是非常控制论：前馈的 guides 负责在行动前提高成功概率，反馈的 sensors 负责在行动后帮助系统自纠。<sup class="footnote-reference" id="fr-harness-story-ch1-2"><a href="#footnote-harness-story-ch1">21</a></sup> Kief Morris 在另一篇文章里则把人的位置重新定义成 <code>"on the loop"</code>：人的工作不是盯住每一行生成代码，而是设计和改进那个会持续产生代码、测试、文档和验证结果的工作回路。<sup class="footnote-reference" id="fr-harness-story-ch1-3"><a href="#footnote-harness-story-ch1">21</a></sup></p>
 <p>换句话说，harness 的控制目标不是“让每一步都最聪明”，而是“让整个循环长期稳定”。它要控制的量，至少包括：</p>
 <ul>
 <li>上下文里的相关证据密度；</li>
@@ -323,11 +380,11 @@
 <li>成本、时延和失败重试半径。</li>
 </ul>
 <p>这也是本书后文所有机制的统一解释：<code>AGENTS.md</code>、skills、memory、hooks、validators、dashboard、swarm 协作，其实都是反馈控制器上的不同传感器、执行器和约束器件。</p>
-<h3 id="117-从-delay-line-到-cache为什么系统必须管理工作集"><a class="header" href="#117-从-delay-line-到-cache为什么系统必须管理工作集">1.1.7 从 delay line 到 cache：为什么系统必须管理工作集</a></h3>
-<p>缓存层级之所以是一个好类比，不只是因为它“快”，而是因为它背后有一整段非常具体的失败史。Computer History Museum 对早期主存的描述很形象：第一代很多内存技术是 serial 的，bit 在环路里循环，机器想读写某个数据，只能等那一串 bit 转回到可访问的位置；直到随机访问内存出现，才真正 <code>"eliminated the wait"</code>。<sup class="footnote-reference" id="fr-cache-history-ch1-2"><a href="#footnote-cache-history-ch1">6</a></sup></p>
-<p>这段历史比今天很多人想象得更物理。Maurice Wilkes 的 EDSAC 用过 mercury delay line，数据不是“放在那里等你读”，而是在管子里流动。Jay Forrester 在 MIT Whirlwind 推进 magnetic core memory，核心问题也不是更优雅，而是原来的 memory 太慢、太不稳定、太不适合持续运行。CHM 对主存史的总结很到位：计算机设计者很早就知道需要 fast, reliable main memory，真正困难的是找出在速度、可靠性和成本之间能工作的技术路线。<sup class="footnote-reference" id="fr-cache-history-ch1-3"><a href="#footnote-cache-history-ch1">6</a></sup></p>
-<p>后来分层这件事越来越清楚。IBM 对 System/370 的回顾写得很直白：1970 年推出的 System/370 Model 145 把 IBM 带进了 silicon age，更快、更紧凑，而 CHM 进一步指出它所用的 64-bit bipolar RAM 就是用作 cache memory。<sup class="footnote-reference" id="fr-cache-history-ch1-4"><a href="#footnote-cache-history-ch1">6</a></sup> 这段演进说明，cache 不是“聪明人爱抽象”的产物，而是单层存储无法同时满足速度、容量和成本时，被现实逼出来的体系结构选择。</p>
-<p>Chris Terman 在 <em>Computation Structures</em> 里把缓存成功的前提总结为 <code>"locality of reference"</code>：系统不需要把全部数据都放进最快层，而要把当前工作集放进最快层，并通过 associativity、block size、replacement policy、write policy 等策略自动管理层间流动。<sup class="footnote-reference" id="fr-memory-hierarchy-ch1-1"><a href="#footnote-memory-hierarchy-ch1">9</a></sup></p>
+<h3 id="147-从-delay-line-到-cache为什么系统必须管理工作集"><a class="header" href="#147-从-delay-line-到-cache为什么系统必须管理工作集">1.4.7 从 delay line 到 cache：为什么系统必须管理工作集</a></h3>
+<p>缓存层级之所以是一个好类比，不只是因为它“快”，而是因为它背后有一整段非常具体的失败史。Computer History Museum 对早期主存的描述很形象：第一代很多内存技术是 serial 的，bit 在环路里循环，机器想读写某个数据，只能等那一串 bit 转回到可访问的位置；直到随机访问内存出现，才真正 <code>"eliminated the wait"</code>。<sup class="footnote-reference" id="fr-cache-history-ch1-2"><a href="#footnote-cache-history-ch1">19</a></sup></p>
+<p>这段历史比今天很多人想象得更物理。Maurice Wilkes 的 EDSAC 用过 mercury delay line，数据不是“放在那里等你读”，而是在管子里流动。Jay Forrester 在 MIT Whirlwind 推进 magnetic core memory，核心问题也不是更优雅，而是原来的 memory 太慢、太不稳定、太不适合持续运行。CHM 对主存史的总结很到位：计算机设计者很早就知道需要 fast, reliable main memory，真正困难的是找出在速度、可靠性和成本之间能工作的技术路线。<sup class="footnote-reference" id="fr-cache-history-ch1-3"><a href="#footnote-cache-history-ch1">19</a></sup></p>
+<p>后来分层这件事越来越清楚。IBM 对 System/370 的回顾写得很直白：1970 年推出的 System/370 Model 145 把 IBM 带进了 silicon age，更快、更紧凑，而 CHM 进一步指出它所用的 64-bit bipolar RAM 就是用作 cache memory。<sup class="footnote-reference" id="fr-cache-history-ch1-4"><a href="#footnote-cache-history-ch1">19</a></sup> 这段演进说明，cache 不是“聪明人爱抽象”的产物，而是单层存储无法同时满足速度、容量和成本时，被现实逼出来的体系结构选择。</p>
+<p>Chris Terman 在 <em>Computation Structures</em> 里把缓存成功的前提总结为 <code>"locality of reference"</code>：系统不需要把全部数据都放进最快层，而要把当前工作集放进最快层，并通过 associativity、block size、replacement policy、write policy 等策略自动管理层间流动。<sup class="footnote-reference" id="fr-memory-hierarchy-ch1-1"><a href="#footnote-memory-hierarchy-ch1">22</a></sup></p>
 <p>这和 agent 的上下文控制几乎同构：</p>
 <ul>
 <li>prompt / 当前 turn 上下文，相当于最靠近“CPU”的 L1；</li>
@@ -342,21 +399,21 @@
 <li>write policy：哪些中间状态只留在临时上下文，哪些必须立刻写回持久事实流。</li>
 </ul>
 <p>如果没有这层控制，系统就会像一个没有 cache policy 的 CPU：不是把高速层塞爆，就是让热点数据来不及进来，最后把大部分时间浪费在低效搬运上。所谓“最佳工作区间”，其实就是 agent 版本的工作集管理。</p>
-<h3 id="118-从-harold-black-到半导体反馈为什么稳定要靠限幅与锁存"><a class="header" href="#118-从-harold-black-到半导体反馈为什么稳定要靠限幅与锁存">1.1.8 从 Harold Black 到半导体反馈：为什么稳定要靠限幅与锁存</a></h3>
-<p>半导体与电路系统又给了另一组更底层的直觉，而且这里的故事感非常强。Harold S. Black 在 Western Electric / Bell System 遇到的问题，并不神秘：长距离电话链路上，信号经过一串又一串放大器，增益是有了，但失真、噪声和漂移也一路叠上去。National Inventors Hall of Fame 对这段历史的概括抓住了关键：Black 为消除失真坚持了六年，最终在通勤 ferry 上想清楚了负反馈放大器的原理。<sup class="footnote-reference" id="fr-feedback-history-ch1-2"><a href="#footnote-feedback-history-ch1">7</a></sup></p>
-<p>这件事为什么重要？因为它揭示了一个非常反直觉的工程事实：成熟系统追求的往往不是最大裸增益，而是更可控的整体行为。Black 的做法，本质上是把一部分输出送回输入端，通过主动牺牲增益，换取更高线性、更低失真和更可预测的整体表现。Bell Labs 保存下来的那篇 1934 年文章，今天读仍然很像现代控制系统的序曲。<sup class="footnote-reference" id="fr-feedback-circuits-ch1-1"><a href="#footnote-feedback-circuits-ch1">10</a></sup></p>
-<p>半导体世界里还有一个与之互补的画面。Terman 在讲 SRAM bit cell 时说得非常直接：它本质上是 <code>"positive feedback loop"</code>，用来形成可稳定保存状态的双稳态存储。<sup class="footnote-reference" id="fr-memory-hierarchy-ch1-2"><a href="#footnote-memory-hierarchy-ch1">9</a></sup> 也就是说，电子系统里同时存在两种看似相反、实际互补的反馈思想：</p>
+<h3 id="148-从-harold-black-到半导体反馈为什么稳定要靠限幅与锁存"><a class="header" href="#148-从-harold-black-到半导体反馈为什么稳定要靠限幅与锁存">1.4.8 从 Harold Black 到半导体反馈：为什么稳定要靠限幅与锁存</a></h3>
+<p>半导体与电路系统又给了另一组更底层的直觉，而且这里的故事感非常强。Harold S. Black 在 Western Electric / Bell System 遇到的问题，并不神秘：长距离电话链路上，信号经过一串又一串放大器，增益是有了，但失真、噪声和漂移也一路叠上去。National Inventors Hall of Fame 对这段历史的概括抓住了关键：Black 为消除失真坚持了六年，最终在通勤 ferry 上想清楚了负反馈放大器的原理。<sup class="footnote-reference" id="fr-feedback-history-ch1-2"><a href="#footnote-feedback-history-ch1">20</a></sup></p>
+<p>这件事为什么重要？因为它揭示了一个非常反直觉的工程事实：成熟系统追求的往往不是最大裸增益，而是更可控的整体行为。Black 的做法，本质上是把一部分输出送回输入端，通过主动牺牲增益，换取更高线性、更低失真和更可预测的整体表现。Bell Labs 保存下来的那篇 1934 年文章，今天读仍然很像现代控制系统的序曲。<sup class="footnote-reference" id="fr-feedback-circuits-ch1-1"><a href="#footnote-feedback-circuits-ch1">23</a></sup></p>
+<p>半导体世界里还有一个与之互补的画面。Terman 在讲 SRAM bit cell 时说得非常直接：它本质上是 <code>"positive feedback loop"</code>，用来形成可稳定保存状态的双稳态存储。<sup class="footnote-reference" id="fr-memory-hierarchy-ch1-2"><a href="#footnote-memory-hierarchy-ch1">22</a></sup> 也就是说，电子系统里同时存在两种看似相反、实际互补的反馈思想：</p>
 <ul>
 <li>正反馈用来锁存状态，让一个 bit 不至于自己滑掉；</li>
 <li>负反馈用来抑制放大链条里的漂移与失真，让整体仍在稳定区工作。</li>
 </ul>
-<p>这对 harness 特别有启发，因为一个长期运行的 agent 同样需要这两类机制：</p>
+<p>这两类机制，正是 §1.1.2 在机理层面点到的“正反馈锁存器”与“负反馈环”的电路原型。对 harness 特别有启发，因为一个长期运行的 agent 同样需要这两类机制：</p>
 <ul>
 <li>session 事实流、validator 通过的 artifact、role / scope / worktree 边界，是它的“锁存器”；</li>
 <li>validator、replay、dashboard、人工升级、角色重分配和恢复逻辑，是它的“负反馈环”。</li>
 </ul>
 <p>长任务 agent 最容易犯的错，恰好就是把这两类机制都省掉：既没有东西把关键事实锁住，又没有东西把错误输出重新送回系统做纠偏。结果就是短期看速度很快，长期看状态漂移、工具误用、上下文污染和错误自信一起累积。工程上真正成熟的系统，必须像好电路那样，知道什么时候该放大，什么时候该锁住，什么时候该限幅。</p>
-<h3 id="119-回到现代-agent控制论如何变成-harness-engineering"><a class="header" href="#119-回到现代-agent控制论如何变成-harness-engineering">1.1.9 回到现代 agent：控制论如何变成 harness engineering</a></h3>
+<h3 id="149-回到现代-agent控制论如何变成-harness-engineering"><a class="header" href="#149-回到现代-agent控制论如何变成-harness-engineering">1.4.9 回到现代 agent：控制论如何变成 harness engineering</a></h3>
 <p>到这里，控制论、cache 和负反馈就不再是三个孤立的类比，而是能落到现代 agent 实践上的三条约束：</p>
 <ol>
 <li>系统必须能持续感知偏差，而不是只在失败后回看聊天记录；</li>
@@ -372,7 +429,7 @@ Harness 工程
   -&gt; 用持久运行时契约稳定长周期自治行为
 </code></pre>
 <p>单靠 prompt 工程无法提供持久的状态事实。上下文工程能改善多轮输入质量，但仍依赖概率性的遵守。Harness 工程增加运行时级别的护栏和证据，使系统可以从模型漂移中恢复，而不是假装漂移不存在。</p>
-<h2 id="12-上下文工程是-harness-的前置纪律"><a class="header" href="#12-上下文工程是-harness-的前置纪律">1.2 上下文工程是 harness 的前置纪律</a></h2>
+<h2 id="15-上下文工程是-harness-的前置纪律"><a class="header" href="#15-上下文工程是-harness-的前置纪律">1.5 上下文工程是 harness 的前置纪律</a></h2>
 <p>在 harness 成熟之前，上下文工程承担大部分控制重量：</p>
 <ul>
 <li><code>AGENTS.md</code> 和角色指令约束规划风格</li>
@@ -381,7 +438,7 @@ Harness 工程
 <li>有边界的工具策略减少不安全探索</li>
 </ul>
 <p>这一层是必要的，但对长任务、并发和后台工作并不充分。</p>
-<h2 id="13-harness-工程是外层确定性循环"><a class="header" href="#13-harness-工程是外层确定性循环">1.3 Harness 工程是外层确定性循环</a></h2>
+<h2 id="16-harness-工程是外层确定性循环"><a class="header" href="#16-harness-工程是外层确定性循环">1.6 Harness 工程是外层确定性循环</a></h2>
 <p>Harness 在概率模型输出外增加确定性控制循环：</p>
 <ul>
 <li>可恢复、可追踪的工作区状态</li>
@@ -391,67 +448,7 @@ Harness 工程
 <li>面向修复和操作员行动的显式失败类别</li>
 </ul>
 <p>Harness 不替代模型智能。它约束模型智能。</p>
-<h2 id="14-能力上限不等于有效工作区间"><a class="header" href="#14-能力上限不等于有效工作区间">1.4 能力上限不等于有效工作区间</a></h2>
-<p>“支持 1M token context”首先是能力上限，不是工程上可以无脑塞满的建议值。长上下文最容易误导团队的地方，在于大家把“能放进去”误当成“同样擅长用好”。</p>
-<p>这件事在事实层面已经很清楚：</p>
-<ul>
-<li>Google 在 2024 年发布 Gemini 1.5 时，报告它在单 needle 的 Needle-in-a-Haystack 测试里，在 1M token 下仍能达到 99% 命中率。<sup class="footnote-reference" id="fr-gemini15-1"><a href="#footnote-gemini15">11</a></sup></li>
-<li>但 Google 自己后续的 long context 开发文档也明确提醒：一旦从“单 needle”变成多个待检索信息点，表现就不会维持同样精度，而且会随上下文内容而大幅波动。<sup class="footnote-reference" id="fr-google-long-context-1"><a href="#footnote-google-long-context">12</a></sup></li>
-<li>Anthropic 的长上下文 prompting 文档则给出很务实的经验：长文档放前面、query 放最后面，复杂多文档输入里响应质量可提高到 30% 左右。<sup class="footnote-reference" id="fr-anthropic-long-1"><a href="#footnote-anthropic-long">13</a></sup></li>
-</ul>
-<p>这说明同一个“1M context”里，不同位置、不同信息密度、不同任务形式的可用性并不均匀。上下文窗口更像一块可寻址的大内存，不像一条任何位置都等价的理想传送带。</p>
-<p>所以工程上应把 context window 分成两个概念：</p>
-<ul>
-<li>容量上限：模型最多能接收多少 token。</li>
-<li>有效工作区间：在当前任务形态下，模型还能稳定检索、遵循指令、维持推理链的那一段上下文工作区。</li>
-</ul>
-<p>后者才是 harness 关心的对象。</p>
-<h2 id="15-为什么会出现最佳工作区间"><a class="header" href="#15-为什么会出现最佳工作区间">1.5 为什么会出现“最佳工作区间”</a></h2>
-<p>所谓“最佳工作区间”，不是说所有模型都存在一个固定 magic number，比如“128K 最好、256K 开始变差”。它更像一个随任务结构变化的工作带宽：在多大范围内，模型还能稳定检索、遵循指令、保持多步推理、避免位置偏置，并让系统在成本和时延上可接受。</p>
-<p>长上下文研究已经给出足够清楚的理论信号。<em>Lost in the Middle</em> 说明相关信息在开头或结尾时更容易被利用，放在中间时表现会下降；<em>Found in the Middle</em> 进一步把这种现象概括为 <code>"U-shaped attention bias"</code>。<sup class="footnote-reference" id="fr-ltm-1"><a href="#footnote-ltm">14</a></sup> <sup class="footnote-reference" id="fr-fitm-1"><a href="#footnote-fitm">15</a></sup> Anthropic 的长上下文文档也给出很工程化的建议：长文档放前面，query 放最后面，在测试中可显著改善复杂多文档任务质量。<sup class="footnote-reference" id="fr-anthropic-long-2"><a href="#footnote-anthropic-long">13</a></sup></p>
-<p>这说明上下文窗口不是一块平坦空间，而是有位置、密度和任务形态差异的工作区。Google 在 Gemini 1.5 发布时报告过 1M token 下很高的 needle 命中率，但它自己的 long context 文档也提醒，多信息点检索的表现会随上下文大幅波动。<sup class="footnote-reference" id="fr-gemini15-2"><a href="#footnote-gemini15">11</a></sup> <sup class="footnote-reference" id="fr-google-long-context-2"><a href="#footnote-google-long-context">12</a></sup> NoLiMa 和 LongCodeBench 又把问题推到更接近真实工作的场景：去掉字面匹配线索，或者进入代码理解和修复任务后，长上下文能力会明显变脆。<sup class="footnote-reference" id="fr-nolima-1"><a href="#footnote-nolima">16</a></sup> <sup class="footnote-reference" id="fr-longcodebench-1"><a href="#footnote-longcodebench">17</a></sup></p>
-<p>所以第 1 章只给出一个理论结论：最大 context 是容量上限，最佳工作区间才是设计目标。Agent 系统不能默认“把更多材料塞进窗口”就会更可靠，而应当反过来设计任务：让模型看到更短、更密、更靠近当前决策的证据切片，把状态、历史、产物和验证证据移到运行时事实流里，再按需调回 prompt。</p>
-<h2 id="16-模型时空失效的机理自回归是一个有限预算的时空滤波器"><a class="header" href="#16-模型时空失效的机理自回归是一个有限预算的时空滤波器">1.6 模型时空失效的机理：自回归是一个有限预算的时空滤波器</a></h2>
-<p>§1.4–1.5 已经从现象层说清楚一件事：有效工作区间小于容量上限。但如果停在现象，读者很容易把它当成“模型还不够好、以后会修好”的暂时缺陷。本节要把话说透：<strong>有效工作区间的存在，是 Transformer 加自回归这套架构在有限算力与显存预算下的数学必然，而不是工程缺陷。</strong> 把机理讲透很重要，因为后文每一项 harness 能力，都是对其中某一条失效机理的对症补偿；不先讲清楚模型天然缺什么，harness 就会被误读成一袋经验技巧。</p>
-<p>一个统一的视角能把前面几个类比收束起来：<strong>自回归加 attention，本质上就是一个有限预算下的时空滤波器。</strong> 它对“位置远”（空间）和“时间旧”（时间）的信号都会衰减。§1.1.7 的 cache 局部性、§1.1.8 的放大器线性区，其实是同一件事在不同介质里的两个影子——滤波器的频率响应在远端衰减，正是它们共同的底层。</p>
-<h3 id="161-空间轴位置越远有效敏感度越低"><a class="header" href="#161-空间轴位置越远有效敏感度越低">1.6.1 空间轴：位置越远，有效敏感度越低</a></h3>
-<p>沿上下文方向，至少有四条机理在同时压低远端 token 的有效权重，外加一条“非均匀分辨率”把它做进了今天的架构。</p>
-<p>第一，<code>softmax 的注意力质量守恒导致稀释</code>。attention 输出是对窗口内所有 token 的凸组合，权重之和恒为 1；窗口里有 n 个 token，平均每个只分到 1/n 的“注意力预算”。要让模型把权重牢牢压在某一个远端关键 token 上，它的 logit 必须显著高过其余，量级大约是 ln n。但 logit 是有界的——RMSNorm、QK-Norm，以及像 Kimi 报告里专门设计的 QK-Clip，都在压制它；不封顶时，attention logit 会冲过 1000 量级、训练直接发散。logit 被一个与 n 无关的常数卡住，单个 token 能拿到的最大权重就随 n 增大趋于零。结论几乎是算术而非调参：<strong>窗口越满，对任意单个远端证据的“最锐检索”越弱。</strong><sup class="footnote-reference" id="fr-softmax-dilution-ch1-1"><a href="#footnote-softmax-dilution-ch1">18</a></sup> <sup class="footnote-reference" id="fr-bounded-logit-ch1-1"><a href="#footnote-bounded-logit-ch1">19</a></sup></p>
-<p>第二，<code>RoPE 的距离衰减包络</code>。主流位置编码 RoPE 在数学上自带一条随相对距离衰减的包络：两个 token 距离越远，其注意力内积的上界越低；而一旦超过训练长度，旋转相位会退相干，外推直接失效。需要诚实标注的是，这条衰减的严格证明假设 query 与 key 为常向量，实际中它更像一个先验偏置而非铁律——但偏置方向是确定的。<sup class="footnote-reference" id="fr-rope-decay-ch1-1"><a href="#footnote-rope-decay-ch1">20</a></sup></p>
-<p>第三，<code>有限残差维度等于有限信道容量</code>。残差流是固定宽度的向量，却要承载整段上下文里的相关信息。由信息论，一个定宽状态无法无损保存无界上下文——越旧、越远的细节越会被压缩、覆盖。这正是 §1.1.1 “LLM 看起来记得、却没有持久事实”在数值层面的根。</p>
-<p>第四，<code>over-squashing 与表示坍缩</code>。把一个远端 token 的信息送到“当前预测位点”，要跨越多层 attention；而因果掩码让信息单向汇聚到最后一个 token，逐层 softmax 平均会把任何单一来源指数稀释，以致不同的长输入会在末位表示上坍缩成几乎一样（低精度浮点会让情况更糟）。这解释了一个反直觉现象：长上下文里“计数、复制、区分”这类看似简单的任务反而最先退化。<sup class="footnote-reference" id="fr-oversquash-ch1-1"><a href="#footnote-oversquash-ch1">21</a></sup></p>
-<p>把这四条叠起来，就得到 §1.5 那条经验现象的机理解释：<strong>上下文窗口不是一块平坦内存，它的“有效分辨率”从光标附近向远处递减。</strong> <em>Lost in the Middle</em> 的 U 形偏置、NoLiMa 在 32K 上把 GPT-4o 从 99.3% 打到 69.7%，都是这条递减曲线在不同任务上的投影。</p>
-<p>而工业界已经把这条“非均匀分辨率”直接做进了架构。为了在百万 token 上还付得起算力，新一代模型不再对全程做均匀的全注意力：滑窗注意力是字面上的矩形窗，窗外直接置零；线性注意力与 SSM（如 MiniMax 的做法）是字面上的指数衰减核；KV 压缩（DeepSeek V4 的 CSA 与 HCA、Kimi 的 MLA）则是有损降采样——近端最近的 token 保留高分辨率、不压缩，越往远端、KV 被越激进地聚合：CSA 把每 m 个 token 压成一条，HCA 把每 m′（远大于 m）个 token 压成一条。换句话说，<strong>所谓“1M context”不是一条处处等价的传送带，而是一组分辨率非均匀的滤波器：近端细、远端粗。</strong> 这恰好把 §1.4 “容量上限不等于有效工作区间”从经验建议升级成了架构事实——连模型厂商自己，都在用压缩换取这个容量上限。<sup class="footnote-reference" id="fr-nonuniform-kv-ch1-1"><a href="#footnote-nonuniform-kv-ch1">22</a></sup></p>
-<p>这里要专门强调一句，免得读者误以为“换个更强的闭源前沿模型就没事了”：<strong>闭源前沿也不例外。</strong> 第三方系统评测（如 Chroma 对 18 个前沿模型的 <em>Context Rot</em> 测试）显示，每一个模型都在每一个长度增量上掉点；前沿模型只是 rolloff 更缓，而非豁免。更说明问题的是，lost-in-the-middle 与干扰项这类退化，在大概率使用全注意力的模型上照样出现——说明它来自上面这些基本面地板，而不只是压缩作弊。Anthropic 自己的工程文档也直说，context rot 在远未触达容量上限时就已经开始。<sup class="footnote-reference" id="fr-context-rot-ch1-1"><a href="#footnote-context-rot-ch1">23</a></sup></p>
-<h3 id="162-时间轴时间越旧有效敏感度越低"><a class="header" href="#162-时间轴时间越旧有效敏感度越低">1.6.2 时间轴：时间越旧，有效敏感度越低</a></h3>
-<p>长任务的失效看起来是“时间”问题——跑得越久越偏——但要拆成两半才讲得透：一半可约为空间问题，另一半不可约。</p>
-<p><code>记忆老化可约为空间衰减</code>。vanilla Transformer 除 KV cache 外没有跨步状态——“k 步前还记不记得”这件事，等价于“那个 token 还在不在窗口里、当前 token 还 attend 得到它吗”。随着生成推进，一个旧事实与当前光标的相对位置距离单调增大，于是按 §1.6.1 的四条空间机理被衰减，最终被窗口、压缩或逐出淘汰。所以“随时间遗忘”在机理上就是“随相对距离衰减”——时间问题塌缩成了空间问题。这正是 §1.1.1 “看起来记得、却没有持久事实”的来源。</p>
-<p><code>误差复合不可约</code>。即便给一个完美、无限、均匀的窗口（空间衰减为零），自回归仍然会随任务变长而劣化：每生成一个 token 都是一次采样，且它会成为后续所有 token 的条件；每步有一个小错误率 ε，长 T 步全对的概率约为 (1−ε) 的 T 次方——可靠性随 horizon 几何衰减。再叠加 exposure bias：训练时模型条件于正确前缀，推理时却条件于自己越来越偏离分布的输出。这一半是反馈回路自身的性质，<strong>延长上下文救不了它</strong>——只能靠降低单步 ε、缩短 horizon、独立验证、重采样。</p>
-<p>用 §1.1.8 的电路语言收口最干净：一个递归（IIR）系统有两种相互独立的退化——<code>冲激响应衰减</code>（远端输入被衰减，等于记忆与空间衰减，可约）和<code>回路噪声累积</code>（把自己带噪的输出回灌，等于误差复合，不可约）。这正好对应 §1.1.8 早就给出的两类器件：<code>正反馈锁存器</code>把关键事实锁住、对抗记忆衰减，<code>负反馈环</code>把错误送回纠偏、对抗误差复合。本节只是把“为什么需要这两类器件”从类比落到了机理。</p>
-<p>这里给出一个后文会反复使用的可操作判据：<strong>把丢失的信息重新塞回光标附近——如果失效被修复，它是空间问题，可由上下文工程补偿；如果模型本来就拿到了信息却仍然漂移、越错越多，它是不可约的时间核，只能由验证、缩短 horizon 和人在环上来兜住。</strong></p>
-<h2 id="17-机理对应能力本书后续章节的提纲"><a class="header" href="#17-机理对应能力本书后续章节的提纲">1.7 机理对应能力：本书后续章节的提纲</a></h2>
-<p>把上面六条机理排开，本书后续的每一项 harness 能力，都可以被读成“对某一条失效机理的对症补偿”。下面这张表就是全书的提纲：左边是模型层“天然缺什么”，右边是 harness 层“补什么、在哪一章展开”。</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>失效机理（模型层）</th><th>失效表现</th><th>对症的 harness 能力</th><th>展开章节</th></tr>
-</thead>
-<tbody>
-<tr><td>softmax 稀释</td><td>上下文越长，关键证据越被“平均掉”</td><td>认知层级缓存控制：admission / eviction、compaction、检索式“短密近”证据切片</td><td>§1.1.7、第 4 章（事实流）、第 9 章</td></tr>
-<tr><td>RoPE 距离衰减 / 外推退相干</td><td>远距离关联弱、超长外推失效</td><td>上下文分层加按需调入（L1 prompt / L2 <code>AGENTS.md</code>·skills·memory / L3 事实流）；把关键事实重新拉回光标附近</td><td>§1.1.7、第 4 章、第 6 章</td></tr>
-<tr><td>有限残差维度</td><td>长历史细节被压缩、陈旧假设增多</td><td>持久事实流：把状态移出 prompt、写回运行时，而不是让模型“记住”</td><td>第 4 章（session 支柱）、第 6 章</td></tr>
-<tr><td>over-squashing / 表示坍缩</td><td>长输入里“分不清”、计数与复制类退化</td><td>结构化证据加产物契约加独立验证：不靠模型在巨大上下文里自己看出来</td><td>第 4 章（验证支柱）、第 9 章</td></tr>
-<tr><td>非均匀 KV 分辨率</td><td>同一窗口不同位置可用性不均（U 形）</td><td>把容量上限与有效工作区间分开设计；短密近证据加检索加分层缓存，不默认塞满</td><td>§1.4–1.5、第 4 章</td></tr>
-<tr><td>记忆老化（时间⊆空间）</td><td>跨小时、跨会话目标漂移，陈旧上下文</td><td>目标保持加锁存：目标、约束、产物锁进 session 与 artifact；compaction 时保留关键决策并定期回注</td><td>第 4 章（session）、第 9 章（短回路与长回路）</td></tr>
-<tr><td>不可约误差复合</td><td>长任务越跑越偏，自信但错误累积</td><td>负反馈环：独立验证、终态裁决、回放、重试与升级、人在环上；并用子 agent 分解缩短单链 horizon</td><td>第 4 章（验证）、第 7 章（操作员面）、第 8 章（群体编排）、第 9 章</td></tr>
-</tbody>
-</table>
-</div>
-<p>读这张表有两个要点。</p>
-<p>第一，<strong>harness 不是一袋经验技巧，而是一组针对已知失效机理的控制器件。</strong> 这正是把 §1.1.6 “harness 是外层反馈控制器”落到实处的方式：<code>AGENTS.md</code>、skills、memory、hooks、validators、dashboard、swarm 协作，分别是这套反馈控制器上的不同传感器、执行器和约束器件，而每一个都对准一条具体的失效机理。</p>
-<p>第二，<strong>空间类机理大多能被上下文工程“补偿”，但时间轴上那条“不可约误差复合”补偿不了、只能被“兜住”。</strong> 这条边界不是修辞，而是工程事实：它正是 §1.2–1.3 反复出现的“上下文工程必要但不充分、必须上升到 harness 工程”的根本原因，也是为什么第 8 章要用群体编排去缩短单链 horizon、第 9 章要把系统拆成短回路与长回路。把更大的窗口当成解药，只能缓解空间类机理；时间类的不可约核，必须靠运行时的验证与人的监督来关闭。</p>
-<p>这条边界还顺带解释了一个产业层面的判断：既然时空失效是架构的必然、连前沿模型都只能“缓”而不能“消”，那么“把上下文窗口做得更大”就永远只是缓解而非根治。真正决定长任务可靠性上限的，是模型之外这套控制系统——这也是本书把 harness engineering 当作工程主战场，而不是把希望寄托在“等下一代模型”的根本理由。</p>
-<h2 id="18-从理论转入实践后文怎样穿插展开"><a class="header" href="#18-从理论转入实践后文怎样穿插展开">1.8 从理论转入实践：后文怎样穿插展开</a></h2>
+<h2 id="17-从理论转入实践后文怎样穿插展开"><a class="header" href="#17-从理论转入实践后文怎样穿插展开">1.7 从理论转入实践：后文怎样穿插展开</a></h2>
 <p>到这里，第 1 章只需要完成一件事：说明 harness 不是可选的产品装饰，而是让 LLM 长任务留在有效工作区间内的控制系统。</p>
 <p>后文不再把所有理论一次性堆在开头，而采用交替推进：</p>
 <ol>
@@ -463,6 +460,45 @@ Harness 工程
 <p>这能避免“第一章把所有结论讲完，后面只剩展开”的头重脚轻。理论负责给读者建立判断坐标，实践负责不断校正这套坐标。</p>
 <hr>
 <ol class="footnote-definition">
+<li id="footnote-softmax-dilution-ch1">
+<p>Petar Veličković et al., <em>Softmax is not Enough (for Sharp Size Generalisation).</em> 本章在此处使用其关于 softmax 随规模稀释、无法保持锐利选择的结论，来解释注意力质量守恒下的远端稀释；对应第 19 章参考文献 43。 <a href="#fr-softmax-dilution-ch1-1">↩</a></p>
+</li>
+<li id="footnote-bounded-logit-ch1">
+<p>本章在此处使用 Kimi K2 技术报告关于 attention logit explosion 与 QK-Clip 的描述（不封顶时 max logit 越过 1000 量级、训练发散），用来说明 logit 被主动限幅、因此单 token 注意力权重存在与 n 无关的上界；对应第 19 章参考文献 47。 <a href="#fr-bounded-logit-ch1-1">↩</a></p>
+</li>
+<li id="footnote-rope-decay-ch1">
+<p>Jianlin Su et al., <em>RoFormer: Enhanced Transformer with Rotary Position Embedding.</em> 本章在此处使用其关于相对距离衰减包络（经 Abel 变换得到）的结论；并按 <em>Round and Round We Go!</em> 标注该衰减证明依赖 query/key 为常向量的前提，故宜视为先验偏置；对应第 19 章参考文献 44、45。 <a href="#fr-rope-decay-ch1-1">↩</a></p>
+</li>
+<li id="footnote-oversquash-ch1">
+<p>Federico Barbero et al., <em>Transformers need glasses! Information over-squashing in language tasks.</em> 本章在此处使用其关于 representational collapse 与因果掩码下信息单向汇聚、over-squashing 的分析，来解释长输入中计数/复制/区分类任务的退化；对应第 19 章参考文献 46。 <a href="#fr-oversquash-ch1-1">↩</a></p>
+</li>
+<li id="footnote-nonuniform-kv-ch1">
+<p>本章在此处综合 DeepSeek-V4 技术报告（CSA/HCA 混合压缩注意力、异构与 on-disk KV cache，将近端高分辨率与远端激进聚合并置）与 MiniMax M3（MSA 稀疏/线性注意力）的做法，用来说明工业界以非均匀分辨率换取百万级容量上限；对应第 19 章参考文献 48、49。 <a href="#fr-nonuniform-kv-ch1-1">↩</a></p>
+</li>
+<li id="footnote-context-rot-ch1">
+<p>本章在此处综合 Chroma <em>Context Rot</em> 对 18 个前沿模型在各长度增量普遍退化的测试，以及 Anthropic <em>Effective context engineering for AI agents</em> 关于“context rot 在远未触达容量上限时即开始”的说明，用来支撑“闭源前沿也不例外”；对应第 19 章参考文献 50、51。 <a href="#fr-context-rot-ch1-1">↩</a></p>
+</li>
+<li id="footnote-gemini15">
+<p>Google, <em>Introducing Gemini 1.5, Google’s next-generation AI model.</em> 本章在此处使用其关于 NIAH 命中率、1M context pricing tier 与时延预期的表述；对应第 19 章参考文献 14。 <a href="#fr-gemini15-1">↩</a></p>
+</li>
+<li id="footnote-google-long-context">
+<p>Google AI for Developers, <em>Long context.</em> 本章在此处使用其关于 performance variability、retrieval-cost tradeoff 与 caching 的说明；对应第 19 章参考文献 15。 <a href="#fr-google-long-context-1">↩</a></p>
+</li>
+<li id="footnote-ltm">
+<p>Nelson F. Liu et al., <em>Lost in the Middle: How Language Models Use Long Contexts.</em> 本章在此处使用其关于长上下文位置偏置与中段退化的结果；对应第 19 章参考文献 11。 <a href="#fr-ltm-1">↩</a></p>
+</li>
+<li id="footnote-fitm">
+<p>Cheng-Yu Hsieh et al., <em>Found in the Middle: Calibrating Positional Attention Bias Improves Long Context Utilization.</em> 本章在此处使用其关于 <code>"U-shaped attention bias"</code> 的分析；对应第 19 章参考文献 12。 <a href="#fr-fitm-1">↩</a></p>
+</li>
+<li id="footnote-nolima">
+<p>Ali Modarressi et al., <em>NoLiMa: Long-Context Evaluation Beyond Literal Matching.</em> 本章在此处使用其关于 32K 条件下模型退化统计，以及 GPT-4o 从 99.3% 降至 69.7% 的结果；对应第 19 章参考文献 16。 <a href="#fr-nolima-1">↩</a></p>
+</li>
+<li id="footnote-longcodebench">
+<p>Stefano Rando et al., <em>LongCodeBench: Evaluating Coding LLMs at 1M Context Windows.</em> 本章在此处使用其关于代码任务长上下文退化的样例数据；对应第 19 章参考文献 17。 <a href="#fr-longcodebench-1">↩</a></p>
+</li>
+<li id="footnote-anthropic-long">
+<p>Anthropic, <em>Prompting best practices: Long context prompting.</em> 本章在此处使用其关于长文档前置、query 后置与约 30% 质量提升的建议；对应第 19 章参考文献 13。 <a href="#fr-anthropic-long-1">↩</a></p>
+</li>
 <li id="footnote-agent-theory-ch1">
 <p>本章在此处综合 Franklin / Graesser 对 autonomous agent 的定义，以及 Wooldridge / Jennings 关于 autonomy、reactivity、pro-activeness 与 social ability 的经典描述；对应第 19 章参考文献 26、27。 <a href="#fr-agent-theory-ch1-1">↩</a> <a href="#fr-agent-theory-ch1-2">↩2</a></p>
 </li>
@@ -492,45 +528,6 @@ Harness 工程
 </li>
 <li id="footnote-feedback-circuits-ch1">
 <p>H. S. Black, <em>Stabilized Feedback Amplifiers.</em> 本章在此处使用其关于多级放大器稳定性、负反馈与非线性抑制的讨论，来类比长任务 agent 的漂移控制；对应第 19 章参考文献 29。 <a href="#fr-feedback-circuits-ch1-1">↩</a></p>
-</li>
-<li id="footnote-gemini15">
-<p>Google, <em>Introducing Gemini 1.5, Google’s next-generation AI model.</em> 本章在此处使用其关于 NIAH 命中率、1M context pricing tier 与时延预期的表述；对应第 19 章参考文献 14。 <a href="#fr-gemini15-1">↩</a> <a href="#fr-gemini15-2">↩2</a></p>
-</li>
-<li id="footnote-google-long-context">
-<p>Google AI for Developers, <em>Long context.</em> 本章在此处使用其关于 performance variability、retrieval-cost tradeoff 与 caching 的说明；对应第 19 章参考文献 15。 <a href="#fr-google-long-context-1">↩</a> <a href="#fr-google-long-context-2">↩2</a></p>
-</li>
-<li id="footnote-anthropic-long">
-<p>Anthropic, <em>Prompting best practices: Long context prompting.</em> 本章在此处使用其关于长文档前置、query 后置与约 30% 质量提升的建议；对应第 19 章参考文献 13。 <a href="#fr-anthropic-long-1">↩</a> <a href="#fr-anthropic-long-2">↩2</a></p>
-</li>
-<li id="footnote-ltm">
-<p>Nelson F. Liu et al., <em>Lost in the Middle: How Language Models Use Long Contexts.</em> 本章在此处使用其关于长上下文位置偏置与中段退化的结果；对应第 19 章参考文献 11。 <a href="#fr-ltm-1">↩</a></p>
-</li>
-<li id="footnote-fitm">
-<p>Cheng-Yu Hsieh et al., <em>Found in the Middle: Calibrating Positional Attention Bias Improves Long Context Utilization.</em> 本章在此处使用其关于 <code>"U-shaped attention bias"</code> 的分析；对应第 19 章参考文献 12。 <a href="#fr-fitm-1">↩</a></p>
-</li>
-<li id="footnote-nolima">
-<p>Ali Modarressi et al., <em>NoLiMa: Long-Context Evaluation Beyond Literal Matching.</em> 本章在此处使用其关于 32K 条件下模型退化统计，以及 GPT-4o 从 99.3% 降至 69.7% 的结果；对应第 19 章参考文献 16。 <a href="#fr-nolima-1">↩</a></p>
-</li>
-<li id="footnote-longcodebench">
-<p>Stefano Rando et al., <em>LongCodeBench: Evaluating Coding LLMs at 1M Context Windows.</em> 本章在此处使用其关于代码任务长上下文退化的样例数据；对应第 19 章参考文献 17。 <a href="#fr-longcodebench-1">↩</a></p>
-</li>
-<li id="footnote-softmax-dilution-ch1">
-<p>Petar Veličković et al., <em>Softmax is not Enough (for Sharp Size Generalisation).</em> 本章在此处使用其关于 softmax 随规模稀释、无法保持锐利选择的结论，来解释注意力质量守恒下的远端稀释；对应第 19 章参考文献 43。 <a href="#fr-softmax-dilution-ch1-1">↩</a></p>
-</li>
-<li id="footnote-bounded-logit-ch1">
-<p>本章在此处使用 Kimi K2 技术报告关于 attention logit explosion 与 QK-Clip 的描述（不封顶时 max logit 越过 1000 量级、训练发散），用来说明 logit 被主动限幅、因此单 token 注意力权重存在与 n 无关的上界；对应第 19 章参考文献 47。 <a href="#fr-bounded-logit-ch1-1">↩</a></p>
-</li>
-<li id="footnote-rope-decay-ch1">
-<p>Jianlin Su et al., <em>RoFormer: Enhanced Transformer with Rotary Position Embedding.</em> 本章在此处使用其关于相对距离衰减包络（经 Abel 变换得到）的结论；并按 <em>Round and Round We Go!</em> 标注该衰减证明依赖 query/key 为常向量的前提，故宜视为先验偏置；对应第 19 章参考文献 44、45。 <a href="#fr-rope-decay-ch1-1">↩</a></p>
-</li>
-<li id="footnote-oversquash-ch1">
-<p>Federico Barbero et al., <em>Transformers need glasses! Information over-squashing in language tasks.</em> 本章在此处使用其关于 representational collapse 与因果掩码下信息单向汇聚、over-squashing 的分析，来解释长输入中计数/复制/区分类任务的退化；对应第 19 章参考文献 46。 <a href="#fr-oversquash-ch1-1">↩</a></p>
-</li>
-<li id="footnote-nonuniform-kv-ch1">
-<p>本章在此处综合 DeepSeek-V4 技术报告（CSA/HCA 混合压缩注意力、异构与 on-disk KV cache，将近端高分辨率与远端激进聚合并置）与 MiniMax M3（MSA 稀疏/线性注意力）的做法，用来说明工业界以非均匀分辨率换取百万级容量上限；对应第 19 章参考文献 48、49。 <a href="#fr-nonuniform-kv-ch1-1">↩</a></p>
-</li>
-<li id="footnote-context-rot-ch1">
-<p>本章在此处综合 Chroma <em>Context Rot</em> 对 18 个前沿模型在各长度增量普遍退化的测试，以及 Anthropic <em>Effective context engineering for AI agents</em> 关于“context rot 在远未触达容量上限时即开始”的说明，用来支撑“闭源前沿也不例外”；对应第 19 章参考文献 50、51。 <a href="#fr-context-rot-ch1-1">↩</a></p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
