@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-417fc987.js";
+            window.path_to_searchindex_js = "searchindex-acc45ece.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-18563b7b.js"></script>
@@ -837,47 +837,32 @@ Session / Thread 事实流
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="7-能力平面与生态桥接不要把-agent-关在单一语言里"><a class="header" href="#7-能力平面与生态桥接不要把-agent-关在单一语言里">7. 能力平面与生态桥接：不要把 agent 关在单一语言里</a></h1>
-<p>第 6 章那张总图里，最容易被低估的是“能力平面”。很多团队把它理解成“再接几个工具”，但 Claude Code 和 Codex 给出的实际信号更强：想做万用 agent，就必须默认系统会不断越出本语言、越出本进程、越出本仓库，去调用 shell、浏览器、MCP、外部 API、第三方脚本，甚至别的 agent。</p>
-<h2 id="71-为什么万用-agent-必然走向能力平面"><a class="header" href="#71-为什么万用-agent-必然走向能力平面">7.1 为什么万用 agent 必然走向能力平面</a></h2>
-<p>Claude Code 之所以能既写代码、又写文章、写 slide、做研究、驱动外部 MCP 服务，不是因为它为每个场景单独训练了一套 prompt，而是因为这些场景都能被还原成一组相对稳定的动作原语：</p>
-<ul>
-<li>读写本地产物；</li>
-<li>运行命令和脚本；</li>
-<li>访问网络与外部服务；</li>
-<li>读取外部资源；</li>
-<li>派工给别的 agent；</li>
-<li>在必要时向人类请求输入或确认。</li>
-</ul>
-<p>Codex 也在公开协议面上把同样的能力列得很清楚：<code>command/exec</code>、<code>fs/*</code>、<code>mcpServer/tool/call</code>、<code>mcpServer/resource/read</code>、<code>tool/requestUserInput</code>、<code>spawn_agent</code> 等都不是附属功能，而是 runtime 的原生动作词汇表。两套系统说明的是同一件事：所谓“万用 agent”，本质上是一个能编排多种能力源的运行时，不是一个更长的 system prompt。<sup class="footnote-reference" id="fr-capability-plane-ch5-1"><a href="#footnote-capability-plane-ch5">1</a></sup></p>
-<h2 id="72-claude-code--codex-如何把外部能力接进来"><a class="header" href="#72-claude-code--codex-如何把外部能力接进来">7.2 Claude Code / Codex 如何把外部能力接进来</a></h2>
-<p>Claude Code 在 <code>ToolUseContext</code> 里直接持有 <code>mcpClients</code>、<code>mcpResources</code>、<code>agentDefinitions</code>、<code>commands</code>、<code>tools</code>、权限上下文与 <code>AppState</code>。这说明它的核心对象不是“当前正在编辑的代码文件”，而是“当前正在推进的任务线程”。任务线程会拿着同一套身份、权限、记忆与摘要机制，去调用不同来源的能力。</p>
-<p>Codex 的路线更偏协议化。它把文件系统、命令执行、MCP、人工输入、多 agent 工具统一暴露在工具注册面和 app-server 协议上。这样做的意义在于，CLI、桌面端、Web 或未来的别的客户端，不需要各自重新发明一遍“怎么执行 shell、怎么继续 thread、怎么向外部 agent 派工”。能力面已经先在内核层被抽象出来。<sup class="footnote-reference" id="fr-capability-plane-ch5-2"><a href="#footnote-capability-plane-ch5">1</a></sup></p>
-<p>这里真正值得学习的不是具体模块名，而是一个架构判断：外部能力不是插件尾巴，而是运行时主干的一部分。</p>
-<h2 id="73-失败案例怎样倒逼出协议化接入"><a class="header" href="#73-失败案例怎样倒逼出协议化接入">7.3 失败案例怎样倒逼出协议化接入</a></h2>
-<p>一旦外部能力没有进入统一协议面，第 5 章那几类事故会立刻重新出现：</p>
-<ul>
-<li>某个 Python skill 用 stderr 表达进度，父任务就会回到 3.1 的进度漂移；</li>
-<li>某个 Node 脚本自己猜主产物路径，就会回到 3.4 的产物契约缺口；</li>
-<li>某个 shell job 不带 session / topic scope，就会回到 3.3 的会话污染；</li>
-<li>某个外部 verifier 只返回一行字符串，就会回到 3.5 的验证器不完整；</li>
-<li>某个集成只在自己的日志里留证据，操作员就会回到 3.6 的盲区。</li>
-</ul>
-<p>所以“桥接”绝不只是 SDK 便利性问题。它的本质是：所有外部能力都要在进入系统时就被收口到同一套 session、scope、artifact、validator、evidence 规则里。</p>
-<h2 id="74-落地模式入口允许多样消费端必须强约束"><a class="header" href="#74-落地模式入口允许多样消费端必须强约束">7.4 落地模式：入口允许多样，消费端必须强约束</a></h2>
-<p>更稳妥的落地方式通常是下面这组组合：</p>
-<ul>
-<li>为 Python / Node / shell / 外部服务提供轻量事件发射辅助层；</li>
-<li>提供 CLI 或环境变量形式的兜底桥接，例如 <code>HARNESS_EVENT_SINK</code>；</li>
-<li>允许 sink 缺失时 no-op，但不允许跳过结果契约和终态验证；</li>
-<li>在消费端统一校验 schema、session/topic scope、phase、artifact 引用与 validator 证据。</li>
-</ul>
-<p>这条原则可以压成一句话：发射端允许语言和生态多样性，消费端必须保持运行时真相的唯一性。</p>
-<p>如果系统以后还要接插件市场、第三方 workflow 或外部 agent，这一章讲的能力平面就是最先要守住的边界。否则平台每开放一步，事实协议就会被侵蚀一步。</p>
+<p>给 agent 一句话：“把这个月的销售数据画成趋势图，贴进周报。”</p>
+<p>它在文本上能想得很清楚——该取哪段时间、画折线还是柱状、放周报哪一节。可这件事真要落地，没有一步是“生成文本”：取数据要打内部那个 SQL 服务，画图要跑一段 matplotlib（Python），“贴进周报”要往一个文件里写。模型再聪明，只要够不到自己语言、自己进程、自己仓库之外的那些东西，这句话就只能停在“我建议你这样做”。</p>
+<p>第 6 章那张总图里，最容易被低估的就是这块“能力平面”。很多团队把它理解成“再接几个工具”，但 Claude Code 和 Codex 给的信号要强得多：想做万用 agent，就得默认系统会<strong>不断越出本语言、越出本进程、越出本仓库</strong>，去调 shell、浏览器、MCP、外部 API、第三方脚本，甚至别的 agent。这一章讲的，就是怎么让它伸得出手，又不让伸出去的每只手都变成一个新的事实漏洞。</p>
+<h2 id="71-万用-agent-为什么必然长出能力平面"><a class="header" href="#71-万用-agent-为什么必然长出能力平面">7.1 万用 agent 为什么必然长出能力平面</a></h2>
+<p>Claude Code 能既写代码、又写文章、做 slide、跑研究、驱动外部服务，靠的不是给每个场景单独调一套 prompt。真要那样，场景一多就维护不动了。它靠的是把这些花样各异的任务，<strong>还原成同一组相对稳定的动作原语</strong>：读写本地产物、运行命令和脚本、访问网络与外部服务、读取外部资源、把活派给别的 agent、必要时向人请求输入或确认。写周报那句话之所以能落地，正是因为它被拆成了这几样原语的组合——查询是“访问外部服务”，画图是“运行脚本”，贴进去是“写本地产物”。</p>
+<p>Codex 把同一份清单摆到了公开协议面上：<code>command/exec</code>、<code>fs/*</code>、<code>mcpServer/tool/call</code>、<code>mcpServer/resource/read</code>、<code>tool/requestUserInput</code>、<code>spawn_agent</code>——这些不是附属功能，而是 runtime 原生的动作词汇表。这里得给不熟的读者补一句 MCP 是什么：<code>Model Context Protocol</code> 是一套标准协议，让模型能以统一方式去发现、调用外部的工具和资源——你可以把它想成工具世界的“USB-C”，有了这个统一口，任何模型、任何客户端都能插上任何一个合规的工具，而不必为每一对组合单独焊一根线。</p>
+<p>两套系统说的是同一件事：所谓“万用 agent”，本质是<strong>一个能编排多种能力源的运行时，而不是一句更长的 system prompt</strong>。把这点想反了，团队就会一直在“再调几行提示词”里打转，而真正该建的是那张能力平面。</p>
+<h2 id="72-claude-code--codex-怎么把外部能力接进来"><a class="header" href="#72-claude-code--codex-怎么把外部能力接进来">7.2 Claude Code / Codex 怎么把外部能力接进来</a></h2>
+<p>把视角拉近到对象层，会看到一个很说明问题的细节。Claude Code 的 <code>ToolUseContext</code> 里，直接攥着 <code>mcpClients</code>、<code>mcpResources</code>、<code>agentDefinitions</code>、<code>commands</code>、<code>tools</code>，还有权限上下文和 <code>AppState</code>。注意它<strong>没把“当前正在编辑的代码文件”当成核心对象</strong>——核心对象是“当前正在推进的那条任务线程”。这条线程拿着同一套身份、权限、记忆和摘要机制，去调不同来源的能力；调 shell、调 MCP、派子 agent，对它而言都是同一个主体在伸不同的手，而不是几个互不相识的工具各自为政。</p>
+<p>Codex 走的是更偏协议的那条路。它把文件系统、命令执行、MCP、人工输入、多 agent 工具，统一暴露在工具注册面和 app-server 协议上。这样做的好处是：CLI、桌面端、Web、乃至未来某个还没出现的客户端，都<strong>不必各自重新发明一遍</strong>“怎么执行 shell、怎么续 thread、怎么向外部 agent 派工”——能力面已经先在内核层被抽象好了，客户端只是它的不同前脸。<sup class="footnote-reference" id="fr-capability-plane-ch7-1"><a href="#footnote-capability-plane-ch7">1</a></sup></p>
+<p>值得学的不是这些模块名，而是它们共同体现的那个架构判断：<strong>外部能力不是插在系统屁股上的插件尾巴，而是运行时主干的一部分。</strong> 这个判断决定了下面一整节的成败。</p>
+<h2 id="73-一个-python-脚本怎样一路污染父任务"><a class="header" href="#73-一个-python-脚本怎样一路污染父任务">7.3 一个 Python 脚本，怎样一路污染父任务</a></h2>
+<p>把上面那句架构判断反过来说会更有杀伤力：外部能力一旦<strong>没有</strong>进入统一协议面，第 5 章那几类事故就会一条条排着队回来。挑最常见的一种追到底——团队图快，把一段现成的 Python 数据脚本当工具挂了进去，没怎么改造。</p>
+<p>它跑起来了。脚本一边处理，一边往 stderr 打进度：<code>Processing row 4000/10000...</code>。在写脚本的人看来这很贴心。可父任务那头，期待的是从一个约定的事件汇流处收到结构化的进度事件；它看 stderr，只看到一坨它无法解析的文本日志。于是父任务的进度，<strong>停在了脚本启动前的那一刻</strong>——这正是第 5.1 节那种进度漂移：活在干，进度却是死的。</p>
+<p>脚本算完，把结果写到了 <code>./out/result.csv</code>——这个路径是它自己猜的。父任务的 artifact 契约里，压根没有这条路径的位置；它不知道主产物已经生成、在哪、该不该送去验证。第 5.4 节那个产物契约缺口，就这么开了。更别提这段脚本是用一个不带 session/topic scope 的 shell 起的，它产生的副作用落不进当前会话的边界里，于是又有了第 5.3 节那种串扰的温床；而如果它顺手还调了个外部 verifier、对方只回一行 <code>OK</code>，那第 5.5 节的验证器不完整也一并凑齐了。</p>
+<p>看清这条链：<strong>每一种没被收口进协议的能力，都精准地重新打开了一条具体的失效机理。</strong> 进度漂移、产物缺口、会话串扰、验证空洞——它们不是各自独立的 bug，而是同一个根因（能力没进统一事实面）在四个出口上的四种症状。所以“桥接”绝不只是 SDK 用着方不方便的问题，它的本质是：<strong>所有外部能力，都要在进入系统的那一刻，就被收口到同一套 session、scope、artifact、validator、evidence 规则里。</strong></p>
+<h2 id="74-入口允许多样消费端必须强约束"><a class="header" href="#74-入口允许多样消费端必须强约束">7.4 入口允许多样，消费端必须强约束</a></h2>
+<p>那条链也指明了正确的落地姿势，可以压成一句话：<strong>发射端允许语言和生态的多样性，消费端必须保持运行时真相的唯一性。</strong></p>
+<p>发射端要宽容，因为你拦不住生态。给 Python、Node、shell、外部服务各提供一个轻量的事件发射辅助层，让它们能方便地把进度、产物、证据按规矩报上来；再提供一个 CLI 或环境变量形式的兜底桥（比如一个 <code>HARNESS_EVENT_SINK</code>），连辅助层都来不及接的脚本，也能靠它把关键事实喷进同一条流。这里有个分寸：sink 缺失时可以 no-op（脚本照跑，只是这次没报结构化进度），但<strong>绝不允许因为 sink 缺失就跳过结果契约和终态验证</strong>——宽容的是“怎么报”，不容商量的是“报上来的东西必须过同一道关”。</p>
+<p>消费端则必须铁面。无论事实从哪种语言、哪个进程喷进来，它在进入系统时都要被同一套规则校验一遍：schema 对不对、带没带 session/topic scope、phase 合不合法、artifact 引用指向哪、validator 证据齐不齐。回到 §7.3 那段 Python 脚本——只要消费端这道关在，它那条 stderr 进度会被判为“无结构、不计入”，它猜的那条产物路径会因为不在契约里而被打回，串扰会因为缺 scope 而被拦下。同一段脚本，接法没变，但因为消费端不松口，它再也污染不了父任务的事实。</p>
+<p>这一章守的边界，会在平台越做越开放时变得越来越重要。等到要接插件市场、第三方 workflow、外部 agent，能力平面就是最先要守住的那道线——否则平台每开放一步，事实协议就被侵蚀一步，最后退回到谁也说不清“现在到底是什么状态”的那种系统。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
-<li id="footnote-capability-plane-ch5">
-<p>本章在此处综合 Claude Code <code>ToolUseContext</code>、MCP 与 agent 定义相关实现，以及 Codex <code>tools</code> 与 <code>app-server</code> 协议面中关于 command、fs、MCP、human input、多 agent 工具的公开边界，用来说明万用 agent 必须先拥有统一的能力平面；对应第 21 章参考文献 21、24。 <a href="#fr-capability-plane-ch5-1">↩</a> <a href="#fr-capability-plane-ch5-2">↩2</a></p>
+<li id="footnote-capability-plane-ch7">
+<p>本章在此处综合 Claude Code <code>ToolUseContext</code>、MCP 与 agent 定义相关实现，以及 Codex <code>tools</code> 与 <code>app-server</code> 协议面中关于 command、fs、MCP、human input、多 agent 工具的公开边界，用来说明万用 agent 必须先拥有统一的能力平面；对应第 21 章参考文献 21、24。 <a href="#fr-capability-plane-ch7-1">↩</a></p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -1099,100 +1084,44 @@ UI / Operator 负责人
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="12-工作流到里程碑映射务实路线图"><a class="header" href="#12-工作流到里程碑映射务实路线图">12. 工作流到里程碑映射：务实路线图</a></h1>
-<p>如果第 6 到第 11 章回答的是“目标架构应该是什么”，第 12 章回答的就是“工程上先做什么、后做什么”。路线图的作用不是展示 backlog，而是把第 4.8 节那九个架构维度按依赖关系排成实施顺序。</p>
-<p>更直接地说：先修真相，再修体验；先把事实流、生命周期和验证守住，再开放生态、丰富协作、提升运营面。</p>
-<h2 id="r1--事实流先建立唯一运行时真相"><a class="header" href="#r1--事实流先建立唯一运行时真相">R1 — 事实流：先建立唯一运行时真相</a></h2>
-<ul>
-<li>把 task、turn、tool result、artifact、validator result 写成 append-only 事实流。</li>
-<li>明确 session / thread / transcript 的持久格式和恢复入口。</li>
-<li>所有 UI、API、dashboard、replay 都只能投影这条事实流，不能各自发明状态。</li>
-</ul>
-<h2 id="r2--生命周期把任务状态变成单调阶梯"><a class="header" href="#r2--生命周期把任务状态变成单调阶梯">R2 — 生命周期：把任务状态变成单调阶梯</a></h2>
-<ul>
-<li>类型化 <code>harness.event.v1</code> 与 <code>task_status</code> 桥接。</li>
-<li>生命周期至少覆盖 <code>queued</code>、<code>running</code>、<code>verifying</code>、<code>ready</code>、<code>failed</code>。</li>
-<li>deep-search / run_pipeline / background task 从 stderr 状态迁移到结构化事件。</li>
-</ul>
-<h2 id="r3--能力平面统一工具mcp脚本和人工输入"><a class="header" href="#r3--能力平面统一工具mcp脚本和人工输入">R3 — 能力平面：统一工具、MCP、脚本和人工输入</a></h2>
-<ul>
-<li>为 shell、Python、Node、MCP、browser、external API 提供统一事件入口。</li>
-<li>支持非 Rust / 非主语言事件发射器，例如 <code>HARNESS_EVENT_SINK</code>。</li>
-<li>工具调用必须带 session、scope、权限和审计信息。</li>
-</ul>
-<h2 id="r4--产物与验证完成状态必须由证据裁决"><a class="header" href="#r4--产物与验证完成状态必须由证据裁决">R4 — 产物与验证：完成状态必须由证据裁决</a></h2>
-<ul>
-<li>manifest / policy / task 字段声明 primary artifact。</li>
-<li>类型化验证器返回结果、失败类别、证据路径和耗时。</li>
-<li><code>ready</code> / <code>failed</code> 只由 validator + evidence 裁决，不由生成器自报。</li>
-</ul>
-<h2 id="r5--回放让实时流和历史流共享对象模型"><a class="header" href="#r5--回放让实时流和历史流共享对象模型">R5 — 回放：让实时流和历史流共享对象模型</a></h2>
-<ul>
-<li>API、SSE、历史回放和刷新恢复使用同一事实模型。</li>
-<li>回放测试覆盖浏览器重载、重新连接、会话切换和部分 stream 中断。</li>
-<li>小型 fleet 门禁验证线上 worker 的真实回放路径。</li>
-</ul>
+<p>见过一支团队，把顺序做反了。第二个月，他们上线了插件市场和一块很漂亮的 dashboard——老板满意，demo 好看。可那时候，后台还没有一条只追加的事实流，终态还是模型自己报的。结果到了第五个月，事情开始诡异地坏：每个插件按自己的方式报状态（第 7 章那种污染，乘以插件数量），dashboard 上挂着一块查询算出来、事实流里无源的“绿”（第 9 章那种影子真相），而当某个任务真的卡住时，没人能说清它此刻到底是什么状态——因为这套系统从一开始就<strong>没有过一个权威的真相</strong>可供追溯。他们不是缺功能，是把楼盖在了没浇地基的地方。</p>
+<p>所以这一章不谈 backlog，谈顺序。它要把第 4.8 节那九个架构维度，按<strong>依赖关系</strong>排成施工序——而不是按“哪个 demo 好看”排。一句话定调：<strong>先修真相，再修体验；先把事实流、生命周期和验证守住，再去开放生态、丰富协作、抬升运营面。</strong> 下面九个里程碑（R1–R9）就是这条施工序，每一个都标着“它为什么在这个位置、抽掉它会塌回哪一章的事故”。</p>
+<h2 id="r1--事实流先立起唯一的运行时真相"><a class="header" href="#r1--事实流先立起唯一的运行时真相">R1 — 事实流：先立起唯一的运行时真相</a></h2>
+<p>一切的地基。把 task、turn、tool result、artifact、validator result 都写成一条只追加（append-only）的事实流，明确 session / thread / transcript 的持久格式和恢复入口，并立下一条铁律：所有 UI、API、dashboard、replay 都只能<strong>投影</strong>这条流，不能各自发明状态。它必须排第一，因为后面每一项能力——回放、操作员面、验证——都要从这条流里取真相；地基没浇，上面盖什么都是影子。</p>
+<h2 id="r2--生命周期把任务状态变成一道单调阶梯"><a class="header" href="#r2--生命周期把任务状态变成一道单调阶梯">R2 — 生命周期：把任务状态变成一道单调阶梯</a></h2>
+<p>有了事实，还要给它定形状。把事件类型化（<code>harness.event.v1</code> 与 <code>task_status</code> 桥接），让生命周期至少覆盖 <code>queued</code>、<code>running</code>、<code>verifying</code>、<code>ready</code>、<code>failed</code> 这几级，并强制 deep-search、background task 这类工序从“往 stderr 打字”迁移到结构化事件。它紧跟 R1，因为没有单调阶梯，进度就只能靠猜——那正是第 5.1 节那种漂移的温床。</p>
+<h2 id="r3--能力平面把工具mcp脚本人工输入收成一个口"><a class="header" href="#r3--能力平面把工具mcp脚本人工输入收成一个口">R3 — 能力平面：把工具、MCP、脚本、人工输入收成一个口</a></h2>
+<p>真相与生命周期立住之后，才轮到放外部能力进来。给 shell、Python、Node、MCP、browser、external API 一个统一的事件入口，支持非主语言的事件发射器（如 <code>HARNESS_EVENT_SINK</code>），并要求每一次工具调用都带上 session、scope、权限和审计信息。顺序很关键：必须先有 R1/R2 那条能收口的流，外部能力才有地方汇入；反过来先开生态，就会是开头那支团队的下场——第 7 章的污染按能力源的数量翻倍。</p>
+<h2 id="r4--产物与验证完成与否由证据裁决"><a class="header" href="#r4--产物与验证完成与否由证据裁决">R4 — 产物与验证：完成与否，由证据裁决</a></h2>
+<p>能力进来了，就得管住“它说完成”。在 manifest / policy / task 字段里声明 primary artifact，让类型化的验证器返回结果、失败类别、证据路径和耗时，并立一条硬规矩：<code>ready</code> / <code>failed</code> 只能由 validator 加 evidence 裁决，绝不能由生成器自报。它排在能力平面之后，因为只有先有统一的产物引用（R3），验证器才知道该去验哪个文件——否则就是第 5.4、5.5 节那种“验了个寂寞”。</p>
+<h2 id="r5--回放让实时流和历史流共享一个对象模型"><a class="header" href="#r5--回放让实时流和历史流共享一个对象模型">R5 — 回放：让实时流和历史流共享一个对象模型</a></h2>
+<p>前四步把后台的真相立住了，这一步管它能不能被正确<strong>看见</strong>。让 API、SSE、历史回放、刷新恢复都用同一份事实模型，让回放测试覆盖重载、重连、会话切换和流中断，并用小型 fleet 门禁去验线上 worker 的真实回放路径。它要在能力与验证之后，因为回放要投影的，正是 R1–R4 攒下的那些事实；地基里还没有的东西，回放也放不出来。（细节见第 8 章。）</p>
 <h2 id="r6--隔离与恢复把-worktree--resume--background-做成一等能力"><a class="header" href="#r6--隔离与恢复把-worktree--resume--background-做成一等能力">R6 — 隔离与恢复：把 worktree / resume / background 做成一等能力</a></h2>
-<ul>
-<li>root task、child task、worktree、owner、scope 显式绑定。</li>
-<li>resume 能恢复 transcript、未完成 tool use、artifact 引用和工作目录。</li>
-<li>background task 与 disk output 进入事实流，而不是只写本地日志。</li>
-</ul>
-<h2 id="r7--协作让-sub-agent--swarm-有角色通信和终态裁决"><a class="header" href="#r7--协作让-sub-agent--swarm-有角色通信和终态裁决">R7 — 协作：让 sub-agent / swarm 有角色、通信和终态裁决</a></h2>
-<ul>
-<li>coordinator、worker、verifier、summarizer 的角色和权限分开。</li>
-<li>子 agent 只返回 summary、evidence、diff、artifact reference，不污染父上下文。</li>
-<li>只有 coordinator + verifier 可以宣布 root task ready / failed。</li>
-</ul>
+<p>让 root task、child task、worktree、owner、scope 显式绑定，让 resume 能恢复 transcript、未完成的 tool use、artifact 引用和工作目录，让 background task 和 disk output 进入事实流而不是只写本地日志。它排在回放之后，因为“断点续跑”本质上是“对一条可回放事实流的再进入”——没有 R5 的对象模型，resume 恢复出来的状态就和实时推送对不上。</p>
+<h2 id="r7--协作让-sub-agent--swarm-有角色有通信有终态裁决"><a class="header" href="#r7--协作让-sub-agent--swarm-有角色有通信有终态裁决">R7 — 协作：让 sub-agent / swarm 有角色、有通信、有终态裁决</a></h2>
+<p>把 coordinator、worker、verifier、summarizer 的角色和权限分开，让子 agent 只回 summary、evidence、diff、artifact reference 而不污染父上下文，并规定只有 coordinator 加 verifier 能宣布 root task 的 <code>ready</code> / <code>failed</code>。多 agent 必须排在隔离与恢复之后，因为协作的前提是每个 agent 都被 scope 和 worktree 关在自己的边界里（R6）；边界没立就放群体编排，就是第 13 章那条“局部成功伪装成系统成功”的失败链。</p>
 <h2 id="r8--知识分层把经验从-wiki-晋升到-skill--docs--agentsmd--gate"><a class="header" href="#r8--知识分层把经验从-wiki-晋升到-skill--docs--agentsmd--gate">R8 — 知识分层：把经验从 wiki 晋升到 skill / docs / AGENTS.md / gate</a></h2>
-<ul>
-<li><code>AGENTS.md</code> 保持短目录，细节下沉到 docs 与 skills。</li>
-<li>重复事故进入 wiki，稳定经验晋升为 skill、validator、fixture 或 CI gate。</li>
-<li>过时经验必须 demotion / deletion，避免知识层变成长期噪声源。</li>
-</ul>
-<h2 id="r9--操作员面把-dashboard门禁回滚和复盘接到同一事实流"><a class="header" href="#r9--操作员面把-dashboard门禁回滚和复盘接到同一事实流">R9 — 操作员面：把 dashboard、门禁、回滚和复盘接到同一事实流</a></h2>
-<ul>
-<li>dashboard 展示 lifecycle、artifact、validator、child task、scope 和最近 summary。</li>
-<li>门禁与发布声明绑定证据，不接受轶事式成功。</li>
-<li>每次事故都沉淀为失败模式条目、复盘模板和可回放 fixture。</li>
-</ul>
-<p>这条路线图按依赖排序，而不是按 backlog 美观排序。R1 到 R2 先建立事实和生命周期；R3 到 R4 让外部能力和完成裁决进入协议；R5 到 R7 解决回放、恢复和多 agent 协作；R8 到 R9 再把组织知识和操作员控制面接进来。顺序反过来，平台会在还没有稳定事实流时就开放外部复杂度，后续每一步都会更贵。</p>
-<p>这条路线也不是凭空想象出来的。Claude Code 已经把 compaction、resume、worktree、sub-agent 摘要、外置 output、权限和扩展机制做进产品里；<em>Dive into Claude Code</em> 则把它们整理成五层系统结构；Codex 已经把 <code>thread-store</code>、<code>rollout</code>、<code>app-server</code>、tool registry 这些“骨架能力”做成显式模块。路线图真正要做的，不是复制某个仓库，而是把这些成熟样本已经证明必要的部件，按依赖顺序转译成自己的系统实现。</p>
+<p>让 <code>AGENTS.md</code> 保持短目录、细节下沉到 docs 与 skills，让重复事故先进 wiki、稳定经验再晋升为 skill、validator、fixture 或 CI gate，并强制过时经验要被降级或删除，免得知识层变成长期噪声源。它靠后，因为知识分层是在前面那套运行时跑顺、开始产生可复用经验之后，才有东西可沉淀。</p>
+<h2 id="r9--操作员面把-dashboard门禁回滚复盘接到同一条事实流"><a class="header" href="#r9--操作员面把-dashboard门禁回滚复盘接到同一条事实流">R9 — 操作员面：把 dashboard、门禁、回滚、复盘接到同一条事实流</a></h2>
+<p>最后，让 dashboard 展示生命周期、artifact、validator、child task、scope 和最近 summary，让门禁与发布声明绑定证据、不接受轶事式的“我测过了没问题”，并让每一次事故都沉淀成失败模式条目、复盘模板和可回放 fixture。它收尾，因为操作员面消费的是前面所有里程碑攒下的事实——它是这条施工序的最后一层装修，而不是地基。（细节见第 9 章。）</p>
+<p>这条序是按依赖排的，不是按 backlog 的美观排的：R1–R2 先立真相与生命周期，R3–R4 让外部能力和完成裁决进入协议，R5–R7 解决回放、恢复与多 agent 协作，R8–R9 才把组织知识和操作员控制面接上。把它倒过来做，就会像本章开头那支团队——在还没有稳定事实流的时候，就先把外部复杂度放了进来，之后每一步都得在流沙上返工，越往后越贵。</p>
+<p>这条路也不是凭空想的。Claude Code 已经把 compaction、resume、worktree、子 agent 摘要、外置 output、权限和扩展机制做进了产品，<em>Dive into Claude Code</em> 把它们整理成五层结构；Codex 则把 <code>thread-store</code>、<code>rollout</code>、<code>app-server</code>、tool registry 这些“骨架能力”做成了显式模块。路线图要做的不是去复制某个仓库，而是把这些成熟样本已经用代价证明“必要”的部件，按依赖顺序，转译成你自己系统里的实现次序。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="13-harness-必要但不充分"><a class="header" href="#13-harness-必要但不充分">13. Harness 必要但不充分</a></h1>
-<p>讲完路线图以后，必须立刻收边界。否则团队很容易把 harness 当成万能解释，把所有产品质量问题都往上堆。这一章的任务，就是把 harness 能解决什么、不能解决什么切开。</p>
-<h2 id="131-一个匿名失败链研究任务看似完成但交付的是错文件"><a class="header" href="#131-一个匿名失败链研究任务看似完成但交付的是错文件">13.1 一个匿名失败链：研究任务“看似完成”，但交付的是错文件</a></h2>
-<p>拿一条很典型的匿名失败链来看，会更容易看清 harness 的边界。用户发来一个任务：“读 12 篇材料，生成一份 20 页汇报，并附带可演示的 slides。”系统表面上做了很多对的事情：起了研究 worker，调用了 web / MCP 搜索，写了草稿，最后还返回了一个 <code>ready</code> 状态和一份 <code>pptx</code>。但用户一打开文件，发现交付的是旧版本模板，引用也不完整，真正的新内容只写进了一个中间 Markdown 文件里。</p>
-<p>如果顺着事故往回追，这条失败链通常会长成下面这样：</p>
-<ol>
-<li>session 层没有把“哪一个 root task、哪几个 child task、哪一个 primary artifact”钉成单一事实；</li>
-<li>capability plane 层里，研究 worker 用 Python 脚本和 MCP 拉资料，打包 worker 用 shell 生成 slides，但两边只在自由文本里提到产物路径，没有统一的 artifact 引用；</li>
-<li>verifier 只检查“有没有生成一个 <code>pptx</code> 文件”，没有检查引用数量、主文件归属和内容新鲜度，于是错误文件也能通过；</li>
-<li>operator dashboard 只能看到“任务 ready”，看不到哪个 child worker 报告了哪个产物、哪个 validator 实际没覆盖到关键约束；</li>
-<li>swarm 层里，coordinator 只拿到一句“slides generated successfully”，没有拿到带证据的 summary，因此把错误结果当成了真实完成。</li>
-</ol>
-<p>这条链很有代表性，因为它不是模型单点失误，而是 <code>session -&gt; capability plane -&gt; verifier -&gt; operator dashboard -&gt; swarm</code> 五层都少了一点约束，于是最后在用户面前合成了一次“假成功”。</p>
-<h2 id="132-顺着这条失败链看五层架构如何真正落地"><a class="header" href="#132-顺着这条失败链看五层架构如何真正落地">13.2 顺着这条失败链，看五层架构如何真正落地</a></h2>
-<p>如果要把上面的事故真正修住，不能只在最后补一个“更强提示词”，而要顺着五层架构逐层落地。</p>
-<p><code>session</code> 层先做硬事实。root task 创建时，就声明本轮交付物是 <code>report.md</code> 与 <code>slides.pptx</code>，并把每个 child task 的 owner、role、scope、worktree、expected artifact type 写进事实流。这样 coordinator、replay、dashboard 和 verifier 才是在读同一份任务定义，而不是各自猜测。</p>
-<p><code>capability plane</code> 层再做统一入口。研究 worker 无论是用 Python、Node、shell 还是 MCP，都只能通过统一事件和 artifact 报告面回传结果。脚本可以自由实现，但不能自由定义状态协议；外部能力可以多样，但产物引用、scope 绑定和任务归属必须一致。</p>
-<p><code>verifier</code> 层负责终态裁决。它不只检查“文件存在”，还要检查：这是不是被声明过的 primary artifact，引用和页数是否达标，slides 是否基于当前 report 生成，证据文件存在哪里。只有通过这些检查，root task 才能进入 <code>ready</code>。否则就应该停在 <code>verifying</code> 或进入 <code>failed</code>，而不是把验证成本甩给用户。</p>
-<p><code>operator dashboard</code> 层负责把这条链说清楚。值班同学应该能一眼看到：哪个 coordinator 派出了哪些 child task，每个 child 最近一次 summary 是什么，哪个 artifact 被报告，哪个 validator 成功或失败，证据路径在哪里。这样收到用户投诉时，团队不是从头猜，而是直接沿着事实流定位是哪一层断了。</p>
-<p><code>swarm</code> 层最后负责把多 agent 协作收束成单一系统真相。coordinator 只负责拆解、汇总和裁决；research worker 只负责证据搜集；draft worker 只负责文本和 slides 生成；verifier worker 只负责检查。没有任何一个 worker 可以单独宣布整个系统已经成功。只要这条规则还守着，局部成功就不会再轻易伪装成系统成功。</p>
-<h2 id="133-harness-解决到哪哪里仍不是-harness-的职责"><a class="header" href="#133-harness-解决到哪哪里仍不是-harness-的职责">13.3 Harness 解决到哪，哪里仍不是 harness 的职责</a></h2>
-<p>Harness 解决编排正确性，不解决完整产品质量。</p>
-<p>高质量代码 agent 仍然需要：</p>
-<ul>
-<li>强模型选择和路由策略</li>
-<li>工具安全边界（沙箱、认证、权限门禁）</li>
-<li>面向编码工作流的强提示词/策略对齐</li>
-<li>测试生成/修复纪律</li>
-<li>仓库感知的编辑质量和评审循环</li>
-<li>延迟/成本治理</li>
-</ul>
-<p>Claude Code 和 Codex 自己也在证明这条边界。前者即使已经有了很重的 harness 运行时，仍然花大量工程在权限、模型、MCP、session、worktree 和进度管理上；后者即使把 thread/turn/item、tools、sandboxing、approvals 抽得很清楚，也依然需要强模型、强测试和强治理来保证结果质量。Harness 能解决的是“系统说真话、状态一致、可恢复、可审计”；它不能替代模型能力、领域知识和组织纪律。</p>
-<p>可以把 harness 看成运行时事实层。<br>没有它，质量无法被信任。<br>只有它，质量仍然依赖模型、工具和产品纪律。</p>
-<p>也可以把它理解为“系统说真话”和“系统是好产品”之间的边界。前者是失败模式迫使我们构建的东西；后者仍然依赖模型路由、沙箱、提示词/策略对齐和评审纪律。</p>
-<p>这条边界很重要。Harness 能让系统不撒谎：没完成就不显示完成，产物无效就不交付，验证失败就不进入 ready，会话切换不串状态。但它不能保证产品判断正确、模型选择最优、用户需求被理解、成本足够低、交互体验足够好。把 harness 当成产品质量的全部，是另一种形式的过度工程。</p>
+<p>路线图一讲完，必须立刻收边界。否则团队很容易把 harness 当成万能解释——产品哪里不好，都往“harness 没做好”上推。这一章就干一件事：把 harness 能解决什么、不能解决什么，干净地切开。</p>
+<h2 id="131-一次假成功研究任务报了-ready交付的却是错文件"><a class="header" href="#131-一次假成功研究任务报了-ready交付的却是错文件">13.1 一次“假成功”：研究任务报了 ready，交付的却是错文件</a></h2>
+<p>先看一次很典型的翻车，从用户的视角。</p>
+<p>任务是这样下的：“读 12 篇材料，生成一份 20 页汇报，并附带可演示的 slides。”系统表面上做得一板一眼——起了研究 worker，调了 web 和 MCP 搜索，写了草稿，最后回了一个 <code>ready</code>，外加一个 <code>report.pptx</code>。用户在工位上双击打开它，期待看到那 12 篇材料汇成的新汇报。然后他愣住了：打开的是上个季度的旧模板，引用残缺，而这次真正写出来的新内容，全躺在一个谁也没提过的中间 Markdown 文件里。系统从头到尾没报一个错。它只是，平静地，交付了一份错的东西，还盖了个“完成”的章。</p>
+<p>顺着这次“假成功”往回追，会发现它不是模型在某一步答错了，而是<strong>五层架构各漏了一点约束，最后在用户面前合成出来的</strong>。最底下，session 层从没把“哪个是 root task、派生了哪几个 child、哪个才是 primary artifact”钉成单一事实——交付物到底是哪个文件，系统自己都没共识。往上一层，能力平面里，研究 worker 用 Python 和 MCP 拉资料、打包 worker 用 shell 生 slides，两边却只在各自的自由文本里顺口提了一句产物路径，没有一个统一的 artifact 引用把它们对齐——于是“新内容在哪”这件事，在两个 worker 之间就已经失联了。再往上，verifier 只检查了“是不是生成了一个 <code>pptx</code>”，没去查引用够不够、主文件归不归属、内容是不是基于这次的 report——于是那个旧模板，轻松通过。再往上，operator dashboard 只看得到一句“任务 ready”，看不到是哪个 child 报了哪个产物、哪个 validator 其实压根没覆盖到关键约束。最顶上，swarm 层的 coordinator 只收到打包 worker 一句轻飘飘的“slides generated successfully”，没有附带证据的 summary，于是它信了，把这次局部的“跑完了”当成了整个系统的“做对了”。</p>
+<p>这条链的代表性就在这里：<strong><code>session → 能力平面 → verifier → dashboard → swarm</code>，五层每层只松了一扣，单独看都不致命，叠起来就合成了一次完整的谎言。</strong></p>
+<h2 id="132-顺着这条链看五层架构怎样真正落地"><a class="header" href="#132-顺着这条链看五层架构怎样真正落地">13.2 顺着这条链，看五层架构怎样真正落地</a></h2>
+<p>要修住它，不能在最末端补一句“更强的提示词”，得顺着这五层逐层把扣收紧。</p>
+<p><code>session</code> 层先做硬事实：root task 一创建，就把本轮交付物声明成 <code>report.md</code> 与 <code>slides.pptx</code>，并把每个 child 的 owner、role、scope、worktree、预期产物类型都写进事实流。这样 coordinator、replay、dashboard、verifier 读的才是<strong>同一份任务定义</strong>，而不是各猜各的。<code>能力平面</code> 层再做统一入口：研究 worker 无论用 Python、Node、shell 还是 MCP，结果都只能经由统一的事件和 artifact 报告面回传——脚本可以自由实现，但不能自由定义状态协议；能力可以多样，但产物引用、scope 绑定、任务归属必须一致。<code>verifier</code> 层负责终态裁决：它不只看“文件存在”，还要查这是不是被声明过的 primary artifact、引用和页数达没达标、slides 是不是基于当前这版 report 生成、证据落在哪——这些全过，root task 才配进 <code>ready</code>，否则就该停在 <code>verifying</code> 或落到 <code>failed</code>，而不是把验证的成本甩给用户去双击发现。<code>dashboard</code> 层负责把这条链摆清楚：值班的人要能一眼看到谁派了哪些 child、每个 child 最近的 summary、哪个 artifact 被报告、哪个 validator 红了、证据在哪——这样用户投诉进来，是沿着事实流定位“哪一层断了”，而不是从零开始猜。<code>swarm</code> 层最后收束成单一真相：coordinator 只管拆解、汇总、裁决，研究 worker 只管搜证，draft worker 只管生成，verifier worker 只管检查，<strong>没有任何一个 worker 能单独宣布整个系统成功</strong>。只要这条规矩还在，局部的“跑完了”就再也伪装不成系统的“做对了”。</p>
+<h2 id="133-它修到哪为止哪里就不再是它的职责"><a class="header" href="#133-它修到哪为止哪里就不再是它的职责">13.3 它修到哪为止，哪里就不再是它的职责</a></h2>
+<p>把上面这套都做对了，也只换来一件事：<strong>编排是正确的</strong>。它换不来完整的产品质量。</p>
+<p>这条边界，Claude Code 和 Codex 自己就是证据。前者即便已经背着一套很重的 harness 运行时，仍然在权限、模型选择、MCP、session、worktree、进度管理上压着大量工程；后者即便把 thread/turn/item、tools、sandboxing、approvals 抽得清清楚楚，也照样得靠强模型、强测试、强治理来保住结果的质量。换句话说，一个高质量的代码 agent，在 harness 之外还欠着一长串东西——一套像样的模型选择与路由策略、工具的安全边界（沙箱、认证、权限门禁）、面向编码工作流的提示词与策略对齐、测试生成与修复的纪律、仓库感知的编辑质量与评审循环，以及对延迟和成本的治理。这些没有一样是 harness 能替你做的。</p>
+<p>所以可以把 harness 看成系统的<strong>运行时事实层</strong>：没有它，质量根本无法被信任——模型再强，你也不知道它报的“完成”算不算数；可只有它，质量仍然悬在模型、工具和产品纪律上。它划的是“系统说真话”和“系统是好产品”之间那条线。前者，是被一连串失败模式逼着我们建起来的：没完成就不许显示完成，产物无效就不许交付，验证没过就不许进 ready，会话一切就不许串状态。后者，仍然依赖模型路由对不对、沙箱严不严、提示词与策略齐不齐、评审纪律松不松。</p>
+<p>记住这条线，是为了避免另一种过度工程：<strong>把 harness 当成产品质量的全部。</strong> 它能让系统不撒谎，却不能保证产品判断正确、模型选得最优、用户需求被真正理解、成本足够低、体验足够好。harness 是地基和承重墙——它决定楼塌不塌；但住得舒不舒服，还得看里面的装修、采光和动线。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="14-可执行清单"><a class="header" href="#14-可执行清单">14. 可执行清单</a></h1>
 <p>边界讲清之后，剩下的工作就是把前面各章的要求压成能执行的检查项。第 14 章不是新观点，而是把第 4.8 节那九个维度压成可以拿来做合并前、上线前、事故后的动作清单，并补上一条匿名失败链的逐层排查顺序。</p>

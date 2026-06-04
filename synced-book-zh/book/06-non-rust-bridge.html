@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-417fc987.js";
+            window.path_to_searchindex_js = "searchindex-acc45ece.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-18563b7b.js"></script>
@@ -175,47 +175,32 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="7-能力平面与生态桥接不要把-agent-关在单一语言里"><a class="header" href="#7-能力平面与生态桥接不要把-agent-关在单一语言里">7. 能力平面与生态桥接：不要把 agent 关在单一语言里</a></h1>
-<p>第 6 章那张总图里，最容易被低估的是“能力平面”。很多团队把它理解成“再接几个工具”，但 Claude Code 和 Codex 给出的实际信号更强：想做万用 agent，就必须默认系统会不断越出本语言、越出本进程、越出本仓库，去调用 shell、浏览器、MCP、外部 API、第三方脚本，甚至别的 agent。</p>
-<h2 id="71-为什么万用-agent-必然走向能力平面"><a class="header" href="#71-为什么万用-agent-必然走向能力平面">7.1 为什么万用 agent 必然走向能力平面</a></h2>
-<p>Claude Code 之所以能既写代码、又写文章、写 slide、做研究、驱动外部 MCP 服务，不是因为它为每个场景单独训练了一套 prompt，而是因为这些场景都能被还原成一组相对稳定的动作原语：</p>
-<ul>
-<li>读写本地产物；</li>
-<li>运行命令和脚本；</li>
-<li>访问网络与外部服务；</li>
-<li>读取外部资源；</li>
-<li>派工给别的 agent；</li>
-<li>在必要时向人类请求输入或确认。</li>
-</ul>
-<p>Codex 也在公开协议面上把同样的能力列得很清楚：<code>command/exec</code>、<code>fs/*</code>、<code>mcpServer/tool/call</code>、<code>mcpServer/resource/read</code>、<code>tool/requestUserInput</code>、<code>spawn_agent</code> 等都不是附属功能，而是 runtime 的原生动作词汇表。两套系统说明的是同一件事：所谓“万用 agent”，本质上是一个能编排多种能力源的运行时，不是一个更长的 system prompt。<sup class="footnote-reference" id="fr-capability-plane-ch5-1"><a href="#footnote-capability-plane-ch5">1</a></sup></p>
-<h2 id="72-claude-code--codex-如何把外部能力接进来"><a class="header" href="#72-claude-code--codex-如何把外部能力接进来">7.2 Claude Code / Codex 如何把外部能力接进来</a></h2>
-<p>Claude Code 在 <code>ToolUseContext</code> 里直接持有 <code>mcpClients</code>、<code>mcpResources</code>、<code>agentDefinitions</code>、<code>commands</code>、<code>tools</code>、权限上下文与 <code>AppState</code>。这说明它的核心对象不是“当前正在编辑的代码文件”，而是“当前正在推进的任务线程”。任务线程会拿着同一套身份、权限、记忆与摘要机制，去调用不同来源的能力。</p>
-<p>Codex 的路线更偏协议化。它把文件系统、命令执行、MCP、人工输入、多 agent 工具统一暴露在工具注册面和 app-server 协议上。这样做的意义在于，CLI、桌面端、Web 或未来的别的客户端，不需要各自重新发明一遍“怎么执行 shell、怎么继续 thread、怎么向外部 agent 派工”。能力面已经先在内核层被抽象出来。<sup class="footnote-reference" id="fr-capability-plane-ch5-2"><a href="#footnote-capability-plane-ch5">1</a></sup></p>
-<p>这里真正值得学习的不是具体模块名，而是一个架构判断：外部能力不是插件尾巴，而是运行时主干的一部分。</p>
-<h2 id="73-失败案例怎样倒逼出协议化接入"><a class="header" href="#73-失败案例怎样倒逼出协议化接入">7.3 失败案例怎样倒逼出协议化接入</a></h2>
-<p>一旦外部能力没有进入统一协议面，第 5 章那几类事故会立刻重新出现：</p>
-<ul>
-<li>某个 Python skill 用 stderr 表达进度，父任务就会回到 3.1 的进度漂移；</li>
-<li>某个 Node 脚本自己猜主产物路径，就会回到 3.4 的产物契约缺口；</li>
-<li>某个 shell job 不带 session / topic scope，就会回到 3.3 的会话污染；</li>
-<li>某个外部 verifier 只返回一行字符串，就会回到 3.5 的验证器不完整；</li>
-<li>某个集成只在自己的日志里留证据，操作员就会回到 3.6 的盲区。</li>
-</ul>
-<p>所以“桥接”绝不只是 SDK 便利性问题。它的本质是：所有外部能力都要在进入系统时就被收口到同一套 session、scope、artifact、validator、evidence 规则里。</p>
-<h2 id="74-落地模式入口允许多样消费端必须强约束"><a class="header" href="#74-落地模式入口允许多样消费端必须强约束">7.4 落地模式：入口允许多样，消费端必须强约束</a></h2>
-<p>更稳妥的落地方式通常是下面这组组合：</p>
-<ul>
-<li>为 Python / Node / shell / 外部服务提供轻量事件发射辅助层；</li>
-<li>提供 CLI 或环境变量形式的兜底桥接，例如 <code>HARNESS_EVENT_SINK</code>；</li>
-<li>允许 sink 缺失时 no-op，但不允许跳过结果契约和终态验证；</li>
-<li>在消费端统一校验 schema、session/topic scope、phase、artifact 引用与 validator 证据。</li>
-</ul>
-<p>这条原则可以压成一句话：发射端允许语言和生态多样性，消费端必须保持运行时真相的唯一性。</p>
-<p>如果系统以后还要接插件市场、第三方 workflow 或外部 agent，这一章讲的能力平面就是最先要守住的边界。否则平台每开放一步，事实协议就会被侵蚀一步。</p>
+<p>给 agent 一句话：“把这个月的销售数据画成趋势图，贴进周报。”</p>
+<p>它在文本上能想得很清楚——该取哪段时间、画折线还是柱状、放周报哪一节。可这件事真要落地，没有一步是“生成文本”：取数据要打内部那个 SQL 服务，画图要跑一段 matplotlib（Python），“贴进周报”要往一个文件里写。模型再聪明，只要够不到自己语言、自己进程、自己仓库之外的那些东西，这句话就只能停在“我建议你这样做”。</p>
+<p>第 6 章那张总图里，最容易被低估的就是这块“能力平面”。很多团队把它理解成“再接几个工具”，但 Claude Code 和 Codex 给的信号要强得多：想做万用 agent，就得默认系统会<strong>不断越出本语言、越出本进程、越出本仓库</strong>，去调 shell、浏览器、MCP、外部 API、第三方脚本，甚至别的 agent。这一章讲的，就是怎么让它伸得出手，又不让伸出去的每只手都变成一个新的事实漏洞。</p>
+<h2 id="71-万用-agent-为什么必然长出能力平面"><a class="header" href="#71-万用-agent-为什么必然长出能力平面">7.1 万用 agent 为什么必然长出能力平面</a></h2>
+<p>Claude Code 能既写代码、又写文章、做 slide、跑研究、驱动外部服务，靠的不是给每个场景单独调一套 prompt。真要那样，场景一多就维护不动了。它靠的是把这些花样各异的任务，<strong>还原成同一组相对稳定的动作原语</strong>：读写本地产物、运行命令和脚本、访问网络与外部服务、读取外部资源、把活派给别的 agent、必要时向人请求输入或确认。写周报那句话之所以能落地，正是因为它被拆成了这几样原语的组合——查询是“访问外部服务”，画图是“运行脚本”，贴进去是“写本地产物”。</p>
+<p>Codex 把同一份清单摆到了公开协议面上：<code>command/exec</code>、<code>fs/*</code>、<code>mcpServer/tool/call</code>、<code>mcpServer/resource/read</code>、<code>tool/requestUserInput</code>、<code>spawn_agent</code>——这些不是附属功能，而是 runtime 原生的动作词汇表。这里得给不熟的读者补一句 MCP 是什么：<code>Model Context Protocol</code> 是一套标准协议，让模型能以统一方式去发现、调用外部的工具和资源——你可以把它想成工具世界的“USB-C”，有了这个统一口，任何模型、任何客户端都能插上任何一个合规的工具，而不必为每一对组合单独焊一根线。</p>
+<p>两套系统说的是同一件事：所谓“万用 agent”，本质是<strong>一个能编排多种能力源的运行时，而不是一句更长的 system prompt</strong>。把这点想反了，团队就会一直在“再调几行提示词”里打转，而真正该建的是那张能力平面。</p>
+<h2 id="72-claude-code--codex-怎么把外部能力接进来"><a class="header" href="#72-claude-code--codex-怎么把外部能力接进来">7.2 Claude Code / Codex 怎么把外部能力接进来</a></h2>
+<p>把视角拉近到对象层，会看到一个很说明问题的细节。Claude Code 的 <code>ToolUseContext</code> 里，直接攥着 <code>mcpClients</code>、<code>mcpResources</code>、<code>agentDefinitions</code>、<code>commands</code>、<code>tools</code>，还有权限上下文和 <code>AppState</code>。注意它<strong>没把“当前正在编辑的代码文件”当成核心对象</strong>——核心对象是“当前正在推进的那条任务线程”。这条线程拿着同一套身份、权限、记忆和摘要机制，去调不同来源的能力；调 shell、调 MCP、派子 agent，对它而言都是同一个主体在伸不同的手，而不是几个互不相识的工具各自为政。</p>
+<p>Codex 走的是更偏协议的那条路。它把文件系统、命令执行、MCP、人工输入、多 agent 工具，统一暴露在工具注册面和 app-server 协议上。这样做的好处是：CLI、桌面端、Web、乃至未来某个还没出现的客户端，都<strong>不必各自重新发明一遍</strong>“怎么执行 shell、怎么续 thread、怎么向外部 agent 派工”——能力面已经先在内核层被抽象好了，客户端只是它的不同前脸。<sup class="footnote-reference" id="fr-capability-plane-ch7-1"><a href="#footnote-capability-plane-ch7">1</a></sup></p>
+<p>值得学的不是这些模块名，而是它们共同体现的那个架构判断：<strong>外部能力不是插在系统屁股上的插件尾巴，而是运行时主干的一部分。</strong> 这个判断决定了下面一整节的成败。</p>
+<h2 id="73-一个-python-脚本怎样一路污染父任务"><a class="header" href="#73-一个-python-脚本怎样一路污染父任务">7.3 一个 Python 脚本，怎样一路污染父任务</a></h2>
+<p>把上面那句架构判断反过来说会更有杀伤力：外部能力一旦<strong>没有</strong>进入统一协议面，第 5 章那几类事故就会一条条排着队回来。挑最常见的一种追到底——团队图快，把一段现成的 Python 数据脚本当工具挂了进去，没怎么改造。</p>
+<p>它跑起来了。脚本一边处理，一边往 stderr 打进度：<code>Processing row 4000/10000...</code>。在写脚本的人看来这很贴心。可父任务那头，期待的是从一个约定的事件汇流处收到结构化的进度事件；它看 stderr，只看到一坨它无法解析的文本日志。于是父任务的进度，<strong>停在了脚本启动前的那一刻</strong>——这正是第 5.1 节那种进度漂移：活在干，进度却是死的。</p>
+<p>脚本算完，把结果写到了 <code>./out/result.csv</code>——这个路径是它自己猜的。父任务的 artifact 契约里，压根没有这条路径的位置；它不知道主产物已经生成、在哪、该不该送去验证。第 5.4 节那个产物契约缺口，就这么开了。更别提这段脚本是用一个不带 session/topic scope 的 shell 起的，它产生的副作用落不进当前会话的边界里，于是又有了第 5.3 节那种串扰的温床；而如果它顺手还调了个外部 verifier、对方只回一行 <code>OK</code>，那第 5.5 节的验证器不完整也一并凑齐了。</p>
+<p>看清这条链：<strong>每一种没被收口进协议的能力，都精准地重新打开了一条具体的失效机理。</strong> 进度漂移、产物缺口、会话串扰、验证空洞——它们不是各自独立的 bug，而是同一个根因（能力没进统一事实面）在四个出口上的四种症状。所以“桥接”绝不只是 SDK 用着方不方便的问题，它的本质是：<strong>所有外部能力，都要在进入系统的那一刻，就被收口到同一套 session、scope、artifact、validator、evidence 规则里。</strong></p>
+<h2 id="74-入口允许多样消费端必须强约束"><a class="header" href="#74-入口允许多样消费端必须强约束">7.4 入口允许多样，消费端必须强约束</a></h2>
+<p>那条链也指明了正确的落地姿势，可以压成一句话：<strong>发射端允许语言和生态的多样性，消费端必须保持运行时真相的唯一性。</strong></p>
+<p>发射端要宽容，因为你拦不住生态。给 Python、Node、shell、外部服务各提供一个轻量的事件发射辅助层，让它们能方便地把进度、产物、证据按规矩报上来；再提供一个 CLI 或环境变量形式的兜底桥（比如一个 <code>HARNESS_EVENT_SINK</code>），连辅助层都来不及接的脚本，也能靠它把关键事实喷进同一条流。这里有个分寸：sink 缺失时可以 no-op（脚本照跑，只是这次没报结构化进度），但<strong>绝不允许因为 sink 缺失就跳过结果契约和终态验证</strong>——宽容的是“怎么报”，不容商量的是“报上来的东西必须过同一道关”。</p>
+<p>消费端则必须铁面。无论事实从哪种语言、哪个进程喷进来，它在进入系统时都要被同一套规则校验一遍：schema 对不对、带没带 session/topic scope、phase 合不合法、artifact 引用指向哪、validator 证据齐不齐。回到 §7.3 那段 Python 脚本——只要消费端这道关在，它那条 stderr 进度会被判为“无结构、不计入”，它猜的那条产物路径会因为不在契约里而被打回，串扰会因为缺 scope 而被拦下。同一段脚本，接法没变，但因为消费端不松口，它再也污染不了父任务的事实。</p>
+<p>这一章守的边界，会在平台越做越开放时变得越来越重要。等到要接插件市场、第三方 workflow、外部 agent，能力平面就是最先要守住的那道线——否则平台每开放一步，事实协议就被侵蚀一步，最后退回到谁也说不清“现在到底是什么状态”的那种系统。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
-<li id="footnote-capability-plane-ch5">
-<p>本章在此处综合 Claude Code <code>ToolUseContext</code>、MCP 与 agent 定义相关实现，以及 Codex <code>tools</code> 与 <code>app-server</code> 协议面中关于 command、fs、MCP、human input、多 agent 工具的公开边界，用来说明万用 agent 必须先拥有统一的能力平面；对应第 21 章参考文献 21、24。 <a href="#fr-capability-plane-ch5-1">↩</a> <a href="#fr-capability-plane-ch5-2">↩2</a></p>
+<li id="footnote-capability-plane-ch7">
+<p>本章在此处综合 Claude Code <code>ToolUseContext</code>、MCP 与 agent 定义相关实现，以及 Codex <code>tools</code> 与 <code>app-server</code> 协议面中关于 command、fs、MCP、human input、多 agent 工具的公开边界，用来说明万用 agent 必须先拥有统一的能力平面；对应第 21 章参考文献 21、24。 <a href="#fr-capability-plane-ch7-1">↩</a></p>
 </li>
 </ol>
 

@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-417fc987.js";
+            window.path_to_searchindex_js = "searchindex-acc45ece.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-18563b7b.js"></script>
@@ -175,64 +175,28 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="12-工作流到里程碑映射务实路线图"><a class="header" href="#12-工作流到里程碑映射务实路线图">12. 工作流到里程碑映射：务实路线图</a></h1>
-<p>如果第 6 到第 11 章回答的是“目标架构应该是什么”，第 12 章回答的就是“工程上先做什么、后做什么”。路线图的作用不是展示 backlog，而是把第 4.8 节那九个架构维度按依赖关系排成实施顺序。</p>
-<p>更直接地说：先修真相，再修体验；先把事实流、生命周期和验证守住，再开放生态、丰富协作、提升运营面。</p>
-<h2 id="r1--事实流先建立唯一运行时真相"><a class="header" href="#r1--事实流先建立唯一运行时真相">R1 — 事实流：先建立唯一运行时真相</a></h2>
-<ul>
-<li>把 task、turn、tool result、artifact、validator result 写成 append-only 事实流。</li>
-<li>明确 session / thread / transcript 的持久格式和恢复入口。</li>
-<li>所有 UI、API、dashboard、replay 都只能投影这条事实流，不能各自发明状态。</li>
-</ul>
-<h2 id="r2--生命周期把任务状态变成单调阶梯"><a class="header" href="#r2--生命周期把任务状态变成单调阶梯">R2 — 生命周期：把任务状态变成单调阶梯</a></h2>
-<ul>
-<li>类型化 <code>harness.event.v1</code> 与 <code>task_status</code> 桥接。</li>
-<li>生命周期至少覆盖 <code>queued</code>、<code>running</code>、<code>verifying</code>、<code>ready</code>、<code>failed</code>。</li>
-<li>deep-search / run_pipeline / background task 从 stderr 状态迁移到结构化事件。</li>
-</ul>
-<h2 id="r3--能力平面统一工具mcp脚本和人工输入"><a class="header" href="#r3--能力平面统一工具mcp脚本和人工输入">R3 — 能力平面：统一工具、MCP、脚本和人工输入</a></h2>
-<ul>
-<li>为 shell、Python、Node、MCP、browser、external API 提供统一事件入口。</li>
-<li>支持非 Rust / 非主语言事件发射器，例如 <code>HARNESS_EVENT_SINK</code>。</li>
-<li>工具调用必须带 session、scope、权限和审计信息。</li>
-</ul>
-<h2 id="r4--产物与验证完成状态必须由证据裁决"><a class="header" href="#r4--产物与验证完成状态必须由证据裁决">R4 — 产物与验证：完成状态必须由证据裁决</a></h2>
-<ul>
-<li>manifest / policy / task 字段声明 primary artifact。</li>
-<li>类型化验证器返回结果、失败类别、证据路径和耗时。</li>
-<li><code>ready</code> / <code>failed</code> 只由 validator + evidence 裁决，不由生成器自报。</li>
-</ul>
-<h2 id="r5--回放让实时流和历史流共享对象模型"><a class="header" href="#r5--回放让实时流和历史流共享对象模型">R5 — 回放：让实时流和历史流共享对象模型</a></h2>
-<ul>
-<li>API、SSE、历史回放和刷新恢复使用同一事实模型。</li>
-<li>回放测试覆盖浏览器重载、重新连接、会话切换和部分 stream 中断。</li>
-<li>小型 fleet 门禁验证线上 worker 的真实回放路径。</li>
-</ul>
+<p>见过一支团队，把顺序做反了。第二个月，他们上线了插件市场和一块很漂亮的 dashboard——老板满意，demo 好看。可那时候，后台还没有一条只追加的事实流，终态还是模型自己报的。结果到了第五个月，事情开始诡异地坏：每个插件按自己的方式报状态（第 7 章那种污染，乘以插件数量），dashboard 上挂着一块查询算出来、事实流里无源的“绿”（第 9 章那种影子真相），而当某个任务真的卡住时，没人能说清它此刻到底是什么状态——因为这套系统从一开始就<strong>没有过一个权威的真相</strong>可供追溯。他们不是缺功能，是把楼盖在了没浇地基的地方。</p>
+<p>所以这一章不谈 backlog，谈顺序。它要把第 4.8 节那九个架构维度，按<strong>依赖关系</strong>排成施工序——而不是按“哪个 demo 好看”排。一句话定调：<strong>先修真相，再修体验；先把事实流、生命周期和验证守住，再去开放生态、丰富协作、抬升运营面。</strong> 下面九个里程碑（R1–R9）就是这条施工序，每一个都标着“它为什么在这个位置、抽掉它会塌回哪一章的事故”。</p>
+<h2 id="r1--事实流先立起唯一的运行时真相"><a class="header" href="#r1--事实流先立起唯一的运行时真相">R1 — 事实流：先立起唯一的运行时真相</a></h2>
+<p>一切的地基。把 task、turn、tool result、artifact、validator result 都写成一条只追加（append-only）的事实流，明确 session / thread / transcript 的持久格式和恢复入口，并立下一条铁律：所有 UI、API、dashboard、replay 都只能<strong>投影</strong>这条流，不能各自发明状态。它必须排第一，因为后面每一项能力——回放、操作员面、验证——都要从这条流里取真相；地基没浇，上面盖什么都是影子。</p>
+<h2 id="r2--生命周期把任务状态变成一道单调阶梯"><a class="header" href="#r2--生命周期把任务状态变成一道单调阶梯">R2 — 生命周期：把任务状态变成一道单调阶梯</a></h2>
+<p>有了事实，还要给它定形状。把事件类型化（<code>harness.event.v1</code> 与 <code>task_status</code> 桥接），让生命周期至少覆盖 <code>queued</code>、<code>running</code>、<code>verifying</code>、<code>ready</code>、<code>failed</code> 这几级，并强制 deep-search、background task 这类工序从“往 stderr 打字”迁移到结构化事件。它紧跟 R1，因为没有单调阶梯，进度就只能靠猜——那正是第 5.1 节那种漂移的温床。</p>
+<h2 id="r3--能力平面把工具mcp脚本人工输入收成一个口"><a class="header" href="#r3--能力平面把工具mcp脚本人工输入收成一个口">R3 — 能力平面：把工具、MCP、脚本、人工输入收成一个口</a></h2>
+<p>真相与生命周期立住之后，才轮到放外部能力进来。给 shell、Python、Node、MCP、browser、external API 一个统一的事件入口，支持非主语言的事件发射器（如 <code>HARNESS_EVENT_SINK</code>），并要求每一次工具调用都带上 session、scope、权限和审计信息。顺序很关键：必须先有 R1/R2 那条能收口的流，外部能力才有地方汇入；反过来先开生态，就会是开头那支团队的下场——第 7 章的污染按能力源的数量翻倍。</p>
+<h2 id="r4--产物与验证完成与否由证据裁决"><a class="header" href="#r4--产物与验证完成与否由证据裁决">R4 — 产物与验证：完成与否，由证据裁决</a></h2>
+<p>能力进来了，就得管住“它说完成”。在 manifest / policy / task 字段里声明 primary artifact，让类型化的验证器返回结果、失败类别、证据路径和耗时，并立一条硬规矩：<code>ready</code> / <code>failed</code> 只能由 validator 加 evidence 裁决，绝不能由生成器自报。它排在能力平面之后，因为只有先有统一的产物引用（R3），验证器才知道该去验哪个文件——否则就是第 5.4、5.5 节那种“验了个寂寞”。</p>
+<h2 id="r5--回放让实时流和历史流共享一个对象模型"><a class="header" href="#r5--回放让实时流和历史流共享一个对象模型">R5 — 回放：让实时流和历史流共享一个对象模型</a></h2>
+<p>前四步把后台的真相立住了，这一步管它能不能被正确<strong>看见</strong>。让 API、SSE、历史回放、刷新恢复都用同一份事实模型，让回放测试覆盖重载、重连、会话切换和流中断，并用小型 fleet 门禁去验线上 worker 的真实回放路径。它要在能力与验证之后，因为回放要投影的，正是 R1–R4 攒下的那些事实；地基里还没有的东西，回放也放不出来。（细节见第 8 章。）</p>
 <h2 id="r6--隔离与恢复把-worktree--resume--background-做成一等能力"><a class="header" href="#r6--隔离与恢复把-worktree--resume--background-做成一等能力">R6 — 隔离与恢复：把 worktree / resume / background 做成一等能力</a></h2>
-<ul>
-<li>root task、child task、worktree、owner、scope 显式绑定。</li>
-<li>resume 能恢复 transcript、未完成 tool use、artifact 引用和工作目录。</li>
-<li>background task 与 disk output 进入事实流，而不是只写本地日志。</li>
-</ul>
-<h2 id="r7--协作让-sub-agent--swarm-有角色通信和终态裁决"><a class="header" href="#r7--协作让-sub-agent--swarm-有角色通信和终态裁决">R7 — 协作：让 sub-agent / swarm 有角色、通信和终态裁决</a></h2>
-<ul>
-<li>coordinator、worker、verifier、summarizer 的角色和权限分开。</li>
-<li>子 agent 只返回 summary、evidence、diff、artifact reference，不污染父上下文。</li>
-<li>只有 coordinator + verifier 可以宣布 root task ready / failed。</li>
-</ul>
+<p>让 root task、child task、worktree、owner、scope 显式绑定，让 resume 能恢复 transcript、未完成的 tool use、artifact 引用和工作目录，让 background task 和 disk output 进入事实流而不是只写本地日志。它排在回放之后，因为“断点续跑”本质上是“对一条可回放事实流的再进入”——没有 R5 的对象模型，resume 恢复出来的状态就和实时推送对不上。</p>
+<h2 id="r7--协作让-sub-agent--swarm-有角色有通信有终态裁决"><a class="header" href="#r7--协作让-sub-agent--swarm-有角色有通信有终态裁决">R7 — 协作：让 sub-agent / swarm 有角色、有通信、有终态裁决</a></h2>
+<p>把 coordinator、worker、verifier、summarizer 的角色和权限分开，让子 agent 只回 summary、evidence、diff、artifact reference 而不污染父上下文，并规定只有 coordinator 加 verifier 能宣布 root task 的 <code>ready</code> / <code>failed</code>。多 agent 必须排在隔离与恢复之后，因为协作的前提是每个 agent 都被 scope 和 worktree 关在自己的边界里（R6）；边界没立就放群体编排，就是第 13 章那条“局部成功伪装成系统成功”的失败链。</p>
 <h2 id="r8--知识分层把经验从-wiki-晋升到-skill--docs--agentsmd--gate"><a class="header" href="#r8--知识分层把经验从-wiki-晋升到-skill--docs--agentsmd--gate">R8 — 知识分层：把经验从 wiki 晋升到 skill / docs / AGENTS.md / gate</a></h2>
-<ul>
-<li><code>AGENTS.md</code> 保持短目录，细节下沉到 docs 与 skills。</li>
-<li>重复事故进入 wiki，稳定经验晋升为 skill、validator、fixture 或 CI gate。</li>
-<li>过时经验必须 demotion / deletion，避免知识层变成长期噪声源。</li>
-</ul>
-<h2 id="r9--操作员面把-dashboard门禁回滚和复盘接到同一事实流"><a class="header" href="#r9--操作员面把-dashboard门禁回滚和复盘接到同一事实流">R9 — 操作员面：把 dashboard、门禁、回滚和复盘接到同一事实流</a></h2>
-<ul>
-<li>dashboard 展示 lifecycle、artifact、validator、child task、scope 和最近 summary。</li>
-<li>门禁与发布声明绑定证据，不接受轶事式成功。</li>
-<li>每次事故都沉淀为失败模式条目、复盘模板和可回放 fixture。</li>
-</ul>
-<p>这条路线图按依赖排序，而不是按 backlog 美观排序。R1 到 R2 先建立事实和生命周期；R3 到 R4 让外部能力和完成裁决进入协议；R5 到 R7 解决回放、恢复和多 agent 协作；R8 到 R9 再把组织知识和操作员控制面接进来。顺序反过来，平台会在还没有稳定事实流时就开放外部复杂度，后续每一步都会更贵。</p>
-<p>这条路线也不是凭空想象出来的。Claude Code 已经把 compaction、resume、worktree、sub-agent 摘要、外置 output、权限和扩展机制做进产品里；<em>Dive into Claude Code</em> 则把它们整理成五层系统结构；Codex 已经把 <code>thread-store</code>、<code>rollout</code>、<code>app-server</code>、tool registry 这些“骨架能力”做成显式模块。路线图真正要做的，不是复制某个仓库，而是把这些成熟样本已经证明必要的部件，按依赖顺序转译成自己的系统实现。</p>
+<p>让 <code>AGENTS.md</code> 保持短目录、细节下沉到 docs 与 skills，让重复事故先进 wiki、稳定经验再晋升为 skill、validator、fixture 或 CI gate，并强制过时经验要被降级或删除，免得知识层变成长期噪声源。它靠后，因为知识分层是在前面那套运行时跑顺、开始产生可复用经验之后，才有东西可沉淀。</p>
+<h2 id="r9--操作员面把-dashboard门禁回滚复盘接到同一条事实流"><a class="header" href="#r9--操作员面把-dashboard门禁回滚复盘接到同一条事实流">R9 — 操作员面：把 dashboard、门禁、回滚、复盘接到同一条事实流</a></h2>
+<p>最后，让 dashboard 展示生命周期、artifact、validator、child task、scope 和最近 summary，让门禁与发布声明绑定证据、不接受轶事式的“我测过了没问题”，并让每一次事故都沉淀成失败模式条目、复盘模板和可回放 fixture。它收尾，因为操作员面消费的是前面所有里程碑攒下的事实——它是这条施工序的最后一层装修，而不是地基。（细节见第 9 章。）</p>
+<p>这条序是按依赖排的，不是按 backlog 的美观排的：R1–R2 先立真相与生命周期，R3–R4 让外部能力和完成裁决进入协议，R5–R7 解决回放、恢复与多 agent 协作，R8–R9 才把组织知识和操作员控制面接上。把它倒过来做，就会像本章开头那支团队——在还没有稳定事实流的时候，就先把外部复杂度放了进来，之后每一步都得在流沙上返工，越往后越贵。</p>
+<p>这条路也不是凭空想的。Claude Code 已经把 compaction、resume、worktree、子 agent 摘要、外置 output、权限和扩展机制做进了产品，<em>Dive into Claude Code</em> 把它们整理成五层结构；Codex 则把 <code>thread-store</code>、<code>rollout</code>、<code>app-server</code>、tool registry 这些“骨架能力”做成了显式模块。路线图要做的不是去复制某个仓库，而是把这些成熟样本已经用代价证明“必要”的部件，按依赖顺序，转译成你自己系统里的实现次序。</p>
 <hr>
                     </main>
 

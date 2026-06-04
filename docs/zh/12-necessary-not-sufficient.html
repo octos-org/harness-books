@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-417fc987.js";
+            window.path_to_searchindex_js = "searchindex-acc45ece.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-18563b7b.js"></script>
@@ -175,40 +175,20 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="13-harness-必要但不充分"><a class="header" href="#13-harness-必要但不充分">13. Harness 必要但不充分</a></h1>
-<p>讲完路线图以后，必须立刻收边界。否则团队很容易把 harness 当成万能解释，把所有产品质量问题都往上堆。这一章的任务，就是把 harness 能解决什么、不能解决什么切开。</p>
-<h2 id="131-一个匿名失败链研究任务看似完成但交付的是错文件"><a class="header" href="#131-一个匿名失败链研究任务看似完成但交付的是错文件">13.1 一个匿名失败链：研究任务“看似完成”，但交付的是错文件</a></h2>
-<p>拿一条很典型的匿名失败链来看，会更容易看清 harness 的边界。用户发来一个任务：“读 12 篇材料，生成一份 20 页汇报，并附带可演示的 slides。”系统表面上做了很多对的事情：起了研究 worker，调用了 web / MCP 搜索，写了草稿，最后还返回了一个 <code>ready</code> 状态和一份 <code>pptx</code>。但用户一打开文件，发现交付的是旧版本模板，引用也不完整，真正的新内容只写进了一个中间 Markdown 文件里。</p>
-<p>如果顺着事故往回追，这条失败链通常会长成下面这样：</p>
-<ol>
-<li>session 层没有把“哪一个 root task、哪几个 child task、哪一个 primary artifact”钉成单一事实；</li>
-<li>capability plane 层里，研究 worker 用 Python 脚本和 MCP 拉资料，打包 worker 用 shell 生成 slides，但两边只在自由文本里提到产物路径，没有统一的 artifact 引用；</li>
-<li>verifier 只检查“有没有生成一个 <code>pptx</code> 文件”，没有检查引用数量、主文件归属和内容新鲜度，于是错误文件也能通过；</li>
-<li>operator dashboard 只能看到“任务 ready”，看不到哪个 child worker 报告了哪个产物、哪个 validator 实际没覆盖到关键约束；</li>
-<li>swarm 层里，coordinator 只拿到一句“slides generated successfully”，没有拿到带证据的 summary，因此把错误结果当成了真实完成。</li>
-</ol>
-<p>这条链很有代表性，因为它不是模型单点失误，而是 <code>session -&gt; capability plane -&gt; verifier -&gt; operator dashboard -&gt; swarm</code> 五层都少了一点约束，于是最后在用户面前合成了一次“假成功”。</p>
-<h2 id="132-顺着这条失败链看五层架构如何真正落地"><a class="header" href="#132-顺着这条失败链看五层架构如何真正落地">13.2 顺着这条失败链，看五层架构如何真正落地</a></h2>
-<p>如果要把上面的事故真正修住，不能只在最后补一个“更强提示词”，而要顺着五层架构逐层落地。</p>
-<p><code>session</code> 层先做硬事实。root task 创建时，就声明本轮交付物是 <code>report.md</code> 与 <code>slides.pptx</code>，并把每个 child task 的 owner、role、scope、worktree、expected artifact type 写进事实流。这样 coordinator、replay、dashboard 和 verifier 才是在读同一份任务定义，而不是各自猜测。</p>
-<p><code>capability plane</code> 层再做统一入口。研究 worker 无论是用 Python、Node、shell 还是 MCP，都只能通过统一事件和 artifact 报告面回传结果。脚本可以自由实现，但不能自由定义状态协议；外部能力可以多样，但产物引用、scope 绑定和任务归属必须一致。</p>
-<p><code>verifier</code> 层负责终态裁决。它不只检查“文件存在”，还要检查：这是不是被声明过的 primary artifact，引用和页数是否达标，slides 是否基于当前 report 生成，证据文件存在哪里。只有通过这些检查，root task 才能进入 <code>ready</code>。否则就应该停在 <code>verifying</code> 或进入 <code>failed</code>，而不是把验证成本甩给用户。</p>
-<p><code>operator dashboard</code> 层负责把这条链说清楚。值班同学应该能一眼看到：哪个 coordinator 派出了哪些 child task，每个 child 最近一次 summary 是什么，哪个 artifact 被报告，哪个 validator 成功或失败，证据路径在哪里。这样收到用户投诉时，团队不是从头猜，而是直接沿着事实流定位是哪一层断了。</p>
-<p><code>swarm</code> 层最后负责把多 agent 协作收束成单一系统真相。coordinator 只负责拆解、汇总和裁决；research worker 只负责证据搜集；draft worker 只负责文本和 slides 生成；verifier worker 只负责检查。没有任何一个 worker 可以单独宣布整个系统已经成功。只要这条规则还守着，局部成功就不会再轻易伪装成系统成功。</p>
-<h2 id="133-harness-解决到哪哪里仍不是-harness-的职责"><a class="header" href="#133-harness-解决到哪哪里仍不是-harness-的职责">13.3 Harness 解决到哪，哪里仍不是 harness 的职责</a></h2>
-<p>Harness 解决编排正确性，不解决完整产品质量。</p>
-<p>高质量代码 agent 仍然需要：</p>
-<ul>
-<li>强模型选择和路由策略</li>
-<li>工具安全边界（沙箱、认证、权限门禁）</li>
-<li>面向编码工作流的强提示词/策略对齐</li>
-<li>测试生成/修复纪律</li>
-<li>仓库感知的编辑质量和评审循环</li>
-<li>延迟/成本治理</li>
-</ul>
-<p>Claude Code 和 Codex 自己也在证明这条边界。前者即使已经有了很重的 harness 运行时，仍然花大量工程在权限、模型、MCP、session、worktree 和进度管理上；后者即使把 thread/turn/item、tools、sandboxing、approvals 抽得很清楚，也依然需要强模型、强测试和强治理来保证结果质量。Harness 能解决的是“系统说真话、状态一致、可恢复、可审计”；它不能替代模型能力、领域知识和组织纪律。</p>
-<p>可以把 harness 看成运行时事实层。<br>没有它，质量无法被信任。<br>只有它，质量仍然依赖模型、工具和产品纪律。</p>
-<p>也可以把它理解为“系统说真话”和“系统是好产品”之间的边界。前者是失败模式迫使我们构建的东西；后者仍然依赖模型路由、沙箱、提示词/策略对齐和评审纪律。</p>
-<p>这条边界很重要。Harness 能让系统不撒谎：没完成就不显示完成，产物无效就不交付，验证失败就不进入 ready，会话切换不串状态。但它不能保证产品判断正确、模型选择最优、用户需求被理解、成本足够低、交互体验足够好。把 harness 当成产品质量的全部，是另一种形式的过度工程。</p>
+<p>路线图一讲完，必须立刻收边界。否则团队很容易把 harness 当成万能解释——产品哪里不好，都往“harness 没做好”上推。这一章就干一件事：把 harness 能解决什么、不能解决什么，干净地切开。</p>
+<h2 id="131-一次假成功研究任务报了-ready交付的却是错文件"><a class="header" href="#131-一次假成功研究任务报了-ready交付的却是错文件">13.1 一次“假成功”：研究任务报了 ready，交付的却是错文件</a></h2>
+<p>先看一次很典型的翻车，从用户的视角。</p>
+<p>任务是这样下的：“读 12 篇材料，生成一份 20 页汇报，并附带可演示的 slides。”系统表面上做得一板一眼——起了研究 worker，调了 web 和 MCP 搜索，写了草稿，最后回了一个 <code>ready</code>，外加一个 <code>report.pptx</code>。用户在工位上双击打开它，期待看到那 12 篇材料汇成的新汇报。然后他愣住了：打开的是上个季度的旧模板，引用残缺，而这次真正写出来的新内容，全躺在一个谁也没提过的中间 Markdown 文件里。系统从头到尾没报一个错。它只是，平静地，交付了一份错的东西，还盖了个“完成”的章。</p>
+<p>顺着这次“假成功”往回追，会发现它不是模型在某一步答错了，而是<strong>五层架构各漏了一点约束，最后在用户面前合成出来的</strong>。最底下，session 层从没把“哪个是 root task、派生了哪几个 child、哪个才是 primary artifact”钉成单一事实——交付物到底是哪个文件，系统自己都没共识。往上一层，能力平面里，研究 worker 用 Python 和 MCP 拉资料、打包 worker 用 shell 生 slides，两边却只在各自的自由文本里顺口提了一句产物路径，没有一个统一的 artifact 引用把它们对齐——于是“新内容在哪”这件事，在两个 worker 之间就已经失联了。再往上，verifier 只检查了“是不是生成了一个 <code>pptx</code>”，没去查引用够不够、主文件归不归属、内容是不是基于这次的 report——于是那个旧模板，轻松通过。再往上，operator dashboard 只看得到一句“任务 ready”，看不到是哪个 child 报了哪个产物、哪个 validator 其实压根没覆盖到关键约束。最顶上，swarm 层的 coordinator 只收到打包 worker 一句轻飘飘的“slides generated successfully”，没有附带证据的 summary，于是它信了，把这次局部的“跑完了”当成了整个系统的“做对了”。</p>
+<p>这条链的代表性就在这里：<strong><code>session → 能力平面 → verifier → dashboard → swarm</code>，五层每层只松了一扣，单独看都不致命，叠起来就合成了一次完整的谎言。</strong></p>
+<h2 id="132-顺着这条链看五层架构怎样真正落地"><a class="header" href="#132-顺着这条链看五层架构怎样真正落地">13.2 顺着这条链，看五层架构怎样真正落地</a></h2>
+<p>要修住它，不能在最末端补一句“更强的提示词”，得顺着这五层逐层把扣收紧。</p>
+<p><code>session</code> 层先做硬事实：root task 一创建，就把本轮交付物声明成 <code>report.md</code> 与 <code>slides.pptx</code>，并把每个 child 的 owner、role、scope、worktree、预期产物类型都写进事实流。这样 coordinator、replay、dashboard、verifier 读的才是<strong>同一份任务定义</strong>，而不是各猜各的。<code>能力平面</code> 层再做统一入口：研究 worker 无论用 Python、Node、shell 还是 MCP，结果都只能经由统一的事件和 artifact 报告面回传——脚本可以自由实现，但不能自由定义状态协议；能力可以多样，但产物引用、scope 绑定、任务归属必须一致。<code>verifier</code> 层负责终态裁决：它不只看“文件存在”，还要查这是不是被声明过的 primary artifact、引用和页数达没达标、slides 是不是基于当前这版 report 生成、证据落在哪——这些全过，root task 才配进 <code>ready</code>，否则就该停在 <code>verifying</code> 或落到 <code>failed</code>，而不是把验证的成本甩给用户去双击发现。<code>dashboard</code> 层负责把这条链摆清楚：值班的人要能一眼看到谁派了哪些 child、每个 child 最近的 summary、哪个 artifact 被报告、哪个 validator 红了、证据在哪——这样用户投诉进来，是沿着事实流定位“哪一层断了”，而不是从零开始猜。<code>swarm</code> 层最后收束成单一真相：coordinator 只管拆解、汇总、裁决，研究 worker 只管搜证，draft worker 只管生成，verifier worker 只管检查，<strong>没有任何一个 worker 能单独宣布整个系统成功</strong>。只要这条规矩还在，局部的“跑完了”就再也伪装不成系统的“做对了”。</p>
+<h2 id="133-它修到哪为止哪里就不再是它的职责"><a class="header" href="#133-它修到哪为止哪里就不再是它的职责">13.3 它修到哪为止，哪里就不再是它的职责</a></h2>
+<p>把上面这套都做对了，也只换来一件事：<strong>编排是正确的</strong>。它换不来完整的产品质量。</p>
+<p>这条边界，Claude Code 和 Codex 自己就是证据。前者即便已经背着一套很重的 harness 运行时，仍然在权限、模型选择、MCP、session、worktree、进度管理上压着大量工程；后者即便把 thread/turn/item、tools、sandboxing、approvals 抽得清清楚楚，也照样得靠强模型、强测试、强治理来保住结果的质量。换句话说，一个高质量的代码 agent，在 harness 之外还欠着一长串东西——一套像样的模型选择与路由策略、工具的安全边界（沙箱、认证、权限门禁）、面向编码工作流的提示词与策略对齐、测试生成与修复的纪律、仓库感知的编辑质量与评审循环，以及对延迟和成本的治理。这些没有一样是 harness 能替你做的。</p>
+<p>所以可以把 harness 看成系统的<strong>运行时事实层</strong>：没有它，质量根本无法被信任——模型再强，你也不知道它报的“完成”算不算数；可只有它，质量仍然悬在模型、工具和产品纪律上。它划的是“系统说真话”和“系统是好产品”之间那条线。前者，是被一连串失败模式逼着我们建起来的：没完成就不许显示完成，产物无效就不许交付，验证没过就不许进 ready，会话一切就不许串状态。后者，仍然依赖模型路由对不对、沙箱严不严、提示词与策略齐不齐、评审纪律松不松。</p>
+<p>记住这条线，是为了避免另一种过度工程：<strong>把 harness 当成产品质量的全部。</strong> 它能让系统不撒谎，却不能保证产品判断正确、模型选得最优、用户需求被真正理解、成本足够低、体验足够好。harness 是地基和承重墙——它决定楼塌不塌；但住得舒不舒服，还得看里面的装修、采光和动线。</p>
 <hr>
                     </main>
 
