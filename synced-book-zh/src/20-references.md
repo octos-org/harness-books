@@ -44,6 +44,15 @@
 40. OpenAI. *Introducing the Codex app.* 2026-02-02. Accessed 2026-04-23. https://openai.com/index/introducing-the-codex-app/
 41. Jiacheng Liu, Xiaohan Zhao, Xinyi Shang, Zhiqiang Shen. *Dive into Claude Code: The Design Space of Today's and Future AI Agent Systems.* arXiv:2604.14228, 2026-04-14. Local PDF reviewed 2026-04-27. https://arxiv.org/abs/2604.14228
 42. Shunyu Yao et al. *ReAct: Synergizing Reasoning and Acting in Language Models.* ICLR 2023 / arXiv 2022. https://arxiv.org/abs/2210.03629
+43. Petar Veličković et al. *Softmax is not Enough (for Sharp Size Generalisation).* arXiv:2410.01104. https://arxiv.org/abs/2410.01104
+44. Jianlin Su et al. *RoFormer: Enhanced Transformer with Rotary Position Embedding.* arXiv:2104.09864. https://arxiv.org/abs/2104.09864
+45. Federico Barbero et al. *Round and Round We Go! What makes Rotary Positional Encodings useful?* arXiv:2410.06205. https://arxiv.org/abs/2410.06205
+46. Federico Barbero et al. *Transformers need glasses! Information over-squashing in language tasks.* NeurIPS 2024 / arXiv:2406.04267. https://arxiv.org/abs/2406.04267
+47. Kimi Team. *Kimi K2 Technical Report.*（QK-Clip 与 attention-logit explosion；本书写作期审读其报告 PDF。）https://github.com/MoonshotAI/Kimi-K2
+48. DeepSeek-AI. *DeepSeek-V4 Technical Report.*（CSA/HCA 混合压缩注意力；异构与 on-disk KV cache；本书写作期审读其报告 PDF。）https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro
+49. MiniMax. *MiniMax M3.*（MiniMax Sparse Attention / 线性注意力，面向 1M token 上下文。）https://www.minimax.io/blog/minimax-m3
+50. Chroma Research. *Context Rot: How Increasing Input Tokens Impacts LLM Performance.* 2025. https://www.trychroma.com/research/context-rot
+51. Anthropic. *Effective context engineering for AI agents.* https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
 
 ## 19.2 支持性参考
 

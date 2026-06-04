@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-18674b5a.js";
+            window.path_to_searchindex_js = "searchindex-3f9bb3c5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-50f4af94.js"></script>
@@ -354,7 +354,47 @@ Harness 工程
 <p>长上下文研究已经给出足够清楚的理论信号。<em>Lost in the Middle</em> 说明相关信息在开头或结尾时更容易被利用，放在中间时表现会下降；<em>Found in the Middle</em> 进一步把这种现象概括为 <code>"U-shaped attention bias"</code>。<sup class="footnote-reference" id="fr-ltm-1"><a href="#footnote-ltm">14</a></sup> <sup class="footnote-reference" id="fr-fitm-1"><a href="#footnote-fitm">15</a></sup> Anthropic 的长上下文文档也给出很工程化的建议：长文档放前面，query 放最后面，在测试中可显著改善复杂多文档任务质量。<sup class="footnote-reference" id="fr-anthropic-long-2"><a href="#footnote-anthropic-long">13</a></sup></p>
 <p>这说明上下文窗口不是一块平坦空间，而是有位置、密度和任务形态差异的工作区。Google 在 Gemini 1.5 发布时报告过 1M token 下很高的 needle 命中率，但它自己的 long context 文档也提醒，多信息点检索的表现会随上下文大幅波动。<sup class="footnote-reference" id="fr-gemini15-2"><a href="#footnote-gemini15">11</a></sup> <sup class="footnote-reference" id="fr-google-long-context-2"><a href="#footnote-google-long-context">12</a></sup> NoLiMa 和 LongCodeBench 又把问题推到更接近真实工作的场景：去掉字面匹配线索，或者进入代码理解和修复任务后，长上下文能力会明显变脆。<sup class="footnote-reference" id="fr-nolima-1"><a href="#footnote-nolima">16</a></sup> <sup class="footnote-reference" id="fr-longcodebench-1"><a href="#footnote-longcodebench">17</a></sup></p>
 <p>所以第 1 章只给出一个理论结论：最大 context 是容量上限，最佳工作区间才是设计目标。Agent 系统不能默认“把更多材料塞进窗口”就会更可靠，而应当反过来设计任务：让模型看到更短、更密、更靠近当前决策的证据切片，把状态、历史、产物和验证证据移到运行时事实流里，再按需调回 prompt。</p>
-<h2 id="16-从理论转入实践后文怎样穿插展开"><a class="header" href="#16-从理论转入实践后文怎样穿插展开">1.6 从理论转入实践：后文怎样穿插展开</a></h2>
+<h2 id="16-模型时空失效的机理自回归是一个有限预算的时空滤波器"><a class="header" href="#16-模型时空失效的机理自回归是一个有限预算的时空滤波器">1.6 模型时空失效的机理：自回归是一个有限预算的时空滤波器</a></h2>
+<p>§1.4–1.5 已经从现象层说清楚一件事：有效工作区间小于容量上限。但如果停在现象，读者很容易把它当成“模型还不够好、以后会修好”的暂时缺陷。本节要把话说透：<strong>有效工作区间的存在，是 Transformer 加自回归这套架构在有限算力与显存预算下的数学必然，而不是工程缺陷。</strong> 把机理讲透很重要，因为后文每一项 harness 能力，都是对其中某一条失效机理的对症补偿；不先讲清楚模型天然缺什么，harness 就会被误读成一袋经验技巧。</p>
+<p>一个统一的视角能把前面几个类比收束起来：<strong>自回归加 attention，本质上就是一个有限预算下的时空滤波器。</strong> 它对“位置远”（空间）和“时间旧”（时间）的信号都会衰减。§1.1.7 的 cache 局部性、§1.1.8 的放大器线性区，其实是同一件事在不同介质里的两个影子——滤波器的频率响应在远端衰减，正是它们共同的底层。</p>
+<h3 id="161-空间轴位置越远有效敏感度越低"><a class="header" href="#161-空间轴位置越远有效敏感度越低">1.6.1 空间轴：位置越远，有效敏感度越低</a></h3>
+<p>沿上下文方向，至少有四条机理在同时压低远端 token 的有效权重，外加一条“非均匀分辨率”把它做进了今天的架构。</p>
+<p>第一，<code>softmax 的注意力质量守恒导致稀释</code>。attention 输出是对窗口内所有 token 的凸组合，权重之和恒为 1；窗口里有 n 个 token，平均每个只分到 1/n 的“注意力预算”。要让模型把权重牢牢压在某一个远端关键 token 上，它的 logit 必须显著高过其余，量级大约是 ln n。但 logit 是有界的——RMSNorm、QK-Norm，以及像 Kimi 报告里专门设计的 QK-Clip，都在压制它；不封顶时，attention logit 会冲过 1000 量级、训练直接发散。logit 被一个与 n 无关的常数卡住，单个 token 能拿到的最大权重就随 n 增大趋于零。结论几乎是算术而非调参：<strong>窗口越满，对任意单个远端证据的“最锐检索”越弱。</strong><sup class="footnote-reference" id="fr-softmax-dilution-ch1-1"><a href="#footnote-softmax-dilution-ch1">18</a></sup> <sup class="footnote-reference" id="fr-bounded-logit-ch1-1"><a href="#footnote-bounded-logit-ch1">19</a></sup></p>
+<p>第二，<code>RoPE 的距离衰减包络</code>。主流位置编码 RoPE 在数学上自带一条随相对距离衰减的包络：两个 token 距离越远，其注意力内积的上界越低；而一旦超过训练长度，旋转相位会退相干，外推直接失效。需要诚实标注的是，这条衰减的严格证明假设 query 与 key 为常向量，实际中它更像一个先验偏置而非铁律——但偏置方向是确定的。<sup class="footnote-reference" id="fr-rope-decay-ch1-1"><a href="#footnote-rope-decay-ch1">20</a></sup></p>
+<p>第三，<code>有限残差维度等于有限信道容量</code>。残差流是固定宽度的向量，却要承载整段上下文里的相关信息。由信息论，一个定宽状态无法无损保存无界上下文——越旧、越远的细节越会被压缩、覆盖。这正是 §1.1.1 “LLM 看起来记得、却没有持久事实”在数值层面的根。</p>
+<p>第四，<code>over-squashing 与表示坍缩</code>。把一个远端 token 的信息送到“当前预测位点”，要跨越多层 attention；而因果掩码让信息单向汇聚到最后一个 token，逐层 softmax 平均会把任何单一来源指数稀释，以致不同的长输入会在末位表示上坍缩成几乎一样（低精度浮点会让情况更糟）。这解释了一个反直觉现象：长上下文里“计数、复制、区分”这类看似简单的任务反而最先退化。<sup class="footnote-reference" id="fr-oversquash-ch1-1"><a href="#footnote-oversquash-ch1">21</a></sup></p>
+<p>把这四条叠起来，就得到 §1.5 那条经验现象的机理解释：<strong>上下文窗口不是一块平坦内存，它的“有效分辨率”从光标附近向远处递减。</strong> <em>Lost in the Middle</em> 的 U 形偏置、NoLiMa 在 32K 上把 GPT-4o 从 99.3% 打到 69.7%，都是这条递减曲线在不同任务上的投影。</p>
+<p>而工业界已经把这条“非均匀分辨率”直接做进了架构。为了在百万 token 上还付得起算力，新一代模型不再对全程做均匀的全注意力：滑窗注意力是字面上的矩形窗，窗外直接置零；线性注意力与 SSM（如 MiniMax 的做法）是字面上的指数衰减核；KV 压缩（DeepSeek V4 的 CSA 与 HCA、Kimi 的 MLA）则是有损降采样——近端最近的 token 保留高分辨率、不压缩，越往远端、KV 被越激进地聚合：CSA 把每 m 个 token 压成一条，HCA 把每 m′（远大于 m）个 token 压成一条。换句话说，<strong>所谓“1M context”不是一条处处等价的传送带，而是一组分辨率非均匀的滤波器：近端细、远端粗。</strong> 这恰好把 §1.4 “容量上限不等于有效工作区间”从经验建议升级成了架构事实——连模型厂商自己，都在用压缩换取这个容量上限。<sup class="footnote-reference" id="fr-nonuniform-kv-ch1-1"><a href="#footnote-nonuniform-kv-ch1">22</a></sup></p>
+<p>这里要专门强调一句，免得读者误以为“换个更强的闭源前沿模型就没事了”：<strong>闭源前沿也不例外。</strong> 第三方系统评测（如 Chroma 对 18 个前沿模型的 <em>Context Rot</em> 测试）显示，每一个模型都在每一个长度增量上掉点；前沿模型只是 rolloff 更缓，而非豁免。更说明问题的是，lost-in-the-middle 与干扰项这类退化，在大概率使用全注意力的模型上照样出现——说明它来自上面这些基本面地板，而不只是压缩作弊。Anthropic 自己的工程文档也直说，context rot 在远未触达容量上限时就已经开始。<sup class="footnote-reference" id="fr-context-rot-ch1-1"><a href="#footnote-context-rot-ch1">23</a></sup></p>
+<h3 id="162-时间轴时间越旧有效敏感度越低"><a class="header" href="#162-时间轴时间越旧有效敏感度越低">1.6.2 时间轴：时间越旧，有效敏感度越低</a></h3>
+<p>长任务的失效看起来是“时间”问题——跑得越久越偏——但要拆成两半才讲得透：一半可约为空间问题，另一半不可约。</p>
+<p><code>记忆老化可约为空间衰减</code>。vanilla Transformer 除 KV cache 外没有跨步状态——“k 步前还记不记得”这件事，等价于“那个 token 还在不在窗口里、当前 token 还 attend 得到它吗”。随着生成推进，一个旧事实与当前光标的相对位置距离单调增大，于是按 §1.6.1 的四条空间机理被衰减，最终被窗口、压缩或逐出淘汰。所以“随时间遗忘”在机理上就是“随相对距离衰减”——时间问题塌缩成了空间问题。这正是 §1.1.1 “看起来记得、却没有持久事实”的来源。</p>
+<p><code>误差复合不可约</code>。即便给一个完美、无限、均匀的窗口（空间衰减为零），自回归仍然会随任务变长而劣化：每生成一个 token 都是一次采样，且它会成为后续所有 token 的条件；每步有一个小错误率 ε，长 T 步全对的概率约为 (1−ε) 的 T 次方——可靠性随 horizon 几何衰减。再叠加 exposure bias：训练时模型条件于正确前缀，推理时却条件于自己越来越偏离分布的输出。这一半是反馈回路自身的性质，<strong>延长上下文救不了它</strong>——只能靠降低单步 ε、缩短 horizon、独立验证、重采样。</p>
+<p>用 §1.1.8 的电路语言收口最干净：一个递归（IIR）系统有两种相互独立的退化——<code>冲激响应衰减</code>（远端输入被衰减，等于记忆与空间衰减，可约）和<code>回路噪声累积</code>（把自己带噪的输出回灌，等于误差复合，不可约）。这正好对应 §1.1.8 早就给出的两类器件：<code>正反馈锁存器</code>把关键事实锁住、对抗记忆衰减，<code>负反馈环</code>把错误送回纠偏、对抗误差复合。本节只是把“为什么需要这两类器件”从类比落到了机理。</p>
+<p>这里给出一个后文会反复使用的可操作判据：<strong>把丢失的信息重新塞回光标附近——如果失效被修复，它是空间问题，可由上下文工程补偿；如果模型本来就拿到了信息却仍然漂移、越错越多，它是不可约的时间核，只能由验证、缩短 horizon 和人在环上来兜住。</strong></p>
+<h2 id="17-机理对应能力本书后续章节的提纲"><a class="header" href="#17-机理对应能力本书后续章节的提纲">1.7 机理对应能力：本书后续章节的提纲</a></h2>
+<p>把上面六条机理排开，本书后续的每一项 harness 能力，都可以被读成“对某一条失效机理的对症补偿”。下面这张表就是全书的提纲：左边是模型层“天然缺什么”，右边是 harness 层“补什么、在哪一章展开”。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>失效机理（模型层）</th><th>失效表现</th><th>对症的 harness 能力</th><th>展开章节</th></tr>
+</thead>
+<tbody>
+<tr><td>softmax 稀释</td><td>上下文越长，关键证据越被“平均掉”</td><td>认知层级缓存控制：admission / eviction、compaction、检索式“短密近”证据切片</td><td>§1.1.7、第 4 章（事实流）、第 9 章</td></tr>
+<tr><td>RoPE 距离衰减 / 外推退相干</td><td>远距离关联弱、超长外推失效</td><td>上下文分层加按需调入（L1 prompt / L2 <code>AGENTS.md</code>·skills·memory / L3 事实流）；把关键事实重新拉回光标附近</td><td>§1.1.7、第 4 章、第 6 章</td></tr>
+<tr><td>有限残差维度</td><td>长历史细节被压缩、陈旧假设增多</td><td>持久事实流：把状态移出 prompt、写回运行时，而不是让模型“记住”</td><td>第 4 章（session 支柱）、第 6 章</td></tr>
+<tr><td>over-squashing / 表示坍缩</td><td>长输入里“分不清”、计数与复制类退化</td><td>结构化证据加产物契约加独立验证：不靠模型在巨大上下文里自己看出来</td><td>第 4 章（验证支柱）、第 9 章</td></tr>
+<tr><td>非均匀 KV 分辨率</td><td>同一窗口不同位置可用性不均（U 形）</td><td>把容量上限与有效工作区间分开设计；短密近证据加检索加分层缓存，不默认塞满</td><td>§1.4–1.5、第 4 章</td></tr>
+<tr><td>记忆老化（时间⊆空间）</td><td>跨小时、跨会话目标漂移，陈旧上下文</td><td>目标保持加锁存：目标、约束、产物锁进 session 与 artifact；compaction 时保留关键决策并定期回注</td><td>第 4 章（session）、第 9 章（短回路与长回路）</td></tr>
+<tr><td>不可约误差复合</td><td>长任务越跑越偏，自信但错误累积</td><td>负反馈环：独立验证、终态裁决、回放、重试与升级、人在环上；并用子 agent 分解缩短单链 horizon</td><td>第 4 章（验证）、第 7 章（操作员面）、第 8 章（群体编排）、第 9 章</td></tr>
+</tbody>
+</table>
+</div>
+<p>读这张表有两个要点。</p>
+<p>第一，<strong>harness 不是一袋经验技巧，而是一组针对已知失效机理的控制器件。</strong> 这正是把 §1.1.6 “harness 是外层反馈控制器”落到实处的方式：<code>AGENTS.md</code>、skills、memory、hooks、validators、dashboard、swarm 协作，分别是这套反馈控制器上的不同传感器、执行器和约束器件，而每一个都对准一条具体的失效机理。</p>
+<p>第二，<strong>空间类机理大多能被上下文工程“补偿”，但时间轴上那条“不可约误差复合”补偿不了、只能被“兜住”。</strong> 这条边界不是修辞，而是工程事实：它正是 §1.2–1.3 反复出现的“上下文工程必要但不充分、必须上升到 harness 工程”的根本原因，也是为什么第 8 章要用群体编排去缩短单链 horizon、第 9 章要把系统拆成短回路与长回路。把更大的窗口当成解药，只能缓解空间类机理；时间类的不可约核，必须靠运行时的验证与人的监督来关闭。</p>
+<p>这条边界还顺带解释了一个产业层面的判断：既然时空失效是架构的必然、连前沿模型都只能“缓”而不能“消”，那么“把上下文窗口做得更大”就永远只是缓解而非根治。真正决定长任务可靠性上限的，是模型之外这套控制系统——这也是本书把 harness engineering 当作工程主战场，而不是把希望寄托在“等下一代模型”的根本理由。</p>
+<h2 id="18-从理论转入实践后文怎样穿插展开"><a class="header" href="#18-从理论转入实践后文怎样穿插展开">1.8 从理论转入实践：后文怎样穿插展开</a></h2>
 <p>到这里，第 1 章只需要完成一件事：说明 harness 不是可选的产品装饰，而是让 LLM 长任务留在有效工作区间内的控制系统。</p>
 <p>后文不再把所有理论一次性堆在开头，而采用交替推进：</p>
 <ol>
@@ -416,6 +456,24 @@ Harness 工程
 </li>
 <li id="footnote-longcodebench">
 <p>Stefano Rando et al., <em>LongCodeBench: Evaluating Coding LLMs at 1M Context Windows.</em> 本章在此处使用其关于代码任务长上下文退化的样例数据；对应第 19 章参考文献 17。 <a href="#fr-longcodebench-1">↩</a></p>
+</li>
+<li id="footnote-softmax-dilution-ch1">
+<p>Petar Veličković et al., <em>Softmax is not Enough (for Sharp Size Generalisation).</em> 本章在此处使用其关于 softmax 随规模稀释、无法保持锐利选择的结论，来解释注意力质量守恒下的远端稀释；对应第 19 章参考文献 43。 <a href="#fr-softmax-dilution-ch1-1">↩</a></p>
+</li>
+<li id="footnote-bounded-logit-ch1">
+<p>本章在此处使用 Kimi K2 技术报告关于 attention logit explosion 与 QK-Clip 的描述（不封顶时 max logit 越过 1000 量级、训练发散），用来说明 logit 被主动限幅、因此单 token 注意力权重存在与 n 无关的上界；对应第 19 章参考文献 47。 <a href="#fr-bounded-logit-ch1-1">↩</a></p>
+</li>
+<li id="footnote-rope-decay-ch1">
+<p>Jianlin Su et al., <em>RoFormer: Enhanced Transformer with Rotary Position Embedding.</em> 本章在此处使用其关于相对距离衰减包络（经 Abel 变换得到）的结论；并按 <em>Round and Round We Go!</em> 标注该衰减证明依赖 query/key 为常向量的前提，故宜视为先验偏置；对应第 19 章参考文献 44、45。 <a href="#fr-rope-decay-ch1-1">↩</a></p>
+</li>
+<li id="footnote-oversquash-ch1">
+<p>Federico Barbero et al., <em>Transformers need glasses! Information over-squashing in language tasks.</em> 本章在此处使用其关于 representational collapse 与因果掩码下信息单向汇聚、over-squashing 的分析，来解释长输入中计数/复制/区分类任务的退化；对应第 19 章参考文献 46。 <a href="#fr-oversquash-ch1-1">↩</a></p>
+</li>
+<li id="footnote-nonuniform-kv-ch1">
+<p>本章在此处综合 DeepSeek-V4 技术报告（CSA/HCA 混合压缩注意力、异构与 on-disk KV cache，将近端高分辨率与远端激进聚合并置）与 MiniMax M3（MSA 稀疏/线性注意力）的做法，用来说明工业界以非均匀分辨率换取百万级容量上限；对应第 19 章参考文献 48、49。 <a href="#fr-nonuniform-kv-ch1-1">↩</a></p>
+</li>
+<li id="footnote-context-rot-ch1">
+<p>本章在此处综合 Chroma <em>Context Rot</em> 对 18 个前沿模型在各长度增量普遍退化的测试，以及 Anthropic <em>Effective context engineering for AI agents</em> 关于“context rot 在远未触达容量上限时即开始”的说明，用来支撑“闭源前沿也不例外”；对应第 19 章参考文献 50、51。 <a href="#fr-context-rot-ch1-1">↩</a></p>
 </li>
 </ol>
 
