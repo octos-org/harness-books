@@ -1,0 +1,326 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>3. 控制系统的回应：harness 是什么、从哪来 - 驾驭工程</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-76555c87.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-18563b7b.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">驾驭工程</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="3-控制系统的回应harness-是什么从哪来"><a class="header" href="#3-控制系统的回应harness-是什么从哪来">3. 控制系统的回应：harness 是什么、从哪来</a></h1>
+<p>第 1 章说清了 LLM 是一台什么机器，第 2 章说清了它在时间和空间上为什么必然失效。两章合起来，指向同一个工程结论：一个概率性的条件生成器，必须被一个外层系统持续纠偏，才能在长任务里留在有效工作区间内。这一章回答的就是——这个外层系统是什么、从哪来。</p>
+<p>要先把主从关系说明白：<strong>harness 的正当性首先来自第 2 章的失效机理；这一章要讲的控制论、缓存与负反馈历史，是这套控制语言的来源与直觉，而不是另一条独立的证明。</strong> 答案会落到 agentic AI 上：所谓 agentic AI，不是“让模型自己想办法”的浪漫说法，而是给 LLM 搭一个能感知、行动、记忆、验证、恢复、并被人类监督的工作环境；正是这个环境提供的负反馈循环，才是 LLM 能稳定、高效工作的前提。</p>
+<h2 id="31-条件生成器带来的五类系统挑战"><a class="header" href="#31-条件生成器带来的五类系统挑战">3.1 条件生成器带来的五类系统挑战</a></h2>
+<p>第 1 章末尾说过，LLM 是个高能力的条件生成器，而不是状态机。把这样一台机器放进真实工作流后，问题很快就不再是“它能不能回答”，而是几件它天生不擅长的事接连冒出来。最先暴露的是目标保持：用户目标会被拆成一串带依赖、带冲突、带优先级的子目标，模型能把目标复述得很漂亮，却不天然拥有跨小时、跨会话守住目标的机制。紧接着是上下文选择——真实任务的材料远大于窗口，哪些内容常驻、哪些按需加载、哪些压缩成摘要、哪些必须写回事实流，这种取舍不能指望模型临场自觉。再往下是工具副作用：shell、文件系统、浏览器、MCP、外部 API 都会真实地改变环境，而“模型提出一个动作”绝不等于“这个动作就该被执行”。然后是结果验证：生成器天然偏好给出连贯的结论，可连贯并不等于正确，产物到底存不存在、新不新鲜、属不属于当前任务、满不满足业务约束，需要一个独立的判断者。最后是人类控制——用户需要授权、打断、恢复、审计和接管，一个看不懂、停不下、复不了盘的 agent，哪怕短期能把活干完，也很难真正进入生产。</p>
+<p>这几类挑战，没有一类是单个 prompt 能彻底解决的。prompt 能提高局部的成功率，却提供不了持久状态、权限边界、工具隔离、回放证据和终态裁决——它们必须进入运行时。</p>
+<h2 id="32-agent-概念的演化从自治系统到-llm-工具执行体"><a class="header" href="#32-agent-概念的演化从自治系统到-llm-工具执行体">3.2 Agent 概念的演化：从自治系统到 LLM 工具执行体</a></h2>
+<p>早期的 agent 理论并不是从 LLM 开始的。Franklin 和 Graesser 给 autonomous agent 下的定义，今天拿来当起点依然合适：agent 不是一次性运行的程序，而是会 <code>"senses that environment and acts on it, over time"</code> 的系统；他们甚至故意举了个有点刺耳的例子，说一个恒温器也满足这个定义。<sup class="footnote-reference" id="fr-agent-theory-ch3-1"><a href="#footnote-agent-theory-ch3">1</a></sup></p>
+<p>这句话初听很“降格”，因为现代人一提 agent，脑子里先冒出来的往往是个会说话、会规划、会调工具的复杂体。但 Franklin / Graesser 的用意恰恰相反：他们想提醒我们，别把 agent 的本体误认成它语言的表面。只要一个系统会感知环境、按当前状态调整行为、再把自己的行动回写进下一轮的感知条件里，它就已经进入了 agent 的问题域。Wooldridge / Jennings 那条经典线索，进一步把 agent 的弱定义压成几项可工程化的特征：自主性、反应性、主动性和社会性。<sup class="footnote-reference" id="fr-agent-theory-ch3-2"><a href="#footnote-agent-theory-ch3">1</a></sup> 到了 LLM 时代，ReAct 把这条线索重新接到语言模型上——模型不再只做一次性回答，而是在推理（reasoning）和行动（acting）之间来回循环，让每一步的观察结果都进入下一步的推理；Claude Code 论文也把现代 coding agent 的演化路径讲得很清楚：从自动补全，到 IDE 助手，再到能规划多步修改、执行 shell、读写文件、迭代自己输出的 agentic system。<sup class="footnote-reference" id="fr-llm-agent-evolution-ch3-1"><a href="#footnote-llm-agent-evolution-ch3">2</a></sup> <sup class="footnote-reference" id="fr-claude-code-design-space-ch3-1"><a href="#footnote-claude-code-design-space-ch3">3</a></sup></p>
+<p>把这些概念翻成工程语言，一个现代 LLM agent 至少包含下面这个循环：</p>
+<pre><code class="language-text">用户目标 / 环境 / 工具 / 运行时事实
+  -&gt; 感知（读取上下文、工具回执、session 状态）
+  -&gt; 判断（识别约束、估计状态、更新计划）
+  -&gt; 决策（选择下一步、选择工具、选择角色/路径）
+  -&gt; 行动（调用工具、修改产物、派工、回写事实）
+  -&gt; 新环境 / 新事实
+</code></pre>
+<p>这也正是 agent 和普通聊天程序在工程上完全不是一回事的原因。普通程序的输入输出常常是一锤子买卖；而 agent 当下的行动，会改变它下一次能感知到什么，所以它天然是个闭环系统，而不是一个单轮映射函数。语言模型在这里只是判断器、或者说策略生成器的一部分，而不是整个系统。</p>
+<h2 id="33-agentic-ai-做的事给-llm-建一个稳定工作环境"><a class="header" href="#33-agentic-ai-做的事给-llm-建一个稳定工作环境">3.3 Agentic AI 做的事：给 LLM 建一个稳定工作环境</a></h2>
+<p>如果把上一节那个闭环拆开，agentic AI 在做的事就清楚了：它不是替代 LLM，而是为 LLM 建一个工作环境。这个环境大体分工如下——感知的部分，负责把用户目标、文件、日志、网页、MCP 资源、历史事实和工具回执，组织成当前可用的上下文；行动的部分，负责把模型提出的动作，转成受权限、沙箱、schema 和并发规则约束的工具调用；记忆的部分，负责把重要事实写回 session、文档、skills、memory 和 artifact，而不是任由它们只漂在 prompt 里；验证的部分，负责把“看起来完成”改成“证据证明完成”；而控制的部分，则负责压缩、恢复、打断、升级、分派子 agent，并把错误反馈回下一轮。</p>
+<p>Claude Code 论文对这一点的概括很有价值：核心的 agent loop 可以简单到只是一个“调用模型、运行工具、再来一遍”的 while 循环，但绝大多数代码并不在这个循环里，而在循环周围那套系统——权限、compaction、MCP/插件/skills/hooks、子 agent 派发，以及追加式的 session 存储。<sup class="footnote-reference" id="fr-claude-code-design-space-ch3-2"><a href="#footnote-claude-code-design-space-ch3">3</a></sup> 这恰好说明，agentic AI 的本体不是“模型多聪明”，而是模型周围那套让它能持续工作的控制系统。所以本书所说的 harness，不该被理解成一层外挂的脚手架，而应被理解成 agent 的外层反馈控制系统：它的任务不是让模型显得更聪明，而是持续感知偏差、校正偏差，并把系统重新拉回可用区间。</p>
+<h2 id="34-三段血统控制论缓存负反馈"><a class="header" href="#34-三段血统控制论缓存负反馈">3.4 三段血统：控制论、缓存、负反馈</a></h2>
+<p>这套控制系统并不是凭空发明的。今天我们在 agent 上遇到的问题，本来就是三段老工程史在一种新的计算介质里重演——它们正是第 1 章 §1.6 那两个类比（缓存、放大器）的来处。隔着半个多世纪，这三拨人面对的其实是同一个问题：怎样让一个系统，在噪声里不丢方向。</p>
+<p>第一段是<strong>控制论</strong>。Norbert Wiener 之所以重要，不只是因为他写了一本标题里带 <code>Cybernetics</code> 的书，更因为他把一个工程问题第一次讲成了一种统一的语言。Britannica 对这段历史的概括点到了要害：Wiener 在二战期间处理的是“如何瞄准移动目标”这类控制问题，他在预测、滤波和目标保持上的思考，后来直接通向了控制论。<sup class="footnote-reference" id="fr-cybernetics-history-ch3-1"><a href="#footnote-cybernetics-history-ch3">4</a></sup> 他关心的不是“机器会不会像人一样思考”，而是“一个系统怎样在持续变化的环境里保持方向”——这是个相当谦卑的问题意识：不追问机器能否超越人，只追问它能否别在半路走丢。MIT Press 对《控制论》的概括很简洁：它研究的是带有 <code>"feedback loops"</code> 的系统中信息如何被控制，以及噪声如何破坏系统的 <code>homeostasis</code>（稳态）。<sup class="footnote-reference" id="fr-cybernetics-foundation-ch3-1"><a href="#footnote-cybernetics-foundation-ch3">5</a></sup> 把这套语言翻回今天的 LLM agent，结论非常直接：真正困难的问题，不是让模型偶尔答出一个漂亮答案，而是让系统在任务持续推进、外界不断反馈、约束持续变化时，仍然不丢目标——而控制论关心的“目标保持”，恰好就是第 2 章 §2.3 那条“记忆老化”机理在系统层面显出的样子。</p>
+<p>第二段是<strong>缓存</strong>。第 1 章 §1.6 已经讲过缓存层级和局部性，这里补的是它背后那段很“物理”的失败史，因为它和 agent 的上下文控制几乎同构。Computer History Museum 的描述很形象：第一代很多内存是串行的，比特在环路里循环流动，机器想读写某个数据，只能等那一串比特转回到可访问的位置；Maurice Wilkes 的 EDSAC 用过水银延迟线，数据化作声波脉冲在水银柱里来回，你要的那一位得等它转回管口；直到随机访问内存出现，才真正 <code>"eliminated the wait"</code>。<sup class="footnote-reference" id="fr-cache-history-ch3-1"><a href="#footnote-cache-history-ch3">6</a></sup> 后来分层越来越清楚：IBM 的 System/370 把计算带进“硅时代”，而它所用的双极型 RAM 正是用作缓存。这段演进说明，缓存不是“聪明人爱抽象”的产物，而是当单层存储无法同时满足速度、容量和成本时，被现实逼出来的体系结构选择——这恰好也是今天“1M 上下文 vs 有效工作区间”那道矛盾的前身。Chris Terman 把缓存奏效的前提总结成一个词——<code>"locality of reference"</code>（引用局部性）：系统不必把全部数据都放进最快层，只需把当前工作集放进去，再靠组相联度、块大小、替换策略、写策略自动管理层间流动。<sup class="footnote-reference" id="fr-memory-hierarchy-ch3-1"><a href="#footnote-memory-hierarchy-ch3">7</a></sup> 这套逻辑直接对应到 agent：当前这一轮的 prompt 相当于贴近 CPU 的 L1，<code>AGENTS.md</code>、skills 和短期 memory 相当于可快速调入的次级层，而 session 事实流、artifact、文档、外部检索结果相当于更慢更大的下层存储。harness 在这里做的，就是一种“认知层级的缓存控制”——决定什么允许进入当前 prompt（admission）、什么旧信息该退回 session（eviction）、一次喂进去的是整块原文还是压缩切片（block size）、哪些中间状态必须立刻写回持久事实流（write policy）。这正是第 2 章 §2.2 那条“softmax 稀释”机理的直接对策：不把高速层塞爆，只把短、密、近的证据切片放进当前窗口。</p>
+<p>第三段是<strong>负反馈</strong>，故事感最强。Harold S. Black 在 Bell System 遇到的问题并不神秘：长途电话链路上，信号要穿过一串又一串放大器，增益是有了，可失真、噪声和漂移也一路叠加上去——这几乎就是第 2 章 §2.3 那个“传话游戏”的电学版本。Black 为消除失真坚持了六年，最终在一个再普通不过的通勤早晨、在开往曼哈顿的渡轮上想清楚了负反馈放大器的原理，顺手把推导记在了一份报纸的边角上。<sup class="footnote-reference" id="fr-feedback-history-ch3-1"><a href="#footnote-feedback-history-ch3">8</a></sup> 这件事揭示了一个反直觉的工程事实：成熟系统追求的，往往不是最大的裸增益，而是更可控的整体行为。回到第 1 章 §1.6 那个放大器——它只在线性区内不失真，越界就削顶；Black 的做法，本质上是把一部分输出送回输入端，用主动牺牲一点增益，换来更宽的线性区、更低的失真和更可预测的整体表现。<sup class="footnote-reference" id="fr-feedback-circuits-ch3-1"><a href="#footnote-feedback-circuits-ch3">9</a></sup> 半导体世界里还有一幅互补的画面：Terman 讲 SRAM 的存储单元时说得很直接，它本质上是一个 <code>"positive feedback loop"</code>（正反馈回路），用来形成可稳定保存状态的双稳态。<sup class="footnote-reference" id="fr-memory-hierarchy-ch3-2"><a href="#footnote-memory-hierarchy-ch3">7</a></sup> 这正是第 2 章 §2.3 点到的那两类互补反馈的电路原型——正反馈用来锁存状态，让一个比特不至于自己滑掉；负反馈用来抑制放大链里的漂移与失真，让整体仍停在稳定区。对一个长期运行的 agent，这两类机制缺一不可：它的“锁存器”，是 session 事实流、通过了验证的 artifact，以及角色、作用域、worktree 这些边界；它的“负反馈环”，是验证器、回放、dashboard、人工升级、角色重分配和恢复逻辑。长任务 agent 最容易犯的错，恰恰是把这两类机制一起省掉——既没有东西把关键事实锁住，又没有东西把错误输出送回纠偏，结果短期看跑得飞快，长期看状态漂移、工具误用、上下文污染和错误自信一起累积，败因和那条没有负反馈的放大链一模一样。</p>
+<h2 id="35-harness-作为外层反馈控制器与那层控制栈"><a class="header" href="#35-harness-作为外层反馈控制器与那层控制栈">3.5 Harness 作为外层反馈控制器，与那层控制栈</a></h2>
+<p>把三段血统叠起来，harness 的角色就立体了：模型本身只负责生成下一步的候选动作，真正把闭环“关上”的是 harness——它通过 session、工具回执、验证器、dashboard 与回放来感知系统状态，通过 compaction、检索、角色路由、权限边界、重试与升级来调节系统，又通过 artifact 契约、终态裁决和人工介入，把错误的行动拦在用户可见的表面之前。</p>
+<p>2026 年 Thoughtworks 这一波关于 harness engineering 的讨论，很适合当现代实践的起点：Birgitta Böckeler 在文章里公开致谢 Kief Morris，说是他把控制论带进了讨论——这不是花絮，而是一个信号：今天的软件团队重新谈 harness，本质上是在重新发现一个很老的控制问题。<sup class="footnote-reference" id="fr-harness-story-ch3-1"><a href="#footnote-harness-story-ch3">10</a></sup> Böckeler 把团队对 AI 生成代码的那道 <code>"natural trust barrier"</code>（信任壁垒）拆得很控制论：前馈的“向导（guides）”负责在行动之前提高成功概率，反馈的“传感器（sensors）”负责在行动之后帮系统自纠。Kief Morris 则把人的位置重新定义成 <code>"on the loop"</code>（在环上）——人的工作不是盯着每一行生成的代码，而是设计并改进那个会持续产出代码、测试、文档和验证结果的工作回路。<sup class="footnote-reference" id="fr-harness-story-ch3-2"><a href="#footnote-harness-story-ch3">10</a></sup> 这两个说法——前馈向导与反馈传感器、人“在环上”而非“在环里”——后面几章会反复出现，值得先记住。</p>
+<p>那么 harness 落到实处是什么？当 agent 离开 demo、走进跨文件、跨工具、跨角色、跨时段的真实场景时，系统瓶颈会从“模型够不够聪明”转向“控制环够不够好”，而真正决定上限的是下面这层控制栈：</p>
+<pre><code class="language-text">Prompt 工程
+  -&gt; 改善局部单轮行为
+上下文工程
+  -&gt; 稳定多轮行为（AGENTS.md、skills、memory、策略上下文）
+Harness 工程
+  -&gt; 用持久运行时契约稳定长周期自治行为
+</code></pre>
+<p>这三层的分工值得说清，因为后文不会再把它们分开重述。上下文工程是 harness 的前置纪律，在 harness 成熟之前承担着大部分控制重量：<code>AGENTS.md</code> 和角色指令约束规划风格，skills 把可复用的领域流程编码下来，memory 记录用户与项目的事实以减少重复漂移，有边界的工具策略压住不安全的探索；这一层必要，但它仍然依赖模型概率性的“遵守”，对长任务、并发和后台工作并不充分。再往上的 harness 工程，则在概率性的模型输出之外，再加一层确定性的控制循环——它提供可恢复、可追踪的工作区状态，给工具调用挂上生命周期 hook 与事件 sink 以便观测，在终态成功之前先做输出的验证与确认，维护持久的任务生命周期与回放语义，并为修复和操作员行动留出显式的失败类别。一句话：<strong>harness 不替代模型智能，它约束模型智能</strong>，好让系统能从模型的漂移中恢复，而不是假装漂移不存在。<code>AGENTS.md</code>、skills、memory、hooks、验证器、dashboard、swarm 协作，其实都是这套反馈控制器上的不同传感器、执行器和约束器件——下一节会把它们逐条对回到第 2 章的失效机理上。</p>
+<h2 id="36-机理对应能力本书后续章节的提纲"><a class="header" href="#36-机理对应能力本书后续章节的提纲">3.6 机理对应能力：本书后续章节的提纲</a></h2>
+<p>第 2 章讲清了模型天然缺什么，前几节讲清了外层控制系统是什么、从哪来。把两者并排放在一起，会看到一种近乎对仗的结构：<strong>模型每缺一样东西，harness 就补上一件对应的器件。</strong> 下面这张表，是全书的提纲——左边是模型层“天然缺什么”，右边是 harness 层“补什么、在哪一章展开”。此刻表里出现的术语（事实流、验证、正/负反馈、人在环上），都已在前几节定义过，不再是空名词。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>失效机理（模型层）</th><th>失效表现</th><th>对症的 harness 能力</th><th>展开章节</th></tr>
+</thead>
+<tbody>
+<tr><td>softmax 稀释</td><td>上下文越长，关键证据越被“平均掉”</td><td>认知层级缓存控制：admission / eviction、compaction、检索式“短密近”证据切片</td><td>§3.4、第 6 章（事实流）、第 11 章</td></tr>
+<tr><td>RoPE 距离衰减 / 外推退相干</td><td>远距离关联弱、超长外推失效</td><td>上下文分层加按需调入（L1 prompt / L2 <code>AGENTS.md</code>·skills·memory / L3 事实流）；把关键事实重新拉回光标附近</td><td>§3.4、第 6 章、第 8 章</td></tr>
+<tr><td>有限残差维度</td><td>长历史细节被压缩、陈旧假设增多</td><td>持久事实流：把状态移出 prompt、写回运行时，而不是让模型“记住”</td><td>第 6 章（session 支柱）、第 8 章</td></tr>
+<tr><td>over-squashing / 表示坍缩</td><td>长输入里“分不清”、计数与复制类退化</td><td>结构化证据加产物契约加独立验证：不靠模型在巨大上下文里自己看出来</td><td>第 6 章（验证支柱）、第 11 章</td></tr>
+<tr><td>非均匀 KV 分辨率</td><td>同一窗口不同位置可用性不均（U 形）</td><td>把容量上限与有效工作区间分开设计；短密近证据加检索加分层缓存，不默认塞满</td><td>§2.4–2.5、第 6 章</td></tr>
+<tr><td>记忆老化（时间⊆空间）</td><td>跨小时、跨会话目标漂移，陈旧上下文</td><td>目标保持加锁存：目标、约束、产物锁进 session 与 artifact；compaction 时保留关键决策并定期回注</td><td>第 6 章（session）、第 11 章（短回路与长回路）</td></tr>
+<tr><td>不可约误差复合</td><td>长任务越跑越偏，自信但错误累积</td><td>负反馈环：独立验证、终态裁决、回放、重试与升级、人在环上；并用子 agent 分解缩短单链 horizon</td><td>第 6 章（验证）、第 9 章（操作员面）、第 10 章（群体编排）、第 11 章</td></tr>
+</tbody>
+</table>
+</div>
+<p>不妨把其中一行读成一个小故事。回到开篇那个 agent：它“忘掉了两小时前的约束”——对应表里的“记忆老化”。它不是不想记，而是那条约束随着光标前移、相对距离变远，被注意力一点点稀释掉了（第 2 章 §2.2 的机理）。harness 的对策不是恳求模型“别忘”，而是把这条约束从易逝的 prompt 里取出来，锁进 session 事实流，再在每次 compaction 之后把它重新放回光标附近——这正是 §3.4 那个“锁存器”三个字的全部含义。同一个 agent“自信地交付跑不通的代码”——对应“不可约误差复合”：靠模型自查没有用，必须在终态由一个独立的验证器说“测试没过”，再把这条反馈送回循环。表里的每一行，都是这样一组“机理—症状—对策”的对应。</p>
+<p>读这张表，有两个要点。其一，<strong>harness 不是一袋经验技巧，而是一组针对已知失效机理的控制器件</strong>：表右栏的每一项，都对准左栏一条具体的失效机理，这正是把 §3.5 “harness 是外层反馈控制器”落到实处的方式。其二，也是更深的一点——<strong>空间类的机理大多能被上下文工程“补偿”，但时间轴上那条“不可约误差复合”补偿不了，只能被“兜住”。</strong> 这条边界不是修辞，而是工程事实：它正是 §3.5 控制栈里“上下文工程必要但不充分、必须上升到 harness 工程”的根本原因，也是为什么第 10 章要用群体编排去缩短单链 horizon、第 11 章要把系统拆成短回路与长回路。把更大的窗口当成解药，只能缓解空间类机理；时间轴那个不可约的核，必须靠运行时的验证与人的监督来关闭。这条边界还顺带解释了一个产业层面的判断：既然时空失效是架构层面的必然，连前沿模型都只能“缓”而不能“消”，那么“把上下文窗口做得更大”就永远只是缓解、而非根治；真正决定长任务可靠性上限的，是模型之外的这套控制系统——这也是本书把 harness engineering 当作工程主战场、而不是把希望寄托在“等下一代模型”身上的根本理由。</p>
+<p>到这里，本书的第一部分（基础）完成了它的全部任务：第 1 章看清这台机器，第 2 章诊断它的必然失效，第 3 章给出外层控制系统的来历与提纲。后文不会再把理论一次性堆在前面，而是采用交替推进的节奏。第 4 章先看成熟样本，拆开 Claude Code 和 Codex，看它们把哪些控制器、传感器、执行器、记忆和权限边界做成了实打实的产品结构；第 5 章转去看失败样本，看一个系统在把聊天输出误当成运行时事实之后，会怎样接连出现进度漂移、会话污染、产物错交和验证失效；第 6 章再把理论和样本压成一张统一的架构图——事实流、生命周期、能力平面、产物验证、回放、隔离恢复、协作、知识分层和操作员面；从第 7 章到第 10 章，则逐个专题展开，每一章都先给出理论约束，再接上 Claude Code / Codex 的实现例证和失败案例的反证。理论负责给读者建立判断的坐标，实践负责不断校正这套坐标。开篇那个时而天才、时而走神的 agent，会在后面每一章里反复回到我们眼前——只是这一次，它身边会逐渐长出一整套把它拉回工作区间的器官。</p>
+<hr>
+<ol class="footnote-definition">
+<li id="footnote-agent-theory-ch3">
+<p>本章在此处综合 Franklin / Graesser 对 autonomous agent 的定义，以及 Wooldridge / Jennings 关于 autonomy、reactivity、pro-activeness 与 social ability 的经典描述；对应第 21 章参考文献 26、27。 <a href="#fr-agent-theory-ch3-1">↩</a> <a href="#fr-agent-theory-ch3-2">↩2</a></p>
+</li>
+<li id="footnote-llm-agent-evolution-ch3">
+<p>本章在此处综合 ReAct 关于 reasoning / acting 循环的经典框架，以及 <em>Dive into Claude Code</em> 对 coding assistant 演化到 agentic system 的描述，用来说明 LLM agent 如何从单轮回答走向工具闭环；对应第 21 章参考文献 41、42。 <a href="#fr-llm-agent-evolution-ch3-1">↩</a></p>
+</li>
+<li id="footnote-claude-code-design-space-ch3">
+<p>Jiacheng Liu 等，<em>Dive into Claude Code: The Design Space of Today’s and Future AI Agent Systems.</em> 本章在此处使用其关于 Claude Code agentic loop、系统边界与源码分析结论，用来把 agentic AI 从概念落到具体产品架构；对应第 21 章参考文献 41。 <a href="#fr-claude-code-design-space-ch3-1">↩</a> <a href="#fr-claude-code-design-space-ch3-2">↩2</a></p>
+</li>
+<li id="footnote-cybernetics-history-ch3">
+<p>本章在此处综合 Britannica 对 Wiener 战时目标跟踪与预测问题的概述，以及 MIT Press 对 Macy Conferences、Wiener、von Neumann、Margaret Mead、Gregory Bateson 等人的描述，用来补足控制论的人物与历史脉络；对应第 21 章参考文献 30、31。 <a href="#fr-cybernetics-history-ch3-1">↩</a></p>
+</li>
+<li id="footnote-cybernetics-foundation-ch3">
+<p>Norbert Wiener, <em>Cybernetics or Control and Communication in the Animal and the Machine.</em> 本章在此处使用 MIT Press 对 cybernetics、feedback loops、noise 与 homeostasis 的概括，来建立控制论视角；对应第 21 章参考文献 25。 <a href="#fr-cybernetics-foundation-ch3-1">↩</a></p>
+</li>
+<li id="footnote-cache-history-ch3">
+<p>本章在此处综合 Computer History Museum 关于 delay line、main memory、magnetic core 与 bipolar RAM/cache 的材料，以及 IBM 对 System/370 向硅与高速 cache 迁移的回顾，用来解释 memory hierarchy 不只是抽象理论，而是现实成本、速度与容量冲突逼出来的分层工程；对应第 21 章参考文献 32、33、34。 <a href="#fr-cache-history-ch3-1">↩</a></p>
+</li>
+<li id="footnote-memory-hierarchy-ch3">
+<p>Chris Terman, <em>Computation Structures</em> 的 <em>The Memory Hierarchy</em> 与 <em>Virtual Memory</em> 讲义。本章在此处使用 locality of reference、associativity、block / replacement / write policy，以及 SRAM 中 positive feedback loop 的解释，来建立 memory hierarchy 与稳定存储的类比；对应第 21 章参考文献 28。 <a href="#fr-memory-hierarchy-ch3-1">↩</a> <a href="#fr-memory-hierarchy-ch3-2">↩2</a></p>
+</li>
+<li id="footnote-feedback-history-ch3">
+<p>本章在此处综合 National Inventors Hall of Fame 与 Bell Labs 对 Harold S. Black 负反馈放大器的历史描述，用来补足 Bell System 长距离电话失真、六年坚持与 ferry 灵感的故事线；对应第 21 章参考文献 29、35。 <a href="#fr-feedback-history-ch3-1">↩</a></p>
+</li>
+<li id="footnote-feedback-circuits-ch3">
+<p>H. S. Black, <em>Stabilized Feedback Amplifiers.</em> 本章在此处使用其关于多级放大器稳定性、负反馈与非线性抑制的讨论，来类比长任务 agent 的漂移控制；对应第 21 章参考文献 29。 <a href="#fr-feedback-circuits-ch3-1">↩</a></p>
+</li>
+<li id="footnote-harness-story-ch3">
+<p>本章在此处综合 Birgitta Böckeler 关于 guides / sensors 的 harness 抽象、Kief Morris 关于 humans “on the loop” 的论述、OpenAI Ryan Lopopolo 的 harness 实践，以及 Anthropic 对 Claude Code 组织采用的公开描述，用来说明今天的 harness engineering 是一条带有人物、组织与实践演进的技术线，而不是新造术语；对应第 21 章参考文献 1、2、36、37、38。 <a href="#fr-harness-story-ch3-1">↩</a> <a href="#fr-harness-story-ch3-2">↩2</a></p>
+</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="02b-spatiotemporal.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="03-maturity-gap.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="02b-spatiotemporal.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="03-maturity-gap.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

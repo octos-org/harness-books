@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>6. 回放与用户事实：前端只能投影运行时真相 - 驾驭工程</title>
+        <title>8. 回放与用户事实：前端只能投影运行时真相 - 驾驭工程</title>
 
 
         <!-- Custom HTML head -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-4f26e068.js";
+            window.path_to_searchindex_js = "searchindex-76555c87.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-50f4af94.js"></script>
+        <script src="toc-18563b7b.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -174,9 +174,9 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="6-回放与用户事实前端只能投影运行时真相"><a class="header" href="#6-回放与用户事实前端只能投影运行时真相">6. 回放与用户事实：前端只能投影运行时真相</a></h1>
-<p>如果第 5 章守的是能力入口，第 6 章守的就是用户表面的真实性。对 harness 来说，前端不是装饰层，而是运行时事实能否被用户正确看见的最后一跳。只要这一跳开始自作主张，系统很快就会掉回第 3.1 到第 3.3 节那些事故里。</p>
-<h2 id="61-回放真正要解决的不是刷新后保留聊天"><a class="header" href="#61-回放真正要解决的不是刷新后保留聊天">6.1 回放真正要解决的不是“刷新后保留聊天”</a></h2>
+                        <h1 id="8-回放与用户事实前端只能投影运行时真相"><a class="header" href="#8-回放与用户事实前端只能投影运行时真相">8. 回放与用户事实：前端只能投影运行时真相</a></h1>
+<p>如果第 7 章守的是能力入口，第 8 章守的就是用户表面的真实性。对 harness 来说，前端不是装饰层，而是运行时事实能否被用户正确看见的最后一跳。只要这一跳开始自作主张，系统很快就会掉回第 5.1 到第 5.3 节那些事故里。</p>
+<h2 id="81-回放真正要解决的不是刷新后保留聊天"><a class="header" href="#81-回放真正要解决的不是刷新后保留聊天">8.1 回放真正要解决的不是“刷新后保留聊天”</a></h2>
 <p>很多产品把 replay 理解成“把聊天记录再画一遍”。这远远不够。真正需要被保留下来的，不只是消息文本，而是任务生命周期、工具副作用、验证证据、子任务摘要、会话 scope 和终态裁决。</p>
 <p>因此，可靠的状态气泡至少要扛住这些情形：</p>
 <ul>
@@ -187,7 +187,7 @@
 <li>部分 stream 中断后重新订阅。</li>
 </ul>
 <p>如果 replay 缺失或解释不一致，即使后端内部做对了很多事，用户看到的仍然会是“随机性”。</p>
-<h2 id="62-claude-code--codex-给出的共同约束"><a class="header" href="#62-claude-code--codex-给出的共同约束">6.2 Claude Code / Codex 给出的共同约束</a></h2>
+<h2 id="82-claude-code--codex-给出的共同约束"><a class="header" href="#82-claude-code--codex-给出的共同约束">8.2 Claude Code / Codex 给出的共同约束</a></h2>
 <p>Codex 的 <code>app-server</code> 把 <code>thread/started</code>、<code>turn/started</code>、<code>item/*</code>、<code>turn/completed</code> 这些通知做成统一事件流，这是在告诉我们：实时流和历史流必须共享一个对象模型。Claude Code 的 <code>query.ts</code>、transcript 持久化、resume 和子 agent 进度摘要，则从产品器官层面说明同一件事：无论 UI 看起来多像聊天，本体都不是聊天，而是一个可恢复执行体的事实投影。<sup class="footnote-reference" id="fr-replay-truth-ch6-1"><a href="#footnote-replay-truth-ch6">1</a></sup></p>
 <p>换句话说，UI 最多拥有三样东西：</p>
 <ul>
@@ -196,15 +196,15 @@
 <li>交互逻辑。</li>
 </ul>
 <p>它不能拥有第四样东西：独立事实。</p>
-<h2 id="63-失败案例怎样变成回放设计规则"><a class="header" href="#63-失败案例怎样变成回放设计规则">6.3 失败案例怎样变成回放设计规则</a></h2>
-<p>第 3 章可以直接翻译成三条回放规则：</p>
+<h2 id="83-失败案例怎样变成回放设计规则"><a class="header" href="#83-失败案例怎样变成回放设计规则">8.3 失败案例怎样变成回放设计规则</a></h2>
+<p>第 5 章可以直接翻译成三条回放规则：</p>
 <ol>
 <li>为了避免 3.1 和 3.2 的进度漂移，实时路径和历史路径必须共享同一份任务 schema。</li>
 <li>为了避免 3.3 的会话污染，session / topic scope 必须从事件层一直贯穿到回放层和渲染层。</li>
 <li>为了避免 3.6 的操作员盲区，UI 不只要显示“当前状态”，还要显示最近行动、最近证据和最近失败原因。</li>
 </ol>
 <p>因此，前端里不应再存在第二套生命周期解释器，也不应允许某些气泡状态只来自本地推断。前端可以做缓存、动画和布局，但不能发明阶段。</p>
-<h2 id="64-实战落地把回放当作可靠性测试面"><a class="header" href="#64-实战落地把回放当作可靠性测试面">6.4 实战落地：把回放当作可靠性测试面</a></h2>
+<h2 id="84-实战落地把回放当作可靠性测试面"><a class="header" href="#84-实战落地把回放当作可靠性测试面">8.4 实战落地：把回放当作可靠性测试面</a></h2>
 <p>回放架构一旦定下来，测试策略也应跟着改：</p>
 <ul>
 <li>断言 <code>/api/sessions/:id/tasks</code> 快照与 SSE 回放在生命周期上完全一致；</li>
@@ -218,7 +218,7 @@
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-replay-truth-ch6">
-<p>本章在此处综合 Codex <code>app-server</code> 中 thread / turn / item 的统一事件流设计，以及 Claude Code transcript、resume 与 agent summary 机制，说明 UI replay 必须建立在统一的后端事实模型之上；对应第 19 章参考文献 21、24。 <a href="#fr-replay-truth-ch6-1">↩</a></p>
+<p>本章在此处综合 Codex <code>app-server</code> 中 thread / turn / item 的统一事件流设计，以及 Claude Code transcript、resume 与 agent summary 机制，说明 UI replay 必须建立在统一的后端事实模型之上；对应第 21 章参考文献 21、24。 <a href="#fr-replay-truth-ch6-1">↩</a></p>
 </li>
 </ol>
 

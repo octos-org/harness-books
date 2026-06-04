@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>7. 操作员控制面与发布真实性 - 驾驭工程</title>
+        <title>9. 操作员控制面与发布真实性 - 驾驭工程</title>
 
 
         <!-- Custom HTML head -->
@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-4f26e068.js";
+            window.path_to_searchindex_js = "searchindex-76555c87.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-50f4af94.js"></script>
+        <script src="toc-18563b7b.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -174,9 +174,9 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="7-操作员控制面与发布真实性"><a class="header" href="#7-操作员控制面与发布真实性">7. 操作员控制面与发布真实性</a></h1>
-<p>到第 6 章为止，我们回答的是“用户如何看到真相”。第 7 章回答的是另一半问题：“操作员如何足够快地理解真相，并用它做发布决策”。这一步非常关键，因为很多团队到了这里会犯一个常见错误：系统内部已经有不少事件和日志，于是误以为“可观测性差不多有了”。但对 harness 来说，真正需要的是控制面，不是日志堆。</p>
-<h2 id="71-操作员真正需要回答哪些问题"><a class="header" href="#71-操作员真正需要回答哪些问题">7.1 操作员真正需要回答哪些问题</a></h2>
+                        <h1 id="9-操作员控制面与发布真实性"><a class="header" href="#9-操作员控制面与发布真实性">9. 操作员控制面与发布真实性</a></h1>
+<p>到第 8 章为止，我们回答的是“用户如何看到真相”。第 9 章回答的是另一半问题：“操作员如何足够快地理解真相，并用它做发布决策”。这一步非常关键，因为很多团队到了这里会犯一个常见错误：系统内部已经有不少事件和日志，于是误以为“可观测性差不多有了”。但对 harness 来说，真正需要的是控制面，不是日志堆。</p>
+<h2 id="91-操作员真正需要回答哪些问题"><a class="header" href="#91-操作员真正需要回答哪些问题">9.1 操作员真正需要回答哪些问题</a></h2>
 <p>一个成熟的操作员视图，至少要能在几十秒内回答下面这些问题：</p>
 <ul>
 <li>哪个任务卡住了？</li>
@@ -187,11 +187,11 @@
 <li>这是本任务自身问题，还是某个子 agent / 外部工具的问题？</li>
 <li>该重试、回滚、继续等待，还是升级给开发者？</li>
 </ul>
-<p>只看计数器是答不出这些问题的。计数器告诉你系统“最近很忙”或“失败率升高了”，但答不出“这次具体为什么错”。这就是第 3.6 节会出现操作员盲区的原因。</p>
-<h2 id="72-claude-code--codex-给了什么操作员线索"><a class="header" href="#72-claude-code--codex-给了什么操作员线索">7.2 Claude Code / Codex 给了什么操作员线索</a></h2>
+<p>只看计数器是答不出这些问题的。计数器告诉你系统“最近很忙”或“失败率升高了”，但答不出“这次具体为什么错”。这就是第 5.6 节会出现操作员盲区的原因。</p>
+<h2 id="92-claude-code--codex-给了什么操作员线索"><a class="header" href="#92-claude-code--codex-给了什么操作员线索">9.2 Claude Code / Codex 给了什么操作员线索</a></h2>
 <p>Claude Code 的 <code>agentSummary.ts</code>、<code>diskOutput.ts</code>、resume 机制说明了一个非常实用的设计取向：操作者不该被迫直接读原始 transcript 或原始日志。他需要的是摘要、最近动作、产物位置、任务归属和恢复入口。Codex 则用 <code>Thread</code> / <code>Turn</code> / <code>Item</code> 的对象拆分，提供了更适合作为 dashboard 基底的数据骨架：历史、执行和副作用被分到了不同层上，因此更容易组织成操作员叙事。<sup class="footnote-reference" id="fr-operator-plane-ch7-1"><a href="#footnote-operator-plane-ch7">1</a></sup></p>
 <p>把这两者合起来，可以得到一条很稳的经验：操作员视图不该只消费 metrics，它必须消费事实流派生出来的叙事结构。</p>
-<h2 id="73-仪表盘应该怎样绑定到同一事实流"><a class="header" href="#73-仪表盘应该怎样绑定到同一事实流">7.3 仪表盘应该怎样绑定到同一事实流</a></h2>
+<h2 id="93-仪表盘应该怎样绑定到同一事实流"><a class="header" href="#93-仪表盘应该怎样绑定到同一事实流">9.3 仪表盘应该怎样绑定到同一事实流</a></h2>
 <p>更稳妥的 dashboard 设计通常会固定展示以下几类信息：</p>
 <ul>
 <li>生命周期面：当前阶段、进入阶段时间、是否违反单调性；</li>
@@ -201,8 +201,8 @@
 <li>作用域面：session / topic / worktree / owner；</li>
 <li>运营面：重试次数、孤儿任务、串扰信号、待人工介入标记。</li>
 </ul>
-<p>这样做的目的，不是让 dashboard 更华丽，而是让它与第 4 章那张运行时总图一一对齐。只要 dashboard 上存在“只在图表里出现、但在事实流里找不到来源”的状态，系统就又多了一条影子真相。</p>
-<h2 id="74-小型-fleet-不是测试补充而是发布事实"><a class="header" href="#74-小型-fleet-不是测试补充而是发布事实">7.4 小型 fleet 不是测试补充，而是发布事实</a></h2>
+<p>这样做的目的，不是让 dashboard 更华丽，而是让它与第 6 章那张运行时总图一一对齐。只要 dashboard 上存在“只在图表里出现、但在事实流里找不到来源”的状态，系统就又多了一条影子真相。</p>
+<h2 id="94-小型-fleet-不是测试补充而是发布事实"><a class="header" href="#94-小型-fleet-不是测试补充而是发布事实">9.4 小型 fleet 不是测试补充，而是发布事实</a></h2>
 <p>单元测试和集成测试是必要的，但对 harness 远远不够。时序型、多表面型、跨 session 的错误，经常只有在真实主机、真实 worker、真实重连路径里才暴露出来。</p>
 <p>因此，小型 fleet 应该被视为发布真实性的最低证明面，而不是可选 bonus：</p>
 <ul>
@@ -211,7 +211,7 @@
 <li>强制输出显式诊断类别，而不是笼统的 <code>failed</code>；</li>
 <li>一旦不变量被破坏，直接阻止合并或发布。</li>
 </ul>
-<p>最值得门禁化的不变量通常正好来自第 3 章：</p>
+<p>最值得门禁化的不变量通常正好来自第 5 章：</p>
 <ul>
 <li>必需阶段缺失；</li>
 <li>阶段序列非单调；</li>
@@ -220,13 +220,13 @@
 <li>重复 research / background task；</li>
 <li>子 agent 摘要和主任务事实失联。</li>
 </ul>
-<h2 id="75-从事故博物馆回流到控制面"><a class="header" href="#75-从事故博物馆回流到控制面">7.5 从事故博物馆回流到控制面</a></h2>
-<p>第 3.7 节讲“失败模式博物馆”时，重点是归档。到了第 7 章，重点则变成回流：每一个高价值失败模式，最终都应该映射成 dashboard 信号、门禁脚本或 operator runbook。只有这样，事故故事才会变成控制面的免疫力，而不是写完复盘就结束。</p>
+<h2 id="95-从事故博物馆回流到控制面"><a class="header" href="#95-从事故博物馆回流到控制面">9.5 从事故博物馆回流到控制面</a></h2>
+<p>第 5.7 节讲“失败模式博物馆”时，重点是归档。到了第 9 章，重点则变成回流：每一个高价值失败模式，最终都应该映射成 dashboard 信号、门禁脚本或 operator runbook。只有这样，事故故事才会变成控制面的免疫力，而不是写完复盘就结束。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-operator-plane-ch7">
-<p>本章在此处综合 Claude Code <code>agentSummary.ts</code>、<code>diskOutput.ts</code>、resume 相关实现，以及 Codex <code>Thread</code> / <code>Turn</code> / <code>Item</code> 的对象分层，用来说明操作员控制面应如何建立在统一事实流之上；对应第 19 章参考文献 21、24。 <a href="#fr-operator-plane-ch7-1">↩</a></p>
+<p>本章在此处综合 Claude Code <code>agentSummary.ts</code>、<code>diskOutput.ts</code>、resume 相关实现，以及 Codex <code>Thread</code> / <code>Turn</code> / <code>Item</code> 的对象分层，用来说明操作员控制面应如何建立在统一事实流之上；对应第 21 章参考文献 21、24。 <a href="#fr-operator-plane-ch7-1">↩</a></p>
 </li>
 </ol>
 

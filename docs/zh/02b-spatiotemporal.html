@@ -1,0 +1,303 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>2. 时空失效：工作区间为什么必然存在 - 驾驭工程</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-76555c87.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-18563b7b.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">驾驭工程</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="2-时空失效工作区间为什么必然存在"><a class="header" href="#2-时空失效工作区间为什么必然存在">2. 时空失效：工作区间为什么必然存在</a></h1>
+<p>第 1 章末尾留下一个说法：LLM 有一段最擅长的“工作区间”，离开它，质量就开始飘。这一章要把这个说法钉死成一条结论——<strong>有效工作区间的存在，是 transformer 加自回归这套架构在有限算力与显存预算下的数学必然，而不是“模型还不够好、以后会修好”的暂时缺陷。</strong> 讲透机理很重要，因为后文每一项 harness 能力，都是对其中某一条失效机理的对症补偿；不先讲清楚模型天然缺什么，harness 就会被误读成一袋经验技巧。</p>
+<h2 id="21-一个统一视角自回归是一个有限预算的时空滤波器"><a class="header" href="#21-一个统一视角自回归是一个有限预算的时空滤波器">2.1 一个统一视角：自回归是一个有限预算的时空滤波器</a></h2>
+<p>把第 1 章 §1.6 那两个硬件类比收束成一句话：<strong>自回归加 attention，本质上就是一个有限预算下的时空滤波器。</strong> 它对“位置远”（空间）和“时间旧”（时间）的信号都会衰减——就像一束光打在越来越宽的舞台上必然越来越暗，又像一段话经过越来越多人转述必然越来越走样。缓存讲的是空间维度上的工作集，放大器线性区讲的是不失真的稳定带宽，而 LLM 同时落在这两条约束之下。下面把“空间”和“时间”两条轴分开拆解。</p>
+<h2 id="22-空间轴位置越远有效敏感度越低"><a class="header" href="#22-空间轴位置越远有效敏感度越低">2.2 空间轴：位置越远，有效敏感度越低</a></h2>
+<p>沿着上下文的方向，有好几条机理在同时压低远端 token 的有效权重，它们叠加起来，才让“窗口不平坦”成为必然。</p>
+<p>最直接、也最接近纯算术的一条，是 softmax 带来的<strong>稀释</strong>。回忆第 1 章 §1.3：注意力的权重总和恒为 1——这意味着注意力是一种“守恒”的资源。打个比方，一位老师的目光总量是固定的一份：台下五个学生时，每张脸都照顾得到；台下五百人时，同一份目光摊到每个人身上，几乎落不下什么。模型也一样，窗口里有 <code>n</code> 个 token，平均每个只分到 <code>1/n</code>。要让模型把目光牢牢压在某一个远端关键 token 上，它的 logit 就得显著高过其余——具体地，要把那个 token 的权重抬到 <code>p</code>，它的 logit 需要比其余高出大约 <code>ln[(n−1)·p/(1−p)]</code>，也就是随 <code>n</code> 大致以 <code>ln n</code> 的速度增长。可 logit 不能想多大就多大：它正比于 q、k 两个向量的点积，而现代模型为了训练稳定，会用 RMSNorm、QK-Norm，乃至 Kimi 报告里专门设计的 QK-Clip 把它压住——不压的话，attention logit 会冲到上千量级、训练直接发散。于是 logit 的可达差距被一个与 <code>n</code> 无关的常数 <code>G</code> 卡死，单个 token 能拿到的最大权重大约是 <code>w_max ≈ e^G / (e^G + n − 1)</code>，随 <code>n</code> 增大不可避免地趋于零。结论几乎是算术而非调参：<strong>窗口越满，对任意单个远端证据的“最锐检索”就越弱。</strong><sup class="footnote-reference" id="fr-softmax-dilution-ch2-1"><a href="#footnote-softmax-dilution-ch2">1</a></sup> <sup class="footnote-reference" id="fr-bounded-logit-ch2-1"><a href="#footnote-bounded-logit-ch2">2</a></sup></p>
+<p>与这条稀释叠加在一起的，是位置编码本身带来的<strong>距离衰减</strong>。今天主流的位置编码叫 RoPE，它的做法是给每个位置的 q、k 旋转一个与“第几个 token”相关的角度，从而把位置信息编码进去。这种旋转有一个数学副作用：两个 token 离得越远，它们 q、k 内积的上界就越低——也就是说，距离本身就在替模型“调暗”远端。更麻烦的是，一旦上下文长度超出训练时见过的范围，这些旋转角度会“退相干”，外推直接失效。需要诚实地补一句：这条距离衰减的严格证明假设了 q、k 是常向量，真实情况下它更像一个先验偏置而非铁律——但偏置的方向是确定的。<sup class="footnote-reference" id="fr-rope-decay-ch2-1"><a href="#footnote-rope-decay-ch2">3</a></sup></p>
+<p>再往深一层，是一个容量问题。还记得第 1 章 §1.2 说过，每个 token 的残差流是<strong>定宽</strong>的吗？这条固定宽度的向量，要同时承载整段上下文里与当前 token 相关的所有信息。由信息论，一个定宽的状态无法无损地保存无界的上下文——越旧、越远的细节，越会被后来的信息压缩、覆盖。这正是第 1 章 §1.7 那句“看起来记得、却没有持久事实”在数值层面的根：模型并没有真的把某条约束写进某个寄存器，只是在当前这薄薄一层表示里，暂时还留着它的影子。</p>
+<p>最后一条藏在“多层”这个结构里，业界借用图神经网络的术语叫它 <code>over-squashing</code>（过度挤压）。要把一个远端 token 的信息送到“当前预测位点”，得跨越很多层注意力；而由于第 1 章 §1.3 讲的因果掩码——每个位置只能看它左边的 token，信息只能自左向右、层层向最后一个位置汇聚——逐层的 softmax 平均会把任何单一来源指数级地稀释掉，以致两段本来不同的长输入，会在最后一个位置的表示上坍缩成几乎一样（低精度浮点会让情况更糟）。这解释了一个反直觉的现象：在长上下文里，“计数、复制、精确区分”这类看起来最简单的任务，反而最先退化。<sup class="footnote-reference" id="fr-oversquash-ch2-1"><a href="#footnote-oversquash-ch2">4</a></sup></p>
+<p>把这几条叠起来，§2.4 将给出的经验现象——U 形偏置、NoLiMa 等——就有了机理解释：<strong>上下文窗口不是一块平坦内存，它的“有效分辨率”从光标附近向远处递减。</strong></p>
+<p>而工业界已经把这条“非均匀分辨率”直接做进了架构。为了在百万 token 上还付得起算力（还记得第 1 章 §1.4 说 KV cache 随长度线性涨吗），新一代模型干脆不再对全程做均匀的全注意力：滑动窗口注意力是字面意义上的矩形窗，窗外直接置零；线性注意力与状态空间模型（如 MiniMax 的做法）是字面意义上的指数衰减核；而 KV 压缩（DeepSeek V4 的 CSA 与 HCA、Kimi 的 MLA）则是有损降采样——近端最近的 token 保留高分辨率、不压缩，越往远端、KV 被聚合得越狠：CSA 把每 <code>m</code> 个 token 压成一条，HCA 把每 <code>m′</code>（远大于 <code>m</code>）个 token 压成一条。换句话说，<strong>所谓“1M context”不是一条处处等价的传送带，而是一组分辨率非均匀的滤波器：近端清晰，远端只剩轮廓。</strong> 这件事意味深长：连最有动机把窗口吹大的模型厂商，自己也在用压缩偷偷换取那个标称的容量上限。<sup class="footnote-reference" id="fr-nonuniform-kv-ch2-1"><a href="#footnote-nonuniform-kv-ch2">5</a></sup></p>
+<p>这里要专门强调一句，免得读者误以为“换个更强的闭源前沿模型就没事了”：<strong>闭源前沿也不例外。</strong> 第三方的系统评测（如 Chroma 对 18 个前沿模型做的 <em>Context Rot</em> 测试）显示，每一个模型都在每一个长度增量上掉点；前沿模型只是衰减得更缓，而非豁免。更说明问题的是，lost-in-the-middle 和干扰项导致的退化，在大概率使用全注意力的模型上照样出现——这说明它来自上面那几条基本面的“地板”，而不只是压缩作弊。Anthropic 自己的工程文档也直说，context rot 在远未触达容量上限时就已经开始。这是个该让团队清醒的事实：你买到的从来不是一块平坦的百万格内存，而是一段中心清晰、边缘发虚的视野。<sup class="footnote-reference" id="fr-context-rot-ch2-1"><a href="#footnote-context-rot-ch2">6</a></sup></p>
+<h2 id="23-时间轴时间越旧有效敏感度越低"><a class="header" href="#23-时间轴时间越旧有效敏感度越低">2.3 时间轴：时间越旧，有效敏感度越低</a></h2>
+<p>长任务的失效看起来是个“时间”问题——跑得越久越偏——但要拆成两半才讲得透：一半可以归约成空间问题，另一半不可约。</p>
+<p>先说可约的那一半，姑且叫它<strong>记忆老化</strong>。第 1 章 §1.4 交代过，模型对“过去”的唯一留存就是 KV cache，除此之外并没有别的跨步状态——所以“k 步之前的事还记不记得”，等价于“那个 token 还在不在窗口里、当前 token 还 attend 得到它吗”。随着生成一步步推进，一个旧事实与当前光标之间的相对距离单调增大，于是它就按上一节的几条空间机理被衰减，最终被窗口截断、被压缩、或被逐出。所以“随时间遗忘”在机理上就是“随相对距离衰减”——时间问题塌缩成了空间问题。开篇那个“忘掉两小时前约束”的 agent，并不是记性差，而是那条约束在它的视野里一步步退到了边缘。</p>
+<p>再说不可约的那一半，叫<strong>误差复合</strong>。还记得第 1 章 §1.5 说自回归是一个“把自己输出回灌进自己输入”的反馈回路吗？即便给它一个完美、无限、均匀的窗口（空间衰减为零），这条回路仍然会让它随任务变长而劣化。这一点最像小孩玩的传话游戏：第一个人说得清清楚楚，传到第十个人嘴里已经面目全非。区别只在于，自回归模型既是传话的人、也是听话的人——它把自己上一句可能说错的话，当成下一句必须遵从的事实。设每一步出错的概率是 <code>ε</code>，那么连续 <code>T</code> 步全对的概率大约是 <code>(1−ε)^T</code>——可靠性随任务长度（horizon）几何式地衰减。再叠加一个被称作 exposure bias 的偏差：训练时模型总是被喂以正确的前缀，推理时却只能以自己越来越偏离分布的输出为条件。换句话说，错误不是被稀释，而是被供养。这一半是反馈回路自身的性质，<strong>延长上下文救不了它</strong>——只能靠降低单步 <code>ε</code>、缩短 horizon、引入独立验证、或重采样。</p>
+<p>用电路语言收个尾会很干净：一个带反馈的递归系统，有两种相互独立的退化方式——一种是它的“冲激响应”随距离衰减（对应记忆与空间衰减，可约），另一种是它把自己带噪的输出回灌后，噪声在回路里不断累积（对应误差复合，不可约）。对应的补偿，恰好也是两类互补的器件：一类像“锁存器”，把关键事实牢牢锁住、对抗记忆衰减；另一类像“负反馈环”，把错误送回去纠偏、对抗误差复合。这两类器件的电路史——Black 的负反馈放大器、SRAM 的双稳态锁存——会在第 3 章作为 harness 的血统展开；本章先把“为什么必然需要这两类器件”从机理上立住。</p>
+<p>这里顺手给出一个后文会反复用到的可操作判据：<strong>把丢失的信息重新塞回光标附近——如果失效被修复了，它就是空间问题，可由上下文工程补偿；如果模型本来就拿到了信息却仍然漂移、越错越多，它就是不可约的时间核，只能靠验证、缩短 horizon 和人在环上来兜住。</strong> 记住这条分界线，后文几乎所有 harness 设计的取舍，都能落到它的两侧。</p>
+<h2 id="24-容量上限不等于有效工作区间实测印证"><a class="header" href="#24-容量上限不等于有效工作区间实测印证">2.4 容量上限不等于有效工作区间：实测印证</a></h2>
+<p>上面的机理预测了一个直接后果：同一个上下文窗口，越往远端越不可用。这一节把它落到事实，并给出工程上该怎样对待它。</p>
+<p>2024 年初有过一个短暂的乐观时刻。Google 发布 Gemini 1.5，宣布它能在百万 token 的“大海”里，以 99% 的命中率捞出那一根“针”——不少人当时以为长上下文问题就此了结。乐观没能维持多久，因为人们很快意识到，真实任务里要捞的从来不是一根针，而是一把散落各处、还彼此牵连的针。</p>
+<p>把这件事摊开看，结论相当一致。Google 自己后续的 long context 开发文档就明确提醒：一旦从“单根针”变成多个待检索的信息点，命中率不再维持那个漂亮的数字，而且会随上下文内容大幅波动。<sup class="footnote-reference" id="fr-gemini15-ch2-1"><a href="#footnote-gemini15-ch2">7</a></sup> <sup class="footnote-reference" id="fr-google-long-context-ch2-1"><a href="#footnote-google-long-context-ch2">8</a></sup> 学术界给出的信号更直接：<em>Lost in the Middle</em> 发现，放在开头或结尾的信息更容易被用上，夹在中间的则明显被冷落；<em>Found in the Middle</em> 进一步把这种现象概括成一条 <code>"U 形注意力偏置"</code>——这正是上一节那条“有效分辨率从光标附近向远处递减”的曲线，在检索任务上显出的形状。说到底，这是个很有人性的毛病：我们读一篇长文，也总是记得开头和结尾，把中间那段忘得最干净。<sup class="footnote-reference" id="fr-ltm-ch2-1"><a href="#footnote-ltm-ch2">9</a></sup> <sup class="footnote-reference" id="fr-fitm-ch2-1"><a href="#footnote-fitm-ch2">10</a></sup> 而当任务从“按字面找”升级成“跨段落推理”时，分数会塌得更厉害——NoLiMa 去掉字面匹配线索后，单是在 32K 长度上，就把 GPT-4o 从 99.3% 打到了 69.7%；LongCodeBench 把场景换成真实的代码理解与修复，长上下文能力同样明显变脆。<sup class="footnote-reference" id="fr-nolima-ch2-1"><a href="#footnote-nolima-ch2">11</a></sup> <sup class="footnote-reference" id="fr-longcodebench-ch2-1"><a href="#footnote-longcodebench-ch2">12</a></sup> 反过来，也正因为窗口不平坦，Anthropic 的长上下文文档才会给出那个很务实的经验：把长文档放在前面、把问题放在最后，复杂的多文档输入下，回答质量能提升三成左右。<sup class="footnote-reference" id="fr-anthropic-long-ch2-1"><a href="#footnote-anthropic-long-ch2">13</a></sup></p>
+<p>这些结果合起来说明同一件事：在同一个“1M context”里，不同位置、不同信息密度、不同任务形式的可用性并不均匀。上下文窗口更像一块可寻址的大内存，而不是一条任何位置都等价的理想传送带；所谓“最佳工作区间”，也不是某个固定的魔法数字（比如“128K 最好、256K 开始变差”），而是一条随任务结构变化的工作带宽——在多大范围内，模型还能稳定检索、遵循指令、保持多步推理、避免位置偏置，并让系统在成本和时延上可接受。</p>
+<h2 id="25-小结把容量上限和有效工作区间分开"><a class="header" href="#25-小结把容量上限和有效工作区间分开">2.5 小结：把容量上限和有效工作区间分开</a></h2>
+<p>因此，工程上必须把两件事分开：一件是<strong>容量上限</strong>，即模型最多能接收多少 token；另一件是<strong>有效工作区间</strong>，即在当前任务形态下，模型还能稳定检索、遵循指令、维持推理链的那一段上下文。前者写在产品规格里，后者才是 harness 真正要经营的对象。结论也随之而来：最大 context 是容量上限，最佳工作区间才是设计目标。一个 agent 系统不该默认“把更多材料塞进窗口”就会更可靠，而应当反过来设计任务——让模型每次只看到更短、更密、更靠近当前决策的证据切片，把状态、历史、产物和验证证据移到运行时的事实流里，再按需调回 prompt。这条原则听起来朴素，却和大多数人对“长上下文”的第一直觉正好相反，它是本书后面所有上下文设计的出发点。</p>
+<p>到这里，问题已经摆清楚了：模型在空间和时间上都会失效，而且这是架构层面的必然。下一章回答的，就是该拿它怎么办——那个把模型拉回工作区间的“外层控制系统”，到底是什么、从哪来。</p>
+<hr>
+<ol class="footnote-definition">
+<li id="footnote-softmax-dilution-ch2">
+<p>Petar Veličković et al., <em>Softmax is not Enough (for Sharp Size Generalisation).</em> 本章在此处使用其关于 softmax 随规模稀释、无法保持锐利选择的结论，来解释注意力质量守恒下的远端稀释；对应第 21 章参考文献 43。 <a href="#fr-softmax-dilution-ch2-1">↩</a></p>
+</li>
+<li id="footnote-bounded-logit-ch2">
+<p>本章在此处使用 Kimi K2 技术报告关于 attention logit explosion 与 QK-Clip 的描述（不封顶时 max logit 越过 1000 量级、训练发散），用来说明 logit 被主动限幅、因此单 token 注意力权重存在与 n 无关的上界；对应第 21 章参考文献 47。 <a href="#fr-bounded-logit-ch2-1">↩</a></p>
+</li>
+<li id="footnote-rope-decay-ch2">
+<p>Jianlin Su et al., <em>RoFormer: Enhanced Transformer with Rotary Position Embedding.</em> 本章在此处使用其关于相对距离衰减包络（经 Abel 变换得到）的结论；并按 <em>Round and Round We Go!</em> 标注该衰减证明依赖 query/key 为常向量的前提，故宜视为先验偏置；对应第 21 章参考文献 44、45。 <a href="#fr-rope-decay-ch2-1">↩</a></p>
+</li>
+<li id="footnote-oversquash-ch2">
+<p>Federico Barbero et al., <em>Transformers need glasses! Information over-squashing in language tasks.</em> 本章在此处使用其关于 representational collapse 与因果掩码下信息单向汇聚、over-squashing 的分析，来解释长输入中计数/复制/区分类任务的退化；对应第 21 章参考文献 46。 <a href="#fr-oversquash-ch2-1">↩</a></p>
+</li>
+<li id="footnote-nonuniform-kv-ch2">
+<p>本章在此处综合 DeepSeek-V4 技术报告（CSA/HCA 混合压缩注意力、异构与 on-disk KV cache，将近端高分辨率与远端激进聚合并置）与 MiniMax M3（MSA 稀疏/线性注意力）的做法，用来说明工业界以非均匀分辨率换取百万级容量上限；对应第 21 章参考文献 48、49。 <a href="#fr-nonuniform-kv-ch2-1">↩</a></p>
+</li>
+<li id="footnote-context-rot-ch2">
+<p>本章在此处综合 Chroma <em>Context Rot</em> 对 18 个前沿模型在各长度增量普遍退化的测试，以及 Anthropic <em>Effective context engineering for AI agents</em> 关于“context rot 在远未触达容量上限时即开始”的说明，用来支撑“闭源前沿也不例外”；对应第 21 章参考文献 50、51。 <a href="#fr-context-rot-ch2-1">↩</a></p>
+</li>
+<li id="footnote-gemini15-ch2">
+<p>Google, <em>Introducing Gemini 1.5, Google’s next-generation AI model.</em> 本章在此处使用其关于 NIAH 命中率、1M context pricing tier 与时延预期的表述；对应第 21 章参考文献 14。 <a href="#fr-gemini15-ch2-1">↩</a></p>
+</li>
+<li id="footnote-google-long-context-ch2">
+<p>Google AI for Developers, <em>Long context.</em> 本章在此处使用其关于 performance variability、retrieval-cost tradeoff 与 caching 的说明；对应第 21 章参考文献 15。 <a href="#fr-google-long-context-ch2-1">↩</a></p>
+</li>
+<li id="footnote-ltm-ch2">
+<p>Nelson F. Liu et al., <em>Lost in the Middle: How Language Models Use Long Contexts.</em> 本章在此处使用其关于长上下文位置偏置与中段退化的结果；对应第 21 章参考文献 11。 <a href="#fr-ltm-ch2-1">↩</a></p>
+</li>
+<li id="footnote-fitm-ch2">
+<p>Cheng-Yu Hsieh et al., <em>Found in the Middle: Calibrating Positional Attention Bias Improves Long Context Utilization.</em> 本章在此处使用其关于 <code>"U-shaped attention bias"</code> 的分析；对应第 21 章参考文献 12。 <a href="#fr-fitm-ch2-1">↩</a></p>
+</li>
+<li id="footnote-nolima-ch2">
+<p>Ali Modarressi et al., <em>NoLiMa: Long-Context Evaluation Beyond Literal Matching.</em> 本章在此处使用其关于 32K 条件下模型退化统计，以及 GPT-4o 从 99.3% 降至 69.7% 的结果；对应第 21 章参考文献 16。 <a href="#fr-nolima-ch2-1">↩</a></p>
+</li>
+<li id="footnote-longcodebench-ch2">
+<p>Stefano Rando et al., <em>LongCodeBench: Evaluating Coding LLMs at 1M Context Windows.</em> 本章在此处使用其关于代码任务长上下文退化的样例数据；对应第 21 章参考文献 17。 <a href="#fr-longcodebench-ch2-1">↩</a></p>
+</li>
+<li id="footnote-anthropic-long-ch2">
+<p>Anthropic, <em>Prompting best practices: Long context prompting.</em> 本章在此处使用其关于长文档前置、query 后置与约 30% 质量提升的建议；对应第 21 章参考文献 13。 <a href="#fr-anthropic-long-ch2-1">↩</a></p>
+</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="02a-llm-machine.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="02c-control-response.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="02a-llm-machine.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="02c-control-response.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>

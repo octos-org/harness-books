@@ -1,8 +1,8 @@
-# 13. 参考架构片段
+# 15. 参考架构片段
 
 前面的章节已经给出原则、边界和检查表；这一章补六段最小架构片段，帮助团队把抽象要求落成具体事实流、契约执行流、swarm 控制流，以及一条匿名失败链的端到端落地图、最小事件序列和可直接复用的复盘模板。
 
-## 13.1 任务事实流
+## 15.1 任务事实流
 
 ```text
 工具发出进度事件 -> 运行时校验事件 -> 监督器持久化状态
@@ -11,7 +11,7 @@
 
 任何绕开这条链的直接 UI 变更都是可靠性风险。
 
-## 13.2 契约执行流
+## 15.2 契约执行流
 
 ```text
 生成子任务成功
@@ -24,7 +24,7 @@
 
 在这条流程完成前标记终态成功，是契约违例。
 
-## 13.3 Swarm 控制流
+## 15.3 Swarm 控制流
 
 ```text
 coordinator 接收总目标
@@ -38,9 +38,9 @@ coordinator 接收总目标
 
 没有 summary、scope、validator 和终态裁决的并行，只是多窗口，不是 swarm。
 
-## 13.4 匿名失败链的端到端落地图
+## 15.4 匿名失败链的端到端落地图
 
-把第 11.1 节那条匿名失败链翻译成一张可以落地的架构图，大致应该长这样：
+把第 13.1 节那条匿名失败链翻译成一张可以落地的架构图，大致应该长这样：
 
 ```text
 用户提交“12 篇材料 -> 汇报 + slides”
@@ -56,7 +56,7 @@ coordinator 接收总目标
 
 这张图的关键，不是“用了几个 worker”，而是每一步都能沿着同一条事实流回放。只要某一步只能靠聊天文本或人脑猜测，最终用户看到的就仍然可能是伪完成。
 
-## 13.5 一组最小事件序列
+## 15.5 一组最小事件序列
 
 如果要让这条落地图真的可回放，session 里至少要能看到类似下面这样的一组最小事件：
 
@@ -85,7 +85,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 
 没有这类最小事件序列，很多系统也能“看起来运行”。但只要出一次事故，团队就会发现自己没有真正的运行时事实，只剩聊天记录和猜测。
 
-## 13.6 可直接复用的事故复盘 Markdown 模板
+## 15.6 可直接复用的事故复盘 Markdown 模板
 
 下面这份模板可以直接作为团队的复盘章节骨架使用。它的重点不是格式统一，而是强制每一次事故都沿着同一条控制链写清楚。
 
@@ -101,7 +101,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 - 一句话摘要：
   - 例如：root task 被错误标记为 `ready`，但交付的 `slides.pptx` 实际是旧模板文件。
 
-## 2. 用户影响与业务影响
+## 4. 用户影响与业务影响
 
 - 受影响用户 / 项目：
 - 受影响时间窗：
@@ -109,7 +109,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 - 错误交付 / 重复执行 / 数据污染 / 合规风险：
 - 是否需要外部沟通或补偿：
 
-## 3. 时间线
+## 5. 时间线
 
 | 时间（绝对时间） | 事件 | 证据 |
 |---|---|---|
@@ -118,7 +118,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 | 2026-04-23 10:12 | root task 被标记为 `ready` | task snapshot |
 | 2026-04-23 10:18 | 用户报告交付文件错误 | support ticket |
 
-## 4. 任务 / Agent 拓扑
+## 6. 任务 / Agent 拓扑
 
 - root task：
 - coordinator：
@@ -129,7 +129,7 @@ task.failed          task=root-17 category=artifact_contract_violation
   - shell / MCP / Python / Node / browser / API
 - 人工介入点：
 
-## 5. 用户面与系统面如何分叉
+## 7. 用户面与系统面如何分叉
 
 - 用户看到的事实：
 - UI / replay 呈现的事实：
@@ -137,42 +137,42 @@ task.failed          task=root-17 category=artifact_contract_violation
 - 底层运行时实际发生的事实：
 - 第一次分叉发生在哪个时刻：
 
-## 6. 五层断裂点解剖
+## 8. 五层断裂点解剖
 
-### 6.1 Session
+### 8.1 Session
 
 - root / child task 关系是否被显式持久化：
 - primary artifact 是否被显式声明：
 - scope / owner / role / worktree 是否完整：
 - 这里的缺口是什么：
 
-### 6.2 Capability Plane
+### 8.2 Capability Plane
 
 - 实际调用了哪些能力：
 - Python / Node / shell / MCP 是否走统一事件入口：
 - artifact / citation / temp file 是否按契约回传：
 - 这里的缺口是什么：
 
-### 6.3 Verifier
+### 8.3 Verifier
 
 - 哪些 validator 本应拦住问题：
 - 实际运行了哪些 validator：
 - 为什么没有阻断终态：
 - 证据路径：
 
-### 6.4 Operator Dashboard
+### 8.4 Operator Dashboard
 
 - 值班同学是否能直接看到 root/child 关系、artifact、validator 结果：
 - 哪些关键信息缺失：
 - 哪些状态只是影子状态：
 
-### 6.5 Swarm / Coordinator
+### 8.5 Swarm / Coordinator
 
 - coordinator 的职责是否越界：
 - child agent 是否回传了可验证 summary：
 - 是否存在局部成功伪装成系统成功：
 
-## 7. 证据包
+## 9. 证据包
 
 - session / task 快照：
 - 关键事件序列：
@@ -181,7 +181,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 - dashboard 截图：
 - 相关 commit / deploy / feature flag：
 
-## 8. 根因归类
+## 10. 根因归类
 
 - 四支柱归类：
   - Session / Harness / Tools / Verification
@@ -189,22 +189,22 @@ task.failed          task=root-17 category=artifact_contract_violation
   - 事实流 / 生命周期 / 能力平面 / 产物与验证 / 回放 / 隔离与恢复 / 协作 / 知识分层 / 操作员面
 - 最终根因一句话：
 
-## 9. 为什么现有防线没有拦住
+## 11. 为什么现有防线没有拦住
 
 - 哪个 validator 缺失：
 - 哪个门禁没有覆盖：
 - 哪个 dashboard 信号不够：
 - 哪个 runbook 或 skill 没有晋升：
 
-## 10. 修复动作
+## 12. 修复动作
 
-### 10.1 已执行 Hotfix
+### 12.1 已执行 Hotfix
 
 - [ ] 修复项
 - [ ] 影响范围
 - [ ] 回滚策略
 
-### 10.2 结构修复
+### 12.2 结构修复
 
 - [ ] session / schema 修复
 - [ ] capability plane 修复
@@ -212,14 +212,14 @@ task.failed          task=root-17 category=artifact_contract_violation
 - [ ] dashboard / replay 修复
 - [ ] swarm / coordinator 修复
 
-### 10.3 发布门禁补强
+### 12.3 发布门禁补强
 
 - [ ] mini-fleet case
 - [ ] replay fixture
 - [ ] validator evidence assertion
 - [ ] cross-session contamination check
 
-## 11. 组织沉淀
+## 13. 组织沉淀
 
 - 会新增哪些 validator：
 - 会新增哪些 dashboard 信号：
@@ -227,7 +227,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 - 会晋升哪些 `AGENTS.md` / docs / skills 规则：
 - 下次同类事故应被什么机制更早拦住：
 
-## 12. 完成定义
+## 14. 完成定义
 
 - [ ] 用户面症状已消失
 - [ ] 根因层修复已上线

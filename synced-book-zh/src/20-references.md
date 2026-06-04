@@ -1,6 +1,6 @@
-# 19. 参考文献与研究轨迹
+# 21. 参考文献与研究轨迹
 
-## 19.1 奠基来源
+## 21.1 奠基来源
 
 1. Birgitta Böckeler. *Harness engineering for coding agent users.* Martin Fowler, 2026-04-02. https://martinfowler.com/articles/harness-engineering.html
 2. OpenAI. *Harness Engineering: Leveraging Codex in an Agent-First World.* https://openai.com/index/harness-engineering/
@@ -54,14 +54,14 @@
 50. Chroma Research. *Context Rot: How Increasing Input Tokens Impacts LLM Performance.* 2025. https://www.trychroma.com/research/context-rot
 51. Anthropic. *Effective context engineering for AI agents.* https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
 
-## 19.2 支持性参考
+## 21.2 支持性参考
 
 - Kai Mei et al. *AIOS: LLM Agent Operating System.*
 - Bertrand Meyer. *Object-Oriented Software Construction.*
 - Dan Ariely 2013 年关于 big data 的那句话，它既是本书反复出现的玩笑，也是警告。
 - EU AI Act、SEC disclosure expectations、FDA SaMD guidance 等治理压力。
 
-## 19.3 研究轨迹
+## 21.3 研究轨迹
 
 底层研究材料位于写作本书时使用的 `ascent-research` session tree，包括 `session.md`、`session.jsonl`、`SCHEMA.md`、`wiki/`、`diagrams/`、`raw/` 和 `drafts/`。
 
