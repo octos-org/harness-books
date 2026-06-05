@@ -118,7 +118,7 @@ emit '{"type":"tool.progress","tool":"slack.upload","pct":100}'
 
 更危险的动作，则要把人重新请回决策里。我们这条任务里，`slack:channel:#finance` 是预先授权的，所以一路无需打断；但假如它要做的是“给外部地址 `cfo@` 发一封带附件的邮件”，触到的就是 `email:send_external` 这类特权 scope——这时合理的设计不是放行，而是先在事实流里落一条 `approval.requested`，把任务挂起，等一条 `approval.decided` 回来再继续。这正是 Codex 那套 sandbox 加 approval 模型的用意：权限的授予、特权动作的审批、人工的放行或拒绝，全都是事实流里的一等事件，而不是某处代码里一个无人留痕的 `if`。[^bridge-contract-ch7] 把这一节连起来看就清楚了——能力平面之所以敢“伸得出手”，正是因为每只手伸出去时，都被 scope 框住、被产物契约盯住、被特权审批拦住，伸出去的每一下都在事实流里留着痕。
 
-[^capability-plane-ch7]: 本章在此处综合 Claude Code `ToolUseContext`、MCP 与 agent 定义相关实现，以及 Codex `tools` 与 `app-server` 协议面中关于 command、fs、MCP、human input、多 agent 工具的公开边界，用来说明万用 agent 必须先拥有统一的能力平面；对应第 21 章参考文献 21、24。
-[^bridge-contract-ch7]: 本章在此处综合 Codex 开源仓库中 sandbox、approval 与工具 scope 的公开边界，以及 MCP 关于工具调用与资源读取的标准约定，用来说明桥接能力的结果契约、事件回流协议与权限模型；对应第 21 章参考文献 24、41。
+[^capability-plane-ch7]: 本章在此处综合 Claude Code `ToolUseContext`、MCP 与 agent 定义相关实现，以及 Codex `tools` 与 `app-server` 协议面中关于 command、fs、MCP、human input、多 agent 工具的公开边界，用来说明万用 agent 必须先拥有统一的能力平面；对应第 22 章参考文献 21、24。
+[^bridge-contract-ch7]: 本章在此处综合 Codex 开源仓库中 sandbox、approval 与工具 scope 的公开边界，以及 MCP 关于工具调用与资源读取的标准约定，用来说明桥接能力的结果契约、事件回流协议与权限模型；对应第 22 章参考文献 24、41。
 
 ---

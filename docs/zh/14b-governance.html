@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>1. LLM 是一台什么机器 - 驾驭工程</title>
+        <title>16. 治理边界：安全、合规、成本与模型路由 - 驾驭工程</title>
 
 
         <!-- Custom HTML head -->
@@ -174,49 +174,50 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="1-llm-是一台什么机器"><a class="header" href="#1-llm-是一台什么机器">1. LLM 是一台什么机器</a></h1>
-<p>凡是和 coding agent 长时间打过交道的人，多半都见过同一幕：开场它像个天才——读懂需求、写出利落的第一版、连你没提到的边角情况都照顾到了；可任务一旦拖长，跨了十几个文件、几十轮工具调用，它会慢慢变成另一个人。先是忘了两小时前你亲口定下的约束，接着把一个早被否决的方案重新端上来，最后用一种毫不动摇的语气，把一段根本跑不通的代码交到你手里，还附赠一句“已完成”。</p>
-<p>奇怪的是，这中间模型并没有变笨。同一个权重、同一个温度，它在一个短问题上依然才华横溢。变的不是能力，而是它所处的那个区间——它悄悄滑出了自己最擅长的工作带，却没有任何人、任何机制把它拉回来。</p>
-<p>要理解这一幕，得先弄清楚这台机器到底是怎么工作的。这一章不假设你有机器学习背景，只把后文反复要用到的几个概念讲透：它读的是什么、信息在它内部怎样流动、它凭什么“记得”上文、又为什么说它本质上是个“会续写自己的概率生成器”。把这台机器看清楚，下一章那条“它必然会在时间和空间上失效”的结论，才不会显得突兀。</p>
-<h2 id="11-它不读字符读-token"><a class="header" href="#11-它不读字符读-token">1.1 它不读字符，读 token</a></h2>
-<p>模型并不直接读字符或单词，而是先把输入切成一串<code>token</code>——可以粗略理解成“词或子词”，常见的英文单词往往是一个 token，长词或中文则会被切成几块。每个 token 再被映射成一个固定长度的向量，叫它的<code>嵌入（embedding）</code>。</p>
-<p>对工程师来说，最贴切的类比是：这有点像把每个词“哈希”成一个高维空间里的坐标点，只不过这套映射是训练出来的，目的是让<strong>语义相近的 token，坐标也相近</strong>。于是“猫”和“狗”离得近，“猫”和“积分”离得远。一段文本进了模型，就变成了一串这样的向量——后面所有运算，处理的都是向量，不再是文字。</p>
-<h2 id="12-一摞相同的层和一条贯穿其中的残差流"><a class="header" href="#12-一摞相同的层和一条贯穿其中的残差流">1.2 一摞相同的层，和一条贯穿其中的“残差流”</a></h2>
-<p>模型的主体，是几十层结构完全相同的层，一层叠一层。每个 token 在穿过这些层时，都随身带着一个固定宽度的向量，这个向量被一层层地读取、修改、写回——业界把它叫作这个 token 的<code>残差流（residual stream）</code>。</p>
-<p>可以把残差流想成这个 token 一路携带的、宽度固定的“工作记忆”：每一层都在它上面叠加一点自己的贡献（像 <code>x += 这一层算出来的东西</code>），而不是推倒重来。这里有一个之后会反复回来的关键事实——<strong>这条工作记忆的宽度是固定的</strong>。无论上下文是十个 token 还是一百万个 token，每个位置能携带的信息量都被这条定宽向量卡死。一台容量固定的搬运车，迟早装不下越堆越多的货，这一点会在下一章变成一条硬性的失效机理。</p>
-<h2 id="13-注意力每个位置如何看别的位置"><a class="header" href="#13-注意力每个位置如何看别的位置">1.3 注意力：每个位置如何“看”别的位置</a></h2>
-<p>层与层之间最核心的动作，叫<code>注意力（attention）</code>。它要解决的问题是：当前这个 token 在更新自己时，应该参考上下文里的哪些其他 token？</p>
-<p>机制可以用一个工程师熟悉的结构去想——一次“软的”关联查找（associative lookup）。每个位置都准备三样东西：一个 query 向量 <code>q</code>（“我在找什么”）、一个 key 向量 <code>k</code>（“我能作为什么样的索引被找到”）、一个 value 向量 <code>v</code>（“如果被选中，我交出什么内容”）。当前位置拿自己的 <code>q</code>，去和每个被看位置的 <code>k</code> 做点积——点积越大，代表越“相关”。这些相关性分数（叫 <code>logit</code>）经过 <code>softmax</code> 归一化成一组<strong>总和恒为 1</strong> 的权重，最后把各位置的 <code>v</code> 按这组权重加权混合起来，就是这一步的输出：</p>
-<pre><code class="language-text">o = Σ_i w_i · v_i ,   其中  w_i = exp(q·k_i /√d) / Σ_j exp(q·k_j /√d) ,   且  Σ_i w_i = 1
-</code></pre>
-<p>和普通哈希表的硬查找（key 完全相等才命中）不同，注意力是一次<strong>软查找</strong>：它不挑出唯一一条，而是把所有条目按相关度调成比例，再加权平均。<code>softmax</code> 在这里只干一件事——把一串可正可负的实数分数，压成一个“总和为 1 的分配比例”。这个“总和恒为 1”的约束看似不起眼，却是下一章第一条失效机理的源头：注意力是一种<strong>守恒</strong>的资源，盘子就那么大，看的东西越多，分到每一样的就越少。</p>
-<p>还有一个约束来自任务本身。模型是在“预测下一个 token”，所以在生成时，每个位置只能看它<strong>左边</strong>（已经出现）的 token，看不到右边（还没生成）的——这叫<code>因果掩码（causal mask）</code>。它的后果是：信息只能自左向右、一层层向最后一个位置汇聚。这个看似不起眼的方向性，也会在下一章长出一条失效机理。</p>
-<h2 id="14-kv-cache把算过的历史存起来"><a class="header" href="#14-kv-cache把算过的历史存起来">1.4 KV cache：把算过的历史存起来</a></h2>
-<p>模型生成文本是一个 token 一个 token 往外蹦的，每蹦一个新 token，它都要回头去“看”前面所有 token——也就是要用到前面每个位置的 <code>k</code> 和 <code>v</code>。如果每生成一个新 token 都把整段上文的 <code>k</code>、<code>v</code> 从头算一遍，代价会随长度平方级地涨上去。</p>
-<p>工程上的对策很直接，也是每个工程师都熟悉的招：把算过的结果缓存下来。模型把每个位置一次性算好的 <code>k</code>、<code>v</code> 存进一块缓存，后续每一步直接复用——这块缓存就是常被提到的 <code>KV cache</code>，本质上是一次跨步的 memoization（增量计算）。</p>
-<p>这里要记住两件后文要用的事。其一，<strong>KV cache 是模型对“过去”的唯一留存</strong>：跨越生成步骤，它对上文的全部记忆，就是这块缓存里躺着的一条条 <code>k</code>、<code>v</code>；模型并没有另一个数据库或状态机替它记着什么。其二，<strong>这块缓存随上下文长度线性增长</strong>：上下文越长，要存的 <code>k</code>、<code>v</code> 越多，占的显存越大——这条成本曲线，正是后面“百万上下文为什么要靠压缩去硬撑”的根源。</p>
-<h2 id="15-自回归它在反复续写自己"><a class="header" href="#15-自回归它在反复续写自己">1.5 自回归：它在反复“续写自己”</a></h2>
-<p>把以上拼起来，就得到这台机器的工作循环：给定当前上下文，模型算出一个“下一个 token 的概率分布”，从中采一个 token，接到上下文末尾，再以这条更长的上下文为条件，预测再下一个——如此反复。这种“拿自己刚生成的输出，当作下一步的输入”的模式，叫<code>自回归（autoregressive）</code>。</p>
-<p>对工程师来说，这里最该警觉的一点是：<strong>它是一个把自己输出回灌进自己输入的反馈回路</strong>。这意味着它生成的每一个 token，无论对错，都会变成后续所有 token 必须依从的“既成事实”。短问题里这没什么；可一旦链条拉长，这条回路会让早期的小偏差被一路放大、供养——这条性质会在下一章变成一类“延长上下文也救不了”的失效。（采样时还有个“温度”参数控制随机性：温度越高越发散、越低越保守，但它不改变上面这条反馈回路的本质。）</p>
-<h2 id="16-两个会一直用到的硬件类比缓存与放大器"><a class="header" href="#16-两个会一直用到的硬件类比缓存与放大器">1.6 两个会一直用到的硬件类比：缓存与放大器</a></h2>
-<p>在进入失效分析之前，先借两个来自硬件世界的老概念，它们会贯穿这一部分的三章，是后面所有直觉的来处。</p>
-<p>第一个来自计算机体系结构里的<strong>缓存层级</strong>。现代 CPU 旁边有几级容量递增、速度递减的存储：最贴近运算单元的是又小又快的 L1，往外是 L2、L3，再往外才是又大又慢的主存。机器跑得快，靠的不是把所有数据都塞进最快那层（也塞不下），而是一条朴素的经验规律——程序在一段时间里往往反复访问同一小撮数据，这叫“局部性（locality）”。于是只要把当前用得着的那一小撮“工作集”放进最快层，整体吞吐就高且可预测；一旦工作集散掉、频繁去慢层取数，性能就断崖式下跌。一句话：<strong>决定性能的不是“你总共有多少内存”，而是“你有没有把对的东西放进最快的那一层”。</strong></p>
-<p>第二个来自模拟电路里的<strong>放大器</strong>。一个三极管放大器的本职，是把一个微弱的输入信号放大成一个更强的输出，放大的倍数叫“增益（gain）”。但它只在一段被称作“线性区”的输入范围内，才能让输出忠实地、不失真地跟随输入；一旦输入太强、越出这段区间，输出就会“削顶”或“饱和”——波形顶部被硬生生削平，信息失真，这时增益再大也没意义。成熟的放大器设计因此往往不追求最大裸增益，而是宁可牺牲一部分增益，换取更宽、更稳的线性区。这个“宁可牺牲增益换稳定”的取舍，到第 3 章会变成理解 harness 的钥匙。</p>
-<p>这两个概念都在讲同一件事：<strong>资源有限的系统，只在一段有限的区间里保持高保真。</strong> 缓存讲的是空间维度上的工作集，放大器讲的是不失真的稳定带宽。记住它们，下一章会看到 LLM 同时落在这两条约束之下。</p>
-<h2 id="17-小结一个强大的条件生成器不是状态机"><a class="header" href="#17-小结一个强大的条件生成器不是状态机">1.7 小结：一个强大的条件生成器，不是状态机</a></h2>
-<p>把这一章收束成一句话：<strong>LLM 是一个高能力的条件生成器</strong>——给定上下文，它生成下一段高概率、高相关性的文本或动作。它能吸收海量语言、代码、工具调用和领域知识，在很短时间里给出像样的候选解释、计划、代码和产物。</p>
-<p>但从系统角度看，它<strong>不是</strong>状态机、不是操作系统、不是数据库、也不是验证器。这个区分，本书会反复用到：它可以在当前上下文里“看起来记得”某条约束，却并不天然拥有持久事实（§1.2 那条定宽残差流和 §1.4 那块会被挤占的 KV cache，决定了“记得”只是暂时的影子）；它可以生成一条 shell 命令，却不知道这条命令是否越权、是否毁掉工作区、是否波及另一个会话；它可以说“完成了”，但这句话本身并不等于产物存在、测试通过、用户目标达成。开篇那个“自信地交付跑不通代码”的 agent 并不是在撒谎——它只是没有任何器官，能区分“说出口的完成”和“被证据证实的完成”。</p>
-<p>正因为它是条件生成器，它的强项和弱项来自同一件事：上下文切片合适、目标明确、反馈短而可验证时，它聪明得惊人；可一旦上下文过长、目标漂移、工具副作用复杂、反馈延迟拉长，它就会把“概率上的连贯”误当成“运行时的事实”。它有一段最擅长的工作区间——而这段区间的边界在哪、为什么必然存在，正是下一章要拆开的事。</p>
+                        <h1 id="16-治理边界安全合规成本与模型路由"><a class="header" href="#16-治理边界安全合规成本与模型路由">16. 治理边界：安全、合规、成本与模型路由</a></h1>
+<p>第 13 章划清了一条线：harness 让系统不撒谎，却不替你保证产品好。它顺手列了一串“harness 之外还欠着的账”——模型路由、沙箱与权限、提示词与策略对齐、测试纪律、延迟与成本治理。那一章把它们一笔带过，是为了守住“必要但不充分”这个论点的边界；这一章把其中四笔账单独拎出来还清：对外的<strong>安全</strong>、对法的<strong>合规</strong>、对钱的<strong>成本</strong>、对模型选择的<strong>路由</strong>。</p>
+<p>挑这四笔，是因为它们有个共同的危险长相。每一笔，团队的第一反应都是“再开一个系统”——给安全开一套独立的权限配置，给合规开一个旁路审计库，给成本开一块单独的计费看板，给路由写一份脱离运行时的模型映射表。而本书从第 6 章到第 11 章反复演的那件事，在这里会第四次上演：<strong>任何脱离主事实流的旁路，迟早会和运行时真相分叉</strong>，分叉之后，它要么骗审计、要么骗财务、要么把任务路给了错的脑子，而且因为它顶着“治理”的正经名头，没人会第一时间怀疑它。所以这一章的结论会和全书一致——这四条边界，最好都长在同一条事实流上，只是换四副镜片去读它。</p>
+<h2 id="161-安全边界沙箱权限以及被告不能兼任法官"><a class="header" href="#161-安全边界沙箱权限以及被告不能兼任法官">16.1 安全边界：沙箱、权限，以及“被告不能兼任法官”</a></h2>
+<p>第 7 章已经把权限讲成了能力契约的一部分：<code>slack.upload</code> 要的不是“能用 Slack”，而是“能往 <code>#finance</code> 写文件”这一条窄 scope。安全边界这一节，是把那条线从“单个工具”升格成“整个运行时的姿态”。</p>
+<p>姿态的第一层是沙箱。一个动作能造成多大破坏，取决于它被关在多大的笼子里。成熟系统不会给 agent 一个无差别的 shell，而是按风险分级：只读的探查（读文件、跑 <code>grep</code>）几乎可以放任；写工作区的动作（改代码、生成产物）限制在声明过的 worktree 里，越界即拦；而触网、发外部、花钱、删除这类动作，则关进最小的笼子，并默认需要一道额外的闸。Codex 把这套做成了显式的 sandbox 加 approval 模型，正是这个意思：笼子的大小不是事后补的策略，而是每个能力被接进来时就钉死的属性。<sup class="footnote-reference" id="fr-governance-sandbox-ch16-1"><a href="#footnote-governance-sandbox-ch16">1</a></sup></p>
+<p>姿态的第二层是审批，而审批最该被记住的，是它必须留痕。回到那条周报任务：把 PDF 发到内部的 <code>#finance</code> 是预授权的窄 scope，一路无需打断；可一旦它要做的是“给外部地址 <code>cfo@</code> 发一封带附件的邮件”，触到的就是 <code>email:send_external</code> 这类特权 scope。这时正确的动作不是放行，而是在事实流里落一条 <code>approval.requested</code>，把任务挂起，等一条 <code>approval.decided</code> 回来再继续。请注意这两条都是<strong>事件</strong>，不是某段代码里一个无人留痕的 <code>if</code>——谁请求了什么特权、谁在什么时候批了、依据是什么，全都沿着第 6.7 节那条 schema 钉在流里。</p>
+<p>这一层之所以不能省，背后是一条比安全更深的原则，第 11.6 节已经点过：<strong>不能让提案者兼任裁决者。</strong> 一个会改自己文档、补自己验证器、建议自己 schema 迁移的反身 harness，恰恰最危险——因为它有动机把“目标函数、权限边界、验证器独立性”朝着对自己有利的方向悄悄挪。安全边界在这里和反身边界合流成同一句话：凡是触及权限、事实流 schema、验证独立性或对外副作用的动作，决定权必须留在人这一侧，且这道“留在人这侧”的事实本身，也得在流里查得到。被告可以陈述、可以举证，但不能自己敲下那一槌。</p>
+<h2 id="162-合规与可审计事实流天生就是审计日志"><a class="header" href="#162-合规与可审计事实流天生就是审计日志">16.2 合规与可审计：事实流天生就是审计日志</a></h2>
+<p>很多团队一听“合规”就开始另起炉灶建审计系统，其实你要的东西，第 6 章那条事实流早就替你攒好了——只是没人意识到它同时是一份审计日志。</p>
+<p>想想合规真正要回答的几个问题：谁，在什么时候，以什么授权，对什么数据，做了什么，结果如何。把这几问逐一对照第 6.7 节那条 schema 会发现，答案全在里面：<code>actor</code> 字段答“谁”，<code>ts</code> 答“何时”，<code>approval.decided</code> 与 scope 答“以什么授权”，<code>tool.called</code> 的 <code>scope</code> 与 <code>args_digest</code> 答“对什么数据、做了什么”，<code>tool.returned</code> 与 <code>validator.result</code> 答“结果如何”。一条只追加、不可改写的事实流，本身就具备审计日志最看重的两个属性：完整性（没有动作能不留痕）和不可抵赖（事件一旦写入就不能被悄悄改掉）。你不需要为合规再建一个旁路——你需要的是确保主事实流的 schema 纪律足够严，严到能直接拿去回答审计问询。</p>
+<p>这里第 6.7 节那几条看似洁癖的约定，开始第二次付钱。当初把工具参数记成 <code>args_digest</code>（内容哈希）而不是原始参数，第一重好处是事实流不被长参数和敏感数据撑爆；可它的第二重好处恰恰落在合规上——一段含 PII 或密钥的输入，不会被原样灌进一条要长期留存、要被广泛回放的日志里，流里只留一个可核对“是否同一组输入”的指纹。同理，把模型的声称单独标成 <code>model.claim</code>、与裁决物理隔离，在合规视角下也有了新意义：当监管问“系统凭什么判这单完成”，你能精确地回答“凭这几条 gating <code>validator.result</code> 加这件带 <code>sha256</code> 的产物”，而不是“模型说它做完了”——前者是证据，后者在任何审计口径下都不算数。</p>
+<p>至于数据留存、可解释、可追溯这些要求，落到这套架构上都变成了同一种操作：回放。要解释“三天前那单为什么失败”，不必去翻谁的记忆，把那条 task 的事件流从某个 <code>seq</code> 折叠一遍即可，得到的叙事和当时操作员看到的逐字一致——因为它们本就派生自同一条流（第 8 章那条铁律在合规场景下又救了一次场）。所谓“可审计的系统”，说到底不是“额外记了很多日志”，而是“任何一个对外的结论，都能被牵回同一条权威事实流上的具体证据”。</p>
+<h2 id="163-成本治理把-token时延重试做成一等预算"><a class="header" href="#163-成本治理把-token时延重试做成一等预算">16.3 成本治理：把 token、时延、重试做成一等预算</a></h2>
+<p>成本最容易被算窄。第 10.3.1 节已经拆过这个误区：盯着 token 单价，会漏掉 prefill 变慢、首 token 延迟上升、KV cache 撑大、重试变贵、调度变难这些真正压垮系统的开销。治理成本的第一步，是把“预算”从一句口头叮嘱，变成事实流里一等的、可消费、可耗尽的资源。</p>
+<p>这件事其实在第 6.8 节那台状态机里已经埋好了接口。还记得 <code>running → failed</code> 那条边的触发条件之一就是“预算耗尽”吗？这不是凑数的——它意味着每条任务都背着一个显式预算（token 上限、墙钟上限、重试次数上限），每一次模型调用、每一次重试都往流里写一条消费记录，预算一见底，状态机就必须把任务推向一个<strong>显式终态</strong>。这条设计的分量，恰恰能用那条周报任务来掂量：t_9f2 之所以没回头核对那次失败的上传，直接原因就是它的 turn 预算快见底了，于是它跳过复查、顺势宣布“已发送”。换句话说，<strong>预算耗尽本身就是一个一等的失败注入点</strong>。治理的铁律由此而来——预算耗尽只能迁移到 <code>failed</code>（或退回 <code>verifying</code> 等待裁决），绝不允许在预算见底的瞬间，让一个未完成的任务静默地翻译成“done”。一个不把预算当事实的系统，会在最缺钱的那一刻，恰好最有动机撒谎。</p>
+<p>预算立住之后，成本治理才谈得上优化，而最大的那块杠杆，第 10.3 节已经给过：能分块的任务，<code>5 × 200K</code> 的真实开销常常小于 <code>1 × 1M</code>，而且 attention 量级还差着约五倍。把这条经验做进治理，就是让 coordinator 默认倾向于“短而局部的子任务 + 摘要上汇”，而不是“一把材料全塞进超长窗口”——省的不只是账单，还有时延和重试成本。再叠一层，是按价值分配算力：在生成草稿、跑无关紧要的批处理时用便宜的脑子，在做规划、做终态验证这种“错了代价很大”的环节才舍得上贵的脑子。这就自然接到了下一节——成本治理到某个点，就变成了模型路由问题。<sup class="footnote-reference" id="fr-governance-cost-ch16-1"><a href="#footnote-governance-cost-ch16">2</a></sup></p>
+<h2 id="164-模型路由在控制系统里选脑子而不是在-prompt-里"><a class="header" href="#164-模型路由在控制系统里选脑子而不是在-prompt-里">16.4 模型路由：在控制系统里选脑子，而不是在 prompt 里</a></h2>
+<p>哪个任务该用哪个模型，是个控制系统决策，不该是写死在某段 prompt 或某个常量里的选择。把它做成 harness 里一等的路由层，是这一章最后一笔账。</p>
+<p>路由的依据，前面几章其实都备好了。按风险路由——高风险、需独立裁决的环节，用更强、更稳的模型，并接上独立验证；按成本路由——廉价、可重试的子任务，用便宜模型（接 16.3 那条价值分配）；而最被低估的一条，是<strong>按工作带路由</strong>。第 2.5 节那套探针量出来的，正是“这个模型在这类任务、这个长度上还靠不靠谱”的有效工作区间——不同模型的工作带并不一样，路由层理应拿着这些曲线，把一个 256K 的检索任务交给工作带够宽的模型，而不是无差别地丢给默认那个。路由决策本身也得是事实流里的一条 <code>model.selected</code> 事件：选了谁、为什么选（风险/成本/工作带）、失败后怎么降级或升级，全都留痕，否则你又得到一个“只活在配置里、和运行时真相对不上”的旁路。</p>
+<p>这条路由层，还正好是本书那个更大论点的落点。前面几章反复说过：凡是能被独立验证器闭合的领域（典型如 coding），开源模型加一套够硬的 harness，足以补齐它和前沿模型的差距；而真正补不齐的，是 UX、人因这类没有 closable 验证器的部分。模型路由，就是把这条判断做成可执行的策略——把“可闭合、可验证”的那部分工作，大胆路由给更便宜的开源模型，背后用 gating validator 兜住质量；把“不可闭合、靠判断”的那部分，留给最强的脑子，或者干脆留给人。让模型自己挑用哪个模型是危险的（它没有动机替你省钱、也没有能力评估自己的工作带）；把这个选择权收回到控制系统手里、并让每次选择都对着证据和预算负责，路由才从一句“我们会智能调度”的空话，变成可审计、可优化的工程。</p>
+<h2 id="165-四条边界共享同一条事实流"><a class="header" href="#165-四条边界共享同一条事实流">16.5 四条边界，共享同一条事实流</a></h2>
+<p>把这四笔账并排摆着看，会发现它们其实是同一台机器的四副镜片。安全问的是“这个动作被授权了吗、被关在多大的笼子里”，合规问的是“这一切能不能被牵回证据”，成本问的是“这一步花了多少、还剩多少预算”，路由问的是“这活该交给哪个脑子、依据是什么”——四个问题，问的都是同一条事实流上的不同字段：scope 与 <code>approval.*</code> 答安全，<code>actor</code>/<code>ts</code>/<code>args_digest</code>/<code>validator.result</code> 答合规，<code>budget.*</code> 答成本，<code>model.selected</code> 答路由。</p>
+<p>所以治理不是盖在 harness 之上的第五层，它就是 harness 那条事实流，被多读了四遍。这也正是为什么本章开头那个“再开一个系统”的冲动必须被按住：一个脱离主流的审计库会漏记一次越权，一块单独的成本看板会算错一次预算，一份脱离运行时的路由表会把任务发给一个工作带根本不够的模型——它们各自的失败，和第 8 章前端“发明 done”、第 9 章 dashboard“影子绿”，是同一种病的不同年龄段。第 13 章说 harness 必要但不充分，治理在这里给那句话补了下半句：<strong>这些“不充分”的部分要做对，靠的仍然是同一条事实流——把安全、合规、成本、路由全都建在它上面，而不是在它旁边各开一条暗渠。</strong></p>
+<hr>
+<hr>
+<ol class="footnote-definition">
+<li id="footnote-governance-sandbox-ch16">
+<p>本章在此处综合 Codex 开源仓库中 sandbox 分级与 approval 流程，以及 Claude Code 在权限上下文、hooks 与工具 scope 上的实现，用来说明安全边界应作为能力被接入时的固有属性、并以事件留痕；对应第 22 章参考文献 21、24。 <a href="#fr-governance-sandbox-ch16-1">↩</a></p>
+</li>
+<li id="footnote-governance-cost-ch16">
+<p>本章在此处综合 OpenAI API Pricing 关于 <code>under 270K</code> 标准费率的限定、Google Gemini 1.5 关于 1M context pricing tier 与 latency 的说明，以及 MInference 关于 1M token prefill 代价的摘要，用来说明成本治理须把 token、时延与重试一并做成一等预算；对应第 22 章参考文献 14、18、20。 <a href="#fr-governance-cost-ch16-1">↩</a></p>
+</li>
+</ol>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="01-book-map.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="14-reference-architecture.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="02b-spatiotemporal.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="15-closing.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -226,11 +227,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="01-book-map.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="14-reference-architecture.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="02b-spatiotemporal.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="15-closing.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-b9224b9f.js";
+            window.path_to_searchindex_js = "searchindex-ee77843f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-cf7b5ff6.js"></script>
+        <script src="toc-9b296d31.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -223,43 +223,43 @@ for L in [4_000, 16_000, 64_000, 256_000]:           # 扫长度
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-softmax-dilution-ch2">
-<p>Petar Veličković et al., <em>Softmax is not Enough (for Sharp Size Generalisation).</em> 本章在此处使用其关于 softmax 随规模稀释、无法保持锐利选择的结论，来解释注意力质量守恒下的远端稀释；对应第 21 章参考文献 43。 <a href="#fr-softmax-dilution-ch2-1">↩</a></p>
+<p>Petar Veličković et al., <em>Softmax is not Enough (for Sharp Size Generalisation).</em> 本章在此处使用其关于 softmax 随规模稀释、无法保持锐利选择的结论，来解释注意力质量守恒下的远端稀释；对应第 22 章参考文献 43。 <a href="#fr-softmax-dilution-ch2-1">↩</a></p>
 </li>
 <li id="footnote-bounded-logit-ch2">
-<p>本章在此处使用 Kimi K2 技术报告关于 attention logit explosion 与 QK-Clip 的描述（不封顶时 max logit 越过 1000 量级、训练发散），用来说明 logit 被主动限幅、因此单 token 注意力权重存在与 n 无关的上界；对应第 21 章参考文献 47。 <a href="#fr-bounded-logit-ch2-1">↩</a></p>
+<p>本章在此处使用 Kimi K2 技术报告关于 attention logit explosion 与 QK-Clip 的描述（不封顶时 max logit 越过 1000 量级、训练发散），用来说明 logit 被主动限幅、因此单 token 注意力权重存在与 n 无关的上界；对应第 22 章参考文献 47。 <a href="#fr-bounded-logit-ch2-1">↩</a></p>
 </li>
 <li id="footnote-rope-decay-ch2">
-<p>Jianlin Su et al., <em>RoFormer: Enhanced Transformer with Rotary Position Embedding.</em> 本章在此处使用其关于相对距离衰减包络（经 Abel 变换得到）的结论；并按 <em>Round and Round We Go!</em> 标注该衰减证明依赖 query/key 为常向量的前提，故宜视为先验偏置；对应第 21 章参考文献 44、45。 <a href="#fr-rope-decay-ch2-1">↩</a></p>
+<p>Jianlin Su et al., <em>RoFormer: Enhanced Transformer with Rotary Position Embedding.</em> 本章在此处使用其关于相对距离衰减包络（经 Abel 变换得到）的结论；并按 <em>Round and Round We Go!</em> 标注该衰减证明依赖 query/key 为常向量的前提，故宜视为先验偏置；对应第 22 章参考文献 44、45。 <a href="#fr-rope-decay-ch2-1">↩</a></p>
 </li>
 <li id="footnote-oversquash-ch2">
-<p>Federico Barbero et al., <em>Transformers need glasses! Information over-squashing in language tasks.</em> 本章在此处使用其关于 representational collapse 与因果掩码下信息单向汇聚、over-squashing 的分析，来解释长输入中计数/复制/区分类任务的退化；对应第 21 章参考文献 46。 <a href="#fr-oversquash-ch2-1">↩</a></p>
+<p>Federico Barbero et al., <em>Transformers need glasses! Information over-squashing in language tasks.</em> 本章在此处使用其关于 representational collapse 与因果掩码下信息单向汇聚、over-squashing 的分析，来解释长输入中计数/复制/区分类任务的退化；对应第 22 章参考文献 46。 <a href="#fr-oversquash-ch2-1">↩</a></p>
 </li>
 <li id="footnote-nonuniform-kv-ch2">
-<p>本章在此处综合 DeepSeek-V4 技术报告（CSA/HCA 混合压缩注意力、异构与 on-disk KV cache，将近端高分辨率与远端激进聚合并置）与 MiniMax M3（MSA 稀疏/线性注意力）的做法，用来说明工业界以非均匀分辨率换取百万级容量上限；对应第 21 章参考文献 48、49。 <a href="#fr-nonuniform-kv-ch2-1">↩</a></p>
+<p>本章在此处综合 DeepSeek-V4 技术报告（CSA/HCA 混合压缩注意力、异构与 on-disk KV cache，将近端高分辨率与远端激进聚合并置）与 MiniMax M3（MSA 稀疏/线性注意力）的做法，用来说明工业界以非均匀分辨率换取百万级容量上限；对应第 22 章参考文献 48、49。 <a href="#fr-nonuniform-kv-ch2-1">↩</a></p>
 </li>
 <li id="footnote-context-rot-ch2">
-<p>本章在此处综合 Chroma <em>Context Rot</em> 对 18 个前沿模型在各长度增量普遍退化的测试，以及 Anthropic <em>Effective context engineering for AI agents</em> 关于“context rot 在远未触达容量上限时即开始”的说明，用来支撑“闭源前沿也不例外”；对应第 21 章参考文献 50、51。 <a href="#fr-context-rot-ch2-1">↩</a></p>
+<p>本章在此处综合 Chroma <em>Context Rot</em> 对 18 个前沿模型在各长度增量普遍退化的测试，以及 Anthropic <em>Effective context engineering for AI agents</em> 关于“context rot 在远未触达容量上限时即开始”的说明，用来支撑“闭源前沿也不例外”；对应第 22 章参考文献 50、51。 <a href="#fr-context-rot-ch2-1">↩</a></p>
 </li>
 <li id="footnote-gemini15-ch2">
-<p>Google, <em>Introducing Gemini 1.5, Google’s next-generation AI model.</em> 本章在此处使用其关于 NIAH 命中率、1M context pricing tier 与时延预期的表述；对应第 21 章参考文献 14。 <a href="#fr-gemini15-ch2-1">↩</a></p>
+<p>Google, <em>Introducing Gemini 1.5, Google’s next-generation AI model.</em> 本章在此处使用其关于 NIAH 命中率、1M context pricing tier 与时延预期的表述；对应第 22 章参考文献 14。 <a href="#fr-gemini15-ch2-1">↩</a></p>
 </li>
 <li id="footnote-google-long-context-ch2">
-<p>Google AI for Developers, <em>Long context.</em> 本章在此处使用其关于 performance variability、retrieval-cost tradeoff 与 caching 的说明；对应第 21 章参考文献 15。 <a href="#fr-google-long-context-ch2-1">↩</a></p>
+<p>Google AI for Developers, <em>Long context.</em> 本章在此处使用其关于 performance variability、retrieval-cost tradeoff 与 caching 的说明；对应第 22 章参考文献 15。 <a href="#fr-google-long-context-ch2-1">↩</a></p>
 </li>
 <li id="footnote-ltm-ch2">
-<p>Nelson F. Liu et al., <em>Lost in the Middle: How Language Models Use Long Contexts.</em> 本章在此处使用其关于长上下文位置偏置与中段退化的结果；对应第 21 章参考文献 11。 <a href="#fr-ltm-ch2-1">↩</a></p>
+<p>Nelson F. Liu et al., <em>Lost in the Middle: How Language Models Use Long Contexts.</em> 本章在此处使用其关于长上下文位置偏置与中段退化的结果；对应第 22 章参考文献 11。 <a href="#fr-ltm-ch2-1">↩</a></p>
 </li>
 <li id="footnote-fitm-ch2">
-<p>Cheng-Yu Hsieh et al., <em>Found in the Middle: Calibrating Positional Attention Bias Improves Long Context Utilization.</em> 本章在此处使用其关于 <code>"U-shaped attention bias"</code> 的分析；对应第 21 章参考文献 12。 <a href="#fr-fitm-ch2-1">↩</a></p>
+<p>Cheng-Yu Hsieh et al., <em>Found in the Middle: Calibrating Positional Attention Bias Improves Long Context Utilization.</em> 本章在此处使用其关于 <code>"U-shaped attention bias"</code> 的分析；对应第 22 章参考文献 12。 <a href="#fr-fitm-ch2-1">↩</a></p>
 </li>
 <li id="footnote-nolima-ch2">
-<p>Ali Modarressi et al., <em>NoLiMa: Long-Context Evaluation Beyond Literal Matching.</em> 本章在此处使用其关于 32K 条件下模型退化统计，以及 GPT-4o 从 99.3% 降至 69.7% 的结果；对应第 21 章参考文献 16。 <a href="#fr-nolima-ch2-1">↩</a></p>
+<p>Ali Modarressi et al., <em>NoLiMa: Long-Context Evaluation Beyond Literal Matching.</em> 本章在此处使用其关于 32K 条件下模型退化统计，以及 GPT-4o 从 99.3% 降至 69.7% 的结果；对应第 22 章参考文献 16。 <a href="#fr-nolima-ch2-1">↩</a></p>
 </li>
 <li id="footnote-longcodebench-ch2">
-<p>Stefano Rando et al., <em>LongCodeBench: Evaluating Coding LLMs at 1M Context Windows.</em> 本章在此处使用其关于代码任务长上下文退化的样例数据；对应第 21 章参考文献 17。 <a href="#fr-longcodebench-ch2-1">↩</a></p>
+<p>Stefano Rando et al., <em>LongCodeBench: Evaluating Coding LLMs at 1M Context Windows.</em> 本章在此处使用其关于代码任务长上下文退化的样例数据；对应第 22 章参考文献 17。 <a href="#fr-longcodebench-ch2-1">↩</a></p>
 </li>
 <li id="footnote-anthropic-long-ch2">
-<p>Anthropic, <em>Prompting best practices: Long context prompting.</em> 本章在此处使用其关于长文档前置、query 后置与约 30% 质量提升的建议；对应第 21 章参考文献 13。 <a href="#fr-anthropic-long-ch2-1">↩</a></p>
+<p>Anthropic, <em>Prompting best practices: Long context prompting.</em> 本章在此处使用其关于长文档前置、query 后置与约 30% 质量提升的建议；对应第 22 章参考文献 13。 <a href="#fr-anthropic-long-ch2-1">↩</a></p>
 </li>
 </ol>
 

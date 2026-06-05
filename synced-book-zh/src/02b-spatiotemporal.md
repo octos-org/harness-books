@@ -79,16 +79,16 @@ for L in [4_000, 16_000, 64_000, 256_000]:           # 扫长度
 
 到这里，问题已经摆清楚了：模型在空间和时间上都会失效，而且这是架构层面的必然。下一章回答的，就是该拿它怎么办——那个把模型拉回工作区间的“外层控制系统”，到底是什么、从哪来。
 
-[^softmax-dilution-ch2]: Petar Veličković et al., *Softmax is not Enough (for Sharp Size Generalisation).* 本章在此处使用其关于 softmax 随规模稀释、无法保持锐利选择的结论，来解释注意力质量守恒下的远端稀释；对应第 21 章参考文献 43。
-[^bounded-logit-ch2]: 本章在此处使用 Kimi K2 技术报告关于 attention logit explosion 与 QK-Clip 的描述（不封顶时 max logit 越过 1000 量级、训练发散），用来说明 logit 被主动限幅、因此单 token 注意力权重存在与 n 无关的上界；对应第 21 章参考文献 47。
-[^rope-decay-ch2]: Jianlin Su et al., *RoFormer: Enhanced Transformer with Rotary Position Embedding.* 本章在此处使用其关于相对距离衰减包络（经 Abel 变换得到）的结论；并按 *Round and Round We Go!* 标注该衰减证明依赖 query/key 为常向量的前提，故宜视为先验偏置；对应第 21 章参考文献 44、45。
-[^oversquash-ch2]: Federico Barbero et al., *Transformers need glasses! Information over-squashing in language tasks.* 本章在此处使用其关于 representational collapse 与因果掩码下信息单向汇聚、over-squashing 的分析，来解释长输入中计数/复制/区分类任务的退化；对应第 21 章参考文献 46。
-[^nonuniform-kv-ch2]: 本章在此处综合 DeepSeek-V4 技术报告（CSA/HCA 混合压缩注意力、异构与 on-disk KV cache，将近端高分辨率与远端激进聚合并置）与 MiniMax M3（MSA 稀疏/线性注意力）的做法，用来说明工业界以非均匀分辨率换取百万级容量上限；对应第 21 章参考文献 48、49。
-[^context-rot-ch2]: 本章在此处综合 Chroma *Context Rot* 对 18 个前沿模型在各长度增量普遍退化的测试，以及 Anthropic *Effective context engineering for AI agents* 关于“context rot 在远未触达容量上限时即开始”的说明，用来支撑“闭源前沿也不例外”；对应第 21 章参考文献 50、51。
-[^gemini15-ch2]: Google, *Introducing Gemini 1.5, Google's next-generation AI model.* 本章在此处使用其关于 NIAH 命中率、1M context pricing tier 与时延预期的表述；对应第 21 章参考文献 14。
-[^google-long-context-ch2]: Google AI for Developers, *Long context.* 本章在此处使用其关于 performance variability、retrieval-cost tradeoff 与 caching 的说明；对应第 21 章参考文献 15。
-[^ltm-ch2]: Nelson F. Liu et al., *Lost in the Middle: How Language Models Use Long Contexts.* 本章在此处使用其关于长上下文位置偏置与中段退化的结果；对应第 21 章参考文献 11。
-[^fitm-ch2]: Cheng-Yu Hsieh et al., *Found in the Middle: Calibrating Positional Attention Bias Improves Long Context Utilization.* 本章在此处使用其关于 `"U-shaped attention bias"` 的分析；对应第 21 章参考文献 12。
-[^nolima-ch2]: Ali Modarressi et al., *NoLiMa: Long-Context Evaluation Beyond Literal Matching.* 本章在此处使用其关于 32K 条件下模型退化统计，以及 GPT-4o 从 99.3% 降至 69.7% 的结果；对应第 21 章参考文献 16。
-[^longcodebench-ch2]: Stefano Rando et al., *LongCodeBench: Evaluating Coding LLMs at 1M Context Windows.* 本章在此处使用其关于代码任务长上下文退化的样例数据；对应第 21 章参考文献 17。
-[^anthropic-long-ch2]: Anthropic, *Prompting best practices: Long context prompting.* 本章在此处使用其关于长文档前置、query 后置与约 30% 质量提升的建议；对应第 21 章参考文献 13。
+[^softmax-dilution-ch2]: Petar Veličković et al., *Softmax is not Enough (for Sharp Size Generalisation).* 本章在此处使用其关于 softmax 随规模稀释、无法保持锐利选择的结论，来解释注意力质量守恒下的远端稀释；对应第 22 章参考文献 43。
+[^bounded-logit-ch2]: 本章在此处使用 Kimi K2 技术报告关于 attention logit explosion 与 QK-Clip 的描述（不封顶时 max logit 越过 1000 量级、训练发散），用来说明 logit 被主动限幅、因此单 token 注意力权重存在与 n 无关的上界；对应第 22 章参考文献 47。
+[^rope-decay-ch2]: Jianlin Su et al., *RoFormer: Enhanced Transformer with Rotary Position Embedding.* 本章在此处使用其关于相对距离衰减包络（经 Abel 变换得到）的结论；并按 *Round and Round We Go!* 标注该衰减证明依赖 query/key 为常向量的前提，故宜视为先验偏置；对应第 22 章参考文献 44、45。
+[^oversquash-ch2]: Federico Barbero et al., *Transformers need glasses! Information over-squashing in language tasks.* 本章在此处使用其关于 representational collapse 与因果掩码下信息单向汇聚、over-squashing 的分析，来解释长输入中计数/复制/区分类任务的退化；对应第 22 章参考文献 46。
+[^nonuniform-kv-ch2]: 本章在此处综合 DeepSeek-V4 技术报告（CSA/HCA 混合压缩注意力、异构与 on-disk KV cache，将近端高分辨率与远端激进聚合并置）与 MiniMax M3（MSA 稀疏/线性注意力）的做法，用来说明工业界以非均匀分辨率换取百万级容量上限；对应第 22 章参考文献 48、49。
+[^context-rot-ch2]: 本章在此处综合 Chroma *Context Rot* 对 18 个前沿模型在各长度增量普遍退化的测试，以及 Anthropic *Effective context engineering for AI agents* 关于“context rot 在远未触达容量上限时即开始”的说明，用来支撑“闭源前沿也不例外”；对应第 22 章参考文献 50、51。
+[^gemini15-ch2]: Google, *Introducing Gemini 1.5, Google's next-generation AI model.* 本章在此处使用其关于 NIAH 命中率、1M context pricing tier 与时延预期的表述；对应第 22 章参考文献 14。
+[^google-long-context-ch2]: Google AI for Developers, *Long context.* 本章在此处使用其关于 performance variability、retrieval-cost tradeoff 与 caching 的说明；对应第 22 章参考文献 15。
+[^ltm-ch2]: Nelson F. Liu et al., *Lost in the Middle: How Language Models Use Long Contexts.* 本章在此处使用其关于长上下文位置偏置与中段退化的结果；对应第 22 章参考文献 11。
+[^fitm-ch2]: Cheng-Yu Hsieh et al., *Found in the Middle: Calibrating Positional Attention Bias Improves Long Context Utilization.* 本章在此处使用其关于 `"U-shaped attention bias"` 的分析；对应第 22 章参考文献 12。
+[^nolima-ch2]: Ali Modarressi et al., *NoLiMa: Long-Context Evaluation Beyond Literal Matching.* 本章在此处使用其关于 32K 条件下模型退化统计，以及 GPT-4o 从 99.3% 降至 69.7% 的结果；对应第 22 章参考文献 16。
+[^longcodebench-ch2]: Stefano Rando et al., *LongCodeBench: Evaluating Coding LLMs at 1M Context Windows.* 本章在此处使用其关于代码任务长上下文退化的样例数据；对应第 22 章参考文献 17。
+[^anthropic-long-ch2]: Anthropic, *Prompting best practices: Long context prompting.* 本章在此处使用其关于长文档前置、query 后置与约 30% 质量提升的建议；对应第 22 章参考文献 13。
