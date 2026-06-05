@@ -9,3 +9,6 @@ sync-work/
 .idea/
 .vscode/
 __pycache__/
+
+# 4K figure masters (local only; web .jpg in src/img/ is committed)
+figures-4k/

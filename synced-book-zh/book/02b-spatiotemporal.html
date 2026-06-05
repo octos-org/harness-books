@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-282c4f39.js";
+            window.path_to_searchindex_js = "searchindex-0df5ccf7.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-67109edf.js"></script>
@@ -192,6 +192,8 @@
 <p>这件事的推论很有分量，值得说重一点：<strong>连最有动机把“窗口能开多大”当卖点的厂商，自己都在用压缩偷偷换取那个标称的容量上限。</strong> 一家公司在规格表上写下“1M context”，却在架构里用 CSA/HCA 把远端 KV 成倍地砍掉——这本身就是一句无声的供认：那一百万格不可能处处等价，否则它根本不必、也不敢压。换句话说，<strong>所谓“1M context”从来不是一条处处等价的传送带，而是一组分辨率非均匀的滤波器：近端清晰，远端只剩轮廓。</strong> 这恰恰从厂商自己的设计选择里，反证了本章那条主线——容量上限不等于有效工作区间。</p>
 <p>也正因为远端是被这样一层层粗化掉的，§2.5 那套探针在你自己的模型上量出来才会是那个样子：当你把“针”往远端（<code>depth → 0%</code>）挪、再一路把总长 <code>L</code> 推大，你看到的 <code>recall–depth</code> 曲线远端塌陷，并不是模型“偶尔走神”，而是你正隔着这层非均匀滤波器去够一条早已被矩形窗截断、被指数核压暗、或被 CSA/HCA 平均进邻居里的证据——能量本就不够，曲线自然抬不起来。能不能直接读到某个模型用了哪种核，往往藏在闭源细节里；但探针给你的远端塌陷形状，是这层滤波器留在外部可观测面上的指纹，量一次就看得见。<sup class="footnote-reference" id="fr-nonuniform-kv-ch2-1"><a href="#footnote-nonuniform-kv-ch2">5</a></sup></p>
 <p>这里要专门强调一句，免得读者误以为“换个更强的闭源前沿模型就没事了”：<strong>闭源前沿也不例外。</strong> 第三方的系统评测（如 Chroma 对 18 个前沿模型做的 <em>Context Rot</em> 测试）显示，每一个模型都在每一个长度增量上掉点；前沿模型只是衰减得更缓，而非豁免。更说明问题的是，lost-in-the-middle 和干扰项导致的退化，在大概率使用全注意力的模型上照样出现——这说明它来自上面那几条基本面的“地板”，而不只是压缩作弊。Anthropic 自己的工程文档也直说，context rot 在远未触达容量上限时就已经开始。这是个该让团队清醒的事实：你买到的从来不是一块平坦的百万格内存，而是一段中心清晰、边缘发虚的视野。<sup class="footnote-reference" id="fr-context-rot-ch2-1"><a href="#footnote-context-rot-ch2">6</a></sup></p>
+<p><img src="./img/nonuniform-window.jpg" alt="上下文窗口的非均匀分辨率"></p>
+<p><em>图：所谓“1M 上下文”不是一条处处等价的传送带。靠近光标的右端分辨率高、清晰可辨；越往远端越被压缩、聚合，最终只剩一道模糊轮廓——容量上限之内，有效分辨率从光标附近向远处递减。</em></p>
 <h2 id="23-时间轴时间越旧有效敏感度越低"><a class="header" href="#23-时间轴时间越旧有效敏感度越低">2.3 时间轴：时间越旧，有效敏感度越低</a></h2>
 <p>长任务的失效看起来是个“时间”问题——跑得越久越偏——但要拆成两半才讲得透：一半可以归约成空间问题，另一半不可约。</p>
 <p>先说可约的那一半，姑且叫它<strong>记忆老化</strong>。第 1 章 §1.4 交代过，模型对“过去”的唯一留存就是 KV cache，除此之外并没有别的跨步状态——所以“k 步之前的事还记不记得”，等价于“那个 token 还在不在窗口里、当前 token 还 attend 得到它吗”。随着生成一步步推进，一个旧事实与当前光标之间的相对距离单调增大，于是它就按上一节的几条空间机理被衰减，最终被窗口截断、被压缩、或被逐出。所以“随时间遗忘”在机理上就是“随相对距离衰减”——时间问题塌缩成了空间问题。开篇那个“忘掉两小时前约束”的 agent，并不是记性差，而是那条约束在它的视野里一步步退到了边缘。</p>
@@ -206,6 +208,8 @@
 <h2 id="25-动手把窗口的不平坦量出来"><a class="header" href="#25-动手把窗口的不平坦量出来">2.5 动手把窗口的不平坦量出来</a></h2>
 <p>前面几节的机理，和别人测出的那些曲线，都还停在“读到”。要把它变成你自己的工程直觉，最划算的办法是花半天，在你真正要用的那个模型上，把窗口的不平坦亲手量一遍。下面这套探针小到一个下午能搭完，却能逼出三条对设计直接有用的读数。</p>
 <p>基本探针就是经典的“大海捞针”。造一段无关的长填充文本当“海”，在其中某个相对深度 <code>d</code> 处（<code>d=0%</code> 最靠开头、<code>d=100%</code> 最贴近问题）埋一句可验证的事实当“针”，把问题放在整段的最后，再看模型答不答得出那句事实。固定总长 <code>L</code>，让 <code>d</code> 从 0% 扫到 100%，每个 <code>d</code> 重复 <code>k</code> 次取命中率，画出来就是一条 <code>recall–depth</code> 曲线——它就是 §2.2 那句“有效分辨率从光标附近向远处递减”在你这台模型上的样子。</p>
+<p><img src="./img/recall-depth-ucurve.jpg" alt="recall–depth 的 U 形曲线"></p>
+<p><em>图：把“针”埋在不同深度、扫描命中率，画出来往往是这样一条 U 形曲线——开头和结尾的信息容易被用上，夹在中间的最容易被冷落。这正是窗口不平坦在检索任务上显出的形状。</em></p>
 <pre><code class="language-python">def probe(model, L, depth, distractors=0, paraphrase=False):
     needle = make_needle(paraphrase)        # 一句可验证的事实
     ctx = build_filler(L)                   # 无关长文本，总长约 L 个 token
