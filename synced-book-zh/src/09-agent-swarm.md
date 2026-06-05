@@ -55,6 +55,40 @@ UI / Operator 负责人
 
 多 agent 一旦上线，最先失控的通常不是模型质量，是控制面纪律。至少有四条规则要焊死。第一，**子 agent 不直接宣布系统终态**——只有 coordinator 加 verifier 能裁决 ready / failed，这是第 13 章那条假成功链的正面解药。第二，**子 agent 之间不共享隐式上下文**，能共享的只有显式的任务说明、事实流引用和被授权的中间产物，否则就回到第 5.3 节那种串扰。第三，**每个子 agent 都必须能被单独恢复、单独取消、单独审计**——群体里一旦有谁不可单独操作，排障时就只能整片重来。第四，**任何协议、生命周期、回放或 scope 语义的变更，都要同步更新 fixture、门禁、E2E 和文档**，否则多 agent 的复杂度会让一处不同步迅速扩散成多处事故。守不住这四条，多 agent 只会比单 agent 更快地制造混乱；守住了，它才真正变成能放大团队产能的协作系统。
 
+## 10.5 把那条任务交给一个 swarm：谁有权说 ready
+
+§10.4 那四条硬规则里，第一条最该被做成协议而不是口号——“子 agent 不直接宣布系统终态”。把它讲透，最好的办法还是回到那条贯穿全卷的周报任务，只不过这次，它不再由一个 agent 独力完成，而是被拆给一个小 swarm：
+
+```text
+coordinator ──spawn_agent("data-worker",     goal="渲染 q2 PDF")──────────▶ w1
+coordinator ──spawn_agent("delivery-worker",  goal="发到 #finance", needs=[a_pdf_1])──▶ w2
+coordinator ──spawn_agent("verifier",         goal="按契约核对产物", gating=true)──▶ v1
+```
+
+三个 worker 各干各的，但它们写进的是**同一条**事实流，只是每条事件都带上 `actor` 标明出处。于是那次熟悉的失败，在 swarm 里长这样：
+
+```jsonl
+{"seq":5, "actor":"agent:w1",          "type":"artifact.written","kind":"report.pdf","artifact_id":"a_pdf_1"}
+{"seq":7, "actor":"agent:w2",          "type":"tool.returned","tool":"slack.upload","ok":false}
+{"seq":8, "actor":"agent:w2",          "type":"subagent.reported","status":"blocked","reason":"upload_incomplete"}
+{"seq":9, "actor":"agent:v1",          "type":"validator.result","validator":"slack.delivered","ok":false,"gating":true}
+{"seq":10,"actor":"agent:coordinator", "type":"task.settled","state":"failed","reason":"required_validator_failed:slack.delivered"}
+```
+
+关键不在这串事件本身，而在**谁有资格写哪一种事件**。把它做成一张权限表，第一条硬规则就从一句叮嘱变成了系统强制的边界：
+
+```text
+事件类型            允许写入的角色
+  artifact.written    任何 worker（只能写自己 scope 内的产物）
+  subagent.reported   worker 自己（done / blocked / failed，仅描述本子任务的状态）
+  validator.result    仅 verifier
+  task.settled        仅 coordinator，且必须在所有 gating validator.result 之后
+```
+
+读懂这张表，整本书的论点在多 agent 这层闭合了。delivery-worker（w2）上传失败时，它**能**做的，是诚实地写一条 `subagent.reported: blocked`——描述“我这一步卡住了”；它**不能**做的，是写 `task.settled`——宣布“整单完成”。这一行权限，正是第 6 章那条“模型只能 `model.claim`、无权宣布终态”的规则，在 swarm 拓扑上的同构投影：worker 只能提议和汇报，verifier 只能裁定单项，唯有 coordinator 能在所有 gating 项落定之后，写下那一条 `task.settled`。
+
+反过来想就更清楚了。一个偷懒的 swarm，如果允许 delivery-worker 自己喊一句“发完了，收工”，那它不过是把第 6 章那个单 agent 的“假成功”，原样乘上了 agent 的数量——每多一个能自宣终态的 worker，就多一个能撒谎的嘴。这也正是 §10.3 那个判断的另一面：sub-agent 的价值从来不是“多开几个并行”，而是在“多嘴多手”的同时，把**裁决权死死收敛到一个角色**。手可以很多，脑可以分工，但说“这单成了”的权力，整个 swarm 里只能有一份。[^claudecode-codex-multiagent-ch10] 谁都能宣布成功的系统，等于谁都没在负责成功。
+
 [^many-brains-ch10]: Anthropic, *Scaling Managed Agents: Decoupling the brain from the hands.* 本章在此处使用其 many brains / many hands 的组织视角，说明 coordinator、worker 与 verifier 的分工；对应第 21 章参考文献 3。
 [^claudecode-codex-multiagent-ch10]: 本章在此处综合 Claude Code 的 `AgentTool.tsx`、`loadAgentsDir.ts`、`teammateMailbox.ts`、`worktree.ts` 等实现，以及 Codex `spawn_agent` / `send_input` / `wait_agent` / `resume_agent` 等工具原语，用来说明多 agent 需要角色、通信、隔离、汇总与恢复这些一等能力；对应第 21 章参考文献 21、24。
 [^swarm-econ-ch10]: 本章在此处综合 Anthropic 的 managed agents 视角、OpenAI API Pricing 关于 `under 270K` 标准费率的限定、Google Gemini 1.5 关于 1M context pricing tiers 与 latency 的说明、Google long context 文档关于 retrieval-cost tradeoff 与 caching 的说明、LongLLMLingua 关于 higher computational cost / performance reduction / position bias 的概括，以及 MInference 关于 1M token prefill 代价的摘要数字，用于说明 sub-agent / swarm 在质量、成本与时延上的优势；对应第 21 章参考文献 3、14、15、18、19、20。

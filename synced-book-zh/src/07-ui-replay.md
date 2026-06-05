@@ -54,7 +54,38 @@ Codex 把这条坑直接堵死在了内核层。它的 `app-server` 把 `thread/
 
 把这一条想透，三条更普遍的规则就自然落地了，而且都指向同一件事：**前端里不该存在第二套生命周期解释器。** 直播和回看若各自解释“什么算一个阶段”，就会像 §8.2 那样闪；scope 若在任一层断掉，就会像刚才那样串；而 UI 若只显示一个干巴巴的状态词、不把最近动作和最近证据一并摆出，操作员就回到第 5.6 节那种盲区。前端可以做缓存、动画、布局，但它不能凭空发明一个阶段——它发明的每一个阶段，都是一条迟早要和后台对质、且必输的影子真相。
 
-## 8.4 把回放写成一道门禁
+## 8.4 把那唯一的解释器，写成一个纯函数
+
+“前端里不该存在第二套生命周期解释器”——这句话听着像戒律，其实有个很务实的落法：把那唯一的解释器，写成一个不带任何私有记忆的纯函数。它吃一串事件，吐一份可显示状态，仅此而已。沿用第 6.7 节那条 schema，它大致长这样：
+
+```js
+// fold: 事件流 → 可显示状态。纯函数：同样的输入，永远同样的输出。
+function fold(events) {
+  const v = { lifecycle: "queued", lastAction: null,
+              artifacts: {}, validators: {}, claims: [], terminalReason: null };
+  for (const e of events) {
+    switch (e.type) {
+      case "turn.started":     v.lifecycle = "running"; break;
+      case "tool.called":      v.lastAction = `${e.tool} …`; break;
+      case "tool.returned":    v.lastAction = `${e.tool} ${e.ok ? "ok" : "FAILED"}`; break;
+      case "artifact.written": v.artifacts[e.kind] = { sha256: e.sha256, path: e.path }; break;
+      case "model.claim":      v.claims.push(e.text); break;      // 记下来给人看，但不碰 lifecycle
+      case "verify.started":   v.lifecycle = "verifying"; break;
+      case "validator.result": v.validators[e.validator] = e.ok; break;
+      case "task.settled":     v.lifecycle = e.state; v.terminalReason = e.reason; break;
+    }
+  }
+  return v;
+}
+```
+
+这段代码里真正该被盯住的，是 `case "model.claim"` 那一行。它把模型那句声称推进一个 `claims` 列表——好让用户**看得到**模型说过什么——可它一个字都没碰 `v.lifecycle`。换句话说，在这个解释器里，模型的“已发送”和任务的“完成”之间，根本没有一条代码通路。
+
+把第 6 章那条任务的事件流喂进去，结论冷得发硬。`seq:8` 那句“已发送到 #finance”落进 `v.claims`，会作为一条聊天气泡显示出来；但 `v.lifecycle` 自始至终只听 `task.settled` 的——而那条 `task.settled` 是第 6.8 节那台状态机在 gating validator 失败后写下的 `{state:"failed", reason:"required_validator_failed:slack.delivered"}`。于是 fold 吐出的是 `lifecycle:"failed"`，外加一条人能读懂的原因，和一句“模型当时是这么说的”。那个绿色完成气泡，在这个函数里压根**不可表示**——不是因为前端工程师足够小心，而是因为 fold 的类型纪律让“从 model.claim 推出 done”这条路根本不存在。第 5.2 节那种“从 UI 反推事实”的假一致，到这里被釜底抽薪：UI 没有自己的薪可烧了，它能显示的每一个生命周期值，都只能由 `task.settled` 这一种事件点着。
+
+这也顺手解释了为什么 §8.1 那次刷新能平静收场。刷新清空的是浏览器内存，可 `fold` 没有内存可清——它的“当前状态”是事实流的纯函数，刷新只是拿同一条流再求一次值。前端可以缓存这条流、可以只折叠增量、可以给状态变化加动画，但它求值的唯一依据，永远是那串它无权改写的事件。
+
+## 8.5 把回放写成一道门禁
 
 这类问题最阴的地方在于，单元测试照不到它们——它们只在“刷新、重连、切会话”这些动作发生的那一瞬现形。所以测试得换个写法：与其断言某个函数的返回值，不如断言**两条路径给出的世界是不是同一个**。
 

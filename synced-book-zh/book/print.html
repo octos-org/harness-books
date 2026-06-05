@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-98445f9a.js";
+            window.path_to_searchindex_js = "searchindex-7b12c9f9.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-f88cc8f9.js"></script>
+        <script src="toc-cf7b5ff6.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -584,7 +584,7 @@ Harness 工程
 <p>一份完整的 harness 事故复盘，大体要走这么一条链：先用一句话说清事故摘要——用户表面看到了什么、系统最终做出了什么错误裁决；再交代用户与业务影响——谁受了影响、错了多久、有没有错误交付、重复执行、数据污染或合规风险。然后是一条按绝对时间排的时间线，从触发、发现、缓解到修复，而不是只写个模糊的先后；紧接着画出任务与 agent 的拓扑——root task、child task、role、worktree、外部能力、人工介入点，好让读者一眼明白这不是单进程的 bug。核心是那段五层断裂点解剖：沿着 <code>session → 能力平面 → verifier → dashboard → swarm</code> 逐层看，哪些层是缺失、哪些是误判、哪些只是把错误放大了。解剖要靠证据撑着，所以得附一个证据包——事件片段、artifact 路径、validator 输出、dashboard 截图、日志片段、以及 commit/deploy 的边界；没有证据，复盘就只是回忆录。再往下是根因归类，把问题落进四支柱和九个架构维度，而不是甩一句“大模型抽风”或“偶发 race condition”了事；并且专门追问一句：现有的防线为什么没拦住——是没有 validator、validator 不阻断、scope 不完整、dashboard 不可读，还是 canary/mini-fleet 压根没覆盖到那条路径。最后两步落到行动：把修复分清层次，hotfix、结构修复、发布门禁、知识晋升、组织流程，别全塞成一个 patch；以及最重要的组织沉淀——这次事故会变成什么长期资产，一个新的 validator、一条 <code>AGENTS.md</code> 规则、一个 skill、一份 runbook、一个 dashboard 信号、一份回放 fixture，还是一道发布门禁。</p>
 <p>这份模板之所以要紧，是因为 harness 事故往往不是“哪一行代码错了”这么简单，而是几个表面一起说了不同的话。统一的模板逼着团队每次都沿同一条控制链回溯，事故才会真正变成组织的免疫力，而不是又一份归了档、然后被遗忘的复盘。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
-<h1 id="6-核心-harness-架构把样本反推成可复用总图"><a class="header" href="#6-核心-harness-架构把样本反推成可复用总图">6. 核心 Harness 架构：把样本反推成可复用总图</a></h1>
+<h1 id="6-核心-harness-架构从样本反推到可实现的参考架构"><a class="header" href="#6-核心-harness-架构从样本反推到可实现的参考架构">6. 核心 Harness 架构：从样本反推到可实现的参考架构</a></h1>
 <p>第 4 章给了正向样本，第 5 章给了反面叙事。把两者叠在一起看，会浮出一个比“某个仓库怎么写的”更稳的结论：成熟的 agent 系统，最终都会收敛到同一张运行时总图。Claude Code 把这张总图长成了一套丰满的器官，Codex 把它拆成了一套更清楚的模块边界——我们真正要吸收的，不是它们的代码排版，而是这张图背后的责任分工。<sup class="footnote-reference" id="fr-claudecode-codex-spine-ch6-1"><a href="#footnote-claudecode-codex-spine-ch6">1</a></sup></p>
 <p>把第 3 章那套控制论语言落到运行时，先看五个角色。受控对象是 task / session / thread；目标与约束是用户目标、验收标准、artifact 契约、权限和预算；传感器是 tool 回执、文件变化、validator 结果、child summary 和 turn/item 事件；控制器负责继续、压缩、重试、派工、升级、打断、恢复；执行器则是 shell、文件系统、MCP、子 agent、worktree、外部 API 和 artifact 写入。按这个框架回看第 4 章那两个样本：Claude Code 的 <code>ToolUseContext</code> 和 <code>query.ts</code> 是控制器入口，<code>StreamingToolExecutor.ts</code> 是执行器调度面，<code>sessionStorage.ts</code>、<code>fileStateCache.ts</code>、<code>agentSummary.ts</code>、<code>diskOutput.ts</code> 是传感器与状态保持层，<code>microCompact</code> / <code>compact.ts</code> / <code>resumeAgent.ts</code> / <code>worktree.ts</code> 负责稳定性控制；Codex 把同一套逻辑拆得更显式——<code>Thread</code> / <code>Turn</code> / <code>Item</code> 建模受控对象，<code>thread-store</code> 与 <code>rollout</code> 是持久层，<code>app-server</code> 与 notifications 是观测总线，<code>tools</code> registry、sandbox、approval、<code>thread/resume</code>、<code>thread/fork</code>、<code>turn/interrupt</code> 构成执行与稳定边界。<sup class="footnote-reference" id="fr-claudecode-codex-spine-ch6-2"><a href="#footnote-claudecode-codex-spine-ch6">1</a></sup></p>
 <pre><code class="language-text">用户任务 / 外部触发
@@ -646,7 +646,84 @@ Session / Thread 事实流
 <h2 id="65-为什么朴素的事实流比聪明的状态更可靠"><a class="header" href="#65-为什么朴素的事实流比聪明的状态更可靠">6.5 为什么朴素的事实流，比“聪明的状态”更可靠</a></h2>
 <p>Karpathy 的 autoresearch 经验点过一个朴素却要命的事实：长期知识系统最难的不是“让模型想起来”，而是 bookkeeping（记账）。他的做法是一对文件——<code>session.md</code> 给人读，提供叙事；<code>session.jsonl</code> 给机器读，提供可回放的事件。这组合一点都不花哨，却有个决定性的好处：<strong>模型会换，UI 会换，工具会换，唯独事实流最好别跟着频繁换。</strong><sup class="footnote-reference" id="fr-karpathy-bookkeeping-ch6-1"><a href="#footnote-karpathy-bookkeeping-ch6">2</a></sup></p>
 <p>很多系统一开始忍不住要更“聪明”的状态层——把前端状态当事实、把聊天 transcript 当事实、把临时日志解析当事实、把缓存快照当事实。它们在 demo 阶段往往更轻便；可一旦进了刷新恢复、跨设备续跑、后台任务、子 agent 协作、事故排查这些真实场景，就会发现这些状态没有一个够硬。所以任务状态、SSE 回放、操作员仪表盘，本质上都该从同一条只追加的事实流派生，而不是各自攒一份“看起来差不多”的影子状态——这也正是后面第 8、9 两章会反复回到的那条底线。</p>
-<h2 id="66-这张总图怎样展开成后面的章节"><a class="header" href="#66-这张总图怎样展开成后面的章节">6.6 这张总图，怎样展开成后面的章节</a></h2>
+<h2 id="66-一条贯穿卷三的任务先把假成功摆到台面上"><a class="header" href="#66-一条贯穿卷三的任务先把假成功摆到台面上">6.6 一条贯穿卷三的任务：先把“假成功”摆到台面上</a></h2>
+<p>到这里，总图、词汇表、四支柱都立住了，可它们还停在“应该这样”的高度。要让这张图变成能照着搭的东西，得先把它要保护的对象拽到眼前——一条具体的任务，具体到能一行行追下去。</p>
+<p>设想一个普通的周一早晨。一位财务分析师在对话框里敲下一句话：“把 <code>data/q2/</code> 下最新的季度数据汇成 PDF 周报，发到 <code>#finance</code> 频道，抄送给 <code>cfo@</code>。”这不是什么刁钻需求，agent 该做的事也很直白：读数据、渲染 PDF、把文件传到 Slack、回一句确认。它确实照做了——读到了 48KB 的源数据，生成了一份四页、能正常打开的 <code>q2-weekly.pdf</code>，然后调用 Slack 上传。</p>
+<p>裂缝就出在最后一步。Slack 的文件上传分两段：先 <code>files.getUploadURLExternal</code> 拿到通道，再 <code>files.completeUpload</code> 确认落盘。第一段返回了 2xx，第二段却在一次网络抖动里超时了。文件没真正出现在 <code>#finance</code>。可这时 agent 的 turn 预算也快见底，它没有再回头核对那条上传到底成没成，而是顺着“我刚才把文件传上去了”的语义惯性，在聊天里写下：“✅ 已生成 <code>q2-weekly.pdf</code> 并发送到 <code>#finance</code>，已抄送 CFO。”前端把这句话渲染成一个绿色的完成气泡。三天后，CFO 在例会上问：周报呢？</p>
+<p>这就是第 5 章里那类“假成功”的标准长相——系统的每一层都没撒谎，可拼到一起，它对用户说了一个根本没发生的事。我们会让这条任务贯穿整个卷三：第 7 章讲那次 Slack 上传为什么必须是一个有 schema、有回执、有权限边界的桥接能力，而不是一段塞在 prompt 里的 <code>curl</code>；第 8 章讲前端凭什么不该把那句“已发送”直接画成 done；第 9 章讲一个 fleet 门禁本应在 <code>verifying</code> 阶段就把它挡在 <code>ready</code> 之外；第 10 章讲如果这件事是交给一个 swarm 做的，到底谁才有权宣布终态；到第 15 章，我们会把它写成一份操作员三十秒能读懂的事故复盘。而这一章接下来要做的，是把那台“本该拦下假成功”的机器，从总图落成几样具体的数据结构。</p>
+<h2 id="67-事实流的具体形状是事件不是聊天"><a class="header" href="#67-事实流的具体形状是事件不是聊天">6.7 事实流的具体形状：是事件，不是聊天</a></h2>
+<p>在“灵光一闪”的系统里，这条任务的“状态”就是聊天框里那句“已发送”——它既是过程，又是结论，还是唯一的证据。工厂模式的第一刀，就是把这三者切开：状态不再是某段会被原地覆盖的文本，而是一条只追加、单调增长的事件流。沿用 Karpathy 那套 <code>session.jsonl</code> 的思路，上面那条任务真正落到事实流里，长这样：<sup class="footnote-reference" id="fr-karpathy-bookkeeping-ch6-2"><a href="#footnote-karpathy-bookkeeping-ch6">2</a></sup></p>
+<pre><code class="language-jsonl">{"seq":1,"ts":"2026-06-02T09:00:01Z","type":"task.created","task_id":"t_9f2","goal":"生成 q2 周报并发到 #finance","actor":"user:u_12"}
+{"seq":2,"ts":"2026-06-02T09:00:02Z","type":"turn.started","task_id":"t_9f2","turn":1}
+{"seq":3,"ts":"2026-06-02T09:00:03Z","type":"tool.called","turn":1,"tool":"fs.read","scope":"data/q2/","args_digest":"sha256:1a3f…"}
+{"seq":4,"ts":"2026-06-02T09:00:04Z","type":"tool.returned","turn":1,"tool":"fs.read","ok":true,"bytes":48213}
+{"seq":5,"ts":"2026-06-02T09:00:31Z","type":"artifact.written","turn":1,"artifact_id":"a_pdf_1","kind":"report.pdf","path":"out/q2-weekly.pdf","sha256":"9c0b…","bytes":91204}
+{"seq":6,"ts":"2026-06-02T09:00:33Z","type":"tool.called","turn":1,"tool":"slack.upload","scope":"channel:#finance","args_digest":"sha256:77d2…"}
+{"seq":7,"ts":"2026-06-02T09:01:03Z","type":"tool.returned","turn":1,"tool":"slack.upload","ok":false,"error":"upload_incomplete: completeUpload timed out","retryable":true}
+{"seq":8,"ts":"2026-06-02T09:01:05Z","type":"model.claim","turn":1,"text":"已发送到 #finance，已抄送 CFO"}
+</code></pre>
+<p>把 <code>seq:7</code> 和 <code>seq:8</code> 并排放着看，整本书的论点几乎就压在这两行里。工具回执白纸黑字写着 <code>ok:false</code>，模型却在下一行声称“已发送”。在“聊天即事实”的系统里，人能看到的只有 <code>seq:8</code>，<code>seq:7</code> 从一开始就没被当成状态；而在“事件即事实”的系统里，<code>seq:7</code> 永远在那，并且 <code>seq:8</code> 被显式标成 <code>model.claim</code>——模型的“声称”，一种和 <code>tool.returned</code> 截然不同的事件类型。它进了日志，却没有资格改写终态。</p>
+<p>这条 schema 的几个约定，都是被前面的事故逼出来的，值得逐一点破。每条事件都带一个单调递增的 <code>seq</code> 和一个 <code>ts</code>：<code>seq</code> 决定回放顺序，<code>ts</code> 只用于展示和审计，二者不可混用——靠时间戳排序，迟早会在时钟回拨或并发写入时翻车。工具调用记的是 <code>args_digest</code> 而不是原始参数：长参数、敏感数据不该灌进事实流，一个内容哈希既能做幂等去重，又能在排障时核对“这次调用和上次是不是同一组输入”。产物事件必带 <code>sha256</code>：因为终态裁决要认的是“这件东西确实被写出来了、内容是这个”，而不是“模型说它写了”。最关键的还是那条类型纪律——凡是模型嘴里说出来的完成、成功、已发送，一律归到 <code>model.claim</code>，与带 <code>ok</code> 字段的 <code>tool.returned</code> 物理隔离。事实流不负责评判模型说得对不对，它只负责把“谁说的、说了什么、什么时候说的”原样钉住，把裁决权留给后面的状态机和验证器。</p>
+<p>至于“当前状态”到底是什么——它不是日志里某个被反复改写的字段，而是把这串事件从 <code>seq:1</code> 折叠到末尾的结果。同一条流，折叠成给用户看的视图是一种投影，折叠成给 operator 排障的时间线是另一种投影，但底下是同一份不可变事实。这个 fold 怎么写成代码、怎么在刷新和断线后还原视图，是第 8 章的主题；这里只需记住：状态是算出来的，不是存出来的。</p>
+<h2 id="68-生命周期状态机谁有权把任务改成-ready"><a class="header" href="#68-生命周期状态机谁有权把任务改成-ready">6.8 生命周期状态机：谁有权把任务改成 ready</a></h2>
+<p>第 6.2 节那五级状态机——<code>queued</code>、<code>running</code>、<code>verifying</code>、<code>ready</code>、<code>failed</code>——现在要长出牙齿。光有五个名字不够，真正定生死的是它们之间哪些迁移合法、每条迁移由谁触发：</p>
+<pre><code class="language-text">   queued ──▶ running ──▶ verifying ──┬──▶ ready
+                 ▲                     └──▶ failed
+                 └──────── resume ─────────┘
+
+合法迁移                触发条件
+  queued    → running     调度器领取任务，分配预算与 worktree
+  running   → verifying    模型声明“我做完了”（一条 model.claim 完成意图）
+  verifying → ready        所有 gating validator 均 ok=true
+  verifying → failed       任一 gating validator ok=false，或所需证据缺失
+  running   → failed        预算耗尽 / 不可重试错误 / 人工取消
+  (任意态)  → running       resume：从某个 checkpoint seq 重建后继续
+</code></pre>
+<p>这张表里最该被记一辈子的，是 <code>verifying → ready</code> 这一条边的守卫。模型声明“做完了”，最多只能把任务从 <code>running</code> 推到 <code>verifying</code>——它有资格“请求验收”，却没有资格“宣布通过”。这一刀，正是“假成功”在工厂模式里无处落脚的根本原因：终态裁决权被从生成器手里拿走了。</p>
+<p>把我们那条任务套进去，机器的判断冷静得近乎无情。<code>seq:8</code> 那句“已发送”是一条完成意图，它合法地把任务从 <code>running</code> 推进到 <code>verifying</code>——到此为止它都没越权。可一进 <code>verifying</code>，那条要求“#finance 收到了文件”的 gating validator 就去事实流里找送达回执，找到的却是 <code>seq:7</code> 的 <code>ok:false</code>。于是状态机面前只剩一条合法出口：<code>failed</code>。模型在 <code>seq:8</code> 说的话，在这台机器里连一次状态迁移都触发不了，它只是日志里一条留痕的声称。同一串事件，换到“聊天即事实”的系统里会被折叠成绿气泡；换到这台状态机上，被折叠成的是一行红色的 <code>failed</code>，外加一句能指给人看的原因。</p>
+<p><code>resume</code> 那条回边同样不是装饰。第 5.3 节已经演示过，长任务的中断、切设备、被打断续跑是常态而非异常；所以 resume 必须是一等迁移，能从事件流的某个 <code>seq</code>（一个 checkpoint）把上下文重建出来再往下跑，而不是“重开一个任务从头来过”。一台连自己怎么断、怎么续都说不清的状态机，是扛不住真实负载的。</p>
+<h2 id="69-产物清单与验证结果completion-是被证据裁出来的"><a class="header" href="#69-产物清单与验证结果completion-是被证据裁出来的">6.9 产物清单与验证结果：completion 是被证据裁出来的</a></h2>
+<p>状态机知道“该不该进 <code>ready</code>”，靠的是有人给它喂判断。这个判断不能是模型的自我感觉，得是一份产物契约和一组验证结果的比对。所谓产物契约，就是任务一开始就声明清楚：这件工作，到底要交出哪几件东西、每件由谁验。我们这条任务的契约是这样的：</p>
+<pre><code class="language-json">{
+  "task_id": "t_9f2",
+  "required_artifacts": [
+    {"kind": "report.pdf",       "owner_rule": "single", "validators": ["pdf.renders", "pdf.nonempty"]},
+    {"kind": "delivery.receipt", "owner_rule": "single", "validators": ["slack.delivered"]}
+  ]
+}
+</code></pre>
+<p>注意它要的是两件产物，不是一件。一份能渲染、非空的 PDF，和一张来自 Slack 的送达回执——“生成报告”和“送达报告”被当成两件需要各自被证明的事。验收时，验证器把实际产生的产物和这份契约逐条比对，结果同样落进事实流：</p>
+<pre><code class="language-json">{"validator":"pdf.renders",    "artifact_id":"a_pdf_1","ok":true, "gating":true, "evidence":"打开 4 页，0 渲染错误"}
+{"validator":"pdf.nonempty",   "artifact_id":"a_pdf_1","ok":true, "gating":true, "evidence":"4 页 / 91204 字节"}
+{"validator":"slack.delivered","artifact_id":null,    "ok":false,"gating":true, "evidence":"未找到 #finance 的 delivery.receipt 产物；最后一次 slack.upload 返回 upload_incomplete"}
+</code></pre>
+<p>PDF 那两条都过了。<code>slack.delivered</code> 这条 <code>gating:true</code>，它的 <code>ok:false</code> 一票否决，直接把终态钉死成 <code>failed</code>。这里有两个设计选择值得停下来看清楚。其一是 <code>owner_rule:"single"</code>——主产物必须显式、唯一地归属，从根上堵死第 5.4 节那种“靠文件名或最近修改时间去猜哪个才是交付物”的事故。其二是 <code>gating</code> 这个开关：验证器分阻断与不阻断两种，只有 <code>gating:true</code> 的失败能否决终态，那些“尽力而为”的检查（拼写、风格、体例建议）照样记录在案，却不该把一个本质完成的任务拖死——这正是为了避开第 5.5 节那种“验证器过严、误伤正常交付”的反向事故。</p>
+<p>而这条任务里最不该被轻轻放过的细节是：那张送达回执，必须是一件 artifact，而不能只是日志里一句“发出去了”。原因很硬——只有 artifact 才进契约、才被 validator 按 <code>kind</code> 寻址、才能在终态裁决时被“点名缺席”。<code>slack.delivered</code> 之所以能斩钉截铁地说“no delivery.receipt found”，正是因为它找的是一件本该存在却不存在的具名产物，而不是去解析一段自由格式的文本日志。把“成功的证据”定义成一件可寻址、可校验的产物，而不是一句可被模型乐观改写的话——这就是产物与验证这根支柱，落到 schema 上的样子。</p>
+<h2 id="610-一条最小-api-面怎样去问它真的完成了吗"><a class="header" href="#610-一条最小-api-面怎样去问它真的完成了吗">6.10 一条最小 API 面：怎样去问“它真的完成了吗”</a></h2>
+<p>事实流、状态机、产物契约都就位之后，还差最后一环：让外面的世界——UI、operator、上游编排器——能问到这台机器的判断，而且只能问到它的判断。这套 API 面可以小到只有几条，但它有一个刻意为之的缺口：</p>
+<pre><code class="language-text">POST /tasks                       创建任务，携带 artifact 契约
+GET  /tasks/{id}                  返回折叠后的裁决：state、artifacts、validators、terminal_reason
+GET  /tasks/{id}/events?from=seq  增量事件，给 operator 回放与排障
+GET  /tasks/{id}/stream           SSE：把事件实时折叠成 UI 视图
+POST /tasks/{id}/resume           从 checkpoint 续跑
+</code></pre>
+<p>那个缺口是：这里没有任何一个端点，会回答“模型说它做完了没有”。<code>model.claim</code> 在 <code>/events</code> 的原始流里查得到，但它进不了 <code>GET /tasks/{id}</code> 的 <code>state</code> 字段——后者是事实流折叠、再叠加 validator 结果之后的裁决。我们那条任务被这样问起时，机器的回答是：</p>
+<pre><code class="language-json">{
+  "task_id": "t_9f2",
+  "state": "failed",
+  "terminal_reason": "required_validator_failed:slack.delivered",
+  "artifacts": [
+    {"artifact_id":"a_pdf_1","kind":"report.pdf","sha256":"9c0b…","verified":true}
+  ],
+  "validators": [
+    {"validator":"pdf.renders","ok":true},
+    {"validator":"slack.delivered","ok":false,"evidence":"未找到 #finance 的 delivery.receipt 产物…"}
+  ]
+}
+</code></pre>
+<p>UI 想画那个绿气泡，唯一合法的依据就是这里的 <code>state:"ready"</code>；而它拿到的是 <code>state:"failed"</code> 加一句人能读懂的 <code>terminal_reason</code>。于是“假成功”在最外层这道关口也无路可走——前端不再有机会从一句聊天文本里自己发明出一个完成态。<code>/events</code> 和 <code>/stream</code> 的分工则预告了第 8 章：前者是给 operator 排障的原始增量，后者是给终端用户实时折叠出的视图，但两者派生自同一条事实流，所以结构上不可能出现“用户看到绿、operator 查到红”的分裂。<code>resume</code> 单列为一个端点而非内部补丁，也是同一种克制——因为第 5.3 节已经讲过，中断与续跑是这类系统的日常，必须能从某个 <code>seq</code> 把状态重建出来，而不是假装任务永远一口气跑完。</p>
+<p>把 6.7 到 6.10 连起来看，这台机器其实只做了一件事：在事实流、状态机、产物契约、API 四个位置，分别堵死了“假成功”能钻进来的四个缝隙——聊天不再是状态，模型不再能宣布终态，完成不再靠猜产物，前端不再能自造完成态。剩下的几章，就是沿着这台机器，把每一道缝隙的工程细节再一层层拧紧。</p>
+<h2 id="611-这张总图怎样展开成后面的章节"><a class="header" href="#611-这张总图怎样展开成后面的章节">6.11 这张总图，怎样展开成后面的章节</a></h2>
 <p>从这里起，后面的章节不再往外并列地堆概念，而是沿着这张总图，把它的关键维度一个个掀开。能力平面与生态桥接掀开成第 7 章，讲万用 agent 为什么必然走向 MCP、外部应用和多语言工具；回放与用户事实掀开成第 8 章，讲 UI 为什么只能投影事实、不能自己发明生命周期；操作员控制面掀开成第 9 章，讲 dashboard、门禁和事故归因为什么必须共享同一条事实流；sub-agent 与 swarm 掀开成第 10 章，讲多 agent 的关键从来不是并行，而是角色、隔离、通信和验证；最后第 11 章再把同一套词汇表，改写成九条设计原则和九组反模式，让“产品故事 → 架构维度 → 设计法则”连成一条论证，而不是三套各说各话的语言。</p>
 <hr>
 <hr>
@@ -655,7 +732,7 @@ Session / Thread 事实流
 <p>本章在此处综合 Claude Code 本地源码镜像、<em>Dive into Claude Code</em> 中七组件与五层子系统分析，以及 Codex 开源仓库中 <code>app-server-protocol</code>、<code>tools</code>、<code>thread-store</code>、<code>rollout</code> 所体现的模块边界，用来反推 agent harness 的通用总图；对应第 21 章参考文献 21、24、41。 <a href="#fr-claudecode-codex-spine-ch6-1">↩</a> <a href="#fr-claudecode-codex-spine-ch6-2">↩2</a> <a href="#fr-claudecode-codex-spine-ch6-3">↩3</a> <a href="#fr-claudecode-codex-spine-ch6-4">↩4</a> <a href="#fr-claudecode-codex-spine-ch6-5">↩5</a></p>
 </li>
 <li id="footnote-karpathy-bookkeeping-ch6">
-<p>Andrej Karpathy, <em>LLM Wiki.</em> 本章在此处使用其关于 autoresearch 双文件与 bookkeeping 的思路，说明 <code>session.md</code> + <code>session.jsonl</code> 这类事实流设计的价值；对应第 21 章参考文献 9。 <a href="#fr-karpathy-bookkeeping-ch6-1">↩</a></p>
+<p>Andrej Karpathy, <em>LLM Wiki.</em> 本章在此处使用其关于 autoresearch 双文件与 bookkeeping 的思路，说明 <code>session.md</code> + <code>session.jsonl</code> 这类事实流设计的价值；对应第 21 章参考文献 9。 <a href="#fr-karpathy-bookkeeping-ch6-1">↩</a> <a href="#fr-karpathy-bookkeeping-ch6-2">↩2</a></p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -681,11 +758,68 @@ Session / Thread 事实流
 <p>发射端要宽容，因为你拦不住生态。给 Python、Node、shell、外部服务各提供一个轻量的事件发射辅助层，让它们能方便地把进度、产物、证据按规矩报上来；再提供一个 CLI 或环境变量形式的兜底桥（比如一个 <code>HARNESS_EVENT_SINK</code>），连辅助层都来不及接的脚本，也能靠它把关键事实喷进同一条流。这里有个分寸：sink 缺失时可以 no-op（脚本照跑，只是这次没报结构化进度），但<strong>绝不允许因为 sink 缺失就跳过结果契约和终态验证</strong>——宽容的是“怎么报”，不容商量的是“报上来的东西必须过同一道关”。</p>
 <p>消费端则必须铁面。无论事实从哪种语言、哪个进程喷进来，它在进入系统时都要被同一套规则校验一遍：schema 对不对、带没带 session/topic scope、phase 合不合法、artifact 引用指向哪、validator 证据齐不齐。回到 §7.3 那段 Python 脚本——只要消费端这道关在，它那条 stderr 进度会被判为“无结构、不计入”，它猜的那条产物路径会因为不在契约里而被打回，串扰会因为缺 scope 而被拦下。同一段脚本，接法没变，但因为消费端不松口，它再也污染不了父任务的事实。</p>
 <p>这一章守的边界，会在平台越做越开放时变得越来越重要。等到要接插件市场、第三方 workflow、外部 agent，能力平面就是最先要守住的那道线——否则平台每开放一步，事实协议就被侵蚀一步，最后退回到谁也说不清“现在到底是什么状态”的那种系统。</p>
+<h2 id="75-把那次-slack-上传做成一个合规的桥接能力"><a class="header" href="#75-把那次-slack-上传做成一个合规的桥接能力">7.5 把那次 Slack 上传，做成一个合规的桥接能力</a></h2>
+<p>抽象讲到这儿，正好可以拿第 6 章那条任务来对质。那次把 <code>q2-weekly.pdf</code> 发到 <code>#finance</code> 的失败，根子就在 <code>slack.upload</code> 这个能力是怎么接进系统的。如果它只是 prompt 里一段顺手写的 <code>curl</code>，那 §7.3 那条污染链会原样上演；而如果它是一个有契约的桥接能力，长相是这样的：</p>
+<pre><code class="language-json">{
+  "name": "slack.upload",
+  "scopes": ["slack:files.write", "slack:channel:#finance"],
+  "args_schema": {"channel": "string", "file_path": "string", "title": "string?"},
+  "result_contract": {
+    "success_means": "files.completeUpload 返回 2xx 且 file_id 可回查",
+    "on_success": {"emit_artifact": {"kind": "delivery.receipt",
+                                     "fields": ["channel", "file_id", "permalink", "ts"]}}
+  }
+}
+</code></pre>
+<p>这份契约里最要命的一行是 <code>success_means</code>。Slack 的上传分两段——先 <code>files.getUploadURLExternal</code> 拿通道，再 <code>files.completeUpload</code> 落盘——而契约明确把“成功”钉在第二段的确认上，外加一个“<code>file_id</code> 可回查”的硬条件。第一段那个 2xx，在这份契约里什么都不算。于是那次 <code>completeUpload</code> 超时，桥接层根本没有“乐观上报”的接口可用：按契约，它只能往事实流写第 6 章里那条 <code>seq:7</code>——<code>ok:false</code>，并且<strong>不</strong>产生 <code>delivery.receipt</code> 这件产物。</p>
+<p>把这件事说穿：第 6 章里状态机之所以能看见那次失败，不是因为模型诚实，而是因为工具契约根本不给它撒谎的入口。<code>success_means</code> 把“成功”的定义从模型的语义直觉、从 HTTP 状态码，挪到了一个可回查的客观事实上；<code>on_success.emit_artifact</code> 又规定了“成功必须留下一件具名产物”。这两条合起来，正好喂饱了第 6.9 节那条 <code>slack.delivered</code> 验证器——它要找的 <code>delivery.receipt</code> 没出现，于是 gating 失败，终态落到 <code>failed</code>。能力契约和验证契约，在这里严丝合缝地咬上了。</p>
+<h2 id="76-事件汇流口的具体协议一段脚本怎样把事实喷回主流"><a class="header" href="#76-事件汇流口的具体协议一段脚本怎样把事实喷回主流">7.6 事件汇流口的具体协议：一段脚本怎样把事实喷回主流</a></h2>
+<p>§7.4 给了一个名字叫 <code>HARNESS_EVENT_SINK</code> 的兜底桥，这里把它摊开成可以照抄的协议。它其实简单到近乎朴素：harness 在拉起桥接进程前，打开一个汇流口（一个 unix domain socket 或具名管道），把它的地址塞进环境变量 <code>HARNESS_EVENT_SINK</code>，再把任务标识塞进 <code>HARNESS_TASK_ID</code>。桥接进程要做的，就一件事——把自己产生的事实，按和原生事件<strong>一模一样</strong>的 schema，逐行 JSON 写进这个口。</p>
+<p>Python 那段在 §7.3 里闯过祸的脚本，接上协议之后是这样：</p>
+<pre><code class="language-python">import os, json, socket
+SINK = os.environ.get("HARNESS_EVENT_SINK")
+
+def emit(ev):
+    if not SINK:                       # sink 缺失 → no-op，脚本照常算完
+        return
+    ev.setdefault("task_id", os.environ["HARNESS_TASK_ID"])
+    with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
+        s.connect(SINK)
+        s.sendall((json.dumps(ev, ensure_ascii=False) + "\n").encode())
+
+emit({"type": "tool.progress", "tool": "report.render", "pct": 40})
+# … 生成 PDF …
+emit({"type": "artifact.written", "kind": "report.pdf",
+      "path": "out/q2-weekly.pdf", "sha256": sha256_of("out/q2-weekly.pdf")})
+</code></pre>
+<p>换成 Node，逻辑一字不差，只是语言皮肤不同：</p>
+<pre><code class="language-js">const net = require("net");
+const SINK = process.env.HARNESS_EVENT_SINK;
+function emit(ev) {
+  if (!SINK) return;
+  ev.task_id ??= process.env.HARNESS_TASK_ID;
+  const c = net.createConnection(SINK, () =&gt; c.end(JSON.stringify(ev) + "\n"));
+}
+emit({ type: "artifact.written", kind: "delivery.receipt",
+       channel: "#finance", file_id: "F0xyz", permalink: "https://slack/…" });
+</code></pre>
+<p>连辅助层都来不及接的场景——比如一段临时 shell——也有最后一道兜底：</p>
+<pre><code class="language-bash">emit() { [ -n "$HARNESS_EVENT_SINK" ] &amp;&amp; printf '%s\n' "$1" | nc -U "$HARNESS_EVENT_SINK"; }
+emit '{"type":"tool.progress","tool":"slack.upload","pct":100}'
+</code></pre>
+<p>三段代码长得不一样，喷出来的事件却落进同一条流、过同一道 schema 校验、被同一个 fold 折叠——这就是“发射端允许多样、消费端保持唯一”那句话的字面实现。也正因如此，§7.3 里那条 stderr 进度漂移有了正解：进度不再靠父任务去猜 stderr，而是脚本主动 <code>emit</code> 一条 <code>tool.progress</code>；产物不再靠文件名猜，而是 <code>emit</code> 一条带 <code>sha256</code> 的 <code>artifact.written</code>。再回到那条分寸线——<code>SINK</code> 缺失时 <code>emit</code> 直接 no-op，脚本照样把活算完，宽容的只是“这次没报进度”；可消费端那边，artifact 契约和 gating validator 一个都不会因为 sink 缺席而豁免。一个闷头不报进度的脚本，顶多让 UI 少几行进度条，绝不会因此被偷偷判成 <code>ready</code>。</p>
+<h2 id="77-权限不是一个开关是能力契约的一部分"><a class="header" href="#77-权限不是一个开关是能力契约的一部分">7.7 权限不是一个开关，是能力契约的一部分</a></h2>
+<p>还剩最后一个问题：既然桥接能力能往外发文件、能花钱、能删东西，凭什么信得过它？答案不在“给不给 agent 权限”这个开关上，而在权限被建模成能力契约的一部分。回看 §7.5 那份 schema，<code>slack.upload</code> 带着 <code>scopes: ["slack:files.write", "slack:channel:#finance"]</code>——它要的不是“能用 Slack”，而是“能往 <code>#finance</code> 这一个频道写文件”。这是最小权限：能力的边界被写进契约，由消费端在调用前核对，而不是靠 agent 自觉。</p>
+<p>这也顺手堵死了一种本可以更阴险的“假成功”。设想模型不老实，直接在聊天里编一句“已生成回执 <code>F0xyz</code>”——它伪造不出第 6 章那件 <code>delivery.receipt</code> 产物，因为写这件产物的前提，是 <code>slack.upload</code> 真的握着 <code>slack:files.write</code> 的 scope、真的拿回了一个可回查的 <code>file_id</code>。权限和产物在这里互为锁扣：没有 scope，调用根本发不出去；没有真实回执，产物根本写不进流。模型能说的，永远只是一条 <code>model.claim</code>。</p>
+<p>更危险的动作，则要把人重新请回决策里。我们这条任务里，<code>slack:channel:#finance</code> 是预先授权的，所以一路无需打断；但假如它要做的是“给外部地址 <code>cfo@</code> 发一封带附件的邮件”，触到的就是 <code>email:send_external</code> 这类特权 scope——这时合理的设计不是放行，而是先在事实流里落一条 <code>approval.requested</code>，把任务挂起，等一条 <code>approval.decided</code> 回来再继续。这正是 Codex 那套 sandbox 加 approval 模型的用意：权限的授予、特权动作的审批、人工的放行或拒绝，全都是事实流里的一等事件，而不是某处代码里一个无人留痕的 <code>if</code>。<sup class="footnote-reference" id="fr-bridge-contract-ch7-1"><a href="#footnote-bridge-contract-ch7">2</a></sup> 把这一节连起来看就清楚了——能力平面之所以敢“伸得出手”，正是因为每只手伸出去时，都被 scope 框住、被产物契约盯住、被特权审批拦住，伸出去的每一下都在事实流里留着痕。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-capability-plane-ch7">
 <p>本章在此处综合 Claude Code <code>ToolUseContext</code>、MCP 与 agent 定义相关实现，以及 Codex <code>tools</code> 与 <code>app-server</code> 协议面中关于 command、fs、MCP、human input、多 agent 工具的公开边界，用来说明万用 agent 必须先拥有统一的能力平面；对应第 21 章参考文献 21、24。 <a href="#fr-capability-plane-ch7-1">↩</a></p>
+</li>
+<li id="footnote-bridge-contract-ch7">
+<p>本章在此处综合 Codex 开源仓库中 sandbox、approval 与工具 scope 的公开边界，以及 MCP 关于工具调用与资源读取的标准约定，用来说明桥接能力的结果契约、事件回流协议与权限模型；对应第 21 章参考文献 24、41。 <a href="#fr-bridge-contract-ch7-1">↩</a></p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -719,7 +853,31 @@ turn/started     { turn: 58 }      ← ⌘R 发生在这里
 <p>你同时开着两个会话：A 在重构支付模块，B 在写一份文档。两者都在跑。你在 A 里刷新。前端要历史，调了 <code>/messages?session=A</code>——到这步都对。可问题出在更下面一层：后端那张事件表为了查询快，建了个按用户聚合的缓存，回放时从缓存里取最近事件，而那段取数的代码，<strong>漏掉了 <code>session</code> 这个过滤条件</strong>。于是 B 刚产生的一条“文档已保存”事件，被当成 A 的历史回放了进来。A 的界面上，于是冒出一条它从没做过的动作。更糟的是，如果 A 的状态机看到这条“保存”就把阶段推进了，你会以为支付模块的某一步完成了——而它根本没动。</p>
 <p>注意这条 bug 的形状：后端的事件本身没错，每条事件都老老实实带着自己的 <code>session</code>；错的是<strong>回放路径在某一段把 scope 丢了</strong>。这就是为什么 scope 不能只在“产生事件”时存在，而必须从事件层、贯穿到回放层、再贯穿到渲染层——中间任何一段图省事把它丢掉，兄弟会话的状态就会从那个缺口里渗进来。</p>
 <p>把这一条想透，三条更普遍的规则就自然落地了，而且都指向同一件事：<strong>前端里不该存在第二套生命周期解释器。</strong> 直播和回看若各自解释“什么算一个阶段”，就会像 §8.2 那样闪；scope 若在任一层断掉，就会像刚才那样串；而 UI 若只显示一个干巴巴的状态词、不把最近动作和最近证据一并摆出，操作员就回到第 5.6 节那种盲区。前端可以做缓存、动画、布局，但它不能凭空发明一个阶段——它发明的每一个阶段，都是一条迟早要和后台对质、且必输的影子真相。</p>
-<h2 id="84-把回放写成一道门禁"><a class="header" href="#84-把回放写成一道门禁">8.4 把回放写成一道门禁</a></h2>
+<h2 id="84-把那唯一的解释器写成一个纯函数"><a class="header" href="#84-把那唯一的解释器写成一个纯函数">8.4 把那唯一的解释器，写成一个纯函数</a></h2>
+<p>“前端里不该存在第二套生命周期解释器”——这句话听着像戒律，其实有个很务实的落法：把那唯一的解释器，写成一个不带任何私有记忆的纯函数。它吃一串事件，吐一份可显示状态，仅此而已。沿用第 6.7 节那条 schema，它大致长这样：</p>
+<pre><code class="language-js">// fold: 事件流 → 可显示状态。纯函数：同样的输入，永远同样的输出。
+function fold(events) {
+  const v = { lifecycle: "queued", lastAction: null,
+              artifacts: {}, validators: {}, claims: [], terminalReason: null };
+  for (const e of events) {
+    switch (e.type) {
+      case "turn.started":     v.lifecycle = "running"; break;
+      case "tool.called":      v.lastAction = `${e.tool} …`; break;
+      case "tool.returned":    v.lastAction = `${e.tool} ${e.ok ? "ok" : "FAILED"}`; break;
+      case "artifact.written": v.artifacts[e.kind] = { sha256: e.sha256, path: e.path }; break;
+      case "model.claim":      v.claims.push(e.text); break;      // 记下来给人看，但不碰 lifecycle
+      case "verify.started":   v.lifecycle = "verifying"; break;
+      case "validator.result": v.validators[e.validator] = e.ok; break;
+      case "task.settled":     v.lifecycle = e.state; v.terminalReason = e.reason; break;
+    }
+  }
+  return v;
+}
+</code></pre>
+<p>这段代码里真正该被盯住的，是 <code>case "model.claim"</code> 那一行。它把模型那句声称推进一个 <code>claims</code> 列表——好让用户<strong>看得到</strong>模型说过什么——可它一个字都没碰 <code>v.lifecycle</code>。换句话说，在这个解释器里，模型的“已发送”和任务的“完成”之间，根本没有一条代码通路。</p>
+<p>把第 6 章那条任务的事件流喂进去，结论冷得发硬。<code>seq:8</code> 那句“已发送到 #finance”落进 <code>v.claims</code>，会作为一条聊天气泡显示出来；但 <code>v.lifecycle</code> 自始至终只听 <code>task.settled</code> 的——而那条 <code>task.settled</code> 是第 6.8 节那台状态机在 gating validator 失败后写下的 <code>{state:"failed", reason:"required_validator_failed:slack.delivered"}</code>。于是 fold 吐出的是 <code>lifecycle:"failed"</code>，外加一条人能读懂的原因，和一句“模型当时是这么说的”。那个绿色完成气泡，在这个函数里压根<strong>不可表示</strong>——不是因为前端工程师足够小心，而是因为 fold 的类型纪律让“从 model.claim 推出 done”这条路根本不存在。第 5.2 节那种“从 UI 反推事实”的假一致，到这里被釜底抽薪：UI 没有自己的薪可烧了，它能显示的每一个生命周期值，都只能由 <code>task.settled</code> 这一种事件点着。</p>
+<p>这也顺手解释了为什么 §8.1 那次刷新能平静收场。刷新清空的是浏览器内存，可 <code>fold</code> 没有内存可清——它的“当前状态”是事实流的纯函数，刷新只是拿同一条流再求一次值。前端可以缓存这条流、可以只折叠增量、可以给状态变化加动画，但它求值的唯一依据，永远是那串它无权改写的事件。</p>
+<h2 id="85-把回放写成一道门禁"><a class="header" href="#85-把回放写成一道门禁">8.5 把回放写成一道门禁</a></h2>
 <p>这类问题最阴的地方在于，单元测试照不到它们——它们只在“刷新、重连、切会话”这些动作发生的那一瞬现形。所以测试得换个写法：与其断言某个函数的返回值，不如断言<strong>两条路径给出的世界是不是同一个</strong>。</p>
 <p>最该先写的那道门禁，正好就是 §8.1 那个场景的自动化版本。它做三件事：起一个任务，让它跑到中途某个确定的阶段（比如 <code>refactor 3/7</code>）；然后分别走两条路——一条直接读任务快照接口 <code>/api/sessions/:id/tasks</code>，一条把 SSE 流从头回放一遍 fold 出状态；最后断言这两个状态在生命周期上<strong>逐字段相等</strong>。这道断言一旦挂上 CI，§8.2 那种“两个对象模型悄悄分叉”的 bug 就再也合不进主干——因为它一分叉，这道门禁立刻红。</p>
 <p>其余的断言是它的同族，方向都一样：刷新前后、重连前后、切会话前后，用户看到的必须是同一份任务事实；历史回放绝不能把兄弟 session 的状态带进当前容器（这正是 §8.3 那道缺口的守卫）；子 agent 摘要、主产物状态、验证证据，刷新后必须依然在；流中断后用 replay 重建的状态，要和恢复直推后继续推送的状态严丝合缝。</p>
@@ -754,6 +912,34 @@ turn/started     { turn: 58 }      ← ⌘R 发生在这里
 <p>第 5.7 节讲“失败模式博物馆”，重点是<strong>归档</strong>——把每次有价值的翻车连同根因存成可查的记录。到第 9 章，重点要从归档变成<strong>回流</strong>：归档只是把教训写下来，回流是把教训接回系统。</p>
 <p>拿刚才那次连接池串扰走完整条回流。它先进博物馆，有了名字和根因。然后它要长出三样东西：一个 dashboard 信号——“同一连接上出现跨 session 事件”立刻标红，让它下次一冒头就可见；一段门禁脚本——就是 §9.4 里那条两 session、强制重连的 fleet 用例，把它焊进发布前的检查；以及一条 runbook（写明“看到这个标红，先按这几步隔离、再这样恢复”的操作手册），让凌晨两点接班的人不必从零推理。只有走完这三步，一个事故才真正变成了控制面的免疫力——同类问题再来，要么被门禁挡在合并前，要么在盘上一眼可见、还配着现成处置。</p>
 <p>这一步最常被省掉，写完一份漂亮复盘就归档了事；可它恰恰是复盘有没有白做的分水岭。某种意义上，一套控制面的成熟度，就等于“有多少条事故，已经回流成了免疫力”。</p>
+<h2 id="96-把那条假成功丢进-fleet-门禁"><a class="header" href="#96-把那条假成功丢进-fleet-门禁">9.6 把那条“假成功”，丢进 fleet 门禁</a></h2>
+<p>把“归档 → 门禁 → runbook”这套回流，套到那条贯穿全卷的周报任务上，整章的抽象就落地了。先问一个最朴素的问题：第 6 章那台状态机已经把 <code>t_9f2</code> 判成了 <code>failed</code>，可万一某条 buggy 的代码路径——或者一个图省事的旧前端——硬把它写成了 <code>ready</code>，谁来兜底？这正是 fleet 门禁该站的位置。它不重算业务逻辑，它只对“终态”做一次真实性体检：</p>
+<pre><code class="language-python"># fleet 门禁：终态真实性。凡是进入 ready 的任务，证据必须齐备。
+def assert_terminal_authentic(task):
+    if task.state != "ready":
+        return Ok()                              # 只管 ready，不为难还在跑的任务
+    for v in task.required_validators:           # required_validators 来自 artifact 契约
+        r = task.validators.get(v)
+        if r is None:
+            return Fail("MISSING_VALIDATOR",     f"{task.id}: ready 但 {v} 从未运行")
+        if not r.ok:
+            return Fail("READY_OVER_FAILED_GATE", f"{task.id}: ready 但 {v} 为 ok=false")
+    for a in task.required_artifacts:            # 主产物必须显式归属、且已校验
+        if a.kind not in task.artifacts:
+            return Fail("MISSING_ARTIFACT",      f"{task.id}: ready 但缺产物 {a.kind}")
+    return Ok()
+</code></pre>
+<p>拿它去验那条任务：契约要的 <code>delivery.receipt</code> 从没被写进流，<code>slack.delivered</code> 这条 gating validator 是 <code>ok=false</code>。于是只要有谁试图把 <code>t_9f2</code> 标成 <code>ready</code>，门禁立刻在 <code>READY_OVER_FAILED_GATE</code> 上炸开——而且它吐的是一个<strong>有名有姓的诊断类别</strong>，不是笼统一句 <code>failed</code>。这就是 §9.4 那条“终态不能在验证前就被宣布成功”从口号变成代码的样子：第 6 章把终态裁决权从模型手里拿走，第 9 章再用门禁兜住“万一裁决被绕过”的最后一种可能。两道关一前一后，“假成功”连越狱的缝都没有。</p>
+<p>而当值班的人凌晨被这条门禁叫醒，他该看到的不是三千行 transcript，是 §9.2 那种折叠好的卡片：</p>
+<pre><code class="language-text">任务 t_9f2 · 季度周报投递              状态  verifying → failed
+  最近动作   slack.upload   FAILED (upload_incomplete: completeUpload 超时)
+  产物       report.pdf      ✓ 已校验 (sha256 9c0b…)
+             delivery.receipt ✗ 缺失
+  门禁       slack.delivered  ✗   →  READY_OVER_FAILED_GATE
+  归属       session u_12 / task t_9f2
+  恢复       slack.upload 标了 retryable=true，可从 seq 6 重试该步
+</code></pre>
+<p>读完这张卡，他不需要推理，只需要决断——而且决断所需的每一格，都能在事实流里指回一条具体事件。最后，按 §9.5 那条回流走完闭环：这次事故进博物馆，命名为“两段式上传只确认了第一段”；它长出一个 dashboard 信号——“任意 <code>ready</code> 任务的 gating validator 不是全绿，立即标红”，让同类问题下次一冒头就可见；长出一条门禁——就是上面那段 <code>assert_terminal_authentic</code>，焊进发布前检查；再长出一条 runbook——“看到 <code>READY_OVER_FAILED_GATE</code>：先核对对应 validator 的 evidence，再决定重试该步还是整单回滚”。走完这三步，这条贯穿了五章的“假成功”，才算真正变成了系统的免疫力：它被设计挡在 <code>ready</code> 之外（第 6 章），被能力契约堵住伪造（第 7 章），被 UI 拒绝渲染成完成（第 8 章），最后被门禁兜住、被复盘回流（第 9 章）。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
@@ -795,6 +981,28 @@ UI / Operator 负责人
 <p>但也别走到另一个极端，把什么都拆成 swarm。有几类任务，单个超长上下文仍然合理：要对全局原文做一次统一的排序、比对或证据归并时；任务主要是全局摘要、不涉及局部修改和反复迭代时；原料高度相关、拆开反而割裂语义连续性时；上下文能一次缓存、多轮查询主要复用同一大语料时；以及你更在意一次性的全局理解、而非并行吞吐时。只要这些前提稍一动摇，sub-agent 方案往往就开始占优——尤其当三条同时成立：材料天然可分 shard、子问题能先局部求解再全局汇总、每轮失败重试代价很高，这时就该优先考虑分解。</p>
 <h2 id="104-让-swarm-不失控的四条硬规则"><a class="header" href="#104-让-swarm-不失控的四条硬规则">10.4 让 swarm 不失控的四条硬规则</a></h2>
 <p>多 agent 一旦上线，最先失控的通常不是模型质量，是控制面纪律。至少有四条规则要焊死。第一，<strong>子 agent 不直接宣布系统终态</strong>——只有 coordinator 加 verifier 能裁决 ready / failed，这是第 13 章那条假成功链的正面解药。第二，<strong>子 agent 之间不共享隐式上下文</strong>，能共享的只有显式的任务说明、事实流引用和被授权的中间产物，否则就回到第 5.3 节那种串扰。第三，<strong>每个子 agent 都必须能被单独恢复、单独取消、单独审计</strong>——群体里一旦有谁不可单独操作，排障时就只能整片重来。第四，<strong>任何协议、生命周期、回放或 scope 语义的变更，都要同步更新 fixture、门禁、E2E 和文档</strong>，否则多 agent 的复杂度会让一处不同步迅速扩散成多处事故。守不住这四条，多 agent 只会比单 agent 更快地制造混乱；守住了，它才真正变成能放大团队产能的协作系统。</p>
+<h2 id="105-把那条任务交给一个-swarm谁有权说-ready"><a class="header" href="#105-把那条任务交给一个-swarm谁有权说-ready">10.5 把那条任务交给一个 swarm：谁有权说 ready</a></h2>
+<p>§10.4 那四条硬规则里，第一条最该被做成协议而不是口号——“子 agent 不直接宣布系统终态”。把它讲透，最好的办法还是回到那条贯穿全卷的周报任务，只不过这次，它不再由一个 agent 独力完成，而是被拆给一个小 swarm：</p>
+<pre><code class="language-text">coordinator ──spawn_agent("data-worker",     goal="渲染 q2 PDF")──────────▶ w1
+coordinator ──spawn_agent("delivery-worker",  goal="发到 #finance", needs=[a_pdf_1])──▶ w2
+coordinator ──spawn_agent("verifier",         goal="按契约核对产物", gating=true)──▶ v1
+</code></pre>
+<p>三个 worker 各干各的，但它们写进的是<strong>同一条</strong>事实流，只是每条事件都带上 <code>actor</code> 标明出处。于是那次熟悉的失败，在 swarm 里长这样：</p>
+<pre><code class="language-jsonl">{"seq":5, "actor":"agent:w1",          "type":"artifact.written","kind":"report.pdf","artifact_id":"a_pdf_1"}
+{"seq":7, "actor":"agent:w2",          "type":"tool.returned","tool":"slack.upload","ok":false}
+{"seq":8, "actor":"agent:w2",          "type":"subagent.reported","status":"blocked","reason":"upload_incomplete"}
+{"seq":9, "actor":"agent:v1",          "type":"validator.result","validator":"slack.delivered","ok":false,"gating":true}
+{"seq":10,"actor":"agent:coordinator", "type":"task.settled","state":"failed","reason":"required_validator_failed:slack.delivered"}
+</code></pre>
+<p>关键不在这串事件本身，而在<strong>谁有资格写哪一种事件</strong>。把它做成一张权限表，第一条硬规则就从一句叮嘱变成了系统强制的边界：</p>
+<pre><code class="language-text">事件类型            允许写入的角色
+  artifact.written    任何 worker（只能写自己 scope 内的产物）
+  subagent.reported   worker 自己（done / blocked / failed，仅描述本子任务的状态）
+  validator.result    仅 verifier
+  task.settled        仅 coordinator，且必须在所有 gating validator.result 之后
+</code></pre>
+<p>读懂这张表，整本书的论点在多 agent 这层闭合了。delivery-worker（w2）上传失败时，它<strong>能</strong>做的，是诚实地写一条 <code>subagent.reported: blocked</code>——描述“我这一步卡住了”；它<strong>不能</strong>做的，是写 <code>task.settled</code>——宣布“整单完成”。这一行权限，正是第 6 章那条“模型只能 <code>model.claim</code>、无权宣布终态”的规则，在 swarm 拓扑上的同构投影：worker 只能提议和汇报，verifier 只能裁定单项，唯有 coordinator 能在所有 gating 项落定之后，写下那一条 <code>task.settled</code>。</p>
+<p>反过来想就更清楚了。一个偷懒的 swarm，如果允许 delivery-worker 自己喊一句“发完了，收工”，那它不过是把第 6 章那个单 agent 的“假成功”，原样乘上了 agent 的数量——每多一个能自宣终态的 worker，就多一个能撒谎的嘴。这也正是 §10.3 那个判断的另一面：sub-agent 的价值从来不是“多开几个并行”，而是在“多嘴多手”的同时，把<strong>裁决权死死收敛到一个角色</strong>。手可以很多，脑可以分工，但说“这单成了”的权力，整个 swarm 里只能有一份。<sup class="footnote-reference" id="fr-claudecode-codex-multiagent-ch10-2"><a href="#footnote-claudecode-codex-multiagent-ch10">2</a></sup> 谁都能宣布成功的系统，等于谁都没在负责成功。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
@@ -802,7 +1010,7 @@ UI / Operator 负责人
 <p>Anthropic, <em>Scaling Managed Agents: Decoupling the brain from the hands.</em> 本章在此处使用其 many brains / many hands 的组织视角，说明 coordinator、worker 与 verifier 的分工；对应第 21 章参考文献 3。 <a href="#fr-many-brains-ch10-1">↩</a></p>
 </li>
 <li id="footnote-claudecode-codex-multiagent-ch10">
-<p>本章在此处综合 Claude Code 的 <code>AgentTool.tsx</code>、<code>loadAgentsDir.ts</code>、<code>teammateMailbox.ts</code>、<code>worktree.ts</code> 等实现，以及 Codex <code>spawn_agent</code> / <code>send_input</code> / <code>wait_agent</code> / <code>resume_agent</code> 等工具原语，用来说明多 agent 需要角色、通信、隔离、汇总与恢复这些一等能力；对应第 21 章参考文献 21、24。 <a href="#fr-claudecode-codex-multiagent-ch10-1">↩</a></p>
+<p>本章在此处综合 Claude Code 的 <code>AgentTool.tsx</code>、<code>loadAgentsDir.ts</code>、<code>teammateMailbox.ts</code>、<code>worktree.ts</code> 等实现，以及 Codex <code>spawn_agent</code> / <code>send_input</code> / <code>wait_agent</code> / <code>resume_agent</code> 等工具原语，用来说明多 agent 需要角色、通信、隔离、汇总与恢复这些一等能力；对应第 21 章参考文献 21、24。 <a href="#fr-claudecode-codex-multiagent-ch10-1">↩</a> <a href="#fr-claudecode-codex-multiagent-ch10-2">↩2</a></p>
 </li>
 <li id="footnote-swarm-econ-ch10">
 <p>本章在此处综合 Anthropic 的 managed agents 视角、OpenAI API Pricing 关于 <code>under 270K</code> 标准费率的限定、Google Gemini 1.5 关于 1M context pricing tiers 与 latency 的说明、Google long context 文档关于 retrieval-cost tradeoff 与 caching 的说明、LongLLMLingua 关于 higher computational cost / performance reduction / position bias 的概括，以及 MInference 关于 1M token prefill 代价的摘要数字，用于说明 sub-agent / swarm 在质量、成本与时延上的优势；对应第 21 章参考文献 3、14、15、18、19、20。 <a href="#fr-swarm-econ-ch10-1">↩</a> <a href="#fr-swarm-econ-ch10-2">↩2</a></p>

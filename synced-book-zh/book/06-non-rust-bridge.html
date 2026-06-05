@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-98445f9a.js";
+            window.path_to_searchindex_js = "searchindex-7b12c9f9.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-f88cc8f9.js"></script>
+        <script src="toc-cf7b5ff6.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -196,11 +196,68 @@
 <p>发射端要宽容，因为你拦不住生态。给 Python、Node、shell、外部服务各提供一个轻量的事件发射辅助层，让它们能方便地把进度、产物、证据按规矩报上来；再提供一个 CLI 或环境变量形式的兜底桥（比如一个 <code>HARNESS_EVENT_SINK</code>），连辅助层都来不及接的脚本，也能靠它把关键事实喷进同一条流。这里有个分寸：sink 缺失时可以 no-op（脚本照跑，只是这次没报结构化进度），但<strong>绝不允许因为 sink 缺失就跳过结果契约和终态验证</strong>——宽容的是“怎么报”，不容商量的是“报上来的东西必须过同一道关”。</p>
 <p>消费端则必须铁面。无论事实从哪种语言、哪个进程喷进来，它在进入系统时都要被同一套规则校验一遍：schema 对不对、带没带 session/topic scope、phase 合不合法、artifact 引用指向哪、validator 证据齐不齐。回到 §7.3 那段 Python 脚本——只要消费端这道关在，它那条 stderr 进度会被判为“无结构、不计入”，它猜的那条产物路径会因为不在契约里而被打回，串扰会因为缺 scope 而被拦下。同一段脚本，接法没变，但因为消费端不松口，它再也污染不了父任务的事实。</p>
 <p>这一章守的边界，会在平台越做越开放时变得越来越重要。等到要接插件市场、第三方 workflow、外部 agent，能力平面就是最先要守住的那道线——否则平台每开放一步，事实协议就被侵蚀一步，最后退回到谁也说不清“现在到底是什么状态”的那种系统。</p>
+<h2 id="75-把那次-slack-上传做成一个合规的桥接能力"><a class="header" href="#75-把那次-slack-上传做成一个合规的桥接能力">7.5 把那次 Slack 上传，做成一个合规的桥接能力</a></h2>
+<p>抽象讲到这儿，正好可以拿第 6 章那条任务来对质。那次把 <code>q2-weekly.pdf</code> 发到 <code>#finance</code> 的失败，根子就在 <code>slack.upload</code> 这个能力是怎么接进系统的。如果它只是 prompt 里一段顺手写的 <code>curl</code>，那 §7.3 那条污染链会原样上演；而如果它是一个有契约的桥接能力，长相是这样的：</p>
+<pre><code class="language-json">{
+  "name": "slack.upload",
+  "scopes": ["slack:files.write", "slack:channel:#finance"],
+  "args_schema": {"channel": "string", "file_path": "string", "title": "string?"},
+  "result_contract": {
+    "success_means": "files.completeUpload 返回 2xx 且 file_id 可回查",
+    "on_success": {"emit_artifact": {"kind": "delivery.receipt",
+                                     "fields": ["channel", "file_id", "permalink", "ts"]}}
+  }
+}
+</code></pre>
+<p>这份契约里最要命的一行是 <code>success_means</code>。Slack 的上传分两段——先 <code>files.getUploadURLExternal</code> 拿通道，再 <code>files.completeUpload</code> 落盘——而契约明确把“成功”钉在第二段的确认上，外加一个“<code>file_id</code> 可回查”的硬条件。第一段那个 2xx，在这份契约里什么都不算。于是那次 <code>completeUpload</code> 超时，桥接层根本没有“乐观上报”的接口可用：按契约，它只能往事实流写第 6 章里那条 <code>seq:7</code>——<code>ok:false</code>，并且<strong>不</strong>产生 <code>delivery.receipt</code> 这件产物。</p>
+<p>把这件事说穿：第 6 章里状态机之所以能看见那次失败，不是因为模型诚实，而是因为工具契约根本不给它撒谎的入口。<code>success_means</code> 把“成功”的定义从模型的语义直觉、从 HTTP 状态码，挪到了一个可回查的客观事实上；<code>on_success.emit_artifact</code> 又规定了“成功必须留下一件具名产物”。这两条合起来，正好喂饱了第 6.9 节那条 <code>slack.delivered</code> 验证器——它要找的 <code>delivery.receipt</code> 没出现，于是 gating 失败，终态落到 <code>failed</code>。能力契约和验证契约，在这里严丝合缝地咬上了。</p>
+<h2 id="76-事件汇流口的具体协议一段脚本怎样把事实喷回主流"><a class="header" href="#76-事件汇流口的具体协议一段脚本怎样把事实喷回主流">7.6 事件汇流口的具体协议：一段脚本怎样把事实喷回主流</a></h2>
+<p>§7.4 给了一个名字叫 <code>HARNESS_EVENT_SINK</code> 的兜底桥，这里把它摊开成可以照抄的协议。它其实简单到近乎朴素：harness 在拉起桥接进程前，打开一个汇流口（一个 unix domain socket 或具名管道），把它的地址塞进环境变量 <code>HARNESS_EVENT_SINK</code>，再把任务标识塞进 <code>HARNESS_TASK_ID</code>。桥接进程要做的，就一件事——把自己产生的事实，按和原生事件<strong>一模一样</strong>的 schema，逐行 JSON 写进这个口。</p>
+<p>Python 那段在 §7.3 里闯过祸的脚本，接上协议之后是这样：</p>
+<pre><code class="language-python">import os, json, socket
+SINK = os.environ.get("HARNESS_EVENT_SINK")
+
+def emit(ev):
+    if not SINK:                       # sink 缺失 → no-op，脚本照常算完
+        return
+    ev.setdefault("task_id", os.environ["HARNESS_TASK_ID"])
+    with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
+        s.connect(SINK)
+        s.sendall((json.dumps(ev, ensure_ascii=False) + "\n").encode())
+
+emit({"type": "tool.progress", "tool": "report.render", "pct": 40})
+# … 生成 PDF …
+emit({"type": "artifact.written", "kind": "report.pdf",
+      "path": "out/q2-weekly.pdf", "sha256": sha256_of("out/q2-weekly.pdf")})
+</code></pre>
+<p>换成 Node，逻辑一字不差，只是语言皮肤不同：</p>
+<pre><code class="language-js">const net = require("net");
+const SINK = process.env.HARNESS_EVENT_SINK;
+function emit(ev) {
+  if (!SINK) return;
+  ev.task_id ??= process.env.HARNESS_TASK_ID;
+  const c = net.createConnection(SINK, () =&gt; c.end(JSON.stringify(ev) + "\n"));
+}
+emit({ type: "artifact.written", kind: "delivery.receipt",
+       channel: "#finance", file_id: "F0xyz", permalink: "https://slack/…" });
+</code></pre>
+<p>连辅助层都来不及接的场景——比如一段临时 shell——也有最后一道兜底：</p>
+<pre><code class="language-bash">emit() { [ -n "$HARNESS_EVENT_SINK" ] &amp;&amp; printf '%s\n' "$1" | nc -U "$HARNESS_EVENT_SINK"; }
+emit '{"type":"tool.progress","tool":"slack.upload","pct":100}'
+</code></pre>
+<p>三段代码长得不一样，喷出来的事件却落进同一条流、过同一道 schema 校验、被同一个 fold 折叠——这就是“发射端允许多样、消费端保持唯一”那句话的字面实现。也正因如此，§7.3 里那条 stderr 进度漂移有了正解：进度不再靠父任务去猜 stderr，而是脚本主动 <code>emit</code> 一条 <code>tool.progress</code>；产物不再靠文件名猜，而是 <code>emit</code> 一条带 <code>sha256</code> 的 <code>artifact.written</code>。再回到那条分寸线——<code>SINK</code> 缺失时 <code>emit</code> 直接 no-op，脚本照样把活算完，宽容的只是“这次没报进度”；可消费端那边，artifact 契约和 gating validator 一个都不会因为 sink 缺席而豁免。一个闷头不报进度的脚本，顶多让 UI 少几行进度条，绝不会因此被偷偷判成 <code>ready</code>。</p>
+<h2 id="77-权限不是一个开关是能力契约的一部分"><a class="header" href="#77-权限不是一个开关是能力契约的一部分">7.7 权限不是一个开关，是能力契约的一部分</a></h2>
+<p>还剩最后一个问题：既然桥接能力能往外发文件、能花钱、能删东西，凭什么信得过它？答案不在“给不给 agent 权限”这个开关上，而在权限被建模成能力契约的一部分。回看 §7.5 那份 schema，<code>slack.upload</code> 带着 <code>scopes: ["slack:files.write", "slack:channel:#finance"]</code>——它要的不是“能用 Slack”，而是“能往 <code>#finance</code> 这一个频道写文件”。这是最小权限：能力的边界被写进契约，由消费端在调用前核对，而不是靠 agent 自觉。</p>
+<p>这也顺手堵死了一种本可以更阴险的“假成功”。设想模型不老实，直接在聊天里编一句“已生成回执 <code>F0xyz</code>”——它伪造不出第 6 章那件 <code>delivery.receipt</code> 产物，因为写这件产物的前提，是 <code>slack.upload</code> 真的握着 <code>slack:files.write</code> 的 scope、真的拿回了一个可回查的 <code>file_id</code>。权限和产物在这里互为锁扣：没有 scope，调用根本发不出去；没有真实回执，产物根本写不进流。模型能说的，永远只是一条 <code>model.claim</code>。</p>
+<p>更危险的动作，则要把人重新请回决策里。我们这条任务里，<code>slack:channel:#finance</code> 是预先授权的，所以一路无需打断；但假如它要做的是“给外部地址 <code>cfo@</code> 发一封带附件的邮件”，触到的就是 <code>email:send_external</code> 这类特权 scope——这时合理的设计不是放行，而是先在事实流里落一条 <code>approval.requested</code>，把任务挂起，等一条 <code>approval.decided</code> 回来再继续。这正是 Codex 那套 sandbox 加 approval 模型的用意：权限的授予、特权动作的审批、人工的放行或拒绝，全都是事实流里的一等事件，而不是某处代码里一个无人留痕的 <code>if</code>。<sup class="footnote-reference" id="fr-bridge-contract-ch7-1"><a href="#footnote-bridge-contract-ch7">2</a></sup> 把这一节连起来看就清楚了——能力平面之所以敢“伸得出手”，正是因为每只手伸出去时，都被 scope 框住、被产物契约盯住、被特权审批拦住，伸出去的每一下都在事实流里留着痕。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-capability-plane-ch7">
 <p>本章在此处综合 Claude Code <code>ToolUseContext</code>、MCP 与 agent 定义相关实现，以及 Codex <code>tools</code> 与 <code>app-server</code> 协议面中关于 command、fs、MCP、human input、多 agent 工具的公开边界，用来说明万用 agent 必须先拥有统一的能力平面；对应第 21 章参考文献 21、24。 <a href="#fr-capability-plane-ch7-1">↩</a></p>
+</li>
+<li id="footnote-bridge-contract-ch7">
+<p>本章在此处综合 Codex 开源仓库中 sandbox、approval 与工具 scope 的公开边界，以及 MCP 关于工具调用与资源读取的标准约定，用来说明桥接能力的结果契约、事件回流协议与权限模型；对应第 21 章参考文献 24、41。 <a href="#fr-bridge-contract-ch7-1">↩</a></p>
 </li>
 </ol>
 

@@ -42,6 +42,43 @@ Codex 给的是同一件事的另一半：地基。它用 `Thread` / `Turn` / `I
 
 这一步最常被省掉，写完一份漂亮复盘就归档了事；可它恰恰是复盘有没有白做的分水岭。某种意义上，一套控制面的成熟度，就等于“有多少条事故，已经回流成了免疫力”。
 
+## 9.6 把那条“假成功”，丢进 fleet 门禁
+
+把“归档 → 门禁 → runbook”这套回流，套到那条贯穿全卷的周报任务上，整章的抽象就落地了。先问一个最朴素的问题：第 6 章那台状态机已经把 `t_9f2` 判成了 `failed`，可万一某条 buggy 的代码路径——或者一个图省事的旧前端——硬把它写成了 `ready`，谁来兜底？这正是 fleet 门禁该站的位置。它不重算业务逻辑，它只对“终态”做一次真实性体检：
+
+```python
+# fleet 门禁：终态真实性。凡是进入 ready 的任务，证据必须齐备。
+def assert_terminal_authentic(task):
+    if task.state != "ready":
+        return Ok()                              # 只管 ready，不为难还在跑的任务
+    for v in task.required_validators:           # required_validators 来自 artifact 契约
+        r = task.validators.get(v)
+        if r is None:
+            return Fail("MISSING_VALIDATOR",     f"{task.id}: ready 但 {v} 从未运行")
+        if not r.ok:
+            return Fail("READY_OVER_FAILED_GATE", f"{task.id}: ready 但 {v} 为 ok=false")
+    for a in task.required_artifacts:            # 主产物必须显式归属、且已校验
+        if a.kind not in task.artifacts:
+            return Fail("MISSING_ARTIFACT",      f"{task.id}: ready 但缺产物 {a.kind}")
+    return Ok()
+```
+
+拿它去验那条任务：契约要的 `delivery.receipt` 从没被写进流，`slack.delivered` 这条 gating validator 是 `ok=false`。于是只要有谁试图把 `t_9f2` 标成 `ready`，门禁立刻在 `READY_OVER_FAILED_GATE` 上炸开——而且它吐的是一个**有名有姓的诊断类别**，不是笼统一句 `failed`。这就是 §9.4 那条“终态不能在验证前就被宣布成功”从口号变成代码的样子：第 6 章把终态裁决权从模型手里拿走，第 9 章再用门禁兜住“万一裁决被绕过”的最后一种可能。两道关一前一后，“假成功”连越狱的缝都没有。
+
+而当值班的人凌晨被这条门禁叫醒，他该看到的不是三千行 transcript，是 §9.2 那种折叠好的卡片：
+
+```text
+任务 t_9f2 · 季度周报投递              状态  verifying → failed
+  最近动作   slack.upload   FAILED (upload_incomplete: completeUpload 超时)
+  产物       report.pdf      ✓ 已校验 (sha256 9c0b…)
+             delivery.receipt ✗ 缺失
+  门禁       slack.delivered  ✗   →  READY_OVER_FAILED_GATE
+  归属       session u_12 / task t_9f2
+  恢复       slack.upload 标了 retryable=true，可从 seq 6 重试该步
+```
+
+读完这张卡，他不需要推理，只需要决断——而且决断所需的每一格，都能在事实流里指回一条具体事件。最后，按 §9.5 那条回流走完闭环：这次事故进博物馆，命名为“两段式上传只确认了第一段”；它长出一个 dashboard 信号——“任意 `ready` 任务的 gating validator 不是全绿，立即标红”，让同类问题下次一冒头就可见；长出一条门禁——就是上面那段 `assert_terminal_authentic`，焊进发布前检查；再长出一条 runbook——“看到 `READY_OVER_FAILED_GATE`：先核对对应 validator 的 evidence，再决定重试该步还是整单回滚”。走完这三步，这条贯穿了五章的“假成功”，才算真正变成了系统的免疫力：它被设计挡在 `ready` 之外（第 6 章），被能力契约堵住伪造（第 7 章），被 UI 拒绝渲染成完成（第 8 章），最后被门禁兜住、被复盘回流（第 9 章）。
+
 [^operator-plane-ch9]: 本章在此处综合 Claude Code `agentSummary.ts`、`diskOutput.ts`、resume 相关实现，以及 Codex `Thread` / `Turn` / `Item` 的对象分层，用来说明操作员控制面应如何建立在统一事实流之上；对应第 21 章参考文献 21、24。
 
 ---

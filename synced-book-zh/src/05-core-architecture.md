@@ -1,4 +1,4 @@
-# 6. 核心 Harness 架构：把样本反推成可复用总图
+# 6. 核心 Harness 架构：从样本反推到可实现的参考架构
 
 第 4 章给了正向样本，第 5 章给了反面叙事。把两者叠在一起看，会浮出一个比“某个仓库怎么写的”更稳的结论：成熟的 agent 系统，最终都会收敛到同一张运行时总图。Claude Code 把这张总图长成了一套丰满的器官，Codex 把它拆成了一套更清楚的模块边界——我们真正要吸收的，不是它们的代码排版，而是这张图背后的责任分工。[^claudecode-codex-spine-ch6]
 
@@ -78,7 +78,121 @@ Karpathy 的 autoresearch 经验点过一个朴素却要命的事实：长期知
 
 很多系统一开始忍不住要更“聪明”的状态层——把前端状态当事实、把聊天 transcript 当事实、把临时日志解析当事实、把缓存快照当事实。它们在 demo 阶段往往更轻便；可一旦进了刷新恢复、跨设备续跑、后台任务、子 agent 协作、事故排查这些真实场景，就会发现这些状态没有一个够硬。所以任务状态、SSE 回放、操作员仪表盘，本质上都该从同一条只追加的事实流派生，而不是各自攒一份“看起来差不多”的影子状态——这也正是后面第 8、9 两章会反复回到的那条底线。
 
-## 6.6 这张总图，怎样展开成后面的章节
+## 6.6 一条贯穿卷三的任务：先把“假成功”摆到台面上
+
+到这里，总图、词汇表、四支柱都立住了，可它们还停在“应该这样”的高度。要让这张图变成能照着搭的东西，得先把它要保护的对象拽到眼前——一条具体的任务，具体到能一行行追下去。
+
+设想一个普通的周一早晨。一位财务分析师在对话框里敲下一句话：“把 `data/q2/` 下最新的季度数据汇成 PDF 周报，发到 `#finance` 频道，抄送给 `cfo@`。”这不是什么刁钻需求，agent 该做的事也很直白：读数据、渲染 PDF、把文件传到 Slack、回一句确认。它确实照做了——读到了 48KB 的源数据，生成了一份四页、能正常打开的 `q2-weekly.pdf`，然后调用 Slack 上传。
+
+裂缝就出在最后一步。Slack 的文件上传分两段：先 `files.getUploadURLExternal` 拿到通道，再 `files.completeUpload` 确认落盘。第一段返回了 2xx，第二段却在一次网络抖动里超时了。文件没真正出现在 `#finance`。可这时 agent 的 turn 预算也快见底，它没有再回头核对那条上传到底成没成，而是顺着“我刚才把文件传上去了”的语义惯性，在聊天里写下：“✅ 已生成 `q2-weekly.pdf` 并发送到 `#finance`，已抄送 CFO。”前端把这句话渲染成一个绿色的完成气泡。三天后，CFO 在例会上问：周报呢？
+
+这就是第 5 章里那类“假成功”的标准长相——系统的每一层都没撒谎，可拼到一起，它对用户说了一个根本没发生的事。我们会让这条任务贯穿整个卷三：第 7 章讲那次 Slack 上传为什么必须是一个有 schema、有回执、有权限边界的桥接能力，而不是一段塞在 prompt 里的 `curl`；第 8 章讲前端凭什么不该把那句“已发送”直接画成 done；第 9 章讲一个 fleet 门禁本应在 `verifying` 阶段就把它挡在 `ready` 之外；第 10 章讲如果这件事是交给一个 swarm 做的，到底谁才有权宣布终态；到第 15 章，我们会把它写成一份操作员三十秒能读懂的事故复盘。而这一章接下来要做的，是把那台“本该拦下假成功”的机器，从总图落成几样具体的数据结构。
+
+## 6.7 事实流的具体形状：是事件，不是聊天
+
+在“灵光一闪”的系统里，这条任务的“状态”就是聊天框里那句“已发送”——它既是过程，又是结论，还是唯一的证据。工厂模式的第一刀，就是把这三者切开：状态不再是某段会被原地覆盖的文本，而是一条只追加、单调增长的事件流。沿用 Karpathy 那套 `session.jsonl` 的思路，上面那条任务真正落到事实流里，长这样：[^karpathy-bookkeeping-ch6]
+
+```jsonl
+{"seq":1,"ts":"2026-06-02T09:00:01Z","type":"task.created","task_id":"t_9f2","goal":"生成 q2 周报并发到 #finance","actor":"user:u_12"}
+{"seq":2,"ts":"2026-06-02T09:00:02Z","type":"turn.started","task_id":"t_9f2","turn":1}
+{"seq":3,"ts":"2026-06-02T09:00:03Z","type":"tool.called","turn":1,"tool":"fs.read","scope":"data/q2/","args_digest":"sha256:1a3f…"}
+{"seq":4,"ts":"2026-06-02T09:00:04Z","type":"tool.returned","turn":1,"tool":"fs.read","ok":true,"bytes":48213}
+{"seq":5,"ts":"2026-06-02T09:00:31Z","type":"artifact.written","turn":1,"artifact_id":"a_pdf_1","kind":"report.pdf","path":"out/q2-weekly.pdf","sha256":"9c0b…","bytes":91204}
+{"seq":6,"ts":"2026-06-02T09:00:33Z","type":"tool.called","turn":1,"tool":"slack.upload","scope":"channel:#finance","args_digest":"sha256:77d2…"}
+{"seq":7,"ts":"2026-06-02T09:01:03Z","type":"tool.returned","turn":1,"tool":"slack.upload","ok":false,"error":"upload_incomplete: completeUpload timed out","retryable":true}
+{"seq":8,"ts":"2026-06-02T09:01:05Z","type":"model.claim","turn":1,"text":"已发送到 #finance，已抄送 CFO"}
+```
+
+把 `seq:7` 和 `seq:8` 并排放着看，整本书的论点几乎就压在这两行里。工具回执白纸黑字写着 `ok:false`，模型却在下一行声称“已发送”。在“聊天即事实”的系统里，人能看到的只有 `seq:8`，`seq:7` 从一开始就没被当成状态；而在“事件即事实”的系统里，`seq:7` 永远在那，并且 `seq:8` 被显式标成 `model.claim`——模型的“声称”，一种和 `tool.returned` 截然不同的事件类型。它进了日志，却没有资格改写终态。
+
+这条 schema 的几个约定，都是被前面的事故逼出来的，值得逐一点破。每条事件都带一个单调递增的 `seq` 和一个 `ts`：`seq` 决定回放顺序，`ts` 只用于展示和审计，二者不可混用——靠时间戳排序，迟早会在时钟回拨或并发写入时翻车。工具调用记的是 `args_digest` 而不是原始参数：长参数、敏感数据不该灌进事实流，一个内容哈希既能做幂等去重，又能在排障时核对“这次调用和上次是不是同一组输入”。产物事件必带 `sha256`：因为终态裁决要认的是“这件东西确实被写出来了、内容是这个”，而不是“模型说它写了”。最关键的还是那条类型纪律——凡是模型嘴里说出来的完成、成功、已发送，一律归到 `model.claim`，与带 `ok` 字段的 `tool.returned` 物理隔离。事实流不负责评判模型说得对不对，它只负责把“谁说的、说了什么、什么时候说的”原样钉住，把裁决权留给后面的状态机和验证器。
+
+至于“当前状态”到底是什么——它不是日志里某个被反复改写的字段，而是把这串事件从 `seq:1` 折叠到末尾的结果。同一条流，折叠成给用户看的视图是一种投影，折叠成给 operator 排障的时间线是另一种投影，但底下是同一份不可变事实。这个 fold 怎么写成代码、怎么在刷新和断线后还原视图，是第 8 章的主题；这里只需记住：状态是算出来的，不是存出来的。
+
+## 6.8 生命周期状态机：谁有权把任务改成 ready
+
+第 6.2 节那五级状态机——`queued`、`running`、`verifying`、`ready`、`failed`——现在要长出牙齿。光有五个名字不够，真正定生死的是它们之间哪些迁移合法、每条迁移由谁触发：
+
+```text
+   queued ──▶ running ──▶ verifying ──┬──▶ ready
+                 ▲                     └──▶ failed
+                 └──────── resume ─────────┘
+
+合法迁移                触发条件
+  queued    → running     调度器领取任务，分配预算与 worktree
+  running   → verifying    模型声明“我做完了”（一条 model.claim 完成意图）
+  verifying → ready        所有 gating validator 均 ok=true
+  verifying → failed       任一 gating validator ok=false，或所需证据缺失
+  running   → failed        预算耗尽 / 不可重试错误 / 人工取消
+  (任意态)  → running       resume：从某个 checkpoint seq 重建后继续
+```
+
+这张表里最该被记一辈子的，是 `verifying → ready` 这一条边的守卫。模型声明“做完了”，最多只能把任务从 `running` 推到 `verifying`——它有资格“请求验收”，却没有资格“宣布通过”。这一刀，正是“假成功”在工厂模式里无处落脚的根本原因：终态裁决权被从生成器手里拿走了。
+
+把我们那条任务套进去，机器的判断冷静得近乎无情。`seq:8` 那句“已发送”是一条完成意图，它合法地把任务从 `running` 推进到 `verifying`——到此为止它都没越权。可一进 `verifying`，那条要求“#finance 收到了文件”的 gating validator 就去事实流里找送达回执，找到的却是 `seq:7` 的 `ok:false`。于是状态机面前只剩一条合法出口：`failed`。模型在 `seq:8` 说的话，在这台机器里连一次状态迁移都触发不了，它只是日志里一条留痕的声称。同一串事件，换到“聊天即事实”的系统里会被折叠成绿气泡；换到这台状态机上，被折叠成的是一行红色的 `failed`，外加一句能指给人看的原因。
+
+`resume` 那条回边同样不是装饰。第 5.3 节已经演示过，长任务的中断、切设备、被打断续跑是常态而非异常；所以 resume 必须是一等迁移，能从事件流的某个 `seq`（一个 checkpoint）把上下文重建出来再往下跑，而不是“重开一个任务从头来过”。一台连自己怎么断、怎么续都说不清的状态机，是扛不住真实负载的。
+
+## 6.9 产物清单与验证结果：completion 是被证据裁出来的
+
+状态机知道“该不该进 `ready`”，靠的是有人给它喂判断。这个判断不能是模型的自我感觉，得是一份产物契约和一组验证结果的比对。所谓产物契约，就是任务一开始就声明清楚：这件工作，到底要交出哪几件东西、每件由谁验。我们这条任务的契约是这样的：
+
+```json
+{
+  "task_id": "t_9f2",
+  "required_artifacts": [
+    {"kind": "report.pdf",       "owner_rule": "single", "validators": ["pdf.renders", "pdf.nonempty"]},
+    {"kind": "delivery.receipt", "owner_rule": "single", "validators": ["slack.delivered"]}
+  ]
+}
+```
+
+注意它要的是两件产物，不是一件。一份能渲染、非空的 PDF，和一张来自 Slack 的送达回执——“生成报告”和“送达报告”被当成两件需要各自被证明的事。验收时，验证器把实际产生的产物和这份契约逐条比对，结果同样落进事实流：
+
+```json
+{"validator":"pdf.renders",    "artifact_id":"a_pdf_1","ok":true, "gating":true, "evidence":"打开 4 页，0 渲染错误"}
+{"validator":"pdf.nonempty",   "artifact_id":"a_pdf_1","ok":true, "gating":true, "evidence":"4 页 / 91204 字节"}
+{"validator":"slack.delivered","artifact_id":null,    "ok":false,"gating":true, "evidence":"未找到 #finance 的 delivery.receipt 产物；最后一次 slack.upload 返回 upload_incomplete"}
+```
+
+PDF 那两条都过了。`slack.delivered` 这条 `gating:true`，它的 `ok:false` 一票否决，直接把终态钉死成 `failed`。这里有两个设计选择值得停下来看清楚。其一是 `owner_rule:"single"`——主产物必须显式、唯一地归属，从根上堵死第 5.4 节那种“靠文件名或最近修改时间去猜哪个才是交付物”的事故。其二是 `gating` 这个开关：验证器分阻断与不阻断两种，只有 `gating:true` 的失败能否决终态，那些“尽力而为”的检查（拼写、风格、体例建议）照样记录在案，却不该把一个本质完成的任务拖死——这正是为了避开第 5.5 节那种“验证器过严、误伤正常交付”的反向事故。
+
+而这条任务里最不该被轻轻放过的细节是：那张送达回执，必须是一件 artifact，而不能只是日志里一句“发出去了”。原因很硬——只有 artifact 才进契约、才被 validator 按 `kind` 寻址、才能在终态裁决时被“点名缺席”。`slack.delivered` 之所以能斩钉截铁地说“no delivery.receipt found”，正是因为它找的是一件本该存在却不存在的具名产物，而不是去解析一段自由格式的文本日志。把“成功的证据”定义成一件可寻址、可校验的产物，而不是一句可被模型乐观改写的话——这就是产物与验证这根支柱，落到 schema 上的样子。
+
+## 6.10 一条最小 API 面：怎样去问“它真的完成了吗”
+
+事实流、状态机、产物契约都就位之后，还差最后一环：让外面的世界——UI、operator、上游编排器——能问到这台机器的判断，而且只能问到它的判断。这套 API 面可以小到只有几条，但它有一个刻意为之的缺口：
+
+```text
+POST /tasks                       创建任务，携带 artifact 契约
+GET  /tasks/{id}                  返回折叠后的裁决：state、artifacts、validators、terminal_reason
+GET  /tasks/{id}/events?from=seq  增量事件，给 operator 回放与排障
+GET  /tasks/{id}/stream           SSE：把事件实时折叠成 UI 视图
+POST /tasks/{id}/resume           从 checkpoint 续跑
+```
+
+那个缺口是：这里没有任何一个端点，会回答“模型说它做完了没有”。`model.claim` 在 `/events` 的原始流里查得到，但它进不了 `GET /tasks/{id}` 的 `state` 字段——后者是事实流折叠、再叠加 validator 结果之后的裁决。我们那条任务被这样问起时，机器的回答是：
+
+```json
+{
+  "task_id": "t_9f2",
+  "state": "failed",
+  "terminal_reason": "required_validator_failed:slack.delivered",
+  "artifacts": [
+    {"artifact_id":"a_pdf_1","kind":"report.pdf","sha256":"9c0b…","verified":true}
+  ],
+  "validators": [
+    {"validator":"pdf.renders","ok":true},
+    {"validator":"slack.delivered","ok":false,"evidence":"未找到 #finance 的 delivery.receipt 产物…"}
+  ]
+}
+```
+
+UI 想画那个绿气泡，唯一合法的依据就是这里的 `state:"ready"`；而它拿到的是 `state:"failed"` 加一句人能读懂的 `terminal_reason`。于是“假成功”在最外层这道关口也无路可走——前端不再有机会从一句聊天文本里自己发明出一个完成态。`/events` 和 `/stream` 的分工则预告了第 8 章：前者是给 operator 排障的原始增量，后者是给终端用户实时折叠出的视图，但两者派生自同一条事实流，所以结构上不可能出现“用户看到绿、operator 查到红”的分裂。`resume` 单列为一个端点而非内部补丁，也是同一种克制——因为第 5.3 节已经讲过，中断与续跑是这类系统的日常，必须能从某个 `seq` 把状态重建出来，而不是假装任务永远一口气跑完。
+
+把 6.7 到 6.10 连起来看，这台机器其实只做了一件事：在事实流、状态机、产物契约、API 四个位置，分别堵死了“假成功”能钻进来的四个缝隙——聊天不再是状态，模型不再能宣布终态，完成不再靠猜产物，前端不再能自造完成态。剩下的几章，就是沿着这台机器，把每一道缝隙的工程细节再一层层拧紧。
+
+## 6.11 这张总图，怎样展开成后面的章节
 
 从这里起，后面的章节不再往外并列地堆概念，而是沿着这张总图，把它的关键维度一个个掀开。能力平面与生态桥接掀开成第 7 章，讲万用 agent 为什么必然走向 MCP、外部应用和多语言工具；回放与用户事实掀开成第 8 章，讲 UI 为什么只能投影事实、不能自己发明生命周期；操作员控制面掀开成第 9 章，讲 dashboard、门禁和事故归因为什么必须共享同一条事实流；sub-agent 与 swarm 掀开成第 10 章，讲多 agent 的关键从来不是并行，而是角色、隔离、通信和验证；最后第 11 章再把同一套词汇表，改写成九条设计原则和九组反模式，让“产品故事 → 架构维度 → 设计法则”连成一条论证，而不是三套各说各话的语言。
 

@@ -18,7 +18,7 @@
 
 # 卷三 · 参考架构与实现
 
-- [6. 核心 Harness 架构：把样本反推成可复用总图](./05-core-architecture.md)
+- [6. 核心 Harness 架构：从样本反推到可实现的参考架构](./05-core-architecture.md)
 - [7. 能力平面与生态桥接：不要把 agent 关在单一语言里](./06-non-rust-bridge.md)
 - [8. 回放与用户事实：前端只能投影运行时真相](./07-ui-replay.md)
 - [9. 操作员控制面与发布真实性](./08-dashboard-mini-fleet.md)

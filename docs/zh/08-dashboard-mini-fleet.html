@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-98445f9a.js";
+            window.path_to_searchindex_js = "searchindex-7b12c9f9.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-f88cc8f9.js"></script>
+        <script src="toc-cf7b5ff6.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -196,6 +196,34 @@
 <p>第 5.7 节讲“失败模式博物馆”，重点是<strong>归档</strong>——把每次有价值的翻车连同根因存成可查的记录。到第 9 章，重点要从归档变成<strong>回流</strong>：归档只是把教训写下来，回流是把教训接回系统。</p>
 <p>拿刚才那次连接池串扰走完整条回流。它先进博物馆，有了名字和根因。然后它要长出三样东西：一个 dashboard 信号——“同一连接上出现跨 session 事件”立刻标红，让它下次一冒头就可见；一段门禁脚本——就是 §9.4 里那条两 session、强制重连的 fleet 用例，把它焊进发布前的检查；以及一条 runbook（写明“看到这个标红，先按这几步隔离、再这样恢复”的操作手册），让凌晨两点接班的人不必从零推理。只有走完这三步，一个事故才真正变成了控制面的免疫力——同类问题再来，要么被门禁挡在合并前，要么在盘上一眼可见、还配着现成处置。</p>
 <p>这一步最常被省掉，写完一份漂亮复盘就归档了事；可它恰恰是复盘有没有白做的分水岭。某种意义上，一套控制面的成熟度，就等于“有多少条事故，已经回流成了免疫力”。</p>
+<h2 id="96-把那条假成功丢进-fleet-门禁"><a class="header" href="#96-把那条假成功丢进-fleet-门禁">9.6 把那条“假成功”，丢进 fleet 门禁</a></h2>
+<p>把“归档 → 门禁 → runbook”这套回流，套到那条贯穿全卷的周报任务上，整章的抽象就落地了。先问一个最朴素的问题：第 6 章那台状态机已经把 <code>t_9f2</code> 判成了 <code>failed</code>，可万一某条 buggy 的代码路径——或者一个图省事的旧前端——硬把它写成了 <code>ready</code>，谁来兜底？这正是 fleet 门禁该站的位置。它不重算业务逻辑，它只对“终态”做一次真实性体检：</p>
+<pre><code class="language-python"># fleet 门禁：终态真实性。凡是进入 ready 的任务，证据必须齐备。
+def assert_terminal_authentic(task):
+    if task.state != "ready":
+        return Ok()                              # 只管 ready，不为难还在跑的任务
+    for v in task.required_validators:           # required_validators 来自 artifact 契约
+        r = task.validators.get(v)
+        if r is None:
+            return Fail("MISSING_VALIDATOR",     f"{task.id}: ready 但 {v} 从未运行")
+        if not r.ok:
+            return Fail("READY_OVER_FAILED_GATE", f"{task.id}: ready 但 {v} 为 ok=false")
+    for a in task.required_artifacts:            # 主产物必须显式归属、且已校验
+        if a.kind not in task.artifacts:
+            return Fail("MISSING_ARTIFACT",      f"{task.id}: ready 但缺产物 {a.kind}")
+    return Ok()
+</code></pre>
+<p>拿它去验那条任务：契约要的 <code>delivery.receipt</code> 从没被写进流，<code>slack.delivered</code> 这条 gating validator 是 <code>ok=false</code>。于是只要有谁试图把 <code>t_9f2</code> 标成 <code>ready</code>，门禁立刻在 <code>READY_OVER_FAILED_GATE</code> 上炸开——而且它吐的是一个<strong>有名有姓的诊断类别</strong>，不是笼统一句 <code>failed</code>。这就是 §9.4 那条“终态不能在验证前就被宣布成功”从口号变成代码的样子：第 6 章把终态裁决权从模型手里拿走，第 9 章再用门禁兜住“万一裁决被绕过”的最后一种可能。两道关一前一后，“假成功”连越狱的缝都没有。</p>
+<p>而当值班的人凌晨被这条门禁叫醒，他该看到的不是三千行 transcript，是 §9.2 那种折叠好的卡片：</p>
+<pre><code class="language-text">任务 t_9f2 · 季度周报投递              状态  verifying → failed
+  最近动作   slack.upload   FAILED (upload_incomplete: completeUpload 超时)
+  产物       report.pdf      ✓ 已校验 (sha256 9c0b…)
+             delivery.receipt ✗ 缺失
+  门禁       slack.delivered  ✗   →  READY_OVER_FAILED_GATE
+  归属       session u_12 / task t_9f2
+  恢复       slack.upload 标了 retryable=true，可从 seq 6 重试该步
+</code></pre>
+<p>读完这张卡，他不需要推理，只需要决断——而且决断所需的每一格，都能在事实流里指回一条具体事件。最后，按 §9.5 那条回流走完闭环：这次事故进博物馆，命名为“两段式上传只确认了第一段”；它长出一个 dashboard 信号——“任意 <code>ready</code> 任务的 gating validator 不是全绿，立即标红”，让同类问题下次一冒头就可见；长出一条门禁——就是上面那段 <code>assert_terminal_authentic</code>，焊进发布前检查；再长出一条 runbook——“看到 <code>READY_OVER_FAILED_GATE</code>：先核对对应 validator 的 evidence，再决定重试该步还是整单回滚”。走完这三步，这条贯穿了五章的“假成功”，才算真正变成了系统的免疫力：它被设计挡在 <code>ready</code> 之外（第 6 章），被能力契约堵住伪造（第 7 章），被 UI 拒绝渲染成完成（第 8 章），最后被门禁兜住、被复盘回流（第 9 章）。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
