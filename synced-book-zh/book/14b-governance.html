@@ -29,13 +29,15 @@
 
         <!-- Custom theme stylesheets -->
 
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
         <!-- Provide site root and default themes to javascript -->
         <script>
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-c0df9ff8.js";
+            window.path_to_searchindex_js = "searchindex-282c4f39.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-67109edf.js"></script>
@@ -190,7 +192,7 @@
 <h2 id="163-成本治理把-token时延重试做成一等预算"><a class="header" href="#163-成本治理把-token时延重试做成一等预算">16.3 成本治理：把 token、时延、重试做成一等预算</a></h2>
 <p>成本最容易被算窄。第 10.3.1 节已经拆过这个误区：盯着 token 单价，会漏掉 prefill 变慢、首 token 延迟上升、KV cache 撑大、重试变贵、调度变难这些真正压垮系统的开销。治理成本的第一步，是把“预算”从一句口头叮嘱，变成事实流里一等的、可消费、可耗尽的资源。</p>
 <p>这件事其实在第 6.8 节那台状态机里已经埋好了接口。还记得 <code>running → failed</code> 那条边的触发条件之一就是“预算耗尽”吗？这不是凑数的——它意味着每条任务都背着一个显式预算（token 上限、墙钟上限、重试次数上限），每一次模型调用、每一次重试都往流里写一条消费记录，预算一见底，状态机就必须把任务推向一个<strong>显式终态</strong>。这条设计的分量，恰恰能用那条周报任务来掂量：t_9f2 之所以没回头核对那次失败的上传，直接原因就是它的 turn 预算快见底了，于是它跳过复查、顺势宣布“已发送”。换句话说，<strong>预算耗尽本身就是一个一等的失败注入点</strong>。治理的铁律由此而来——预算耗尽只能迁移到 <code>failed</code>（或退回 <code>verifying</code> 等待裁决），绝不允许在预算见底的瞬间，让一个未完成的任务静默地翻译成“done”。一个不把预算当事实的系统，会在最缺钱的那一刻，恰好最有动机撒谎。</p>
-<p>预算立住之后，成本治理才谈得上优化，而最大的那块杠杆，第 10.3 节已经给过：能分块的任务，<code>5 × 200K</code> 的真实开销常常小于 <code>1 × 1M</code>，而且 attention 量级还差着约五倍。把这条经验做进治理，就是让 coordinator 默认倾向于“短而局部的子任务 + 摘要上汇”，而不是“一把材料全塞进超长窗口”——省的不只是账单，还有时延和重试成本。再叠一层，是按价值分配算力：在生成草稿、跑无关紧要的批处理时用便宜的脑子，在做规划、做终态验证这种“错了代价很大”的环节才舍得上贵的脑子。这就自然接到了下一节——成本治理到某个点，就变成了模型路由问题。<sup class="footnote-reference" id="fr-governance-cost-ch16-1"><a href="#footnote-governance-cost-ch16">2</a></sup></p>
+<p>预算立住之后，成本治理才谈得上优化，而最大的那块杠杆，第 10.3 节已经给过：能分块的任务，\(5 \times 200\text{K}\) 的真实开销常常小于 \(1 \times 1\text{M}\)，而且 attention 量级还差着约五倍。把这条经验做进治理，就是让 coordinator 默认倾向于“短而局部的子任务 + 摘要上汇”，而不是“一把材料全塞进超长窗口”——省的不只是账单，还有时延和重试成本。再叠一层，是按价值分配算力：在生成草稿、跑无关紧要的批处理时用便宜的脑子，在做规划、做终态验证这种“错了代价很大”的环节才舍得上贵的脑子。这就自然接到了下一节——成本治理到某个点，就变成了模型路由问题。<sup class="footnote-reference" id="fr-governance-cost-ch16-1"><a href="#footnote-governance-cost-ch16">2</a></sup></p>
 <h2 id="164-模型路由在控制系统里选脑子而不是在-prompt-里"><a class="header" href="#164-模型路由在控制系统里选脑子而不是在-prompt-里">16.4 模型路由：在控制系统里选脑子，而不是在 prompt 里</a></h2>
 <p>哪个任务该用哪个模型，是个控制系统决策，不该是写死在某段 prompt 或某个常量里的选择。把它做成 harness 里一等的路由层，是这一章最后一笔账。</p>
 <p>路由的依据，前面几章其实都备好了。按风险路由——高风险、需独立裁决的环节，用更强、更稳的模型，并接上独立验证；按成本路由——廉价、可重试的子任务，用便宜模型（接 16.3 那条价值分配）；而最被低估的一条，是<strong>按工作带路由</strong>。第 2.5 节那套探针量出来的，正是“这个模型在这类任务、这个长度上还靠不靠谱”的有效工作区间——不同模型的工作带并不一样，路由层理应拿着这些曲线，把一个 256K 的检索任务交给工作带够宽的模型，而不是无差别地丢给默认那个。路由决策本身也得是事实流里的一条 <code>model.selected</code> 事件：选了谁、为什么选（风险/成本/工作带）、失败后怎么降级或升级，全都留痕，否则你又得到一个“只活在配置里、和运行时真相对不上”的旁路。</p>

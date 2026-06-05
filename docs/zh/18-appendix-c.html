@@ -29,13 +29,15 @@
 
         <!-- Custom theme stylesheets -->
 
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
         <!-- Provide site root and default themes to javascript -->
         <script>
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-c0df9ff8.js";
+            window.path_to_searchindex_js = "searchindex-282c4f39.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-67109edf.js"></script>
@@ -274,7 +276,7 @@
 <tr><td>残差流（residual stream）</td><td>每个 token 穿过几十层结构相同的层时，随身携带的一条<strong>宽度固定</strong>的向量，被逐层读取、修改、写回（像 <code>x += 这一层算出来的东西</code>）。可把它想成这个 token 一路携带的定宽“工作记忆”。</td></tr>
 <tr><td>有限残差维度</td><td>上面那条工作记忆的宽度是<strong>固定</strong>的：无论上下文是十个还是一百万个 token，每个位置能携带的信息量都被这条定宽向量卡死。一台容量固定的搬运车，迟早装不下越堆越多的货。</td></tr>
 <tr><td>KV cache</td><td>自回归生成时，为避免重算而缓存下来的历史 key/value。它随上下文长度<strong>线性增长</strong>，是“1M context 为什么这么贵”的物理原因，也逼出了工业界对远端 KV 的有损压缩。</td></tr>
-<tr><td>softmax 稀释</td><td>注意力权重总和恒为 1，是一种“守恒”资源；窗口里 token 越多，单个远端关键证据能拿到的最大权重越往零滑落，约为 <code>w_max ≈ e^G/(e^G+n-1)</code>，其中 <code>G</code> 是与窗口长度 <code>n</code> 无关的常数差距。窗口越满，最锐的那次检索反而越钝——这是算术结论，不是模型“走神”。</td></tr>
+<tr><td>softmax 稀释</td><td>注意力权重总和恒为 1，是一种“守恒”资源；窗口里 token 越多，单个远端关键证据能拿到的最大权重越往零滑落，约为 \(w_{\max} \approx e^{G}/(e^{G}+n-1)\)，其中 \(G\) 是与窗口长度 \(n\) 无关的常数差距。窗口越满，最锐的那次检索反而越钝——这是算术结论，不是模型“走神”。</td></tr>
 <tr><td>RoPE 距离衰减</td><td>旋转位置编码下，token 之间的关联强度随相对距离增大而衰减，远距离关联弱、超长外推失效。对策是把关键事实重新“拉回光标附近”，而非指望模型自己跨越长距离记住。</td></tr>
 <tr><td>over-squashing / 表示坍缩</td><td>长输入被压进有限表示后，“分不清、数不清、复制不准”的退化，尤其伤计数与复制类任务。对策是结构化证据加产物契约加独立验证——不靠模型在巨大上下文里自己看出来。</td></tr>
 <tr><td>lost-in-the-middle / U 形偏置</td><td>长上下文里夹在中段、又被相似信息包围的证据最难被锐利挑出，命中率曲线呈中段塌陷的 U 形。它是 softmax 稀释叠加 over-squashing 的合演。</td></tr>
@@ -310,7 +312,7 @@
 <tr><th>术语</th><th>定义</th></tr>
 </thead>
 <tbody>
-<tr><td>可闭合验证器（sound / 便宜 / 独立）</td><td>一个领域可闭合，前提是能造出验证器 <code>V</code>，让它<strong>可靠</strong>（假阳性极低）、<strong>便宜</strong>（验一遍远小于生成一遍）、<strong>独立</strong>（不依赖生成它的那个模型自己打分）。三者齐备，第 3 章那条负反馈环就从比喻变成一笔能算的账：独立采样 <code>k</code> 次至少一次通过的概率约 <code>1 − (1 − p)^k</code>。</td></tr>
+<tr><td>可闭合验证器（sound / 便宜 / 独立）</td><td>一个领域可闭合，前提是能造出验证器 <code>V</code>，让它<strong>可靠</strong>（假阳性极低）、<strong>便宜</strong>（验一遍远小于生成一遍）、<strong>独立</strong>（不依赖生成它的那个模型自己打分）。三者齐备，第 3 章那条负反馈环就从比喻变成一笔能算的账：独立采样 \(k\) 次至少一次通过的概率约 \(1-(1-p)^{k}\)。</td></tr>
 <tr><td>sound（可靠）</td><td>验证器放过一个错误产物的概率（假阳性率）。一个 gating 验证器的假阳性率必须<strong>远低于模型单次出错率</strong>，否则循环每多采样一次只是多一次被放行的机会。它是三个属性里最要命的一个。</td></tr>
 <tr><td>Goodhart</td><td>当“通过验证器”成了模型被优化的目标，模型逐渐学会生成那种“让验证器满意、却并不真正正确”的产物——验证器没变，却正在被绕过。典型警报：通过率异常走高、用户投诉却同步上升的剪刀差。</td></tr>
 <tr><td>LLM-as-judge</td><td>用一个模型给产物打分的验证手段。只在没有机器 oracle 时才轮到它，且必须用与生成端<strong>不同</strong>的模型、明确的评分 rubric、并定期用人工标注负样本校准；未校准到足够 sound 之前，绝不让它单独充当 gating。</td></tr>

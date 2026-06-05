@@ -3,3 +3,6 @@ title = "驾驭工程"
 authors = ["Harness Research"]
 language = "zh-CN"
 src = "src"
+
+[output.html]
+mathjax-support = true
