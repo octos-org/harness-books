@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-2891aba2.js";
+            window.path_to_searchindex_js = "searchindex-46551984.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-cf7b5ff6.js"></script>
@@ -227,6 +227,24 @@
 <li><input disabled="" type="checkbox"> <code>swarm</code>：child agent 的 summary 是否包含可验证产物引用，而不是一句模糊的 “done”。</li>
 </ul>
 <p>这组检查项的目的，是把“问题出在 session、能力平面、validator、dashboard 还是 swarm”快速切开。只要团队还在把这五层混成一个“agent 没做好”，修复成本就会始终过高。</p>
+<h2 id="145-参考架构落地自检卷三的具体工件是否到位"><a class="header" href="#145-参考架构落地自检卷三的具体工件是否到位">14.5 参考架构落地自检（卷三的具体工件是否到位）</a></h2>
+<p>前一组清单切的是“事故出在哪一层”，这一组切的是更早的问题：你照着卷三搭出来的那套参考架构，关键工件到底有没有真正落地。它逐条对应第 6 到 10 章那条“假成功”任务被堵死的每一道缝——任何一条还打着叉，那道缝就还开着。</p>
+<ul>
+<li><input disabled="" type="checkbox"> <code>事实流</code>：模型的完成声明被单独建模成 <code>model.claim</code>，与带 <code>ok</code> 字段的 <code>tool.returned</code> 物理隔离，且无权改写终态。</li>
+<li><input disabled="" type="checkbox"> <code>事实流</code>：每条事件带单调 <code>seq</code>，产物事件带 <code>sha256</code>，工具事件带 <code>args_digest</code> 而非原始参数。</li>
+<li><input disabled="" type="checkbox"> <code>生命周期</code>：<code>verifying → ready</code> 这条边的守卫是“所有 gating validator 全绿”，模型最多只能把任务从 <code>running</code> 推到 <code>verifying</code>。</li>
+<li><input disabled="" type="checkbox"> <code>生命周期</code>：<code>resume</code> 是一等迁移，能从某个 checkpoint <code>seq</code> 重建上下文，而不是重开任务。</li>
+<li><input disabled="" type="checkbox"> <code>产物与验证</code>：每个任务在创建时声明 artifact 契约（<code>required_artifacts</code> + <code>owner_rule:single</code>），主产物显式唯一归属。</li>
+<li><input disabled="" type="checkbox"> <code>产物与验证</code>：验证器分 <code>gating</code> 与非 <code>gating</code>，只有 gating 失败否决终态，“尽力而为”的检查记录但不阻断。</li>
+<li><input disabled="" type="checkbox"> <code>产物与验证</code>：每一项“成功的证据”都是一件可寻址的 artifact（如 <code>delivery.receipt</code>），而不是一句可被乐观改写的日志。</li>
+<li><input disabled="" type="checkbox"> <code>能力平面</code>：每个桥接工具有 <code>success_means</code> 结果契约，把“成功”钉在可回查的客观事实上，而非 HTTP 状态码或模型语义。</li>
+<li><input disabled="" type="checkbox"> <code>能力平面</code>：非主语言脚本经 <code>HARNESS_EVENT_SINK</code> 回流事件，sink 缺失时 <code>emit</code> no-op，但 artifact 契约与 gating validator 绝不因此豁免。</li>
+<li><input disabled="" type="checkbox"> <code>权限</code>：特权 scope（发外部、花钱、删除）触发 <code>approval.requested</code>，审批的请求与裁决都是事实流里的一等事件。</li>
+<li><input disabled="" type="checkbox"> <code>回放</code>：UI 的生命周期值只能由 <code>task.settled</code> 点亮，fold 是无私有记忆的纯函数；绿色完成态对 <code>model.claim</code> 不可表示。</li>
+<li><input disabled="" type="checkbox"> <code>操作员面</code>：存在 <code>assert_terminal_authentic</code> 类门禁，对每个 <code>ready</code> 任务断言其 gating validator 全绿、required artifact 齐备。</li>
+<li><input disabled="" type="checkbox"> <code>协作</code>：事件写入权限表强制“仅 coordinator 能写 <code>task.settled</code>、仅 verifier 能写 <code>validator.result</code>”，worker 只能 <code>subagent.reported</code>。</li>
+</ul>
+<p>这组自检最好在第一次把参考架构接进自己系统时逐条过一遍，之后每次大改事实流、验证或编排协议时再过一遍。它不保证产品好用——那是第 13 章划清的边界——但它保证：系统至少不会再对用户说一次它自己都没验证过的“完成”。</p>
 <hr>
                     </main>
 

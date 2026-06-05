@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-2891aba2.js";
+            window.path_to_searchindex_js = "searchindex-46551984.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-cf7b5ff6.js"></script>
@@ -1074,6 +1074,12 @@ coordinator ──spawn_agent("verifier",         goal="按契约核对产物", 
 <p>最后，让 dashboard 展示生命周期、artifact、validator、child task、scope 和最近 summary，让门禁与发布声明绑定证据、不接受轶事式的“我测过了没问题”，并让每一次事故都沉淀成失败模式条目、复盘模板和可回放 fixture。它收尾，因为操作员面消费的是前面所有里程碑攒下的事实——它是这条施工序的最后一层装修，而不是地基。（细节见第 9 章。）</p>
 <p>这条序是按依赖排的，不是按 backlog 的美观排的：R1–R2 先立真相与生命周期，R3–R4 让外部能力和完成裁决进入协议，R5–R7 解决回放、恢复与多 agent 协作，R8–R9 才把组织知识和操作员控制面接上。把它倒过来做，就会像本章开头那支团队——在还没有稳定事实流的时候，就先把外部复杂度放了进来，之后每一步都得在流沙上返工，越往后越贵。</p>
 <p>这条路也不是凭空想的。Claude Code 已经把 compaction、resume、worktree、子 agent 摘要、外置 output、权限和扩展机制做进了产品，<em>Dive into Claude Code</em> 把它们整理成五层结构；Codex 则把 <code>thread-store</code>、<code>rollout</code>、<code>app-server</code>、tool registry 这些“骨架能力”做成了显式模块。路线图要做的不是去复制某个仓库，而是把这些成熟样本已经用代价证明“必要”的部件，按依赖顺序，转译成你自己系统里的实现次序。</p>
+<h2 id="r1r9-的试金石把那条周报任务丢进施工序"><a class="header" href="#r1r9-的试金石把那条周报任务丢进施工序">R1–R9 的试金石：把那条周报任务丢进施工序</a></h2>
+<p>抽象的施工序，最好拿一个具体任务来检验它每一步到底防住了什么。还是第 6 章那条任务——把 <code>q2-weekly.pdf</code> 发到 <code>#finance</code>，结果两段式上传的第二段超时、模型却声称“已发送”。把这条任务依次丢给 R1 到 R9，能清楚看到“假成功”是在缺哪一环时钻进来、又是在补上哪一环时被关在门外。</p>
+<p>先看没有 R1 的世界。没有那条只追加的事实流，<code>slack.upload</code> 第二段超时这件事根本没有落脚处——它要么只活在一行转瞬即逝的 stderr 里，要么干脆被模型那句“已发送”盖过去。连失败本身都不可见，后面八步就都无从谈起。所以 R1 不是“第一项功能”，而是让这次失败<strong>第一次有资格被看见</strong>的前提：有了它，那条 <code>seq:7 ok:false</code> 才会永久躺在流里，等着被后面的环节追究。</p>
+<p>R2 把这条流定出形状。任务从 <code>running</code> 进 <code>verifying</code>，是模型那句“我做完了”触发的——但 R2 立的单调阶梯规定，这一步只换来“请求验收”的资格，换不来“宣布通过”的权力。于是真正的裁决，被往后推给了 R4。</p>
+<p>R4 是这条任务<strong>第一个被实打实接住</strong>的地方。产物与验证里声明了主产物必须包含一张 <code>delivery.receipt</code>，而那张回执因为上传失败从未生成；gating validator <code>slack.delivered</code> 拿不到证据，按“<code>ready</code> 只能由 validator 加 evidence 裁决”这条硬规矩，终态只能落到 <code>failed</code>。换句话说，哪怕前面所有环节都没拦住，到 R4 这一步，这次“假成功”就已经被判了出局。R3 在这里是 R4 的前提——正因为能力平面（第 7 章那份 <code>slack.upload</code> 结果契约）规定了“成功必须 emit 一件具名回执产物”，R4 的验证器才知道该去找什么、找不到时该点谁的名。</p>
+<p>再往后，R5 到 R9 不是为了“再抓一次”，而是为了让这次已经判出的失败，在每一个表面都说同一句实话。R5 保证刷新或重连后，UI 折叠出来的仍是 <code>failed</code> 而不是那个绿气泡；R9 则补上最后一道兜底——<code>assert_terminal_authentic</code> 这道操作员门禁，专防“万一某条 buggy 路径硬把它写成 <code>ready</code>”，并把它沉成 dashboard 信号和 runbook。一次失败、九个里程碑，落点高度集中在 R3/R4，再由 R1、R5、R9 在前后兜住可见性与一致性——这正说明施工序不是九件平摊的活，而是一条有主次、有依赖的承重结构：地基（R1）不浇，连失败都看不见；承重墙（R3/R4）不立，失败就拦不住；装修（R9）不做，拦住了也没人看得懂。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="13-harness-必要但不充分"><a class="header" href="#13-harness-必要但不充分">13. Harness 必要但不充分</a></h1>
 <p>路线图一讲完，必须立刻收边界。否则团队很容易把 harness 当成万能解释——产品哪里不好，都往“harness 没做好”上推。这一章就干一件事：把 harness 能解决什么、不能解决什么，干净地切开。</p>
@@ -1144,6 +1150,24 @@ coordinator ──spawn_agent("verifier",         goal="按契约核对产物", 
 <li><input disabled="" type="checkbox"> <code>swarm</code>：child agent 的 summary 是否包含可验证产物引用，而不是一句模糊的 “done”。</li>
 </ul>
 <p>这组检查项的目的，是把“问题出在 session、能力平面、validator、dashboard 还是 swarm”快速切开。只要团队还在把这五层混成一个“agent 没做好”，修复成本就会始终过高。</p>
+<h2 id="145-参考架构落地自检卷三的具体工件是否到位"><a class="header" href="#145-参考架构落地自检卷三的具体工件是否到位">14.5 参考架构落地自检（卷三的具体工件是否到位）</a></h2>
+<p>前一组清单切的是“事故出在哪一层”，这一组切的是更早的问题：你照着卷三搭出来的那套参考架构，关键工件到底有没有真正落地。它逐条对应第 6 到 10 章那条“假成功”任务被堵死的每一道缝——任何一条还打着叉，那道缝就还开着。</p>
+<ul>
+<li><input disabled="" type="checkbox"> <code>事实流</code>：模型的完成声明被单独建模成 <code>model.claim</code>，与带 <code>ok</code> 字段的 <code>tool.returned</code> 物理隔离，且无权改写终态。</li>
+<li><input disabled="" type="checkbox"> <code>事实流</code>：每条事件带单调 <code>seq</code>，产物事件带 <code>sha256</code>，工具事件带 <code>args_digest</code> 而非原始参数。</li>
+<li><input disabled="" type="checkbox"> <code>生命周期</code>：<code>verifying → ready</code> 这条边的守卫是“所有 gating validator 全绿”，模型最多只能把任务从 <code>running</code> 推到 <code>verifying</code>。</li>
+<li><input disabled="" type="checkbox"> <code>生命周期</code>：<code>resume</code> 是一等迁移，能从某个 checkpoint <code>seq</code> 重建上下文，而不是重开任务。</li>
+<li><input disabled="" type="checkbox"> <code>产物与验证</code>：每个任务在创建时声明 artifact 契约（<code>required_artifacts</code> + <code>owner_rule:single</code>），主产物显式唯一归属。</li>
+<li><input disabled="" type="checkbox"> <code>产物与验证</code>：验证器分 <code>gating</code> 与非 <code>gating</code>，只有 gating 失败否决终态，“尽力而为”的检查记录但不阻断。</li>
+<li><input disabled="" type="checkbox"> <code>产物与验证</code>：每一项“成功的证据”都是一件可寻址的 artifact（如 <code>delivery.receipt</code>），而不是一句可被乐观改写的日志。</li>
+<li><input disabled="" type="checkbox"> <code>能力平面</code>：每个桥接工具有 <code>success_means</code> 结果契约，把“成功”钉在可回查的客观事实上，而非 HTTP 状态码或模型语义。</li>
+<li><input disabled="" type="checkbox"> <code>能力平面</code>：非主语言脚本经 <code>HARNESS_EVENT_SINK</code> 回流事件，sink 缺失时 <code>emit</code> no-op，但 artifact 契约与 gating validator 绝不因此豁免。</li>
+<li><input disabled="" type="checkbox"> <code>权限</code>：特权 scope（发外部、花钱、删除）触发 <code>approval.requested</code>，审批的请求与裁决都是事实流里的一等事件。</li>
+<li><input disabled="" type="checkbox"> <code>回放</code>：UI 的生命周期值只能由 <code>task.settled</code> 点亮，fold 是无私有记忆的纯函数；绿色完成态对 <code>model.claim</code> 不可表示。</li>
+<li><input disabled="" type="checkbox"> <code>操作员面</code>：存在 <code>assert_terminal_authentic</code> 类门禁，对每个 <code>ready</code> 任务断言其 gating validator 全绿、required artifact 齐备。</li>
+<li><input disabled="" type="checkbox"> <code>协作</code>：事件写入权限表强制“仅 coordinator 能写 <code>task.settled</code>、仅 verifier 能写 <code>validator.result</code>”，worker 只能 <code>subagent.reported</code>。</li>
+</ul>
+<p>这组自检最好在第一次把参考架构接进自己系统时逐条过一遍，之后每次大改事实流、验证或编排协议时再过一遍。它不保证产品好用——那是第 13 章划清的边界——但它保证：系统至少不会再对用户说一次它自己都没验证过的“完成”。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="15-参考架构片段"><a class="header" href="#15-参考架构片段">15. 参考架构片段</a></h1>
 <p>前面的章节已经给出原则、边界和检查表；这一章补七段最小架构片段，帮助团队把抽象要求落成具体事实流、契约执行流、swarm 控制流，以及一条匿名失败链的端到端落地图、最小事件序列、可直接复用的复盘模板，外加一份按全书贯穿样例（那条“假成功”的周报任务）填好的复盘范例。</p>

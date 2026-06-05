@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-2891aba2.js";
+            window.path_to_searchindex_js = "searchindex-46551984.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-cf7b5ff6.js"></script>
@@ -197,6 +197,12 @@
 <p>最后，让 dashboard 展示生命周期、artifact、validator、child task、scope 和最近 summary，让门禁与发布声明绑定证据、不接受轶事式的“我测过了没问题”，并让每一次事故都沉淀成失败模式条目、复盘模板和可回放 fixture。它收尾，因为操作员面消费的是前面所有里程碑攒下的事实——它是这条施工序的最后一层装修，而不是地基。（细节见第 9 章。）</p>
 <p>这条序是按依赖排的，不是按 backlog 的美观排的：R1–R2 先立真相与生命周期，R3–R4 让外部能力和完成裁决进入协议，R5–R7 解决回放、恢复与多 agent 协作，R8–R9 才把组织知识和操作员控制面接上。把它倒过来做，就会像本章开头那支团队——在还没有稳定事实流的时候，就先把外部复杂度放了进来，之后每一步都得在流沙上返工，越往后越贵。</p>
 <p>这条路也不是凭空想的。Claude Code 已经把 compaction、resume、worktree、子 agent 摘要、外置 output、权限和扩展机制做进了产品，<em>Dive into Claude Code</em> 把它们整理成五层结构；Codex 则把 <code>thread-store</code>、<code>rollout</code>、<code>app-server</code>、tool registry 这些“骨架能力”做成了显式模块。路线图要做的不是去复制某个仓库，而是把这些成熟样本已经用代价证明“必要”的部件，按依赖顺序，转译成你自己系统里的实现次序。</p>
+<h2 id="r1r9-的试金石把那条周报任务丢进施工序"><a class="header" href="#r1r9-的试金石把那条周报任务丢进施工序">R1–R9 的试金石：把那条周报任务丢进施工序</a></h2>
+<p>抽象的施工序，最好拿一个具体任务来检验它每一步到底防住了什么。还是第 6 章那条任务——把 <code>q2-weekly.pdf</code> 发到 <code>#finance</code>，结果两段式上传的第二段超时、模型却声称“已发送”。把这条任务依次丢给 R1 到 R9，能清楚看到“假成功”是在缺哪一环时钻进来、又是在补上哪一环时被关在门外。</p>
+<p>先看没有 R1 的世界。没有那条只追加的事实流，<code>slack.upload</code> 第二段超时这件事根本没有落脚处——它要么只活在一行转瞬即逝的 stderr 里，要么干脆被模型那句“已发送”盖过去。连失败本身都不可见，后面八步就都无从谈起。所以 R1 不是“第一项功能”，而是让这次失败<strong>第一次有资格被看见</strong>的前提：有了它，那条 <code>seq:7 ok:false</code> 才会永久躺在流里，等着被后面的环节追究。</p>
+<p>R2 把这条流定出形状。任务从 <code>running</code> 进 <code>verifying</code>，是模型那句“我做完了”触发的——但 R2 立的单调阶梯规定，这一步只换来“请求验收”的资格，换不来“宣布通过”的权力。于是真正的裁决，被往后推给了 R4。</p>
+<p>R4 是这条任务<strong>第一个被实打实接住</strong>的地方。产物与验证里声明了主产物必须包含一张 <code>delivery.receipt</code>，而那张回执因为上传失败从未生成；gating validator <code>slack.delivered</code> 拿不到证据，按“<code>ready</code> 只能由 validator 加 evidence 裁决”这条硬规矩，终态只能落到 <code>failed</code>。换句话说，哪怕前面所有环节都没拦住，到 R4 这一步，这次“假成功”就已经被判了出局。R3 在这里是 R4 的前提——正因为能力平面（第 7 章那份 <code>slack.upload</code> 结果契约）规定了“成功必须 emit 一件具名回执产物”，R4 的验证器才知道该去找什么、找不到时该点谁的名。</p>
+<p>再往后，R5 到 R9 不是为了“再抓一次”，而是为了让这次已经判出的失败，在每一个表面都说同一句实话。R5 保证刷新或重连后，UI 折叠出来的仍是 <code>failed</code> 而不是那个绿气泡；R9 则补上最后一道兜底——<code>assert_terminal_authentic</code> 这道操作员门禁，专防“万一某条 buggy 路径硬把它写成 <code>ready</code>”，并把它沉成 dashboard 信号和 runbook。一次失败、九个里程碑，落点高度集中在 R3/R4，再由 R1、R5、R9 在前后兜住可见性与一致性——这正说明施工序不是九件平摊的活，而是一条有主次、有依赖的承重结构：地基（R1）不浇，连失败都看不见；承重墙（R3/R4）不立，失败就拦不住；装修（R9）不做，拦住了也没人看得懂。</p>
 <hr>
                     </main>
 
