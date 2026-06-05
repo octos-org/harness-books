@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-bf1fddc0.js";
+            window.path_to_searchindex_js = "searchindex-18996540.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-18563b7b.js"></script>
@@ -435,23 +435,8 @@ Harness 工程
 <p>第 1 层是 AI 编码过程的驾驭工程。这里 agent 是工程团队的生产工具，最终产品仍然是代码、服务、应用或基础设施。OpenAI Codex 团队的 1M LOC 案例、Fowler 的代码 agent harness、Codex 开源仓库里对 sandbox、approval、MCP、rollout 和 <code>AGENTS.md</code> 的显式边界，都属于这一层。<sup class="footnote-reference" id="fr-layer1-harness-ch2-1"><a href="#footnote-layer1-harness-ch2">1</a></sup></p>
 <p>第 2 层是 AI agent 自身的 harness 工程。这里产品本身就是 agent，用户直接把任务交给它。系统要处理 session 恢复、sandbox 权限、工具调用审计、长任务重启、客户环境隔离、gateway 路由和合规签字。Anthropic 的 session / harness / sandbox 三抽象、Claude Code 源码里对 compaction、resume、worktree、sub-agent 的拆分，以及 OpenClaw/Hermes 在 gateway、memory、skills、cron 和多会话上的控制面，都更接近这一层。<sup class="footnote-reference" id="fr-layer2-harness-ch2-1"><a href="#footnote-layer2-harness-ch2">2</a></sup></p>
 <p>Claude Code 和 Codex 站在这两层的分界线附近：它们既是编码生产工具，也体现出长任务 harness 产品的形态。OpenClaw 和 Hermes 更明显属于 Layer 2。下一章的失败案例只承担一个角色：反证样本。它有价值，不是因为它代表行业，而是因为它把同一种结构性问题暴露得很具体。</p>
-<p>“灵光一闪的天才”模式有这些特征：</p>
-<ul>
-<li>成功依赖 prompt，且不可重复</li>
-<li>状态来自聊天文本，而不是持久运行时状态</li>
-<li>产物靠文件名或启发式猜测</li>
-<li>长任务可以静默失败，却看起来像“完成”</li>
-<li>会话切换导致状态串扰和 UI 混乱</li>
-</ul>
-<p>软件工厂模式具有相反特征：</p>
-<ul>
-<li>由契约定义输出和验证器</li>
-<li>生命周期持久化且单调（<code>queued -&gt; running -&gt; verifying -&gt; ready|failed</code>）</li>
-<li>进度是事件化、类型化、可回放、有作用域的</li>
-<li>UI 是后端事实的投影，而不是独立事实</li>
-<li>每次事故都有操作员级证据</li>
-</ul>
-<p>Harness 就是这两种模式之间的转换机制。</p>
+<p>这两层之上，还罩着一对更朴素的对照——正是这本书书名里的那两种模式。“灵光一闪的天才”模式的几个特征，都指向同一种脆弱：成功依赖某一句 prompt、且不可重复，状态来自聊天文本而非持久的运行时，产物靠文件名或启发式去猜，长任务能静默失败却看起来像“完成”，而且一切换会话就状态串扰、UI 混乱。“软件工厂”模式则处处相反：输出和验证由契约定义，生命周期被持久化成一道单调阶梯（<code>queued -&gt; running -&gt; verifying -&gt; ready|failed</code>），进度是事件化、类型化、可回放、有作用域的，UI 只是后端事实的投影而非独立事实，而每一次事故都留着操作员级的证据。</p>
+<p>而 harness，就是把系统从前一种模式，搬到后一种模式去的那台转换机。</p>
 <h2 id="42-claude-codeharness-已经产品化"><a class="header" href="#42-claude-codeharness-已经产品化">4.2 Claude Code：harness 已经产品化</a></h2>
 <p>如果只看 Anthropic 对外讲 Claude Code 的方式，很容易把它误判成一个更强的 coding CLI。但把两条官方叙事并起来看，事情就变了。产品页直接写着，公司里 <code>"majority of code is now written by Claude Code"</code>，工程师的工作重心转向 architecture、product thinking 和 continuous orchestration。另一篇内部案例更有画面感：律师拿它做电话树系统，设计师开始做原本不太会碰的大块 state management 变更，数据科学家在“几乎不会 JavaScript/TypeScript”的情况下，用它搭出生产级可视化应用。<sup class="footnote-reference" id="fr-claudecode-story-ch2-1"><a href="#footnote-claudecode-story-ch2">3</a></sup></p>
 <p>这些故事的意义不是“人人都能一键写软件”，而是 Claude Code 已经越过了传统 coding assistant 的边界，开始充当一个更通用的任务 runtime：只要工作能被还原成“收集上下文 -&gt; 规划 -&gt; 调工具 -&gt; 生成产物 -&gt; 跑检查 -&gt; 继续迭代”这条链，它就不再局限于写代码。下面再回到源码去看，就更容易理解它为什么必须长出那么多看似“与写代码无关”的运行时器官。</p>
@@ -518,13 +503,7 @@ Harness 工程
 <p>这篇文章最该反复读的，不是 1M LOC 这个数字，而是 OpenAI 对工程师新角色的定义。Lopopolo 写得很直接：早期进展慢，不是因为 Codex 不行，而是因为 environment was underspecified；真正缺的是 tools、abstractions 和 internal structure。于是工程师的主要工作，不再是亲手写每一行代码，而是不断追问：“缺了什么能力，怎样把它做得既 legible 又 enforceable for the agent？”<sup class="footnote-reference" id="fr-openai-factory-story-ch2-3"><a href="#footnote-openai-factory-story-ch2">10</a></sup></p>
 <p>这和传统工程管理的差异非常大。过去一个 senior engineer 遇到问题，常见反应是自己下场把关键路径写掉；在这个实验里，那条路被刻意封死了。于是团队被迫做 depth-first 的 enablement：先让 agent 会设计、会测试、会 review、会操作环境，再用这些中间能力解锁更复杂的任务。换句话说，工程师从“代码作者”转成了“能力供给者”“环境设计者”“反馈环建筑师”。这正是 harness engineering 的组织学含义。</p>
 <h3 id="453-为什么-legibility-会先于-intelligence"><a class="header" href="#453-为什么-legibility-会先于-intelligence">4.5.3 为什么 legibility 会先于 intelligence</a></h3>
-<p>OpenAI 在这篇文章里反复强调的一个词是 legibility。这里的意思不是“代码写得漂亮”，而是 agent 能不能看懂、验证、继续沿着现有结构工作。文章给出的做法几乎是一套控制面样板：</p>
-<ul>
-<li>app 必须 bootable per git worktree，这样每个变更都有自己隔离的运行实例；</li>
-<li>Chrome DevTools Protocol 直接接进 agent runtime，让它能自己看 DOM snapshot、截图、导航和 UI 行为；</li>
-<li>日志、指标、trace 通过本地 observability stack 暴露给 agent；</li>
-<li>长任务可以持续数小时，文章里明确说经常看到单次 Codex run 工作六小时以上。<sup class="footnote-reference" id="fr-openai-factory-story-ch2-4"><a href="#footnote-openai-factory-story-ch2">10</a></sup></li>
-</ul>
+<p>OpenAI 在这篇文章里反复强调的一个词是 legibility。它的意思不是“代码写得漂亮”，而是 agent 能不能看懂、能不能验证、能不能继续沿着现有结构往下干。文章给出的做法，几乎就是一套控制面样板：每个 app 都必须能 per git worktree 地独立启动，好让每个变更都有自己隔离的运行实例；Chrome DevTools Protocol 被直接接进 agent runtime，让它能自己看 DOM 快照、截图、导航和 UI 行为；日志、指标、trace 经由本地的 observability stack 暴露给 agent；而长任务可以一口气跑上数小时——文章里明确说，经常看到单次 Codex run 工作六小时以上。<sup class="footnote-reference" id="fr-openai-factory-story-ch2-4"><a href="#footnote-openai-factory-story-ch2">10</a></sup></p>
 <p>这组做法的共同点是：它们都在把系统状态从“人类肉眼可见”转成“agent 也可直接读取并利用”。这正是为什么文章会把一节标题直接写成 <code>Agent legibility is the goal</code>。<sup class="footnote-reference" id="fr-openai-factory-story-ch2-5"><a href="#footnote-openai-factory-story-ch2">10</a></sup> 只有当 UI、日志、指标、线程状态、执行历史都变成 agent 可读事实，反馈环才真正闭合；否则系统再强，也只是把人类换成了一个更快但更盲的执行者。</p>
 <h3 id="454-为什么文档架构约束和-merge-哲学都变了"><a class="header" href="#454-为什么文档架构约束和-merge-哲学都变了">4.5.4 为什么文档、架构约束和 merge 哲学都变了</a></h3>
 <p>这篇文章真正成熟的地方，在于它没有把问题收缩成“多写点提示词”。OpenAI 团队很早就试过“one big AGENTS.md”，结论是 predictable 地失败：上下文挤占、重点失焦、快速腐烂、不可验证。最后他们把 <code>AGENTS.md</code> 降回目录，把 <code>docs/</code> 提升成 system of record。<sup class="footnote-reference" id="fr-openai-factory-story-ch2-6"><a href="#footnote-openai-factory-story-ch2">10</a></sup> 这和本书前文关于 <code>AGENTS.md</code> 的判断完全一致：它必须短、稳定、常驻，上下文里只放地图，不放百科全书。</p>
@@ -540,18 +519,8 @@ Harness 工程
 <p>OpenAI 的极端案例不能直接搬到所有场景。内部工具链、非合规关键路径、风险自吸收时，可以把大量人工审查下沉到 CI、性质测试、结构化验证和指标门禁。医疗、金融、隐私、客户数据路径则不同：实名人工 reviewer、审计记录、变更控制和合规签字是事实要求，不是工程偏好。<sup class="footnote-reference" id="fr-review-boundary-ch2-1"><a href="#footnote-review-boundary-ch2">12</a></sup></p>
 <p>因此大多数团队的目标都不该是追求“没有人看”，而是把人类从重复、低信号的逐行审查中解放出来，转向审查契约、门禁、失败分类和高风险边界。</p>
 <h2 id="48-把成熟样本压成全书的架构索引"><a class="header" href="#48-把成熟样本压成全书的架构索引">4.8 把成熟样本压成全书的架构索引</a></h2>
-<p>如果把 Claude Code 的“器官”与 Codex 的“骨架”叠在一起，再把 OpenClaw / Hermes 的 control plane 经验作为侧证，可以把全书后续章节统一压成九个架构维度：</p>
-<ol>
-<li>事实流维度：session / thread / transcript 必须是独立、可恢复、可回放的持久层。</li>
-<li>生命周期维度：任务必须有单调、公开、跨表面一致的状态阶梯。</li>
-<li>能力平面维度：工具、shell、MCP、外部应用、人工输入都必须进入统一调度面。</li>
-<li>产物与验证维度：主产物、验证器、失败证据和终态裁决必须显式绑定。</li>
-<li>回放维度：实时流、历史流、刷新恢复和 UI 投影必须共享同一事实模型。</li>
-<li>隔离与恢复维度：worktree、resume、background task、disk output 这类机制必须成为运行时能力，而不是异常补丁。</li>
-<li>协作维度：sub-agent / swarm 需要角色、通信、权限、汇总与验证，而不是“多开几个窗口”。</li>
-<li>知识分层维度：<code>AGENTS.md</code>、docs、skills、memory 需要按常驻层、按需层、晋升层治理。</li>
-<li>操作员维度：dashboard、门禁、回滚、故障归因必须建立在同一条运行时事实流上。</li>
-</ol>
+<p>如果把 Claude Code 的“器官”与 Codex 的“骨架”叠在一起，再把 OpenClaw / Hermes 的 control plane 经验当侧证，可以把全书后续章节统一压成九个架构维度——它们其实就是第 6 章那张总图的九个切面，下面按四组来读。</p>
+<p>最底下是真相的两块底座：<strong>事实流</strong>维度要求 session / thread / transcript 是独立、可恢复、可回放的持久层，<strong>生命周期</strong>维度要求任务有一道单调、公开、跨表面一致的状态阶梯。往上是能力与完成：<strong>能力平面</strong>维度要求工具、shell、MCP、外部应用、人工输入都进入统一调度面，<strong>产物与验证</strong>维度要求主产物、验证器、失败证据和终态裁决被显式绑定。再往上是看见、隔离与协作：<strong>回放</strong>维度要求实时流、历史流、刷新恢复和 UI 投影共享同一事实模型，<strong>隔离与恢复</strong>维度要求 worktree、resume、background task、disk output 成为一等运行时能力、而非异常补丁，<strong>协作</strong>维度要求 sub-agent / swarm 有角色、通信、权限、汇总与验证，而不是“多开几个窗口”。最后是沉淀与监督：<strong>知识分层</strong>维度要求 <code>AGENTS.md</code>、docs、skills、memory 按常驻层、按需层、晋升层来治理，<strong>操作员</strong>维度要求 dashboard、门禁、回滚、故障归因都建在同一条运行时事实流上。</p>
 <p>第 6 章会先给出这九个维度如何组成最小可用 harness；第 7 到第 10 章分别展开能力平面、回放、操作员控制面和多 agent 编排；第 11 章把这些维度再上升为设计原则；第 12 到第 16 章则把原则压成路线图、边界、清单和收束。</p>
 <p>下一章不再继续看成熟样本，而改用一组真实失败案例来回答另一个问题：当这些维度缺位时，系统具体会怎么坏。</p>
 <hr>
