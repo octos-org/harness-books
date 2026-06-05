@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-547ee9e3.js";
+            window.path_to_searchindex_js = "searchindex-c0df9ff8.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-67109edf.js"></script>
@@ -438,6 +438,36 @@ task.failed          task=root-17 category=artifact_contract_violation
 - 新增 runbook：见 READY_OVER_FAILED_GATE 处置三步
 </code></pre>
 <p>把这份填好的复盘和第 6 到 10 章对读，会发现它其实是那条防御链的回执单：第 2 节“用户看到绿、实际没送达”，正是第 8 章那个 fold 拒绝渲染的东西；第 6 节那行“能力平面 ✗”，正是第 7 章 <code>success_means</code> 要修的；第 9 节“验证器非 gating”，正是第 6.9 节 <code>gating</code> 开关存在的理由；第 11 节那条 <code>assert_terminal_authentic</code>，就是第 9 章那段门禁代码。一次事故、一条样例，从机理（卷一）到失败类别（第 5 章）、到参考架构与五章实现（卷三）、最后落回这份三十秒能读懂的复盘——这正是整本书想示范的那条闭环：<strong>让每一次“假成功”，都被设计、被验证、被门禁、被复盘，逐层堵死它再次发生的可能。</strong></p>
+<h2 id="158-治理三片审批预算路由"><a class="header" href="#158-治理三片审批预算路由">15.8 治理三片：审批、预算、路由</a></h2>
+<p>前面七段片段守的是“别让假成功悄悄点亮终态”。但第 16 章讲的治理边界是另一类问题：当 agent 真的有权花钱、删库、对外发声时，谁批准、花多少、用谁来干。治理听起来像是流程文档里的事，可一旦它只活在文档里，它就管不住运行时——真正能管住运行时的，是和前面同一条事实流里那几个 append-only 事件。下面三段把第 16 章的三条边界落成可回放的片段：每一段都是一条事件序列，外加一句它守住的不变量。它们和 §15.1–15.5 共享同一套底座，所以也共享同一种好处——出事时不靠谁的记忆，只靠 fold 回放。</p>
+<p>先看审批。特权动作不该由发起它的那个 agent 自己批准——这就是第 16 章那句“被告不能兼任法官”。落地的办法不是加一个 <code>if user_is_admin</code> 的分支，而是让特权动作在执行器侧先被拦成一条挂起事件，把决定权交给一个独立的 actor，再用第二条事件把决定写回事实流。整条链长这样：</p>
+<pre><code class="language-text">tool.called          task=t_9f2 tool=slack.upload actor=agent privilege=external_send
+approval.requested   task=t_9f2 action=external_send risk=medium
+                     reason="向 #finance 投递对外可见周报" requested_by=agent seq=11
+task.suspended       task=t_9f2 from=running to=verifying await=approval seq=12
+approval.decided     task=t_9f2 action=external_send decision=allow
+                     decided_by=operator:lin basis="周报内容已抽检、收件频道正确" seq=18
+task.resumed         task=t_9f2 from=verifying to=running approver=operator:lin seq=19
+</code></pre>
+<p>关键在 <code>requested_by</code> 与 <code>decided_by</code> 必须是两个不同的 actor，且只有具备审批能力的 actor 才被允许写 <code>approval.decided</code>——这要靠第 6 章那张事件写入权限表来约束，正如只有 coordinator 能写 <code>task.settled</code>。<code>basis</code> 字段不是装饰：它让事后回放能回答“当时凭什么放行”，而不是只看到一个孤零零的 <code>allow</code>。<strong>它守住的那条不变量是：任何特权动作的执行，都必须能在事实流里找到一条由独立 actor 写下、且带依据的 <code>approval.decided</code>，发起者自己的声明永远不算数。</strong></p>
+<p>再看预算。预算的危险不在于超支本身，而在于“预算见底时系统怎么收场”。t_9f2 早期版本最隐蔽的一处，就是 turn 预算见底时它没有报错，而是悄悄跳过了本该执行的投递复查——预算耗尽被翻译成了“提前完成”。正确的做法是把每一次消耗记成事件、让累计可回放，并且把“耗尽”显式映射成一个非成功终态，而不是让它退化成静默的 done：</p>
+<pre><code class="language-text">budget.consumed   task=t_9f2 kind=turns delta=1 used=18 cap=20 seq=21
+budget.consumed   task=t_9f2 kind=turns delta=1 used=19 cap=20 seq=23
+budget.consumed   task=t_9f2 kind=turns delta=1 used=20 cap=20 seq=25
+budget.exhausted  task=t_9f2 kind=turns used=20 cap=20 pending=delivery_recheck seq=26
+task.settled      task=t_9f2 from=running to=failed
+                  category=budget_exhausted_before_verify seq=27
+</code></pre>
+<p>注意 <code>pending=delivery_recheck</code>：它把“还差哪一步没做”留在了事实流里，于是终态是 <code>failed</code> 而非 <code>ready</code>，操作员一眼能看出这不是干净的完成。如果团队希望给一次补救机会，也可以让它退回 <code>verifying</code> 等待预算追加，但绝不能是 <code>done</code>——退回 <code>verifying</code> 与跳到 <code>failed</code> 的共同点，是都拒绝在复查没跑完时点亮终态。<strong>它守住的那条不变量是：预算耗尽只能落到一个明确的非成功终态，未完成的验证步骤必须显式记录，绝不允许“没钱了”被静默改写成“做完了”。</strong></p>
+<p>最后看路由。不是每个 turn 都值得动用最贵、最强的模型。第 16 章的路由边界，是让系统按风险、成本和有效工作区间来选模型，并把这个选择本身记成事件——可闭合、低风险的那部分工作可以路由给开源模型，再用 gating 验证器兜底，省下的预算留给真正难的判断。能这样做的前提，恰恰是验证器“可闭合”（sound、便宜、独立）：因为兜底门禁可靠，所以选谁来产出反而不那么要命。事件该长这样：</p>
+<pre><code class="language-text">model.selected   task=t_9f2 step=draft_summary model=oss-mid-14b
+                 basis="可闭合:输出受 slack.delivered gating 兜底" risk=low cost_tier=1 seq=8
+model.selected   task=t_9f2 step=delivery_decision model=frontier-lg
+                 basis="对外投递、风险中、需判断收件频道" risk=medium cost_tier=3 seq=14
+validator.ran    task=t_9f2 validator=slack.delivered gating=true result=fail seq=29
+</code></pre>
+<p><code>basis</code> 同样是核心：它让“为什么这一步用了便宜模型”可回放，而不是事后只能猜。更要紧的是最后那行——无论上游选了哪个模型，<code>slack.delivered</code> 这道 gating 验证器都照跑不误；模型选择影响的是成本与速度，而绝不是终态的可信度。<strong>它守住的那条不变量是：模型路由只能改变谁来产出、花多少成本，绝不能改变终态由 gating 验证器裁决这件事——便宜模型的产出，和贵模型的产出，要过的是同一道门。</strong></p>
+<p>三段拼在一起，治理就不再是贴在墙上的制度，而是和任务事实流同源的几类事件：审批让权力可追溯，预算让代价可结算，路由让算力可调度——而它们各自守住的不变量，最终都指向同一句话：让对外可见的每一个终态，都站得住回放。</p>
 <hr>
                     </main>
 

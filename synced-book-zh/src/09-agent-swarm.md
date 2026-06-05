@@ -89,6 +89,35 @@ coordinator ──spawn_agent("verifier",         goal="按契约核对产物", 
 
 反过来想就更清楚了。一个偷懒的 swarm，如果允许 delivery-worker 自己喊一句“发完了，收工”，那它不过是把第 6 章那个单 agent 的“假成功”，原样乘上了 agent 的数量——每多一个能自宣终态的 worker，就多一个能撒谎的嘴。这也正是 §10.3 那个判断的另一面：sub-agent 的价值从来不是“多开几个并行”，而是在“多嘴多手”的同时，把**裁决权死死收敛到一个角色**。手可以很多，脑可以分工，但说“这单成了”的权力，整个 swarm 里只能有一份。[^claudecode-codex-multiagent-ch10] 谁都能宣布成功的系统，等于谁都没在负责成功。
 
+## 10.6 一个 worker 中途崩了，群体怎么不塌
+
+§10.5 演的是“失败被诚实地汇报、终态被正确地裁决”，那是一条相对干净的链：每个 worker 都活到了能写下自己那条 `subagent.reported` 的时刻。但真实的 swarm 里有更难看的一种情况——某个 worker 根本没机会体面收场，它在半道上崩了。进程被 OOM 杀掉、worktree 里一个本地依赖装不上、渲染库踩到一个段错误，于是它既没产出产物，也没来得及说“我卡住了”。这种“沉默的死”，恰恰是最考验控制面纪律的地方：一个没有角色化、不能单独恢复的系统，遇到它只有两条退路，要么整局推倒重跑，要么更糟——某个还活着的 agent 看见缺了块东西，自作主张地把窟窿填上，合成出一个假成功。
+
+还是那三个 worker：data-worker `w1` 负责把 q2 数据渲染成 PDF，delivery-worker `w2` 负责把它发到 `#finance`，verifier `v1` 负责按契约核对。这次让 `w1` 在渲染到一半时崩掉。要紧的是看清，控制面是怎么把这次崩溃**吸收**进一条恢复链，而不是让它向上**放大**成一次全局重跑或一个绿色谎言。
+
+第一道纪律，是 `w1` 的死讯只能以它自己的口吻被记下。崩溃本身由 coordinator 通过 `wait_agent` 观察到——子进程非正常退出，没有任何 `artifact.written`。注意这里有一个微妙但要命的边界：`w1` 能为自己写下（或被代写）一条 `subagent.reported:{status:"failed"}`，说的是“我这一步没成”，它绝写不出 `task.settled`。这正是 §10.4 第一条在崩溃路径上的回响——子 agent 描述自己这一步的死活，但永远无权宣布系统的终态。一个进程哪怕死了，它能污染的也只是自己 scope 内的那一格事实，碰不到那张只有 coordinator 能写 `task.settled` 的权限表。
+
+第二道纪律，是恢复落在一个干净的工作区里，而不是原地缝补。coordinator 读到 `w1` 失败，并不去翻它崩溃时留下的半成品 worktree——那里可能有写了一半的 PDF、半截临时文件、一个坏掉的字体缓存。它做的是 §10.4 第三条所说的“单独恢复”：在一个全新的 worktree 里重新派发 `w1` 的子任务，给它一个新的 actor 身份 `w1'`，让它从干净状态重渲一次。整局里其余两个 worker 的事实、其余 shard 的进度，一格都不用动。这就是角色化与单独恢复合起来的红利：失败的爆炸半径，被收敛到一个子任务、一个 worktree。
+
+第三道纪律，是下游 worker 因依赖未就绪而**正确地等待**，而不是抓着一个不存在的产物硬发。`w2` 的派工带着 `needs=[a_pdf_1]`。在 `w1` 崩到 `w1'` 重渲成功、`a_pdf_1` 真正落进事实流之前，`w2` 的前置条件就是不满足，它只能挂在 `blocked` 上等。这一条等待是被结构逼出来的，不是靠 `w2` 自觉——产物契约里那条 `a_pdf_1` 的依赖，物理上挡住了它去 `slack.upload` 一个空文件或一个上一轮的陈旧 PDF。把这条恢复链演出来，事实流大致是这样：
+
+```jsonl
+{"seq":12,"actor":"agent:w1",          "type":"tool.called","tool":"pdf.render","args_digest":"…q2…"}
+{"seq":13,"actor":"agent:coordinator", "type":"subagent.reported","subagent":"w1","status":"failed","reason":"worker_crashed:exit_signal_SIGSEGV"}
+{"seq":14,"actor":"agent:w2",          "type":"subagent.reported","status":"blocked","reason":"needs_unmet:a_pdf_1"}
+{"seq":15,"actor":"agent:coordinator", "type":"subagent.respawned","of":"w1","as":"w1'","worktree":"wt_q2_retry","clean":true}
+{"seq":16,"actor":"agent:w1'",         "type":"artifact.written","kind":"report.pdf","artifact_id":"a_pdf_1"}
+{"seq":18,"actor":"agent:w2",          "type":"tool.returned","tool":"slack.upload","ok":true}
+{"seq":19,"actor":"agent:w2",          "type":"artifact.written","kind":"delivery.receipt","artifact_id":"a_rcpt_1"}
+{"seq":20,"actor":"agent:v1",          "type":"validator.result","validator":"shard.consistency","ok":false,"gating":true,"reason":"a_pdf_1 渲染自 shard 切换前的旧游标"}
+{"seq":22,"actor":"agent:v1",          "type":"validator.result","validator":"slack.delivered","ok":true,"gating":true}
+{"seq":24,"actor":"agent:coordinator", "type":"task.settled","state":"failed","reason":"required_validator_failed:shard.consistency"}
+```
+
+这条流里藏着第四道纪律，也是最容易被“多开几个 agent”忽略的一道：verifier 是跨 shard 的最后一道闸。`w1'` 在干净 worktree 里重渲时，恰好赶上数据层做了一次 shard 切换，它读到的是切换前那一刻的旧游标，于是 PDF 本身渲染成功、`slack.delivered` 也为真——单看 `w2` 这条链，一切都绿。可 `v1` 的 `shard.consistency` 验证器是独立于任何单个 worker 的视角，它比对了产物所依据的游标与当前权威游标，`seq:20` 那条 `ok:false` 把这个隐患拦在了终态之前。于是 coordinator 在 `seq:24` 写下的不是 ready，而是一条理由明确的 `failed`。这恰好呼应了第 13 章那条“可闭合验证器要 sound、要独立”的要求——独立，意味着它不被任何一个声称自己干完了的 worker 牵着走。
+
+把这条恢复链倒过来看，对比就刺眼了。一个只会“多开几个 agent”、却没把角色与单独恢复能力焊进控制面的系统，遇到同样的 `w1` 崩溃，只剩两种难看的结局。第一种是整片重跑：因为没有“单独恢复一个子任务”的原语，唯一安全的做法就是把三个 worker 连同已经算对的部分一起推倒，付一次完整的、昂贵的 prefill 和 API 账单，这正是 §10.3 想让你省下的那笔钱。第二种更危险：某个还活着的 agent——比如一个被允许自宣终态的 `w2`——看见缺了 `a_pdf_1`，顺手抓起上一轮缓存里的旧 PDF 发了出去，再写一条“已发送”，于是崩溃被一路向上**放大**成了一个绿色气泡，正是贯穿全书那条 `t_9f2` 假成功的 swarm 翻版。区别从来不在 agent 的数量，而在那张权限表是否还立着：worker 只描述自己这一步、恢复落在干净 worktree、下游因 `needs` 未就绪而等待、verifier 独立把跨 shard 的隐患拦下、唯有 coordinator 在所有 gating 项落定后写终态。守住这五点，一个 worker 中途崩了，群体顶多慢一拍；守不住，它崩的那一下，会被整个群体齐声放大成一句谎话。
+
 [^many-brains-ch10]: Anthropic, *Scaling Managed Agents: Decoupling the brain from the hands.* 本章在此处使用其 many brains / many hands 的组织视角，说明 coordinator、worker 与 verifier 的分工；对应第 23 章参考文献 3。
 [^claudecode-codex-multiagent-ch10]: 本章在此处综合 Claude Code 的 `AgentTool.tsx`、`loadAgentsDir.ts`、`teammateMailbox.ts`、`worktree.ts` 等实现，以及 Codex `spawn_agent` / `send_input` / `wait_agent` / `resume_agent` 等工具原语，用来说明多 agent 需要角色、通信、隔离、汇总与恢复这些一等能力；对应第 23 章参考文献 21、24。
 [^swarm-econ-ch10]: 本章在此处综合 Anthropic 的 managed agents 视角、OpenAI API Pricing 关于 `under 270K` 标准费率的限定、Google Gemini 1.5 关于 1M context pricing tiers 与 latency 的说明、Google long context 文档关于 retrieval-cost tradeoff 与 caching 的说明、LongLLMLingua 关于 higher computational cost / performance reduction / position bias 的概括，以及 MInference 关于 1M token prefill 代价的摘要数字，用于说明 sub-agent / swarm 在质量、成本与时延上的优势；对应第 23 章参考文献 3、14、15、18、19、20。

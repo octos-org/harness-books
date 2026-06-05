@@ -118,6 +118,45 @@ emit '{"type":"tool.progress","tool":"slack.upload","pct":100}'
 
 更危险的动作，则要把人重新请回决策里。我们这条任务里，`slack:channel:#finance` 是预先授权的，所以一路无需打断；但假如它要做的是“给外部地址 `cfo@` 发一封带附件的邮件”，触到的就是 `email:send_external` 这类特权 scope——这时合理的设计不是放行，而是先在事实流里落一条 `approval.requested`，把任务挂起，等一条 `approval.decided` 回来再继续。这正是 Codex 那套 sandbox 加 approval 模型的用意：权限的授予、特权动作的审批、人工的放行或拒绝，全都是事实流里的一等事件，而不是某处代码里一个无人留痕的 `if`。[^bridge-contract-ch7] 把这一节连起来看就清楚了——能力平面之所以敢“伸得出手”，正是因为每只手伸出去时，都被 scope 框住、被产物契约盯住、被特权审批拦住，伸出去的每一下都在事实流里留着痕。
 
+## 7.8 同一道纪律，套到一个 MCP 工具上
+
+前面那段 Slack 上传是“自己人”——`slack.upload` 是团队亲手包出来的桥接能力。但 §7.1 提过，MCP 的意义恰恰在它是“工具世界的 USB-C”：很多能力并不出自你的代码库，而是别人写好的一个 MCP server，你只是把它插上来。这里最容易跑偏的念头是——“MCP 嘛，给 demo 加点扩展用的，接上能跑就行”。这个念头一旦成立，§7.3 那条污染链会原封不动地从 MCP 这个口再灌一遍。所以正确的理解是反过来的：**MCP 不是给 demo 加扩展的旁路，而是把外部能力接进同一个运行面的标准口。** 一件能力从 shell 来、从 Python 来、从 Node 来，还是从某个 MCP server 来，对消费端那道校验而言没有半点区别——它们最终都得过同一道关。
+
+拿一个具体的来对质：团队有个内部工单系统，对外暴露成一个 MCP server，其中一个工具叫 `ticket.create`，用来下一张采购或运维工单。最省事的接法是“调通了 HTTP 200 就算下单成功”——而这恰恰是 §7.5 里 `slack.upload` 摔过的那一跤的翻版：HTTP 200 只说明请求到达了对端的网关，不说明工单真的落库、真的拿到了一个能回查的编号。所以这个 MCP 工具进系统时，要被套上和 `slack.upload` 一模一样的契约骨架：
+
+```json
+{
+  "name": "ticket.create",
+  "source": "mcp:internal-ticketing",
+  "scopes": ["ticket:create", "ticket:project:OPS"],
+  "args_schema": {"project": "string", "title": "string", "priority": "string?"},
+  "result_contract": {
+    "success_means": "工单已落库且返回的 ticket_id 可经 ticket.get 回查命中",
+    "on_success": {"emit_artifact": {"kind": "ticket.receipt",
+                                     "fields": ["ticket_id", "project", "url", "created_ts"]}}
+  },
+  "privileged": {"priority=P0": "approval.requested"}
+}
+```
+
+注意这份契约和 §7.5 那份在结构上是同一个模子刻出来的，只在该填的地方填了工单的语义。`success_means` 同样没有停在传输层：它要求的不是“对端回了 2xx”，而是“拿到的 `ticket_id` 能被 `ticket.get` 再查一次、并且命中”——把“成功”钉死在一个可回查的客观事实上，而不是模型对一句回包的语义直觉。换成那个常见的“知识库检索”MCP 工具，这条线写法不变：成功的定义是“检索真的命中、返回了带 `doc_id` 的结果”，而不是“检索接口没报错”。无论哪种工具，`success_means` 都在干同一件事——把成功的判据从感觉挪到证据。
+
+接下来的几道关，全是这本书一路讲下来的老规矩，只是这次施加在一个外来工具上。它产出一件具名 artifact：成功必须落下一件 `ticket.receipt`，带着 `ticket_id` 和回查用的 `url`——这正是后续 gating validator 要找的那件物证，没有它，终态点不亮 `ready`，道理和 §7.6 里那件 `delivery.receipt` 一字不差。它经统一事件入口回流：MCP server 那边吐回的调用结果，不会被当成“特殊的 MCP 返回”另开一条通道，而是被翻译成和原生事件同一套 schema 的事实，喷进 §7.6 那个 `HARNESS_EVENT_SINK` 描述的同一条流——`tool.progress`、`artifact.written` 这些事件，并不在乎自己背后那只手是 MCP 还是 shell。它的 scope 受限：`ticket:create` 加 `ticket:project:OPS`，意思是这件能力只能在 `OPS` 这一个项目下建单，建不到别的项目去，更越不出工单这件事——和 `slack.upload` 只能往 `#finance` 写文件是同一种最小权限。
+
+唯一比 Slack 那例多出来的，是那行 `privileged`。下一张普通工单是日常操作，一路无需打断；可一旦 `priority` 是 `P0`——意味着会触发待命工程师的电话告警、半夜把人喊起来——这就是个特权动作，不该由 agent 自行拍板。于是契约规定：遇到 `P0`，桥接层不直接发出调用，而是先往事实流里落一条 `approval.requested`，把任务挂起，等一条人来拍板的 `approval.decided` 回来再决定放不放行。这和 §7.7 里那封发给 `cfo@` 的外部邮件是同一套机制——特权的边界被写进能力契约，审批是事实流里的一等事件，而不是某段 MCP 适配代码里一个无人留痕的 `if`。
+
+把这条 MCP 工具走过的事实流摊开，会看到它和原生能力的足迹完全同形：
+
+```jsonl
+{"seq":11,"ts":"...","actor":"agent","type":"tool.invoked","tool":"ticket.create","source":"mcp:internal-ticketing","args_digest":"sha256:…"}
+{"seq":12,"ts":"...","actor":"runtime","type":"approval.requested","reason":"priority=P0","tool":"ticket.create"}
+{"seq":13,"ts":"...","actor":"oncall-lead","type":"approval.decided","decision":"approved"}
+{"seq":14,"ts":"...","actor":"tool","type":"tool.returned","tool":"ticket.create","ok":true}
+{"seq":15,"ts":"...","actor":"tool","type":"artifact.written","kind":"ticket.receipt","ticket_id":"OPS-4821","url":"https://tickets/OPS-4821","sha256":"…"}
+```
+
+这串事件里没有一条带着“我是 MCP”的特殊标记去要特殊待遇。`approval.requested` 因为撞上 `P0` 而落下，`tool.returned` 带着 `ok:true` 而不是一句模型自述，`ticket.receipt` 这件产物携着可回查的 `ticket_id` 落进流——每一步都和这本书前面讲的原生能力踩在同一组规矩上。这正是把 MCP 当“标准口”而非“扩展旁路”的全部意义：你接进来的能力可以是任何人写的、用任何语言实现的，但它一旦进了这道口，就得和 `slack.upload`、和那段 Python 脚本一样，把成功钉在证据上、把产物留成物证、把特权交还给人。发射端尽可以五花八门，消费端那道关，对谁都一视同仁。
+
 [^capability-plane-ch7]: 本章在此处综合 Claude Code `ToolUseContext`、MCP 与 agent 定义相关实现，以及 Codex `tools` 与 `app-server` 协议面中关于 command、fs、MCP、human input、多 agent 工具的公开边界，用来说明万用 agent 必须先拥有统一的能力平面；对应第 23 章参考文献 21、24。
 [^bridge-contract-ch7]: 本章在此处综合 Codex 开源仓库中 sandbox、approval 与工具 scope 的公开边界，以及 MCP 关于工具调用与资源读取的标准约定，用来说明桥接能力的结果契约、事件回流协议与权限模型；对应第 23 章参考文献 24、41。
 
