@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-7b12c9f9.js";
+            window.path_to_searchindex_js = "searchindex-2891aba2.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-cf7b5ff6.js"></script>
@@ -175,7 +175,7 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="15-参考架构片段"><a class="header" href="#15-参考架构片段">15. 参考架构片段</a></h1>
-<p>前面的章节已经给出原则、边界和检查表；这一章补六段最小架构片段，帮助团队把抽象要求落成具体事实流、契约执行流、swarm 控制流，以及一条匿名失败链的端到端落地图、最小事件序列和可直接复用的复盘模板。</p>
+<p>前面的章节已经给出原则、边界和检查表；这一章补七段最小架构片段，帮助团队把抽象要求落成具体事实流、契约执行流、swarm 控制流，以及一条匿名失败链的端到端落地图、最小事件序列、可直接复用的复盘模板，外加一份按全书贯穿样例（那条“假成功”的周报任务）填好的复盘范例。</p>
 <h2 id="151-任务事实流"><a class="header" href="#151-任务事实流">15.1 任务事实流</a></h2>
 <pre><code class="language-text">工具发出进度事件 -&gt; 运行时校验事件 -&gt; 监督器持久化状态
 -&gt; TaskStatusChanged -&gt; API/SSE -&gt; UI 回放与状态气泡
@@ -250,7 +250,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 - 一句话摘要：
   - 例如：root task 被错误标记为 `ready`，但交付的 `slides.pptx` 实际是旧模板文件。
 
-## 4. 用户影响与业务影响
+## 2. 用户影响与业务影响
 
 - 受影响用户 / 项目：
 - 受影响时间窗：
@@ -258,7 +258,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 - 错误交付 / 重复执行 / 数据污染 / 合规风险：
 - 是否需要外部沟通或补偿：
 
-## 5. 时间线
+## 3. 时间线
 
 | 时间（绝对时间） | 事件 | 证据 |
 |---|---|---|
@@ -267,7 +267,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 | 2026-04-23 10:12 | root task 被标记为 `ready` | task snapshot |
 | 2026-04-23 10:18 | 用户报告交付文件错误 | support ticket |
 
-## 6. 任务 / Agent 拓扑
+## 4. 任务 / Agent 拓扑
 
 - root task：
 - coordinator：
@@ -278,7 +278,7 @@ task.failed          task=root-17 category=artifact_contract_violation
   - shell / MCP / Python / Node / browser / API
 - 人工介入点：
 
-## 7. 用户面与系统面如何分叉
+## 5. 用户面与系统面如何分叉
 
 - 用户看到的事实：
 - UI / replay 呈现的事实：
@@ -286,42 +286,42 @@ task.failed          task=root-17 category=artifact_contract_violation
 - 底层运行时实际发生的事实：
 - 第一次分叉发生在哪个时刻：
 
-## 8. 五层断裂点解剖
+## 6. 五层断裂点解剖
 
-### 8.1 Session
+### 6.1 Session
 
 - root / child task 关系是否被显式持久化：
 - primary artifact 是否被显式声明：
 - scope / owner / role / worktree 是否完整：
 - 这里的缺口是什么：
 
-### 8.2 Capability Plane
+### 6.2 Capability Plane
 
 - 实际调用了哪些能力：
 - Python / Node / shell / MCP 是否走统一事件入口：
 - artifact / citation / temp file 是否按契约回传：
 - 这里的缺口是什么：
 
-### 8.3 Verifier
+### 6.3 Verifier
 
 - 哪些 validator 本应拦住问题：
 - 实际运行了哪些 validator：
 - 为什么没有阻断终态：
 - 证据路径：
 
-### 8.4 Operator Dashboard
+### 6.4 Operator Dashboard
 
 - 值班同学是否能直接看到 root/child 关系、artifact、validator 结果：
 - 哪些关键信息缺失：
 - 哪些状态只是影子状态：
 
-### 8.5 Swarm / Coordinator
+### 6.5 Swarm / Coordinator
 
 - coordinator 的职责是否越界：
 - child agent 是否回传了可验证 summary：
 - 是否存在局部成功伪装成系统成功：
 
-## 9. 证据包
+## 7. 证据包
 
 - session / task 快照：
 - 关键事件序列：
@@ -330,7 +330,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 - dashboard 截图：
 - 相关 commit / deploy / feature flag：
 
-## 10. 根因归类
+## 8. 根因归类
 
 - 四支柱归类：
   - Session / Harness / Tools / Verification
@@ -338,22 +338,22 @@ task.failed          task=root-17 category=artifact_contract_violation
   - 事实流 / 生命周期 / 能力平面 / 产物与验证 / 回放 / 隔离与恢复 / 协作 / 知识分层 / 操作员面
 - 最终根因一句话：
 
-## 11. 为什么现有防线没有拦住
+## 9. 为什么现有防线没有拦住
 
 - 哪个 validator 缺失：
 - 哪个门禁没有覆盖：
 - 哪个 dashboard 信号不够：
 - 哪个 runbook 或 skill 没有晋升：
 
-## 12. 修复动作
+## 10. 修复动作
 
-### 12.1 已执行 Hotfix
+### 10.1 已执行 Hotfix
 
 - [ ] 修复项
 - [ ] 影响范围
 - [ ] 回滚策略
 
-### 12.2 结构修复
+### 10.2 结构修复
 
 - [ ] session / schema 修复
 - [ ] capability plane 修复
@@ -361,14 +361,14 @@ task.failed          task=root-17 category=artifact_contract_violation
 - [ ] dashboard / replay 修复
 - [ ] swarm / coordinator 修复
 
-### 12.3 发布门禁补强
+### 10.3 发布门禁补强
 
 - [ ] mini-fleet case
 - [ ] replay fixture
 - [ ] validator evidence assertion
 - [ ] cross-session contamination check
 
-## 13. 组织沉淀
+## 11. 组织沉淀
 
 - 会新增哪些 validator：
 - 会新增哪些 dashboard 信号：
@@ -376,7 +376,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 - 会晋升哪些 `AGENTS.md` / docs / skills 规则：
 - 下次同类事故应被什么机制更早拦住：
 
-## 14. 完成定义
+## 12. 完成定义
 
 - [ ] 用户面症状已消失
 - [ ] 根因层修复已上线
@@ -385,6 +385,59 @@ task.failed          task=root-17 category=artifact_contract_violation
 - [ ] 复盘已归档到 failure museum
 </code></pre>
 <p>这个模板最重要的价值，不是让复盘文档更整齐，而是避免团队把 harness 事故再次写成“一个人记得的故事”。只要每次都沿着这份模板写，事故就会持续沉进 session 模型、能力平面、validator、dashboard 和 swarm 纪律里。</p>
+<h2 id="157-一份填好的复盘周报投递的假成功"><a class="header" href="#157-一份填好的复盘周报投递的假成功">15.7 一份填好的复盘：周报投递的“假成功”</a></h2>
+<p>空模板再清楚，也不如填好的一份有说服力。第 6 章那条贯穿全卷的任务——把 <code>q2-weekly.pdf</code> 发到 <code>#finance</code>、却在两段式上传的第二段悄悄失败——我们一路追到了第 10 章。现在把它按上面的模板填一遍，但只填操作员真正会在三十秒里扫过的那几格。它该长这样：</p>
+<pre><code class="language-md"># 事故：周报“已发送”，但 #finance 从未收到
+
+## 1. 事故摘要
+- 事故编号：INC-2026-0602-01
+- 任务：t_9f2（季度周报投递）
+- 当前状态：已修复
+- 一句话摘要：模型在聊天里声称“已发送到 #finance”，但 slack.upload 的
+  completeUpload 超时、delivery.receipt 从未生成；任务真实终态是 failed。
+
+## 2. 用户影响与业务影响
+- 受影响方：财务团队、CFO
+- 时间窗：2026-06-02 09:01 报“完成”，至 06-05 例会上被发现，约 3 天
+- 用户表面症状：聊天显示绿色完成气泡“已发送、已抄送 CFO”
+- 错误交付：是——周报实际未送达，决策依据缺失
+- 合规风险：低（无数据外泄，仅交付缺失）
+
+## 3. 时间线
+| 时间 | 事件 | 证据 |
+|---|---|---|
+| 06-02 09:00:31 | report.pdf 生成 | seq 5, sha256 9c0b… |
+| 06-02 09:01:03 | slack.upload 第二段超时 | seq 7, ok=false, upload_incomplete |
+| 06-02 09:01:05 | 模型声称“已发送” | seq 8, type=model.claim |
+| 06-05 10:00   | CFO 例会上报告缺失 | 会议纪要 |
+
+## 6. 五层断裂点解剖（一句话版）
+- session：事实流没问题——seq 7 的失败一直在，从未被覆盖。
+- 能力平面：✗ 早期版本里 slack.upload 是 prompt 里一段 curl，
+  success_means 未定义，把第一段的 2xx 当成了成功。
+- verifier：✗ slack.delivered 当时是 best-effort、非 gating，未阻断终态。
+- dashboard：✗ 无“ready 但 gating 未全绿”信号，绿气泡无人质疑。
+- swarm：本次为单 agent，未涉及。
+
+## 8. 根因归类
+- 四支柱：Tools（能力契约缺 success_means）+ Verification（gating 缺失）
+- 九维度：能力平面 / 产物与验证
+- 最终根因一句话：把“成功”的定义留给了模型语义和 HTTP 状态码，
+  而不是一件可回查的 delivery.receipt 产物。
+
+## 9. 为什么现有防线没有拦住
+- slack.upload 无结果契约，未要求 emit delivery.receipt 产物
+- slack.delivered 验证器存在但非 gating，failed 不阻断
+- 无终态真实性门禁（assert_terminal_authentic）
+
+## 11. 组织沉淀
+- 新增 validator：slack.delivered 升为 gating
+- 新增能力契约：slack.upload.success_means = completeUpload 2xx 且 file_id 可回查
+- 新增门禁：assert_terminal_authentic（ready ⇒ 所有 gating validator 全绿）
+- 新增 dashboard 信号：ready 但 gating 未全绿 → 立即标红
+- 新增 runbook：见 READY_OVER_FAILED_GATE 处置三步
+</code></pre>
+<p>把这份填好的复盘和第 6 到 10 章对读，会发现它其实是那条防御链的回执单：第 2 节“用户看到绿、实际没送达”，正是第 8 章那个 fold 拒绝渲染的东西；第 6 节那行“能力平面 ✗”，正是第 7 章 <code>success_means</code> 要修的；第 9 节“验证器非 gating”，正是第 6.9 节 <code>gating</code> 开关存在的理由；第 11 节那条 <code>assert_terminal_authentic</code>，就是第 9 章那段门禁代码。一次事故、一条样例，从机理（卷一）到失败类别（第 5 章）、到参考架构与五章实现（卷三）、最后落回这份三十秒能读懂的复盘——这正是整本书想示范的那条闭环：<strong>让每一次“假成功”，都被设计、被验证、被门禁、被复盘，逐层堵死它再次发生的可能。</strong></p>
 <hr>
                     </main>
 
