@@ -46,7 +46,7 @@
 
 所以治理不是盖在 harness 之上的第五层，它就是 harness 那条事实流，被多读了四遍。这也正是为什么本章开头那个“再开一个系统”的冲动必须被按住：一个脱离主流的审计库会漏记一次越权，一块单独的成本看板会算错一次预算，一份脱离运行时的路由表会把任务发给一个工作带根本不够的模型——它们各自的失败，和第 8 章前端“发明 done”、第 9 章 dashboard“影子绿”，是同一种病的不同年龄段。第 13 章说 harness 必要但不充分，治理在这里给那句话补了下半句：**这些“不充分”的部分要做对，靠的仍然是同一条事实流——把安全、合规、成本、路由全都建在它上面，而不是在它旁边各开一条暗渠。**
 
-[^governance-sandbox-ch16]: 本章在此处综合 Codex 开源仓库中 sandbox 分级与 approval 流程，以及 Claude Code 在权限上下文、hooks 与工具 scope 上的实现，用来说明安全边界应作为能力被接入时的固有属性、并以事件留痕；对应第 22 章参考文献 21、24。
-[^governance-cost-ch16]: 本章在此处综合 OpenAI API Pricing 关于 `under 270K` 标准费率的限定、Google Gemini 1.5 关于 1M context pricing tier 与 latency 的说明，以及 MInference 关于 1M token prefill 代价的摘要，用来说明成本治理须把 token、时延与重试一并做成一等预算；对应第 22 章参考文献 14、18、20。
+[^governance-sandbox-ch16]: 本章在此处综合 Codex 开源仓库中 sandbox 分级与 approval 流程，以及 Claude Code 在权限上下文、hooks 与工具 scope 上的实现，用来说明安全边界应作为能力被接入时的固有属性、并以事件留痕；对应第 23 章参考文献 21、24。
+[^governance-cost-ch16]: 本章在此处综合 OpenAI API Pricing 关于 `under 270K` 标准费率的限定、Google Gemini 1.5 关于 1M context pricing tier 与 latency 的说明，以及 MInference 关于 1M token prefill 代价的摘要，用来说明成本治理须把 token、时延与重试一并做成一等预算；对应第 23 章参考文献 14、18、20。
 
 ---

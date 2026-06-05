@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-c7f2fb25.js";
+            window.path_to_searchindex_js = "searchindex-6fa9ffb9.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-9b296d31.js"></script>
+        <script src="toc-67109edf.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -208,7 +208,7 @@
 <li>需要不靠聊天文本猜测失败模式的平台操作员和技术负责人</li>
 </ul>
 <h2 id="03-推荐阅读顺序"><a class="header" href="#03-推荐阅读顺序">0.3 推荐阅读顺序</a></h2>
-<p>最稳妥的是线性路径——从前言和第 0 章一路读到第 22 章，按下面四卷的顺序推进。若时间有限，可以按角色裁剪：把 agent 当作编码生产工具的读者（Layer 1），可先用第 1–6 章打底，再跳到第 12 章的路线图和第 14 章的清单；产品本身就是 agent 的读者（Layer 2），则重点读第 1–3 章的机理、第 6–10 章的实现模块，和第 13 章的能力边界。更细的按角色路线（负责人、架构师、CTO、研究者），见文末附录 D。</p>
+<p>最稳妥的是线性路径——从前言和第 0 章一路读到第 23 章，按下面四卷的顺序推进。若时间有限，可以按角色裁剪：把 agent 当作编码生产工具的读者（Layer 1），可先用第 1–6 章打底，再跳到第 12 章的路线图和第 14 章的清单；产品本身就是 agent 的读者（Layer 2），则重点读第 1–3 章的机理、第 6–10 章的实现模块，和第 13 章的能力边界。更细的按角色路线（负责人、架构师、CTO、研究者），见文末附录 D。</p>
 <h2 id="04-这版书稿的组织方式"><a class="header" href="#04-这版书稿的组织方式">0.4 这版书稿的组织方式</a></h2>
 <p>全书按四卷推进，让“理论 → 样本 → 架构 → 实践”成为一条连续、不回头的主线。</p>
 <p><strong>卷一·机理与控制系统（第 1–3 章）</strong> 先讲 LLM 是一台什么机器、它为什么在时间和空间上必然失效，再由此导出 harness 作为外层反馈控制系统——这是全书的地基，回答“为什么非要一套控制系统不可”。<strong>卷二·正反样本（第 4–5 章）</strong> 用 Claude Code、Codex、OpenAI 1M LOC 这些成熟样本正面示范成熟系统在建设什么，再用一组真实事故反面印证机制缺位会怎样坏。<strong>卷三·参考架构与实现（第 6–10 章）</strong> 把样本反推成一张统一总图，再沿能力平面、回放与用户事实、操作员控制面、群体编排，逐个从概念展开到可照着搭的实现。<strong>卷四·落地与治理（第 11 章及以后）</strong> 把架构上升为设计原则，排成施工路线图，收成可执行清单与能力边界，并以结语、附录与参考文献收束。</p>
@@ -297,43 +297,43 @@ for L in [4_000, 16_000, 64_000, 256_000]:           # 扫长度
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-softmax-dilution-ch2">
-<p>Petar Veličković et al., <em>Softmax is not Enough (for Sharp Size Generalisation).</em> 本章在此处使用其关于 softmax 随规模稀释、无法保持锐利选择的结论，来解释注意力质量守恒下的远端稀释；对应第 22 章参考文献 43。 <a href="#fr-softmax-dilution-ch2-1">↩</a></p>
+<p>Petar Veličković et al., <em>Softmax is not Enough (for Sharp Size Generalisation).</em> 本章在此处使用其关于 softmax 随规模稀释、无法保持锐利选择的结论，来解释注意力质量守恒下的远端稀释；对应第 23 章参考文献 43。 <a href="#fr-softmax-dilution-ch2-1">↩</a></p>
 </li>
 <li id="footnote-bounded-logit-ch2">
-<p>本章在此处使用 Kimi K2 技术报告关于 attention logit explosion 与 QK-Clip 的描述（不封顶时 max logit 越过 1000 量级、训练发散），用来说明 logit 被主动限幅、因此单 token 注意力权重存在与 n 无关的上界；对应第 22 章参考文献 47。 <a href="#fr-bounded-logit-ch2-1">↩</a></p>
+<p>本章在此处使用 Kimi K2 技术报告关于 attention logit explosion 与 QK-Clip 的描述（不封顶时 max logit 越过 1000 量级、训练发散），用来说明 logit 被主动限幅、因此单 token 注意力权重存在与 n 无关的上界；对应第 23 章参考文献 47。 <a href="#fr-bounded-logit-ch2-1">↩</a></p>
 </li>
 <li id="footnote-rope-decay-ch2">
-<p>Jianlin Su et al., <em>RoFormer: Enhanced Transformer with Rotary Position Embedding.</em> 本章在此处使用其关于相对距离衰减包络（经 Abel 变换得到）的结论；并按 <em>Round and Round We Go!</em> 标注该衰减证明依赖 query/key 为常向量的前提，故宜视为先验偏置；对应第 22 章参考文献 44、45。 <a href="#fr-rope-decay-ch2-1">↩</a></p>
+<p>Jianlin Su et al., <em>RoFormer: Enhanced Transformer with Rotary Position Embedding.</em> 本章在此处使用其关于相对距离衰减包络（经 Abel 变换得到）的结论；并按 <em>Round and Round We Go!</em> 标注该衰减证明依赖 query/key 为常向量的前提，故宜视为先验偏置；对应第 23 章参考文献 44、45。 <a href="#fr-rope-decay-ch2-1">↩</a></p>
 </li>
 <li id="footnote-oversquash-ch2">
-<p>Federico Barbero et al., <em>Transformers need glasses! Information over-squashing in language tasks.</em> 本章在此处使用其关于 representational collapse 与因果掩码下信息单向汇聚、over-squashing 的分析，来解释长输入中计数/复制/区分类任务的退化；对应第 22 章参考文献 46。 <a href="#fr-oversquash-ch2-1">↩</a></p>
+<p>Federico Barbero et al., <em>Transformers need glasses! Information over-squashing in language tasks.</em> 本章在此处使用其关于 representational collapse 与因果掩码下信息单向汇聚、over-squashing 的分析，来解释长输入中计数/复制/区分类任务的退化；对应第 23 章参考文献 46。 <a href="#fr-oversquash-ch2-1">↩</a></p>
 </li>
 <li id="footnote-nonuniform-kv-ch2">
-<p>本章在此处综合 DeepSeek-V4 技术报告（CSA/HCA 混合压缩注意力、异构与 on-disk KV cache，将近端高分辨率与远端激进聚合并置）与 MiniMax M3（MSA 稀疏/线性注意力）的做法，用来说明工业界以非均匀分辨率换取百万级容量上限；对应第 22 章参考文献 48、49。 <a href="#fr-nonuniform-kv-ch2-1">↩</a></p>
+<p>本章在此处综合 DeepSeek-V4 技术报告（CSA/HCA 混合压缩注意力、异构与 on-disk KV cache，将近端高分辨率与远端激进聚合并置）与 MiniMax M3（MSA 稀疏/线性注意力）的做法，用来说明工业界以非均匀分辨率换取百万级容量上限；对应第 23 章参考文献 48、49。 <a href="#fr-nonuniform-kv-ch2-1">↩</a></p>
 </li>
 <li id="footnote-context-rot-ch2">
-<p>本章在此处综合 Chroma <em>Context Rot</em> 对 18 个前沿模型在各长度增量普遍退化的测试，以及 Anthropic <em>Effective context engineering for AI agents</em> 关于“context rot 在远未触达容量上限时即开始”的说明，用来支撑“闭源前沿也不例外”；对应第 22 章参考文献 50、51。 <a href="#fr-context-rot-ch2-1">↩</a></p>
+<p>本章在此处综合 Chroma <em>Context Rot</em> 对 18 个前沿模型在各长度增量普遍退化的测试，以及 Anthropic <em>Effective context engineering for AI agents</em> 关于“context rot 在远未触达容量上限时即开始”的说明，用来支撑“闭源前沿也不例外”；对应第 23 章参考文献 50、51。 <a href="#fr-context-rot-ch2-1">↩</a></p>
 </li>
 <li id="footnote-gemini15-ch2">
-<p>Google, <em>Introducing Gemini 1.5, Google’s next-generation AI model.</em> 本章在此处使用其关于 NIAH 命中率、1M context pricing tier 与时延预期的表述；对应第 22 章参考文献 14。 <a href="#fr-gemini15-ch2-1">↩</a></p>
+<p>Google, <em>Introducing Gemini 1.5, Google’s next-generation AI model.</em> 本章在此处使用其关于 NIAH 命中率、1M context pricing tier 与时延预期的表述；对应第 23 章参考文献 14。 <a href="#fr-gemini15-ch2-1">↩</a></p>
 </li>
 <li id="footnote-google-long-context-ch2">
-<p>Google AI for Developers, <em>Long context.</em> 本章在此处使用其关于 performance variability、retrieval-cost tradeoff 与 caching 的说明；对应第 22 章参考文献 15。 <a href="#fr-google-long-context-ch2-1">↩</a></p>
+<p>Google AI for Developers, <em>Long context.</em> 本章在此处使用其关于 performance variability、retrieval-cost tradeoff 与 caching 的说明；对应第 23 章参考文献 15。 <a href="#fr-google-long-context-ch2-1">↩</a></p>
 </li>
 <li id="footnote-ltm-ch2">
-<p>Nelson F. Liu et al., <em>Lost in the Middle: How Language Models Use Long Contexts.</em> 本章在此处使用其关于长上下文位置偏置与中段退化的结果；对应第 22 章参考文献 11。 <a href="#fr-ltm-ch2-1">↩</a></p>
+<p>Nelson F. Liu et al., <em>Lost in the Middle: How Language Models Use Long Contexts.</em> 本章在此处使用其关于长上下文位置偏置与中段退化的结果；对应第 23 章参考文献 11。 <a href="#fr-ltm-ch2-1">↩</a></p>
 </li>
 <li id="footnote-fitm-ch2">
-<p>Cheng-Yu Hsieh et al., <em>Found in the Middle: Calibrating Positional Attention Bias Improves Long Context Utilization.</em> 本章在此处使用其关于 <code>"U-shaped attention bias"</code> 的分析；对应第 22 章参考文献 12。 <a href="#fr-fitm-ch2-1">↩</a></p>
+<p>Cheng-Yu Hsieh et al., <em>Found in the Middle: Calibrating Positional Attention Bias Improves Long Context Utilization.</em> 本章在此处使用其关于 <code>"U-shaped attention bias"</code> 的分析；对应第 23 章参考文献 12。 <a href="#fr-fitm-ch2-1">↩</a></p>
 </li>
 <li id="footnote-nolima-ch2">
-<p>Ali Modarressi et al., <em>NoLiMa: Long-Context Evaluation Beyond Literal Matching.</em> 本章在此处使用其关于 32K 条件下模型退化统计，以及 GPT-4o 从 99.3% 降至 69.7% 的结果；对应第 22 章参考文献 16。 <a href="#fr-nolima-ch2-1">↩</a></p>
+<p>Ali Modarressi et al., <em>NoLiMa: Long-Context Evaluation Beyond Literal Matching.</em> 本章在此处使用其关于 32K 条件下模型退化统计，以及 GPT-4o 从 99.3% 降至 69.7% 的结果；对应第 23 章参考文献 16。 <a href="#fr-nolima-ch2-1">↩</a></p>
 </li>
 <li id="footnote-longcodebench-ch2">
-<p>Stefano Rando et al., <em>LongCodeBench: Evaluating Coding LLMs at 1M Context Windows.</em> 本章在此处使用其关于代码任务长上下文退化的样例数据；对应第 22 章参考文献 17。 <a href="#fr-longcodebench-ch2-1">↩</a></p>
+<p>Stefano Rando et al., <em>LongCodeBench: Evaluating Coding LLMs at 1M Context Windows.</em> 本章在此处使用其关于代码任务长上下文退化的样例数据；对应第 23 章参考文献 17。 <a href="#fr-longcodebench-ch2-1">↩</a></p>
 </li>
 <li id="footnote-anthropic-long-ch2">
-<p>Anthropic, <em>Prompting best practices: Long context prompting.</em> 本章在此处使用其关于长文档前置、query 后置与约 30% 质量提升的建议；对应第 22 章参考文献 13。 <a href="#fr-anthropic-long-ch2-1">↩</a></p>
+<p>Anthropic, <em>Prompting best practices: Long context prompting.</em> 本章在此处使用其关于长文档前置、query 后置与约 30% 质量提升的建议；对应第 23 章参考文献 13。 <a href="#fr-anthropic-long-ch2-1">↩</a></p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -399,34 +399,34 @@ Harness 工程
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-agent-theory-ch3">
-<p>本章在此处综合 Franklin / Graesser 对 autonomous agent 的定义，以及 Wooldridge / Jennings 关于 autonomy、reactivity、pro-activeness 与 social ability 的经典描述；对应第 22 章参考文献 26、27。 <a href="#fr-agent-theory-ch3-1">↩</a> <a href="#fr-agent-theory-ch3-2">↩2</a></p>
+<p>本章在此处综合 Franklin / Graesser 对 autonomous agent 的定义，以及 Wooldridge / Jennings 关于 autonomy、reactivity、pro-activeness 与 social ability 的经典描述；对应第 23 章参考文献 26、27。 <a href="#fr-agent-theory-ch3-1">↩</a> <a href="#fr-agent-theory-ch3-2">↩2</a></p>
 </li>
 <li id="footnote-llm-agent-evolution-ch3">
-<p>本章在此处综合 ReAct 关于 reasoning / acting 循环的经典框架，以及 <em>Dive into Claude Code</em> 对 coding assistant 演化到 agentic system 的描述，用来说明 LLM agent 如何从单轮回答走向工具闭环；对应第 22 章参考文献 41、42。 <a href="#fr-llm-agent-evolution-ch3-1">↩</a></p>
+<p>本章在此处综合 ReAct 关于 reasoning / acting 循环的经典框架，以及 <em>Dive into Claude Code</em> 对 coding assistant 演化到 agentic system 的描述，用来说明 LLM agent 如何从单轮回答走向工具闭环；对应第 23 章参考文献 41、42。 <a href="#fr-llm-agent-evolution-ch3-1">↩</a></p>
 </li>
 <li id="footnote-claude-code-design-space-ch3">
-<p>Jiacheng Liu 等，<em>Dive into Claude Code: The Design Space of Today’s and Future AI Agent Systems.</em> 本章在此处使用其关于 Claude Code agentic loop、系统边界与源码分析结论，用来把 agentic AI 从概念落到具体产品架构；对应第 22 章参考文献 41。 <a href="#fr-claude-code-design-space-ch3-1">↩</a> <a href="#fr-claude-code-design-space-ch3-2">↩2</a></p>
+<p>Jiacheng Liu 等，<em>Dive into Claude Code: The Design Space of Today’s and Future AI Agent Systems.</em> 本章在此处使用其关于 Claude Code agentic loop、系统边界与源码分析结论，用来把 agentic AI 从概念落到具体产品架构；对应第 23 章参考文献 41。 <a href="#fr-claude-code-design-space-ch3-1">↩</a> <a href="#fr-claude-code-design-space-ch3-2">↩2</a></p>
 </li>
 <li id="footnote-cybernetics-history-ch3">
-<p>本章在此处综合 Britannica 对 Wiener 战时目标跟踪与预测问题的概述，以及 MIT Press 对 Macy Conferences、Wiener、von Neumann、Margaret Mead、Gregory Bateson 等人的描述，用来补足控制论的人物与历史脉络；对应第 22 章参考文献 30、31。 <a href="#fr-cybernetics-history-ch3-1">↩</a></p>
+<p>本章在此处综合 Britannica 对 Wiener 战时目标跟踪与预测问题的概述，以及 MIT Press 对 Macy Conferences、Wiener、von Neumann、Margaret Mead、Gregory Bateson 等人的描述，用来补足控制论的人物与历史脉络；对应第 23 章参考文献 30、31。 <a href="#fr-cybernetics-history-ch3-1">↩</a></p>
 </li>
 <li id="footnote-cybernetics-foundation-ch3">
-<p>Norbert Wiener, <em>Cybernetics or Control and Communication in the Animal and the Machine.</em> 本章在此处使用 MIT Press 对 cybernetics、feedback loops、noise 与 homeostasis 的概括，来建立控制论视角；对应第 22 章参考文献 25。 <a href="#fr-cybernetics-foundation-ch3-1">↩</a></p>
+<p>Norbert Wiener, <em>Cybernetics or Control and Communication in the Animal and the Machine.</em> 本章在此处使用 MIT Press 对 cybernetics、feedback loops、noise 与 homeostasis 的概括，来建立控制论视角；对应第 23 章参考文献 25。 <a href="#fr-cybernetics-foundation-ch3-1">↩</a></p>
 </li>
 <li id="footnote-cache-history-ch3">
-<p>本章在此处综合 Computer History Museum 关于 delay line、main memory、magnetic core 与 bipolar RAM/cache 的材料，以及 IBM 对 System/370 向硅与高速 cache 迁移的回顾，用来解释 memory hierarchy 不只是抽象理论，而是现实成本、速度与容量冲突逼出来的分层工程；对应第 22 章参考文献 32、33、34。 <a href="#fr-cache-history-ch3-1">↩</a></p>
+<p>本章在此处综合 Computer History Museum 关于 delay line、main memory、magnetic core 与 bipolar RAM/cache 的材料，以及 IBM 对 System/370 向硅与高速 cache 迁移的回顾，用来解释 memory hierarchy 不只是抽象理论，而是现实成本、速度与容量冲突逼出来的分层工程；对应第 23 章参考文献 32、33、34。 <a href="#fr-cache-history-ch3-1">↩</a></p>
 </li>
 <li id="footnote-memory-hierarchy-ch3">
-<p>Chris Terman, <em>Computation Structures</em> 的 <em>The Memory Hierarchy</em> 与 <em>Virtual Memory</em> 讲义。本章在此处使用 locality of reference、associativity、block / replacement / write policy，以及 SRAM 中 positive feedback loop 的解释，来建立 memory hierarchy 与稳定存储的类比；对应第 22 章参考文献 28。 <a href="#fr-memory-hierarchy-ch3-1">↩</a> <a href="#fr-memory-hierarchy-ch3-2">↩2</a></p>
+<p>Chris Terman, <em>Computation Structures</em> 的 <em>The Memory Hierarchy</em> 与 <em>Virtual Memory</em> 讲义。本章在此处使用 locality of reference、associativity、block / replacement / write policy，以及 SRAM 中 positive feedback loop 的解释，来建立 memory hierarchy 与稳定存储的类比；对应第 23 章参考文献 28。 <a href="#fr-memory-hierarchy-ch3-1">↩</a> <a href="#fr-memory-hierarchy-ch3-2">↩2</a></p>
 </li>
 <li id="footnote-feedback-history-ch3">
-<p>本章在此处综合 National Inventors Hall of Fame 与 Bell Labs 对 Harold S. Black 负反馈放大器的历史描述，用来补足 Bell System 长距离电话失真、六年坚持与 ferry 灵感的故事线；对应第 22 章参考文献 29、35。 <a href="#fr-feedback-history-ch3-1">↩</a></p>
+<p>本章在此处综合 National Inventors Hall of Fame 与 Bell Labs 对 Harold S. Black 负反馈放大器的历史描述，用来补足 Bell System 长距离电话失真、六年坚持与 ferry 灵感的故事线；对应第 23 章参考文献 29、35。 <a href="#fr-feedback-history-ch3-1">↩</a></p>
 </li>
 <li id="footnote-feedback-circuits-ch3">
-<p>H. S. Black, <em>Stabilized Feedback Amplifiers.</em> 本章在此处使用其关于多级放大器稳定性、负反馈与非线性抑制的讨论，来类比长任务 agent 的漂移控制；对应第 22 章参考文献 29。 <a href="#fr-feedback-circuits-ch3-1">↩</a></p>
+<p>H. S. Black, <em>Stabilized Feedback Amplifiers.</em> 本章在此处使用其关于多级放大器稳定性、负反馈与非线性抑制的讨论，来类比长任务 agent 的漂移控制；对应第 23 章参考文献 29。 <a href="#fr-feedback-circuits-ch3-1">↩</a></p>
 </li>
 <li id="footnote-harness-story-ch3">
-<p>本章在此处综合 Birgitta Böckeler 关于 guides / sensors 的 harness 抽象、Kief Morris 关于 humans “on the loop” 的论述、OpenAI Ryan Lopopolo 的 harness 实践，以及 Anthropic 对 Claude Code 组织采用的公开描述，用来说明今天的 harness engineering 是一条带有人物、组织与实践演进的技术线，而不是新造术语；对应第 22 章参考文献 1、2、36、37、38。 <a href="#fr-harness-story-ch3-1">↩</a> <a href="#fr-harness-story-ch3-2">↩2</a></p>
+<p>本章在此处综合 Birgitta Böckeler 关于 guides / sensors 的 harness 抽象、Kief Morris 关于 humans “on the loop” 的论述、OpenAI Ryan Lopopolo 的 harness 实践，以及 Anthropic 对 Claude Code 组织采用的公开描述，用来说明今天的 harness engineering 是一条带有人物、组织与实践演进的技术线，而不是新造术语；对应第 23 章参考文献 1、2、36、37、38。 <a href="#fr-harness-story-ch3-1">↩</a> <a href="#fr-harness-story-ch3-2">↩2</a></p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -496,6 +496,9 @@ Harness 工程
 <h2 id="44-openclaw-与-hermes更广义-agent-product-也在重复同一规律"><a class="header" href="#44-openclaw-与-hermes更广义-agent-product-也在重复同一规律">4.4 OpenClaw 与 Hermes：更广义 agent product 也在重复同一规律</a></h2>
 <p>OpenClaw 和 Hermes 不以 coding agent 为中心，但恰好证明 harness 不是 coding-only 现象。OpenClaw 把 Gateway 明确称为 control plane，核心围绕 sessions、channels、skills、routing、web surfaces 和安全边界展开；Hermes 则把 gateway、SQLite session store、FTS5 memory、skills、delegate tool、cron、MCP 与多种 terminal backend 放到同一运行面。二者共同点都不是“提示词写得更会”，而是把 session、memory、skills、gateway、cron、sub-agent 当作系统事实。<sup class="footnote-reference" id="fr-openclaw-hermes-ch4-1"><a href="#footnote-openclaw-hermes-ch4">8</a></sup></p>
 <p>对本书而言，OpenClaw 和 Hermes 只需要简单分析，因为它们不是最贴近“AI 软件工厂”的主样本；但它们非常有价值，因为它们说明一旦 agent 要跨渠道、跨时段、跨环境连续行动，control plane 一定会长出来。也就是说，harness 不是 coding agent 的偶然补丁，而是 agent product 普遍会演化出来的外层系统。<sup class="footnote-reference" id="fr-openclaw-hermes-ch4-2"><a href="#footnote-openclaw-hermes-ch4">8</a></sup></p>
+<h3 id="441-把它们的部件对回那张统一词汇表"><a class="header" href="#441-把它们的部件对回那张统一词汇表">4.4.1 把它们的部件，对回那张统一词汇表</a></h3>
+<p>光说“control plane 一定会长出来”还停在断言。把 Hermes 那几样部件逐一对回后面第 6 章要用的那套运行时词汇，断言就变成了可核对的证据。它的 SQLite session store，就是事实流——把跨渠道、跨时段的会话历史持久化下来，而不是让它漂在某一次对话的上下文里；它的 FTS5 memory，是知识分层里那个“可被检索调入”的次级层，对应第 3 章那套缓存层级里的 L2；它的 delegate tool，是协作原语——把活派给另一个 agent，正是第 10 章那套 spawn 与汇总的雏形；它的 cron，则把“按时触发”做成了系统事实，而不再靠人记得去戳一下；而那个统一的 gateway，把上面这些连同 MCP、多种 terminal backend 收拢到同一个控制面上，扮演的正是操作员面加能力平面的角色。OpenClaw 把 Gateway 干脆挑明叫 control plane，把 sessions、channels、skills、routing、web surfaces 和安全边界都挂在它名下，说的是同一件事。<sup class="footnote-reference" id="fr-openclaw-hermes-ch4-3"><a href="#footnote-openclaw-hermes-ch4">8</a></sup></p>
+<p>把这张对照看完，会浮出一个挺有说服力的现象：一个根本不以写代码为中心的 agent product，最后长出来的器官清单，竟和 Claude Code、Codex 那两个 coding 样本高度重合——session 事实流、可检索的记忆、技能、派工、定时、统一网关、安全边界。这不是谁抄谁，而是同一条工程定律在不同形态的产品上各自显形：只要 agent 要跨渠道、跨时段、跨环境地连续行动，它就一定会被逼着把 session、memory、skills、routing、安全这些东西，从“提示词里的约定”升格成“系统里的事实”。所以 OpenClaw 和 Hermes 在这本书里真正的角色，不是又一组待拆解的主样本，而是一次针对全书论点的泛化性检验——把“harness 是 agent 软件本体”这句话，从 coding 这一个领域，验到更广义的 agent product 上。它通过了。</p>
 <h2 id="45-openai-1m-loc-案例真正说明了什么"><a class="header" href="#45-openai-1m-loc-案例真正说明了什么">4.5 OpenAI 1M LOC 案例真正说明了什么</a></h2>
 <p>相比 Claude Code 和 Codex 主要展示产品或仓库层面的运行时结构，OpenAI 的 1M LOC 案例展示的是组织生产层发生了什么变化：从 2025 年 8 月第一次提交到 2026 年 2 月，约五个月时间，三位工程师驱动 Codex 产出约 1M LOC、1500+ 个已合并 PR，平均每位工程师每天 3.5 个 PR，并宣称人类不直接写应用代码。<sup class="footnote-reference" id="fr-openai-factory-ch4-1"><a href="#footnote-openai-factory-ch4">9</a></sup> 这个故事的重点不是“模型终于可以替代工程师”，而是工程师的工作对象上移了。</p>
 <h3 id="451-这不是炫耀案例而是一场强制约束实验"><a class="header" href="#451-这不是炫耀案例而是一场强制约束实验">4.5.1 这不是炫耀案例，而是一场强制约束实验</a></h3>
@@ -523,46 +526,46 @@ Harness 工程
 <h2 id="48-把成熟样本压成全书的架构索引"><a class="header" href="#48-把成熟样本压成全书的架构索引">4.8 把成熟样本压成全书的架构索引</a></h2>
 <p>如果把 Claude Code 的“器官”与 Codex 的“骨架”叠在一起，再把 OpenClaw / Hermes 的 control plane 经验当侧证，可以把全书后续章节统一压成九个架构维度——它们其实就是第 6 章那张总图的九个切面，下面按四组来读。</p>
 <p>最底下是真相的两块底座：<strong>事实流</strong>维度要求 session / thread / transcript 是独立、可恢复、可回放的持久层，<strong>生命周期</strong>维度要求任务有一道单调、公开、跨表面一致的状态阶梯。往上是能力与完成：<strong>能力平面</strong>维度要求工具、shell、MCP、外部应用、人工输入都进入统一调度面，<strong>产物与验证</strong>维度要求主产物、验证器、失败证据和终态裁决被显式绑定。再往上是看见、隔离与协作：<strong>回放</strong>维度要求实时流、历史流、刷新恢复和 UI 投影共享同一事实模型，<strong>隔离与恢复</strong>维度要求 worktree、resume、background task、disk output 成为一等运行时能力、而非异常补丁，<strong>协作</strong>维度要求 sub-agent / swarm 有角色、通信、权限、汇总与验证，而不是“多开几个窗口”。最后是沉淀与监督：<strong>知识分层</strong>维度要求 <code>AGENTS.md</code>、docs、skills、memory 按常驻层、按需层、晋升层来治理，<strong>操作员</strong>维度要求 dashboard、门禁、回滚、故障归因都建在同一条运行时事实流上。</p>
-<p>第 6 章会先给出这九个维度如何组成最小可用 harness；第 7 到第 10 章分别展开能力平面、回放、操作员控制面和多 agent 编排；第 11 章把这些维度再上升为设计原则；第 12 到第 17 章则把原则压成路线图、边界、清单、参考架构、治理与收束。</p>
+<p>第 6 章会先给出这九个维度如何组成最小可用 harness；第 7 到第 10 章分别展开能力平面、回放、操作员控制面和多 agent 编排；第 11 章把这些维度再上升为设计原则；第 12 到第 18 章则把原则压成路线图、边界、清单、参考架构、治理、验证器工程与收束。</p>
 <p>下一章不再继续看成熟样本，而改用一组真实失败案例来回答另一个问题：当这些维度缺位时，系统具体会怎么坏。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-layer1-harness-ch4">
-<p>本章在此处综合 Fowler 关于 coding agent harness 的框架，以及 OpenAI 与 Codex 开源仓库关于 1M LOC、<code>AGENTS.md</code>、sandbox、approval、MCP 与 rollout 的工程边界；对应第 22 章参考文献 1、2、21。 <a href="#fr-layer1-harness-ch4-1">↩</a></p>
+<p>本章在此处综合 Fowler 关于 coding agent harness 的框架，以及 OpenAI 与 Codex 开源仓库关于 1M LOC、<code>AGENTS.md</code>、sandbox、approval、MCP 与 rollout 的工程边界；对应第 23 章参考文献 1、2、21。 <a href="#fr-layer1-harness-ch4-1">↩</a></p>
 </li>
 <li id="footnote-layer2-harness-ch4">
-<p>本章在此处综合 Anthropic 关于 managed agents 与 long-running harness 的接口抽象、Claude Code 本地源码镜像所体现的 session/compaction/sub-agent 机制，以及 OpenClaw/Hermes 在 gateway、memory、skills 与 sub-agent 上的产品形态；对应第 22 章参考文献 3、4、6、7、22、23、24。 <a href="#fr-layer2-harness-ch4-1">↩</a></p>
+<p>本章在此处综合 Anthropic 关于 managed agents 与 long-running harness 的接口抽象、Claude Code 本地源码镜像所体现的 session/compaction/sub-agent 机制，以及 OpenClaw/Hermes 在 gateway、memory、skills 与 sub-agent 上的产品形态；对应第 23 章参考文献 3、4、6、7、22、23、24。 <a href="#fr-layer2-harness-ch4-1">↩</a></p>
 </li>
 <li id="footnote-claudecode-story-ch4">
-<p>本章在此处综合 Anthropic Claude Code 产品页关于 “majority of code is now written by Claude Code” 的表述，以及 Anthropic 内部团队案例中关于律师、设计师和数据科学家使用 Claude Code 的故事，用来说明 Claude Code 已经超出传统 coding assistant 的边界；对应第 22 章参考文献 36、37。 <a href="#fr-claudecode-story-ch4-1">↩</a></p>
+<p>本章在此处综合 Anthropic Claude Code 产品页关于 “majority of code is now written by Claude Code” 的表述，以及 Anthropic 内部团队案例中关于律师、设计师和数据科学家使用 Claude Code 的故事，用来说明 Claude Code 已经超出传统 coding assistant 的边界；对应第 23 章参考文献 36、37。 <a href="#fr-claudecode-story-ch4-1">↩</a></p>
 </li>
 <li id="footnote-claudecode-ch4">
-<p>本章在此处根据 2026-04-23 对 Claude Code 本地源码镜像的结构审读，使用其 <code>Tool.ts</code>、<code>query.ts</code>、<code>main.tsx</code>、<code>services/tools/StreamingToolExecutor.ts</code>、<code>services/compact/*</code>、<code>tools/AgentTool/{AgentTool.tsx,loadAgentsDir.ts,resumeAgent.ts}</code>、<code>utils/{sessionStorage.ts,fileStateCache.ts,worktree.ts,teammateMailbox.ts}</code>、<code>utils/task/diskOutput.ts</code> 与 <code>services/AgentSummary/agentSummary.ts</code> 所体现的 tool context、主循环、MCP、技能/插件、子 agent、swarm mailbox、分层 compaction、resume、disk-backed output 和 worktree 机制；对应第 22 章参考文献 24。 <a href="#fr-claudecode-ch4-1">↩</a> <a href="#fr-claudecode-ch4-2">↩2</a> <a href="#fr-claudecode-ch4-3">↩3</a> <a href="#fr-claudecode-ch4-4">↩4</a> <a href="#fr-claudecode-ch4-5">↩5</a> <a href="#fr-claudecode-ch4-6">↩6</a> <a href="#fr-claudecode-ch4-7">↩7</a> <a href="#fr-claudecode-ch4-8">↩8</a> <a href="#fr-claudecode-ch4-9">↩9</a> <a href="#fr-claudecode-ch4-10">↩10</a> <a href="#fr-claudecode-ch4-11">↩11</a> <a href="#fr-claudecode-ch4-12">↩12</a> <a href="#fr-claudecode-ch4-13">↩13</a></p>
+<p>本章在此处根据 2026-04-23 对 Claude Code 本地源码镜像的结构审读，使用其 <code>Tool.ts</code>、<code>query.ts</code>、<code>main.tsx</code>、<code>services/tools/StreamingToolExecutor.ts</code>、<code>services/compact/*</code>、<code>tools/AgentTool/{AgentTool.tsx,loadAgentsDir.ts,resumeAgent.ts}</code>、<code>utils/{sessionStorage.ts,fileStateCache.ts,worktree.ts,teammateMailbox.ts}</code>、<code>utils/task/diskOutput.ts</code> 与 <code>services/AgentSummary/agentSummary.ts</code> 所体现的 tool context、主循环、MCP、技能/插件、子 agent、swarm mailbox、分层 compaction、resume、disk-backed output 和 worktree 机制；对应第 23 章参考文献 24。 <a href="#fr-claudecode-ch4-1">↩</a> <a href="#fr-claudecode-ch4-2">↩2</a> <a href="#fr-claudecode-ch4-3">↩3</a> <a href="#fr-claudecode-ch4-4">↩4</a> <a href="#fr-claudecode-ch4-5">↩5</a> <a href="#fr-claudecode-ch4-6">↩6</a> <a href="#fr-claudecode-ch4-7">↩7</a> <a href="#fr-claudecode-ch4-8">↩8</a> <a href="#fr-claudecode-ch4-9">↩9</a> <a href="#fr-claudecode-ch4-10">↩10</a> <a href="#fr-claudecode-ch4-11">↩11</a> <a href="#fr-claudecode-ch4-12">↩12</a> <a href="#fr-claudecode-ch4-13">↩13</a></p>
 </li>
 <li id="footnote-claude-code-paper-ch4">
-<p>Jiacheng Liu 等，<em>Dive into Claude Code: The Design Space of Today’s and Future AI Agent Systems.</em> 本章在此处使用其基于公开 TypeScript 源码的 Claude Code 分析，包括五类价值目标、十三条设计原则、七个高层组件、五层子系统结构、权限系统、五层 compaction、MCP / plugins / skills / hooks、subagent delegation 与 append-oriented session storage；对应第 22 章参考文献 41。 <a href="#fr-claude-code-paper-ch4-1">↩</a> <a href="#fr-claude-code-paper-ch4-2">↩2</a></p>
+<p>Jiacheng Liu 等，<em>Dive into Claude Code: The Design Space of Today’s and Future AI Agent Systems.</em> 本章在此处使用其基于公开 TypeScript 源码的 Claude Code 分析，包括五类价值目标、十三条设计原则、七个高层组件、五层子系统结构、权限系统、五层 compaction、MCP / plugins / skills / hooks、subagent delegation 与 append-oriented session storage；对应第 23 章参考文献 41。 <a href="#fr-claude-code-paper-ch4-1">↩</a> <a href="#fr-claude-code-paper-ch4-2">↩2</a></p>
 </li>
 <li id="footnote-codex-story-ch4">
-<p>本章在此处综合 OpenAI 关于 <em>Introducing Codex</em> 与 <em>Introducing the Codex app</em> 的产品叙事，以及 Codex 开源 README / app-server README 对本地 CLI、rich interfaces、多线程、多 agent 与 worktree 的公开描述，用来补足 Codex 从云端并行 agent 到本地 runtime kernel 的演进故事；对应第 22 章参考文献 21、39、40。 <a href="#fr-codex-story-ch4-1">↩</a> <a href="#fr-codex-story-ch4-2">↩2</a> <a href="#fr-codex-story-ch4-3">↩3</a> <a href="#fr-codex-story-ch4-4">↩4</a> <a href="#fr-codex-story-ch4-5">↩5</a> <a href="#fr-codex-story-ch4-6">↩6</a> <a href="#fr-codex-story-ch4-7">↩7</a> <a href="#fr-codex-story-ch4-8">↩8</a></p>
+<p>本章在此处综合 OpenAI 关于 <em>Introducing Codex</em> 与 <em>Introducing the Codex app</em> 的产品叙事，以及 Codex 开源 README / app-server README 对本地 CLI、rich interfaces、多线程、多 agent 与 worktree 的公开描述，用来补足 Codex 从云端并行 agent 到本地 runtime kernel 的演进故事；对应第 23 章参考文献 21、39、40。 <a href="#fr-codex-story-ch4-1">↩</a> <a href="#fr-codex-story-ch4-2">↩2</a> <a href="#fr-codex-story-ch4-3">↩3</a> <a href="#fr-codex-story-ch4-4">↩4</a> <a href="#fr-codex-story-ch4-5">↩5</a> <a href="#fr-codex-story-ch4-6">↩6</a> <a href="#fr-codex-story-ch4-7">↩7</a> <a href="#fr-codex-story-ch4-8">↩8</a></p>
 </li>
 <li id="footnote-codex-oss-ch4">
-<p>OpenAI, <em>openai/codex</em> 开源仓库。 本章在此处使用其 <code>codex-rs/cli/src/main.rs</code>、<code>codex-rs/app-server/README.md</code>、<code>codex-rs/app-server-protocol/src/protocol/v2.rs</code>、<code>codex-rs/tools/src/lib.rs</code>、<code>codex-rs/thread-store/src/lib.rs</code>、<code>codex-rs/rollout/src/lib.rs</code>、仓库根 <code>AGENTS.md</code> 与 <code>docs/agents_md.md</code> 中关于 CLI surfaces、Thread/Turn/Item、tool registry、thread persistence、rollout、sandbox、approvals 与 <code>AGENTS.md</code> 的公开结构；对应第 22 章参考文献 21。 <a href="#fr-codex-oss-ch4-1">↩</a> <a href="#fr-codex-oss-ch4-2">↩2</a> <a href="#fr-codex-oss-ch4-3">↩3</a> <a href="#fr-codex-oss-ch4-4">↩4</a> <a href="#fr-codex-oss-ch4-5">↩5</a> <a href="#fr-codex-oss-ch4-6">↩6</a> <a href="#fr-codex-oss-ch4-7">↩7</a> <a href="#fr-codex-oss-ch4-8">↩8</a> <a href="#fr-codex-oss-ch4-9">↩9</a> <a href="#fr-codex-oss-ch4-10">↩10</a></p>
+<p>OpenAI, <em>openai/codex</em> 开源仓库。 本章在此处使用其 <code>codex-rs/cli/src/main.rs</code>、<code>codex-rs/app-server/README.md</code>、<code>codex-rs/app-server-protocol/src/protocol/v2.rs</code>、<code>codex-rs/tools/src/lib.rs</code>、<code>codex-rs/thread-store/src/lib.rs</code>、<code>codex-rs/rollout/src/lib.rs</code>、仓库根 <code>AGENTS.md</code> 与 <code>docs/agents_md.md</code> 中关于 CLI surfaces、Thread/Turn/Item、tool registry、thread persistence、rollout、sandbox、approvals 与 <code>AGENTS.md</code> 的公开结构；对应第 23 章参考文献 21。 <a href="#fr-codex-oss-ch4-1">↩</a> <a href="#fr-codex-oss-ch4-2">↩2</a> <a href="#fr-codex-oss-ch4-3">↩3</a> <a href="#fr-codex-oss-ch4-4">↩4</a> <a href="#fr-codex-oss-ch4-5">↩5</a> <a href="#fr-codex-oss-ch4-6">↩6</a> <a href="#fr-codex-oss-ch4-7">↩7</a> <a href="#fr-codex-oss-ch4-8">↩8</a> <a href="#fr-codex-oss-ch4-9">↩9</a> <a href="#fr-codex-oss-ch4-10">↩10</a></p>
 </li>
 <li id="footnote-openclaw-hermes-ch4">
-<p>本章在此处综合 OpenClaw README 中关于 Gateway control plane、sessions、channels、skills 与 routing 的描述，以及 Hermes README/AGENTS 中关于 gateway、SQLite session store、memory、skills、delegate tool、cron 与 MCP 的结构；对应第 22 章参考文献 22、23。 <a href="#fr-openclaw-hermes-ch4-1">↩</a> <a href="#fr-openclaw-hermes-ch4-2">↩2</a></p>
+<p>本章在此处综合 OpenClaw README 中关于 Gateway control plane、sessions、channels、skills 与 routing 的描述，以及 Hermes README/AGENTS 中关于 gateway、SQLite session store、memory、skills、delegate tool、cron 与 MCP 的结构；对应第 23 章参考文献 22、23。 <a href="#fr-openclaw-hermes-ch4-1">↩</a> <a href="#fr-openclaw-hermes-ch4-2">↩2</a> <a href="#fr-openclaw-hermes-ch4-3">↩3</a></p>
 </li>
 <li id="footnote-openai-factory-ch4">
-<p>OpenAI, <em>Harness Engineering: Leveraging Codex in an Agent-First World.</em> 本章在此处使用其关于 1M LOC、1500+ merged PR、三位工程师与低人工写码比例的案例数字；对应第 22 章参考文献 2。 <a href="#fr-openai-factory-ch4-1">↩</a></p>
+<p>OpenAI, <em>Harness Engineering: Leveraging Codex in an Agent-First World.</em> 本章在此处使用其关于 1M LOC、1500+ merged PR、三位工程师与低人工写码比例的案例数字；对应第 23 章参考文献 2。 <a href="#fr-openai-factory-ch4-1">↩</a></p>
 </li>
 <li id="footnote-openai-factory-story-ch4">
-<p>本章在此处使用 Ryan Lopopolo 文章中关于 “Humans steer. Agents execute.”、无手写代码、worktree、repository knowledge 作为 system of record、minimal merge gates 与 garbage collection 的叙述，用来补足 1M LOC 案例的组织与控制系统视角；对应第 22 章参考文献 2。 <a href="#fr-openai-factory-story-ch4-1">↩</a> <a href="#fr-openai-factory-story-ch4-2">↩2</a> <a href="#fr-openai-factory-story-ch4-3">↩3</a> <a href="#fr-openai-factory-story-ch4-4">↩4</a> <a href="#fr-openai-factory-story-ch4-5">↩5</a> <a href="#fr-openai-factory-story-ch4-6">↩6</a> <a href="#fr-openai-factory-story-ch4-7">↩7</a> <a href="#fr-openai-factory-story-ch4-8">↩8</a> <a href="#fr-openai-factory-story-ch4-9">↩9</a></p>
+<p>本章在此处使用 Ryan Lopopolo 文章中关于 “Humans steer. Agents execute.”、无手写代码、worktree、repository knowledge 作为 system of record、minimal merge gates 与 garbage collection 的叙述，用来补足 1M LOC 案例的组织与控制系统视角；对应第 23 章参考文献 2。 <a href="#fr-openai-factory-story-ch4-1">↩</a> <a href="#fr-openai-factory-story-ch4-2">↩2</a> <a href="#fr-openai-factory-story-ch4-3">↩3</a> <a href="#fr-openai-factory-story-ch4-4">↩4</a> <a href="#fr-openai-factory-story-ch4-5">↩5</a> <a href="#fr-openai-factory-story-ch4-6">↩6</a> <a href="#fr-openai-factory-story-ch4-7">↩7</a> <a href="#fr-openai-factory-story-ch4-8">↩8</a> <a href="#fr-openai-factory-story-ch4-9">↩9</a></p>
 </li>
 <li id="footnote-agents-catalog-ch4">
-<p>本章在此处综合 Fowler、OpenAI 与 Codex 开源文档关于 <code>AGENTS.md</code> 作为短目录、细节下沉到 <code>docs/</code> 的做法；对应第 22 章参考文献 1、2、21。 <a href="#fr-agents-catalog-ch4-1">↩</a></p>
+<p>本章在此处综合 Fowler、OpenAI 与 Codex 开源文档关于 <code>AGENTS.md</code> 作为短目录、细节下沉到 <code>docs/</code> 的做法；对应第 23 章参考文献 1、2、21。 <a href="#fr-agents-catalog-ch4-1">↩</a></p>
 </li>
 <li id="footnote-review-boundary-ch4">
-<p>本章在此处前半使用 OpenAI 关于极端自动化案例边界的表述；后半关于医疗、金融、隐私与客户数据路径的要求属于本文的工程外推；对应第 22 章参考文献 2。 <a href="#fr-review-boundary-ch4-1">↩</a></p>
+<p>本章在此处前半使用 OpenAI 关于极端自动化案例边界的表述；后半关于医疗、金融、隐私与客户数据路径的要求属于本文的工程外推；对应第 23 章参考文献 2。 <a href="#fr-review-boundary-ch4-1">↩</a></p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -747,10 +750,10 @@ POST /tasks/{id}/resume           从 checkpoint 续跑
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-claudecode-codex-spine-ch6">
-<p>本章在此处综合 Claude Code 本地源码镜像、<em>Dive into Claude Code</em> 中七组件与五层子系统分析，以及 Codex 开源仓库中 <code>app-server-protocol</code>、<code>tools</code>、<code>thread-store</code>、<code>rollout</code> 所体现的模块边界，用来反推 agent harness 的通用总图；对应第 22 章参考文献 21、24、41。 <a href="#fr-claudecode-codex-spine-ch6-1">↩</a> <a href="#fr-claudecode-codex-spine-ch6-2">↩2</a> <a href="#fr-claudecode-codex-spine-ch6-3">↩3</a> <a href="#fr-claudecode-codex-spine-ch6-4">↩4</a> <a href="#fr-claudecode-codex-spine-ch6-5">↩5</a></p>
+<p>本章在此处综合 Claude Code 本地源码镜像、<em>Dive into Claude Code</em> 中七组件与五层子系统分析，以及 Codex 开源仓库中 <code>app-server-protocol</code>、<code>tools</code>、<code>thread-store</code>、<code>rollout</code> 所体现的模块边界，用来反推 agent harness 的通用总图；对应第 23 章参考文献 21、24、41。 <a href="#fr-claudecode-codex-spine-ch6-1">↩</a> <a href="#fr-claudecode-codex-spine-ch6-2">↩2</a> <a href="#fr-claudecode-codex-spine-ch6-3">↩3</a> <a href="#fr-claudecode-codex-spine-ch6-4">↩4</a> <a href="#fr-claudecode-codex-spine-ch6-5">↩5</a></p>
 </li>
 <li id="footnote-karpathy-bookkeeping-ch6">
-<p>Andrej Karpathy, <em>LLM Wiki.</em> 本章在此处使用其关于 autoresearch 双文件与 bookkeeping 的思路，说明 <code>session.md</code> + <code>session.jsonl</code> 这类事实流设计的价值；对应第 22 章参考文献 9。 <a href="#fr-karpathy-bookkeeping-ch6-1">↩</a> <a href="#fr-karpathy-bookkeeping-ch6-2">↩2</a></p>
+<p>Andrej Karpathy, <em>LLM Wiki.</em> 本章在此处使用其关于 autoresearch 双文件与 bookkeeping 的思路，说明 <code>session.md</code> + <code>session.jsonl</code> 这类事实流设计的价值；对应第 23 章参考文献 9。 <a href="#fr-karpathy-bookkeeping-ch6-1">↩</a> <a href="#fr-karpathy-bookkeeping-ch6-2">↩2</a></p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -834,10 +837,10 @@ emit '{"type":"tool.progress","tool":"slack.upload","pct":100}'
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-capability-plane-ch7">
-<p>本章在此处综合 Claude Code <code>ToolUseContext</code>、MCP 与 agent 定义相关实现，以及 Codex <code>tools</code> 与 <code>app-server</code> 协议面中关于 command、fs、MCP、human input、多 agent 工具的公开边界，用来说明万用 agent 必须先拥有统一的能力平面；对应第 22 章参考文献 21、24。 <a href="#fr-capability-plane-ch7-1">↩</a></p>
+<p>本章在此处综合 Claude Code <code>ToolUseContext</code>、MCP 与 agent 定义相关实现，以及 Codex <code>tools</code> 与 <code>app-server</code> 协议面中关于 command、fs、MCP、human input、多 agent 工具的公开边界，用来说明万用 agent 必须先拥有统一的能力平面；对应第 23 章参考文献 21、24。 <a href="#fr-capability-plane-ch7-1">↩</a></p>
 </li>
 <li id="footnote-bridge-contract-ch7">
-<p>本章在此处综合 Codex 开源仓库中 sandbox、approval 与工具 scope 的公开边界，以及 MCP 关于工具调用与资源读取的标准约定，用来说明桥接能力的结果契约、事件回流协议与权限模型；对应第 22 章参考文献 24、41。 <a href="#fr-bridge-contract-ch7-1">↩</a></p>
+<p>本章在此处综合 Codex 开源仓库中 sandbox、approval 与工具 scope 的公开边界，以及 MCP 关于工具调用与资源读取的标准约定，用来说明桥接能力的结果契约、事件回流协议与权限模型；对应第 23 章参考文献 24、41。 <a href="#fr-bridge-contract-ch7-1">↩</a></p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -904,7 +907,7 @@ function fold(events) {
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-replay-truth-ch8">
-<p>本章在此处综合 Codex <code>app-server</code> 中 thread / turn / item 的统一事件流设计，以及 Claude Code transcript、resume 与 agent summary 机制，说明 UI replay 必须建立在统一的后端事实模型之上；对应第 22 章参考文献 21、24。 <a href="#fr-replay-truth-ch8-1">↩</a></p>
+<p>本章在此处综合 Codex <code>app-server</code> 中 thread / turn / item 的统一事件流设计，以及 Claude Code transcript、resume 与 agent summary 机制，说明 UI replay 必须建立在统一的后端事实模型之上；对应第 23 章参考文献 21、24。 <a href="#fr-replay-truth-ch8-1">↩</a></p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -962,7 +965,7 @@ def assert_terminal_authentic(task):
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-operator-plane-ch9">
-<p>本章在此处综合 Claude Code <code>agentSummary.ts</code>、<code>diskOutput.ts</code>、resume 相关实现，以及 Codex <code>Thread</code> / <code>Turn</code> / <code>Item</code> 的对象分层，用来说明操作员控制面应如何建立在统一事实流之上；对应第 22 章参考文献 21、24。 <a href="#fr-operator-plane-ch9-1">↩</a></p>
+<p>本章在此处综合 Claude Code <code>agentSummary.ts</code>、<code>diskOutput.ts</code>、resume 相关实现，以及 Codex <code>Thread</code> / <code>Turn</code> / <code>Item</code> 的对象分层，用来说明操作员控制面应如何建立在统一事实流之上；对应第 23 章参考文献 21、24。 <a href="#fr-operator-plane-ch9-1">↩</a></p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -1025,13 +1028,13 @@ coordinator ──spawn_agent("verifier",         goal="按契约核对产物", 
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-many-brains-ch10">
-<p>Anthropic, <em>Scaling Managed Agents: Decoupling the brain from the hands.</em> 本章在此处使用其 many brains / many hands 的组织视角，说明 coordinator、worker 与 verifier 的分工；对应第 22 章参考文献 3。 <a href="#fr-many-brains-ch10-1">↩</a></p>
+<p>Anthropic, <em>Scaling Managed Agents: Decoupling the brain from the hands.</em> 本章在此处使用其 many brains / many hands 的组织视角，说明 coordinator、worker 与 verifier 的分工；对应第 23 章参考文献 3。 <a href="#fr-many-brains-ch10-1">↩</a></p>
 </li>
 <li id="footnote-claudecode-codex-multiagent-ch10">
-<p>本章在此处综合 Claude Code 的 <code>AgentTool.tsx</code>、<code>loadAgentsDir.ts</code>、<code>teammateMailbox.ts</code>、<code>worktree.ts</code> 等实现，以及 Codex <code>spawn_agent</code> / <code>send_input</code> / <code>wait_agent</code> / <code>resume_agent</code> 等工具原语，用来说明多 agent 需要角色、通信、隔离、汇总与恢复这些一等能力；对应第 22 章参考文献 21、24。 <a href="#fr-claudecode-codex-multiagent-ch10-1">↩</a> <a href="#fr-claudecode-codex-multiagent-ch10-2">↩2</a></p>
+<p>本章在此处综合 Claude Code 的 <code>AgentTool.tsx</code>、<code>loadAgentsDir.ts</code>、<code>teammateMailbox.ts</code>、<code>worktree.ts</code> 等实现，以及 Codex <code>spawn_agent</code> / <code>send_input</code> / <code>wait_agent</code> / <code>resume_agent</code> 等工具原语，用来说明多 agent 需要角色、通信、隔离、汇总与恢复这些一等能力；对应第 23 章参考文献 21、24。 <a href="#fr-claudecode-codex-multiagent-ch10-1">↩</a> <a href="#fr-claudecode-codex-multiagent-ch10-2">↩2</a></p>
 </li>
 <li id="footnote-swarm-econ-ch10">
-<p>本章在此处综合 Anthropic 的 managed agents 视角、OpenAI API Pricing 关于 <code>under 270K</code> 标准费率的限定、Google Gemini 1.5 关于 1M context pricing tiers 与 latency 的说明、Google long context 文档关于 retrieval-cost tradeoff 与 caching 的说明、LongLLMLingua 关于 higher computational cost / performance reduction / position bias 的概括，以及 MInference 关于 1M token prefill 代价的摘要数字，用于说明 sub-agent / swarm 在质量、成本与时延上的优势；对应第 22 章参考文献 3、14、15、18、19、20。 <a href="#fr-swarm-econ-ch10-1">↩</a> <a href="#fr-swarm-econ-ch10-2">↩2</a></p>
+<p>本章在此处综合 Anthropic 的 managed agents 视角、OpenAI API Pricing 关于 <code>under 270K</code> 标准费率的限定、Google Gemini 1.5 关于 1M context pricing tiers 与 latency 的说明、Google long context 文档关于 retrieval-cost tradeoff 与 caching 的说明、LongLLMLingua 关于 higher computational cost / performance reduction / position bias 的概括，以及 MInference 关于 1M token prefill 代价的摘要数字，用于说明 sub-agent / swarm 在质量、成本与时延上的优势；对应第 23 章参考文献 3、14、15、18、19、20。 <a href="#fr-swarm-econ-ch10-1">↩</a> <a href="#fr-swarm-econ-ch10-2">↩2</a></p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -1059,13 +1062,13 @@ coordinator ──spawn_agent("verifier",         goal="按契约核对产物", 
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-thoughtworks-principles-ch11">
-<p>Birgitta Bockeler, <em>Harness engineering for coding agent users.</em> 本章在此处使用其关于把任务状态、工具边界、验证反馈与控制回路从 prompt 中外移出来的抽象，总结为本书的可迁移原则；对应第 22 章参考文献 1。 <a href="#fr-thoughtworks-principles-ch11-1">↩</a></p>
+<p>Birgitta Bockeler, <em>Harness engineering for coding agent users.</em> 本章在此处使用其关于把任务状态、工具边界、验证反馈与控制回路从 prompt 中外移出来的抽象，总结为本书的可迁移原则；对应第 23 章参考文献 1。 <a href="#fr-thoughtworks-principles-ch11-1">↩</a></p>
 </li>
 <li id="footnote-long-loop-ch11">
-<p>本章在此处使用 Karpathy 的知识记账思路，并结合本文前述 harness 实践，说明 wiki -&gt; skill -&gt; <code>AGENTS.md</code> / docs -&gt; CI / validator / dashboard 的长循环；对应第 22 章参考文献 9。 <a href="#fr-long-loop-ch11-1">↩</a></p>
+<p>本章在此处使用 Karpathy 的知识记账思路，并结合本文前述 harness 实践，说明 wiki -&gt; skill -&gt; <code>AGENTS.md</code> / docs -&gt; CI / validator / dashboard 的长循环；对应第 23 章参考文献 9。 <a href="#fr-long-loop-ch11-1">↩</a></p>
 </li>
 <li id="footnote-promotion-discipline-ch11">
-<p>本章在此处综合 OpenAI 与 Karpathy 关于 <code>AGENTS.md</code> 保持短目录、经验 promotion / demotion 的治理思路；对应第 22 章参考文献 2、9。 <a href="#fr-promotion-discipline-ch11-1">↩</a></p>
+<p>本章在此处综合 OpenAI 与 Karpathy 关于 <code>AGENTS.md</code> 保持短目录、经验 promotion / demotion 的治理思路；对应第 23 章参考文献 2、9。 <a href="#fr-promotion-discipline-ch11-1">↩</a></p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -1121,7 +1124,7 @@ coordinator ──spawn_agent("verifier",         goal="按契约核对产物", 
 <p>代码这个领域，简直是为“可闭合”量身定做的——它的验证器多到奢侈，而且条条满足那三个条件。编译器和类型检查器是独立且便宜的可靠裁判；单元测试、属性测试、端到端测试把“对不对”变成可机器判定的断言；linter、静态分析、可复现的运行结果，每一样都是不依赖生成者的独立信号。所以一个 coding agent 的产出质量，根本不必押在“模型这次写得对不对”上——押在“测试过没过、类型检查过没过、复现成功没成功”上就够了，而这些恰恰是 harness 最擅长接进终态裁决的东西。这也呼应了第 16.4 节那条路由策略：把可闭合的那部分工作，大胆交给更便宜的开源模型，背后用 gating validator 兜住质量。</p>
 <p>顺着这条判据看出去，可闭合的领域远不止 coding。形式化数学有证明检查器，data transformation 有 schema 与约束校验，IaC 与配置有 dry-run 加 policy 检查，SQL 有结果集比对，带参考答案的翻译有引用比对，检索类任务有“引文是否真实存在”的核验——凡是“检查一个答案对不对，比从头想出这个答案便宜得多”的领域，都落在可闭合这一侧。它们的共同点，就是那个生成与验证之间的<strong>代价不对称</strong>：难的是做出来，容易的是验它对——而 harness 的全部本事，正是把“容易的那一半”做成系统化、独立、阻断终态的关卡。</p>
 <p>可补不齐的那一侧，恰恰是因为这个不对称塌掉了。UX 好不好、这个功能是不是用户真正要的、这段文案的调性对不对、产品该往哪个方向走、一个设计在审美和伦理上能不能站住——这些没有一个便宜、独立、可靠的验证器。它们的“验证器”就是人本身的判断，而人的判断昂贵、主观、还难以复现（同一个设计，两个人、甚至同一个人在不同时候，给出的裁决都未必一致）。这正是前面讨论资源时那个属于人因（姑且记作 R3）的部分：它的瓶颈不在模型能力，在于<strong>根本没有一个可闭合的裁判可以放进循环</strong>。所以这里有个很反直觉、却很重要的结论——补不齐 UX 的，不是“开源模型不够强”，换上最强的前沿模型同样补不齐，因为缺的从来不是生成能力，是验证的闭合性。在这种领域硬堆模型，是把钱花在了瓶颈的对面。</p>
-<p>于是这一刀，给团队留下一个可以天天用的决策动作：在赌一个领域“能不能用 harness 加模型做下去”之前，先问一句——<strong>这里有没有一个 sound、便宜、独立的验证器？</strong> 答案是“有”，那就别纠结模型够不够顶级，去把那个“生成—验证—重试”的循环搭硬；答案是“没有”，那就别幻想靠更强的模型补齐，老老实实把人放进环里，让 harness 去服务人的判断，而不是替代它。这条判据，把第 16 章那句“治理建在同一条事实流上”，又往前推了一步：连“这件事到底该不该交给模型”，都能在动工之前，先用验证器的闭合性掂量出来。</p>
+<p>于是这一刀，给团队留下一个可以天天用的决策动作：在赌一个领域“能不能用 harness 加模型做下去”之前，先问一句——<strong>这里有没有一个 sound、便宜、独立的验证器？</strong> 答案是“有”，那就别纠结模型够不够顶级，去把那个“生成—验证—重试”的循环搭硬（怎么造、怎么养这样一个 sound、便宜、独立的验证器，是第 17 章要专门讲的）；答案是“没有”，那就别幻想靠更强的模型补齐，老老实实把人放进环里，让 harness 去服务人的判断，而不是替代它。这条判据，把第 16 章那句“治理建在同一条事实流上”，又往前推了一步：连“这件事到底该不该交给模型”，都能在动工之前，先用验证器的闭合性掂量出来。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
 <h1 id="14-可执行清单"><a class="header" href="#14-可执行清单">14. 可执行清单</a></h1>
 <p>边界讲清之后，剩下的工作就是把前面各章的要求压成能执行的检查项。第 14 章不是新观点，而是把第 4.8 节那九个维度压成可以拿来做合并前、上线前、事故后的动作清单，并补上一条匿名失败链的逐层排查顺序。</p>
@@ -1488,14 +1491,52 @@ task.failed          task=root-17 category=artifact_contract_violation
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-governance-sandbox-ch16">
-<p>本章在此处综合 Codex 开源仓库中 sandbox 分级与 approval 流程，以及 Claude Code 在权限上下文、hooks 与工具 scope 上的实现，用来说明安全边界应作为能力被接入时的固有属性、并以事件留痕；对应第 22 章参考文献 21、24。 <a href="#fr-governance-sandbox-ch16-1">↩</a></p>
+<p>本章在此处综合 Codex 开源仓库中 sandbox 分级与 approval 流程，以及 Claude Code 在权限上下文、hooks 与工具 scope 上的实现，用来说明安全边界应作为能力被接入时的固有属性、并以事件留痕；对应第 23 章参考文献 21、24。 <a href="#fr-governance-sandbox-ch16-1">↩</a></p>
 </li>
 <li id="footnote-governance-cost-ch16">
-<p>本章在此处综合 OpenAI API Pricing 关于 <code>under 270K</code> 标准费率的限定、Google Gemini 1.5 关于 1M context pricing tier 与 latency 的说明，以及 MInference 关于 1M token prefill 代价的摘要，用来说明成本治理须把 token、时延与重试一并做成一等预算；对应第 22 章参考文献 14、18、20。 <a href="#fr-governance-cost-ch16-1">↩</a></p>
+<p>本章在此处综合 OpenAI API Pricing 关于 <code>under 270K</code> 标准费率的限定、Google Gemini 1.5 关于 1M context pricing tier 与 latency 的说明，以及 MInference 关于 1M token prefill 代价的摘要，用来说明成本治理须把 token、时延与重试一并做成一等预算；对应第 23 章参考文献 14、18、20。 <a href="#fr-governance-cost-ch16-1">↩</a></p>
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="17-结语下一阶段的工程姿态"><a class="header" href="#17-结语下一阶段的工程姿态">17. 结语：下一阶段的工程姿态</a></h1>
+<h1 id="17-评测与验证器工程把可闭合落成可操作的方法"><a class="header" href="#17-评测与验证器工程把可闭合落成可操作的方法">17. 评测与验证器工程：把“可闭合”落成可操作的方法</a></h1>
+<p>第 13.4 节给了一条战略判据：一个领域能不能靠 harness 加模型补齐，取决于它有没有一个 sound、便宜、独立的验证器。判据立住了，可它把全部重量都压在了一个被严重低估的词上——“验证器”。整本书反复说“完成由证据裁决、不由模型自报”，而那个裁决者究竟怎么造、怎么不被骗、怎么随时间不退化，本身就是一门工程。这一章就把第 13.4 节那条判据，从“有没有”落到“怎么有”。</p>
+<p>这门工程值得被单独拎出来，是因为它是整套 harness 里失败代价最不对称的一环。事实流写漏了，顶多查不到；UI 投影错了，刷新一下露馅；可验证器一旦判错——尤其是把错的判成对的——它不是漏了一个信号，而是亲手给系统盖了那个“假成功”的章。第 5 章那一连串事故里，最伤用户信任的几类，根子都在这里。</p>
+<h2 id="171-三条硬指标怎么变成可测的数"><a class="header" href="#171-三条硬指标怎么变成可测的数">17.1 三条硬指标，怎么变成可测的数</a></h2>
+<p>sound、便宜、独立这三个词，听着像形容词，其实每一个都能落成一个可以量的数；不把它们量出来，“我们有验证器”就只是一句安慰。</p>
+<p>最要命的是 <strong>sound</strong>，它说的是假阳性率——验证器放过一个错误产物的概率。为什么是它最要命？因为假阳性是“假成功”的直接来源：一个会放错的验证器，比没有验证器更危险，它给了团队和用户一种虚假的安全感，让本该被拦下的错误，顶着“已验证”的绿灯直接交付。量它的办法也很朴素：攒一批<strong>已知是错的</strong>产物当负样本，整批喂给验证器，数它放过了几个。这里有条够硬的判据——一个 gating 验证器的假阳性率，必须压到<strong>远低于模型单次出错率</strong>，否则它根本兜不住第 13.4 节那条 <code>1−(1−p)^k</code> 的账：循环每多采样一次，是多了一次被假阳性放行的机会，而不是多了一道保险。</p>
+<p>其次是 <strong>便宜</strong>，它说的是验一遍相对生成一遍的代价。量法直接：验证耗时除以生成耗时。这条之所以不能省，同样是因为那条循环——“生成—验证—重试”能跑得起来，前提是每多验一次的边际成本足够低；如果验证比生成还贵，循环在经济上就垮了，团队迟早会偷偷把它降级成抽样跑或非 gating，于是它名存实亡，正好滑回第 5.5 节那种“验证器在、却不阻断”的窘境。</p>
+<p>最容易被忽视的是 <strong>独立</strong>，它说的是验证器不能依赖被它验的那个产物的生成者。这里藏着 harness 里最诱人的一个反模式：让生成代码的那个模型，回头给自己的产物打分（用同一个模型做 LLM-as-judge）。它看起来省事又“智能”，可它系统性地抬高假阳性——因为一个模型对自己的错误有盲区，它倾向于认可自己生成时所依据的同一套（可能错误的）假设。真正独立的裁判，来自另一条信息通路：编译器、类型检查器、测试、外部 oracle、一个<strong>不同的</strong>模型，或者人。独立性不是锦上添花，它是 sound 能否成立的前提——一个不独立的验证器，假阳性几乎注定降不下来。</p>
+<h2 id="172-它最常以哪三种方式坏掉"><a class="header" href="#172-它最常以哪三种方式坏掉">17.2 它最常以哪三种方式坏掉</a></h2>
+<p>把上面三条指标翻过来，正好就是验证器最常见的三种失效，而且每一种都各有各的隐蔽。</p>
+<p>第一种是<strong>假阳性悄悄升高</strong>，对应 sound 的退化。它的隐蔽在于：系统表面上一直在“通过”，没有任何报错，直到用户那头积起投诉。最阴的一条路径叫 Goodhart——当“通过验证器”成了模型被优化的目标，模型会逐渐学会生成那种<strong>让验证器满意、却并不真正正确</strong>的产物。验证器没变，可它正在被绕过。一个只盯“通过率”的团队，对此完全无感，因为通过率甚至会变得更好看。</p>
+<p>第二种是<strong>太贵被关掉</strong>，对应便宜的失守。验证器跑得太慢，拖垮了吞吐，于是团队做了个看起来很合理的妥协：把它从 gating 降成告警，或者从“每次跑”改成“抽样跑”。从这一刻起，它就不再是终态门禁，而是一个偶尔说两句的旁观者——第 5.5 节那道本该阻断的关，就是这么悄悄敞开的。</p>
+<p>第三种是<strong>伪独立</strong>，对应独立的失守，也最难自查。验证器表面上是另一套代码、另一个进程，可它和生成端共享了同一个错误假设。最典型的，是让模型自己生成测试、再用这些测试去验它自己写的代码——测试和被测代码同源，模型理解错了需求，它写的测试会和它写的代码一起错，双双“通过”。表面有验证，实质没有独立的第二意见。</p>
+<h2 id="173-怎么把它接进终态裁决"><a class="header" href="#173-怎么把它接进终态裁决">17.3 怎么把它接进终态裁决</a></h2>
+<p>指标和失效讲清了，剩下的是接法——怎么让验证器的判断，真正卡在 <code>ready</code> 那道门上。第 6.9 节已经给过骨架（gating 开关、带证据的 <code>validator.result</code>、失败分类），这一节补的是“一个合格验证器的输出，到底该长什么样”。它绝不能是第 5.5 节那种揉成一个布尔的 <code>validation error</code>，而应该是一份结构化、可被人和机器分别消费的结果：</p>
+<pre><code class="language-text">ValidatorResult {
+  validator:   "slides_freshness"            // 谁在验
+  ok:          false                         // 结论
+  gating:      true                          // 失败是否否决终态
+  category:    "stale_artifact"              // 失败类别，供路由重试/降级/终止
+  expected:    "based on report.md@2026-06-02"
+  actual:      "based on 2025-Q1 template"
+  evidence:    "checks/slides_freshness.json"// 可回放的证据路径
+  duration_ms: 1200                          // 耗时，喂给 16.3 的成本治理
+}
+</code></pre>
+<p>有了这份契约，验证就从“过没过”升级成了“为什么没过、证据在哪、下一步怎么办”。<code>category</code> 那一栏尤其值钱——它让 harness 能按失败类别分流：是 <code>timeout</code> 就重试，是 <code>stale_artifact</code> 就回退到重新生成那一步，是 <code>contract_violation</code> 就直接终止并升级，而不是一律“整轮重跑”。</p>
+<p>接的方式上，还有一条很实用的纪律：<strong>分层验证</strong>。把便宜的快验证（lint、类型检查、存在性）排在前面先跑，把贵的慢验证（端到端、复现、跨产物一致性）放后面、能并行就并行；所有 gating 的验证必须在终态裁决前全部跑完，non-gating 的（风格、拼写、建议）则只记录、不阻断。这样既守住了 sound（gating 的一个都不少），又照顾了便宜（不让每次都为最贵的检查买单），还顺手避开了第 5.5 节那种“验证器太严、把正常任务也拖死”的反向事故。</p>
+<h2 id="174-用什么验从字面到语义到对抗"><a class="header" href="#174-用什么验从字面到语义到对抗">17.4 用什么验：从字面，到语义，到对抗</a></h2>
+<p>同样是“验证”，手段的强弱差着量级，而强弱恰好对应它们有多容易被 Goodhart 绕过。</p>
+<p>最便宜、也最容易被绕的，是<strong>字面与存在性检查</strong>——“文件在不在”“字段有没有”。它该用，但只能当第一道粗筛；第 5.4 节那个靠文件名启发式猜主产物的事故，反过来说明了：只验“存在”，等于邀请系统拿一个同名的错文件来糊弄你。往上一层是<strong>属性与不变量</strong>：不去对单点结果做断言，而是断言产物必须满足的一类性质（“所有引用都能在源材料里找到”“页数 ≥ N 且每页非空”“函数对任意合法输入都不抛异常”）。属性比单点断言难被 Goodhart，因为要骗过一整类不变量，比骗过一条固定断言难得多。再往上，有 oracle 时最强的是<strong>差分与参考比对</strong>——拿一个已知正确的参考答案或旧版本做差，直接比结果集、比渲染输出、比行为。</p>
+<p>而真正把 sound 养硬的那一招，是<strong>对抗样本</strong>：主动构造一批“看起来对、其实错”的负样本，专门喂给验证器，量它的假阳性。这件事的纪律意义，怎么强调都不过分——验证器的 sound 不是写出来就有的，是用负样本一次次逼出来的。每逃逸一次“假成功”，那个漏网的错误产物，就该被收编成一个新的负样本，永久留在验证器的回归集里（这正好接上第 9.5 节那条“事故回流成免疫力”）。</p>
+<p>至于 <strong>LLM-as-judge</strong>，它不是不能用，而是只在没有机器 oracle 的领域（比如评摘要质量、评文案是否切题）才轮得到它，且必须守三条：用一个和生成端<strong>不同</strong>的模型，给它明确的评分 rubric 而不是“你觉得好不好”，并定期拿人工标注的负样本去校准它的假阳性。最要紧的一条底线是——在它没被校准到足够 sound 之前，绝不让它单独充当 gating。把一个假阳性未知的判官放上终态裁决的位置，等于把第 17.1 节那条最要命的指标，交给了运气。</p>
+<h2 id="175-验证器是会退化的资产得养"><a class="header" href="#175-验证器是会退化的资产得养">17.5 验证器是会退化的资产，得养</a></h2>
+<p>最后一点，是很多团队没意识到的：验证器不是写完就一劳永逸的代码，它是一项会随时间退化的资产，和第 11.5 节讲的 skill 一样，需要晋升、校准和淘汰的纪律。</p>
+<p>它退化的方式，前面已经点过——模型会朝着“骗过它”进化（Goodhart），需求会变、而它没跟着变，依赖的外部 oracle 会漂移。所以养它的动作也对应地清楚：每一次“假成功”逃逸，都回流成一个新的负样本和（必要时）一道新的 gating 检查；定期跑整个负样本集，把假阳性率当成一个要持续盯的指标，而不是上线时量一次就忘；并对 Goodhart 立一个专门的警报——当某个验证器的通过率异常走高、用户投诉却同步上升时，这个剪刀差几乎一定意味着它正在被绕过，该立刻复查，而不是庆祝。</p>
+<p>把这一章收束回第 13.4 节那条判据，会看到一个朴素却有分量的结论：一个领域能不能“用 harness 加开源模型补齐”，最终并不取决于模型有多强，而取决于你愿不愿意把“造验证器、养验证器”这门工程做扎实。模型决定了生成质量的下限，而<strong>验证器，决定了你究竟敢把终态裁决，交到谁手里</strong>。这,也正是整本书那句“完成由证据裁决”落到地上时，最硬、也最该被当回事的那一块地基。</p>
+<hr><div style="break-before: page; page-break-before: always;"></div>
+<h1 id="18-结语下一阶段的工程姿态"><a class="header" href="#18-结语下一阶段的工程姿态">18. 结语：下一阶段的工程姿态</a></h1>
 <p>到这里，整本书的主线也就闭合了：从长上下文和长任务的根因出发，经由 Claude Code / Codex 反推出来的架构总纲，穿过真实失败案例、运行时总图、能力平面、回放、操作员控制面、多 agent 编排与治理原则，最后落回一套可执行的工程姿态。</p>
 <p>把 harness 工作当作产品可靠性工程，而不是抽象框架建设。</p>
 <p>对任何还在从 demo 走向系统的 agent 团队，更合理的胜利模式是：</p>
@@ -1508,7 +1549,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 </ol>
 <p>这就是从“今天看起来很聪明”走向“每天都能正确交付”的路径。真正的关键，不是复制 Claude Code 或 Codex 的目录结构，而是学会像它们那样，把模型能力包进一个会说真话、会积累免疫力、会被团队长期维护的控制系统里。</p>
 <hr><div style="break-before: page; page-break-before: always;"></div>
-<h1 id="18-附录-a源文本与研究流程"><a class="header" href="#18-附录-a源文本与研究流程">18. 附录 A：源文本与研究流程</a></h1>
+<h1 id="19-附录-a源文本与研究流程"><a class="header" href="#19-附录-a源文本与研究流程">19. 附录 A：源文本与研究流程</a></h1>
 <p>本书论证建立在三类材料之上：第一类是 harness / agent / context engineering 的奠基文本，第二类是 Claude Code、Codex、OpenClaw、Hermes 这类系统样本，第三类是长上下文、控制论、memory hierarchy 和负反馈这些理论支撑。它们可以聚成四个实践组：</p>
 <ul>
 <li>第 1 层谱系：Fowler、OpenAI、Fisher Zhang、NxCode</li>
@@ -1533,7 +1574,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 <li>哪些契约属于 runtime，哪些属于 policy？</li>
 </ul>
 <hr><div style="break-before: page; page-break-before: always;"></div>
-<h1 id="19-附录-bharness-自查矩阵"><a class="header" href="#19-附录-bharness-自查矩阵">19. 附录 B：Harness 自查矩阵</a></h1>
+<h1 id="20-附录-bharness-自查矩阵"><a class="header" href="#20-附录-bharness-自查矩阵">20. 附录 B：Harness 自查矩阵</a></h1>
 <p>使用下面的矩阵为团队或产品打分。每一行标记为 <code>❌</code>、<code>⚠️</code> 或 <code>✅</code>。</p>
 <h2 id="181-session-支柱"><a class="header" href="#181-session-支柱">18.1 Session 支柱</a></h2>
 <div class="table-wrapper">
@@ -1604,7 +1645,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 <li>低于 4 个 <code>✅</code>：L0，仍然以 prompt 为中心</li>
 </ul>
 <hr><div style="break-before: page; page-break-before: always;"></div>
-<h1 id="20-附录-c精选术语表"><a class="header" href="#20-附录-c精选术语表">20. 附录 C：精选术语表</a></h1>
+<h1 id="21-附录-c精选术语表"><a class="header" href="#21-附录-c精选术语表">21. 附录 C：精选术语表</a></h1>
 <p>这是全书最常出现术语的紧凑节选。</p>
 <div class="table-wrapper">
 <table>
@@ -1639,7 +1680,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 </table>
 </div>
 <hr><div style="break-before: page; page-break-before: always;"></div>
-<h1 id="21-附录-d按角色阅读路径"><a class="header" href="#21-附录-d按角色阅读路径">21. 附录 D：按角色阅读路径</a></h1>
+<h1 id="22-附录-d按角色阅读路径"><a class="header" href="#22-附录-d按角色阅读路径">22. 附录 D：按角色阅读路径</a></h1>
 <p>如果你把这本书作为团队资料阅读，请使用与你职责最匹配的最短路径。</p>
 <div class="table-wrapper">
 <table>
@@ -1656,7 +1697,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 </table>
 </div>
 <hr><div style="break-before: page; page-break-before: always;"></div>
-<h1 id="22-参考文献与研究轨迹"><a class="header" href="#22-参考文献与研究轨迹">22. 参考文献与研究轨迹</a></h1>
+<h1 id="23-参考文献与研究轨迹"><a class="header" href="#23-参考文献与研究轨迹">23. 参考文献与研究轨迹</a></h1>
 <h2 id="211-奠基来源"><a class="header" href="#211-奠基来源">21.1 奠基来源</a></h2>
 <ol>
 <li>Birgitta Böckeler. <em>Harness engineering for coding agent users.</em> Martin Fowler, 2026-04-02. https://martinfowler.com/articles/harness-engineering.html</li>

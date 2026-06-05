@@ -35,10 +35,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-c7f2fb25.js";
+            window.path_to_searchindex_js = "searchindex-6fa9ffb9.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-9b296d31.js"></script>
+        <script src="toc-67109edf.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -240,6 +240,9 @@
 <h2 id="44-openclaw-与-hermes更广义-agent-product-也在重复同一规律"><a class="header" href="#44-openclaw-与-hermes更广义-agent-product-也在重复同一规律">4.4 OpenClaw 与 Hermes：更广义 agent product 也在重复同一规律</a></h2>
 <p>OpenClaw 和 Hermes 不以 coding agent 为中心，但恰好证明 harness 不是 coding-only 现象。OpenClaw 把 Gateway 明确称为 control plane，核心围绕 sessions、channels、skills、routing、web surfaces 和安全边界展开；Hermes 则把 gateway、SQLite session store、FTS5 memory、skills、delegate tool、cron、MCP 与多种 terminal backend 放到同一运行面。二者共同点都不是“提示词写得更会”，而是把 session、memory、skills、gateway、cron、sub-agent 当作系统事实。<sup class="footnote-reference" id="fr-openclaw-hermes-ch4-1"><a href="#footnote-openclaw-hermes-ch4">8</a></sup></p>
 <p>对本书而言，OpenClaw 和 Hermes 只需要简单分析，因为它们不是最贴近“AI 软件工厂”的主样本；但它们非常有价值，因为它们说明一旦 agent 要跨渠道、跨时段、跨环境连续行动，control plane 一定会长出来。也就是说，harness 不是 coding agent 的偶然补丁，而是 agent product 普遍会演化出来的外层系统。<sup class="footnote-reference" id="fr-openclaw-hermes-ch4-2"><a href="#footnote-openclaw-hermes-ch4">8</a></sup></p>
+<h3 id="441-把它们的部件对回那张统一词汇表"><a class="header" href="#441-把它们的部件对回那张统一词汇表">4.4.1 把它们的部件，对回那张统一词汇表</a></h3>
+<p>光说“control plane 一定会长出来”还停在断言。把 Hermes 那几样部件逐一对回后面第 6 章要用的那套运行时词汇，断言就变成了可核对的证据。它的 SQLite session store，就是事实流——把跨渠道、跨时段的会话历史持久化下来，而不是让它漂在某一次对话的上下文里；它的 FTS5 memory，是知识分层里那个“可被检索调入”的次级层，对应第 3 章那套缓存层级里的 L2；它的 delegate tool，是协作原语——把活派给另一个 agent，正是第 10 章那套 spawn 与汇总的雏形；它的 cron，则把“按时触发”做成了系统事实，而不再靠人记得去戳一下；而那个统一的 gateway，把上面这些连同 MCP、多种 terminal backend 收拢到同一个控制面上，扮演的正是操作员面加能力平面的角色。OpenClaw 把 Gateway 干脆挑明叫 control plane，把 sessions、channels、skills、routing、web surfaces 和安全边界都挂在它名下，说的是同一件事。<sup class="footnote-reference" id="fr-openclaw-hermes-ch4-3"><a href="#footnote-openclaw-hermes-ch4">8</a></sup></p>
+<p>把这张对照看完，会浮出一个挺有说服力的现象：一个根本不以写代码为中心的 agent product，最后长出来的器官清单，竟和 Claude Code、Codex 那两个 coding 样本高度重合——session 事实流、可检索的记忆、技能、派工、定时、统一网关、安全边界。这不是谁抄谁，而是同一条工程定律在不同形态的产品上各自显形：只要 agent 要跨渠道、跨时段、跨环境地连续行动，它就一定会被逼着把 session、memory、skills、routing、安全这些东西，从“提示词里的约定”升格成“系统里的事实”。所以 OpenClaw 和 Hermes 在这本书里真正的角色，不是又一组待拆解的主样本，而是一次针对全书论点的泛化性检验——把“harness 是 agent 软件本体”这句话，从 coding 这一个领域，验到更广义的 agent product 上。它通过了。</p>
 <h2 id="45-openai-1m-loc-案例真正说明了什么"><a class="header" href="#45-openai-1m-loc-案例真正说明了什么">4.5 OpenAI 1M LOC 案例真正说明了什么</a></h2>
 <p>相比 Claude Code 和 Codex 主要展示产品或仓库层面的运行时结构，OpenAI 的 1M LOC 案例展示的是组织生产层发生了什么变化：从 2025 年 8 月第一次提交到 2026 年 2 月，约五个月时间，三位工程师驱动 Codex 产出约 1M LOC、1500+ 个已合并 PR，平均每位工程师每天 3.5 个 PR，并宣称人类不直接写应用代码。<sup class="footnote-reference" id="fr-openai-factory-ch4-1"><a href="#footnote-openai-factory-ch4">9</a></sup> 这个故事的重点不是“模型终于可以替代工程师”，而是工程师的工作对象上移了。</p>
 <h3 id="451-这不是炫耀案例而是一场强制约束实验"><a class="header" href="#451-这不是炫耀案例而是一场强制约束实验">4.5.1 这不是炫耀案例，而是一场强制约束实验</a></h3>
@@ -267,46 +270,46 @@
 <h2 id="48-把成熟样本压成全书的架构索引"><a class="header" href="#48-把成熟样本压成全书的架构索引">4.8 把成熟样本压成全书的架构索引</a></h2>
 <p>如果把 Claude Code 的“器官”与 Codex 的“骨架”叠在一起，再把 OpenClaw / Hermes 的 control plane 经验当侧证，可以把全书后续章节统一压成九个架构维度——它们其实就是第 6 章那张总图的九个切面，下面按四组来读。</p>
 <p>最底下是真相的两块底座：<strong>事实流</strong>维度要求 session / thread / transcript 是独立、可恢复、可回放的持久层，<strong>生命周期</strong>维度要求任务有一道单调、公开、跨表面一致的状态阶梯。往上是能力与完成：<strong>能力平面</strong>维度要求工具、shell、MCP、外部应用、人工输入都进入统一调度面，<strong>产物与验证</strong>维度要求主产物、验证器、失败证据和终态裁决被显式绑定。再往上是看见、隔离与协作：<strong>回放</strong>维度要求实时流、历史流、刷新恢复和 UI 投影共享同一事实模型，<strong>隔离与恢复</strong>维度要求 worktree、resume、background task、disk output 成为一等运行时能力、而非异常补丁，<strong>协作</strong>维度要求 sub-agent / swarm 有角色、通信、权限、汇总与验证，而不是“多开几个窗口”。最后是沉淀与监督：<strong>知识分层</strong>维度要求 <code>AGENTS.md</code>、docs、skills、memory 按常驻层、按需层、晋升层来治理，<strong>操作员</strong>维度要求 dashboard、门禁、回滚、故障归因都建在同一条运行时事实流上。</p>
-<p>第 6 章会先给出这九个维度如何组成最小可用 harness；第 7 到第 10 章分别展开能力平面、回放、操作员控制面和多 agent 编排；第 11 章把这些维度再上升为设计原则；第 12 到第 17 章则把原则压成路线图、边界、清单、参考架构、治理与收束。</p>
+<p>第 6 章会先给出这九个维度如何组成最小可用 harness；第 7 到第 10 章分别展开能力平面、回放、操作员控制面和多 agent 编排；第 11 章把这些维度再上升为设计原则；第 12 到第 18 章则把原则压成路线图、边界、清单、参考架构、治理、验证器工程与收束。</p>
 <p>下一章不再继续看成熟样本，而改用一组真实失败案例来回答另一个问题：当这些维度缺位时，系统具体会怎么坏。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
 <li id="footnote-layer1-harness-ch4">
-<p>本章在此处综合 Fowler 关于 coding agent harness 的框架，以及 OpenAI 与 Codex 开源仓库关于 1M LOC、<code>AGENTS.md</code>、sandbox、approval、MCP 与 rollout 的工程边界；对应第 22 章参考文献 1、2、21。 <a href="#fr-layer1-harness-ch4-1">↩</a></p>
+<p>本章在此处综合 Fowler 关于 coding agent harness 的框架，以及 OpenAI 与 Codex 开源仓库关于 1M LOC、<code>AGENTS.md</code>、sandbox、approval、MCP 与 rollout 的工程边界；对应第 23 章参考文献 1、2、21。 <a href="#fr-layer1-harness-ch4-1">↩</a></p>
 </li>
 <li id="footnote-layer2-harness-ch4">
-<p>本章在此处综合 Anthropic 关于 managed agents 与 long-running harness 的接口抽象、Claude Code 本地源码镜像所体现的 session/compaction/sub-agent 机制，以及 OpenClaw/Hermes 在 gateway、memory、skills 与 sub-agent 上的产品形态；对应第 22 章参考文献 3、4、6、7、22、23、24。 <a href="#fr-layer2-harness-ch4-1">↩</a></p>
+<p>本章在此处综合 Anthropic 关于 managed agents 与 long-running harness 的接口抽象、Claude Code 本地源码镜像所体现的 session/compaction/sub-agent 机制，以及 OpenClaw/Hermes 在 gateway、memory、skills 与 sub-agent 上的产品形态；对应第 23 章参考文献 3、4、6、7、22、23、24。 <a href="#fr-layer2-harness-ch4-1">↩</a></p>
 </li>
 <li id="footnote-claudecode-story-ch4">
-<p>本章在此处综合 Anthropic Claude Code 产品页关于 “majority of code is now written by Claude Code” 的表述，以及 Anthropic 内部团队案例中关于律师、设计师和数据科学家使用 Claude Code 的故事，用来说明 Claude Code 已经超出传统 coding assistant 的边界；对应第 22 章参考文献 36、37。 <a href="#fr-claudecode-story-ch4-1">↩</a></p>
+<p>本章在此处综合 Anthropic Claude Code 产品页关于 “majority of code is now written by Claude Code” 的表述，以及 Anthropic 内部团队案例中关于律师、设计师和数据科学家使用 Claude Code 的故事，用来说明 Claude Code 已经超出传统 coding assistant 的边界；对应第 23 章参考文献 36、37。 <a href="#fr-claudecode-story-ch4-1">↩</a></p>
 </li>
 <li id="footnote-claudecode-ch4">
-<p>本章在此处根据 2026-04-23 对 Claude Code 本地源码镜像的结构审读，使用其 <code>Tool.ts</code>、<code>query.ts</code>、<code>main.tsx</code>、<code>services/tools/StreamingToolExecutor.ts</code>、<code>services/compact/*</code>、<code>tools/AgentTool/{AgentTool.tsx,loadAgentsDir.ts,resumeAgent.ts}</code>、<code>utils/{sessionStorage.ts,fileStateCache.ts,worktree.ts,teammateMailbox.ts}</code>、<code>utils/task/diskOutput.ts</code> 与 <code>services/AgentSummary/agentSummary.ts</code> 所体现的 tool context、主循环、MCP、技能/插件、子 agent、swarm mailbox、分层 compaction、resume、disk-backed output 和 worktree 机制；对应第 22 章参考文献 24。 <a href="#fr-claudecode-ch4-1">↩</a> <a href="#fr-claudecode-ch4-2">↩2</a> <a href="#fr-claudecode-ch4-3">↩3</a> <a href="#fr-claudecode-ch4-4">↩4</a> <a href="#fr-claudecode-ch4-5">↩5</a> <a href="#fr-claudecode-ch4-6">↩6</a> <a href="#fr-claudecode-ch4-7">↩7</a> <a href="#fr-claudecode-ch4-8">↩8</a> <a href="#fr-claudecode-ch4-9">↩9</a> <a href="#fr-claudecode-ch4-10">↩10</a> <a href="#fr-claudecode-ch4-11">↩11</a> <a href="#fr-claudecode-ch4-12">↩12</a> <a href="#fr-claudecode-ch4-13">↩13</a></p>
+<p>本章在此处根据 2026-04-23 对 Claude Code 本地源码镜像的结构审读，使用其 <code>Tool.ts</code>、<code>query.ts</code>、<code>main.tsx</code>、<code>services/tools/StreamingToolExecutor.ts</code>、<code>services/compact/*</code>、<code>tools/AgentTool/{AgentTool.tsx,loadAgentsDir.ts,resumeAgent.ts}</code>、<code>utils/{sessionStorage.ts,fileStateCache.ts,worktree.ts,teammateMailbox.ts}</code>、<code>utils/task/diskOutput.ts</code> 与 <code>services/AgentSummary/agentSummary.ts</code> 所体现的 tool context、主循环、MCP、技能/插件、子 agent、swarm mailbox、分层 compaction、resume、disk-backed output 和 worktree 机制；对应第 23 章参考文献 24。 <a href="#fr-claudecode-ch4-1">↩</a> <a href="#fr-claudecode-ch4-2">↩2</a> <a href="#fr-claudecode-ch4-3">↩3</a> <a href="#fr-claudecode-ch4-4">↩4</a> <a href="#fr-claudecode-ch4-5">↩5</a> <a href="#fr-claudecode-ch4-6">↩6</a> <a href="#fr-claudecode-ch4-7">↩7</a> <a href="#fr-claudecode-ch4-8">↩8</a> <a href="#fr-claudecode-ch4-9">↩9</a> <a href="#fr-claudecode-ch4-10">↩10</a> <a href="#fr-claudecode-ch4-11">↩11</a> <a href="#fr-claudecode-ch4-12">↩12</a> <a href="#fr-claudecode-ch4-13">↩13</a></p>
 </li>
 <li id="footnote-claude-code-paper-ch4">
-<p>Jiacheng Liu 等，<em>Dive into Claude Code: The Design Space of Today’s and Future AI Agent Systems.</em> 本章在此处使用其基于公开 TypeScript 源码的 Claude Code 分析，包括五类价值目标、十三条设计原则、七个高层组件、五层子系统结构、权限系统、五层 compaction、MCP / plugins / skills / hooks、subagent delegation 与 append-oriented session storage；对应第 22 章参考文献 41。 <a href="#fr-claude-code-paper-ch4-1">↩</a> <a href="#fr-claude-code-paper-ch4-2">↩2</a></p>
+<p>Jiacheng Liu 等，<em>Dive into Claude Code: The Design Space of Today’s and Future AI Agent Systems.</em> 本章在此处使用其基于公开 TypeScript 源码的 Claude Code 分析，包括五类价值目标、十三条设计原则、七个高层组件、五层子系统结构、权限系统、五层 compaction、MCP / plugins / skills / hooks、subagent delegation 与 append-oriented session storage；对应第 23 章参考文献 41。 <a href="#fr-claude-code-paper-ch4-1">↩</a> <a href="#fr-claude-code-paper-ch4-2">↩2</a></p>
 </li>
 <li id="footnote-codex-story-ch4">
-<p>本章在此处综合 OpenAI 关于 <em>Introducing Codex</em> 与 <em>Introducing the Codex app</em> 的产品叙事，以及 Codex 开源 README / app-server README 对本地 CLI、rich interfaces、多线程、多 agent 与 worktree 的公开描述，用来补足 Codex 从云端并行 agent 到本地 runtime kernel 的演进故事；对应第 22 章参考文献 21、39、40。 <a href="#fr-codex-story-ch4-1">↩</a> <a href="#fr-codex-story-ch4-2">↩2</a> <a href="#fr-codex-story-ch4-3">↩3</a> <a href="#fr-codex-story-ch4-4">↩4</a> <a href="#fr-codex-story-ch4-5">↩5</a> <a href="#fr-codex-story-ch4-6">↩6</a> <a href="#fr-codex-story-ch4-7">↩7</a> <a href="#fr-codex-story-ch4-8">↩8</a></p>
+<p>本章在此处综合 OpenAI 关于 <em>Introducing Codex</em> 与 <em>Introducing the Codex app</em> 的产品叙事，以及 Codex 开源 README / app-server README 对本地 CLI、rich interfaces、多线程、多 agent 与 worktree 的公开描述，用来补足 Codex 从云端并行 agent 到本地 runtime kernel 的演进故事；对应第 23 章参考文献 21、39、40。 <a href="#fr-codex-story-ch4-1">↩</a> <a href="#fr-codex-story-ch4-2">↩2</a> <a href="#fr-codex-story-ch4-3">↩3</a> <a href="#fr-codex-story-ch4-4">↩4</a> <a href="#fr-codex-story-ch4-5">↩5</a> <a href="#fr-codex-story-ch4-6">↩6</a> <a href="#fr-codex-story-ch4-7">↩7</a> <a href="#fr-codex-story-ch4-8">↩8</a></p>
 </li>
 <li id="footnote-codex-oss-ch4">
-<p>OpenAI, <em>openai/codex</em> 开源仓库。 本章在此处使用其 <code>codex-rs/cli/src/main.rs</code>、<code>codex-rs/app-server/README.md</code>、<code>codex-rs/app-server-protocol/src/protocol/v2.rs</code>、<code>codex-rs/tools/src/lib.rs</code>、<code>codex-rs/thread-store/src/lib.rs</code>、<code>codex-rs/rollout/src/lib.rs</code>、仓库根 <code>AGENTS.md</code> 与 <code>docs/agents_md.md</code> 中关于 CLI surfaces、Thread/Turn/Item、tool registry、thread persistence、rollout、sandbox、approvals 与 <code>AGENTS.md</code> 的公开结构；对应第 22 章参考文献 21。 <a href="#fr-codex-oss-ch4-1">↩</a> <a href="#fr-codex-oss-ch4-2">↩2</a> <a href="#fr-codex-oss-ch4-3">↩3</a> <a href="#fr-codex-oss-ch4-4">↩4</a> <a href="#fr-codex-oss-ch4-5">↩5</a> <a href="#fr-codex-oss-ch4-6">↩6</a> <a href="#fr-codex-oss-ch4-7">↩7</a> <a href="#fr-codex-oss-ch4-8">↩8</a> <a href="#fr-codex-oss-ch4-9">↩9</a> <a href="#fr-codex-oss-ch4-10">↩10</a></p>
+<p>OpenAI, <em>openai/codex</em> 开源仓库。 本章在此处使用其 <code>codex-rs/cli/src/main.rs</code>、<code>codex-rs/app-server/README.md</code>、<code>codex-rs/app-server-protocol/src/protocol/v2.rs</code>、<code>codex-rs/tools/src/lib.rs</code>、<code>codex-rs/thread-store/src/lib.rs</code>、<code>codex-rs/rollout/src/lib.rs</code>、仓库根 <code>AGENTS.md</code> 与 <code>docs/agents_md.md</code> 中关于 CLI surfaces、Thread/Turn/Item、tool registry、thread persistence、rollout、sandbox、approvals 与 <code>AGENTS.md</code> 的公开结构；对应第 23 章参考文献 21。 <a href="#fr-codex-oss-ch4-1">↩</a> <a href="#fr-codex-oss-ch4-2">↩2</a> <a href="#fr-codex-oss-ch4-3">↩3</a> <a href="#fr-codex-oss-ch4-4">↩4</a> <a href="#fr-codex-oss-ch4-5">↩5</a> <a href="#fr-codex-oss-ch4-6">↩6</a> <a href="#fr-codex-oss-ch4-7">↩7</a> <a href="#fr-codex-oss-ch4-8">↩8</a> <a href="#fr-codex-oss-ch4-9">↩9</a> <a href="#fr-codex-oss-ch4-10">↩10</a></p>
 </li>
 <li id="footnote-openclaw-hermes-ch4">
-<p>本章在此处综合 OpenClaw README 中关于 Gateway control plane、sessions、channels、skills 与 routing 的描述，以及 Hermes README/AGENTS 中关于 gateway、SQLite session store、memory、skills、delegate tool、cron 与 MCP 的结构；对应第 22 章参考文献 22、23。 <a href="#fr-openclaw-hermes-ch4-1">↩</a> <a href="#fr-openclaw-hermes-ch4-2">↩2</a></p>
+<p>本章在此处综合 OpenClaw README 中关于 Gateway control plane、sessions、channels、skills 与 routing 的描述，以及 Hermes README/AGENTS 中关于 gateway、SQLite session store、memory、skills、delegate tool、cron 与 MCP 的结构；对应第 23 章参考文献 22、23。 <a href="#fr-openclaw-hermes-ch4-1">↩</a> <a href="#fr-openclaw-hermes-ch4-2">↩2</a> <a href="#fr-openclaw-hermes-ch4-3">↩3</a></p>
 </li>
 <li id="footnote-openai-factory-ch4">
-<p>OpenAI, <em>Harness Engineering: Leveraging Codex in an Agent-First World.</em> 本章在此处使用其关于 1M LOC、1500+ merged PR、三位工程师与低人工写码比例的案例数字；对应第 22 章参考文献 2。 <a href="#fr-openai-factory-ch4-1">↩</a></p>
+<p>OpenAI, <em>Harness Engineering: Leveraging Codex in an Agent-First World.</em> 本章在此处使用其关于 1M LOC、1500+ merged PR、三位工程师与低人工写码比例的案例数字；对应第 23 章参考文献 2。 <a href="#fr-openai-factory-ch4-1">↩</a></p>
 </li>
 <li id="footnote-openai-factory-story-ch4">
-<p>本章在此处使用 Ryan Lopopolo 文章中关于 “Humans steer. Agents execute.”、无手写代码、worktree、repository knowledge 作为 system of record、minimal merge gates 与 garbage collection 的叙述，用来补足 1M LOC 案例的组织与控制系统视角；对应第 22 章参考文献 2。 <a href="#fr-openai-factory-story-ch4-1">↩</a> <a href="#fr-openai-factory-story-ch4-2">↩2</a> <a href="#fr-openai-factory-story-ch4-3">↩3</a> <a href="#fr-openai-factory-story-ch4-4">↩4</a> <a href="#fr-openai-factory-story-ch4-5">↩5</a> <a href="#fr-openai-factory-story-ch4-6">↩6</a> <a href="#fr-openai-factory-story-ch4-7">↩7</a> <a href="#fr-openai-factory-story-ch4-8">↩8</a> <a href="#fr-openai-factory-story-ch4-9">↩9</a></p>
+<p>本章在此处使用 Ryan Lopopolo 文章中关于 “Humans steer. Agents execute.”、无手写代码、worktree、repository knowledge 作为 system of record、minimal merge gates 与 garbage collection 的叙述，用来补足 1M LOC 案例的组织与控制系统视角；对应第 23 章参考文献 2。 <a href="#fr-openai-factory-story-ch4-1">↩</a> <a href="#fr-openai-factory-story-ch4-2">↩2</a> <a href="#fr-openai-factory-story-ch4-3">↩3</a> <a href="#fr-openai-factory-story-ch4-4">↩4</a> <a href="#fr-openai-factory-story-ch4-5">↩5</a> <a href="#fr-openai-factory-story-ch4-6">↩6</a> <a href="#fr-openai-factory-story-ch4-7">↩7</a> <a href="#fr-openai-factory-story-ch4-8">↩8</a> <a href="#fr-openai-factory-story-ch4-9">↩9</a></p>
 </li>
 <li id="footnote-agents-catalog-ch4">
-<p>本章在此处综合 Fowler、OpenAI 与 Codex 开源文档关于 <code>AGENTS.md</code> 作为短目录、细节下沉到 <code>docs/</code> 的做法；对应第 22 章参考文献 1、2、21。 <a href="#fr-agents-catalog-ch4-1">↩</a></p>
+<p>本章在此处综合 Fowler、OpenAI 与 Codex 开源文档关于 <code>AGENTS.md</code> 作为短目录、细节下沉到 <code>docs/</code> 的做法；对应第 23 章参考文献 1、2、21。 <a href="#fr-agents-catalog-ch4-1">↩</a></p>
 </li>
 <li id="footnote-review-boundary-ch4">
-<p>本章在此处前半使用 OpenAI 关于极端自动化案例边界的表述；后半关于医疗、金融、隐私与客户数据路径的要求属于本文的工程外推；对应第 22 章参考文献 2。 <a href="#fr-review-boundary-ch4-1">↩</a></p>
+<p>本章在此处前半使用 OpenAI 关于极端自动化案例边界的表述；后半关于医疗、金融、隐私与客户数据路径的要求属于本文的工程外推；对应第 23 章参考文献 2。 <a href="#fr-review-boundary-ch4-1">↩</a></p>
 </li>
 </ol>
 

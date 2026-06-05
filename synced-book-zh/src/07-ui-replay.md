@@ -95,6 +95,6 @@ function fold(events) {
 
 这些断言读着琐碎，却是“用户事实层到底存不存在”的试金石。一个朴素的判据：只要这些断言还没成为合并/发布的门禁，团队就还停留在“实现了一个前端”——它刷新一下就可能骗人；而一个真正可信的用户事实层，是你怎么刷、怎么断、怎么切，它都说同一句实话。区别不在画得好不好看，在敢不敢被这样反复地刷。
 
-[^replay-truth-ch8]: 本章在此处综合 Codex `app-server` 中 thread / turn / item 的统一事件流设计，以及 Claude Code transcript、resume 与 agent summary 机制，说明 UI replay 必须建立在统一的后端事实模型之上；对应第 22 章参考文献 21、24。
+[^replay-truth-ch8]: 本章在此处综合 Codex `app-server` 中 thread / turn / item 的统一事件流设计，以及 Claude Code transcript、resume 与 agent summary 机制，说明 UI replay 必须建立在统一的后端事实模型之上；对应第 23 章参考文献 21、24。
 
 ---

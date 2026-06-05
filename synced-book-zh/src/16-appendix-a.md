@@ -1,4 +1,4 @@
-# 18. 附录 A：源文本与研究流程
+# 19. 附录 A：源文本与研究流程
 
 本书论证建立在三类材料之上：第一类是 harness / agent / context engineering 的奠基文本，第二类是 Claude Code、Codex、OpenClaw、Hermes 这类系统样本，第三类是长上下文、控制论、memory hierarchy 和负反馈这些理论支撑。它们可以聚成四个实践组：
 

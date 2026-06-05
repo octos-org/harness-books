@@ -79,6 +79,6 @@ def assert_terminal_authentic(task):
 
 读完这张卡，他不需要推理，只需要决断——而且决断所需的每一格，都能在事实流里指回一条具体事件。最后，按 §9.5 那条回流走完闭环：这次事故进博物馆，命名为“两段式上传只确认了第一段”；它长出一个 dashboard 信号——“任意 `ready` 任务的 gating validator 不是全绿，立即标红”，让同类问题下次一冒头就可见；长出一条门禁——就是上面那段 `assert_terminal_authentic`，焊进发布前检查；再长出一条 runbook——“看到 `READY_OVER_FAILED_GATE`：先核对对应 validator 的 evidence，再决定重试该步还是整单回滚”。走完这三步，这条贯穿了五章的“假成功”，才算真正变成了系统的免疫力：它被设计挡在 `ready` 之外（第 6 章），被能力契约堵住伪造（第 7 章），被 UI 拒绝渲染成完成（第 8 章），最后被门禁兜住、被复盘回流（第 9 章）。
 
-[^operator-plane-ch9]: 本章在此处综合 Claude Code `agentSummary.ts`、`diskOutput.ts`、resume 相关实现，以及 Codex `Thread` / `Turn` / `Item` 的对象分层，用来说明操作员控制面应如何建立在统一事实流之上；对应第 22 章参考文献 21、24。
+[^operator-plane-ch9]: 本章在此处综合 Claude Code `agentSummary.ts`、`diskOutput.ts`、resume 相关实现，以及 Codex `Thread` / `Turn` / `Item` 的对象分层，用来说明操作员控制面应如何建立在统一事实流之上；对应第 23 章参考文献 21、24。
 
 ---
