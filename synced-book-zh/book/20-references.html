@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-8b2e81f5.js";
+            window.path_to_searchindex_js = "searchindex-547ee9e3.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-67109edf.js"></script>
@@ -175,7 +175,7 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="23-参考文献与研究轨迹"><a class="header" href="#23-参考文献与研究轨迹">23. 参考文献与研究轨迹</a></h1>
-<h2 id="211-奠基来源"><a class="header" href="#211-奠基来源">21.1 奠基来源</a></h2>
+<h2 id="231-奠基来源"><a class="header" href="#231-奠基来源">23.1 奠基来源</a></h2>
 <ol>
 <li>Birgitta Böckeler. <em>Harness engineering for coding agent users.</em> Martin Fowler, 2026-04-02. https://martinfowler.com/articles/harness-engineering.html</li>
 <li>OpenAI. <em>Harness Engineering: Leveraging Codex in an Agent-First World.</em> https://openai.com/index/harness-engineering/</li>
@@ -229,15 +229,21 @@
 <li>Chroma Research. <em>Context Rot: How Increasing Input Tokens Impacts LLM Performance.</em> 2025. https://www.trychroma.com/research/context-rot</li>
 <li>Anthropic. <em>Effective context engineering for AI agents.</em> https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents</li>
 </ol>
-<h2 id="212-支持性参考"><a class="header" href="#212-支持性参考">21.2 支持性参考</a></h2>
+<h2 id="232-支持性参考"><a class="header" href="#232-支持性参考">23.2 支持性参考</a></h2>
 <ul>
 <li>Kai Mei et al. <em>AIOS: LLM Agent Operating System.</em></li>
 <li>Bertrand Meyer. <em>Object-Oriented Software Construction.</em></li>
 <li>Dan Ariely 2013 年关于 big data 的那句话，它既是本书反复出现的玩笑，也是警告。</li>
 <li>EU AI Act、SEC disclosure expectations、FDA SaMD guidance 等治理压力。</li>
 </ul>
-<h2 id="213-研究轨迹"><a class="header" href="#213-研究轨迹">21.3 研究轨迹</a></h2>
+<h2 id="233-研究轨迹"><a class="header" href="#233-研究轨迹">23.3 研究轨迹</a></h2>
 <p>底层研究材料位于写作本书时使用的 <code>ascent-research</code> session tree，包括 <code>session.md</code>、<code>session.jsonl</code>、<code>SCHEMA.md</code>、<code>wiki/</code>、<code>diagrams/</code>、<code>raw/</code> 和 <code>drafts/</code>。</p>
+<p>这条轨迹真正的方法学，不在于材料有多少，而在于材料之间怎么互相咬合。本书从不把任何单一来源当作权威：一份公开源码可能只是某一时刻某一团队的局部选择，一篇论文可能在受控基准上成立而在生产负载下失真，一张厂商价格页则天然带着销售口径。所以全书的每一个结论，都被要求站到三类证据的交点上才算成立——这是一种刻意的三角互证，任何一条腿单独都撑不住一张桌子。</p>
+<p>第一条腿是成熟产品的公开源码与可审读镜像。我们读的不是教程式的玩具实现，而是真在跑的东西：Claude Code 的 <code>Tool.ts</code>、<code>query.ts</code>、<code>StreamingToolExecutor.ts</code>、那一组 <code>compact</code> 服务和 <code>AgentTool</code> 子树，以及 Codex 那边 <code>codex-rs/cli</code>、<code>app-server</code>、<code>thread-store</code>、<code>rollout</code> 这些模块的体量与切分方式。源码会暴露论文不会写的东西：哪一层真的落了盘、哪一个写入只有 coordinator 有权限、两段式上传的第二段失败时事实流里到底留下了什么。t_9f2 那条“假成功“周报任务之所以能被一路追到 <code>completeUpload</code> 静默超时，正是因为我们手里有事实流的物理形状，而不是某段宣传文案里“已发送“的措辞。源码告诉你系统实际承诺了什么，而不是它声称承诺了什么。</p>
+<p>第二条腿是公开论文与技术报告，它们解释源码为什么不得不长成那样。长上下文在中段塌陷不是工程师偷懒，而是 softmax 在序列变长时把注意力稀释成一片均匀的雾（参考第 23 章参考文献 43），是 RoPE 的旋转相位让远距离 token 的点积随距离衰减（44、45），是有限残差维度下信息被反复折叠产生的 over-squashing（46）。“迷失在中段“和 NoLiMa、LongCodeBench、Context Rot 这些评测（11、16、17、50）把“容量不等于有效工作区间“从一句口号变成了可测量的曲线。各家厂商的 KV 策略——Kimi 的 QK-Clip、DeepSeek 的混合压缩与 on-disk KV cache、MiniMax 的稀疏/线性注意力（47、48、49）——则反过来印证：连模型自己都在用各种手段对抗同一组物理约束。论文给了源码一个“为什么”，源码给了论文一个“真在这么干“。</p>
+<p>第三条腿是厂商的价格页与长上下文文档，它把前两条腿换算成钱和延迟。容量上限写在文档里，有效工作区间藏在评测里，而成本三本账——prefill 的钱、KV 驻留的钱、每多塞一个 token 在每一步自回归里反复付的钱——要把定价（20）和长上下文文档（13、15、19、51）摆在一起才算得清。一个架构选择只有同时被源码证明“做得出“、被论文证明“必须做“、被价格页证明“付得起“，它才进入本书的正文。</p>
+<p>在这三条腿之外，我们还刻意叠了一组匿名的真实事故作为反证。三角互证容易让人只收集“印证假设“的证据，而事故是专门用来打脸的：它们是系统在没人看的角落里实际怎么坏掉的记录。t_9f2 就是这一类被去标识化、保留事件骨架的样本——绿色完成气泡、聊天里言之凿凿的“已发送“、底层 <code>tool.returned(ok:false)</code> 三者并存。正是这种“模型自述与工具回执物理打架“的现场，逼出了本书的核心主张：把 <code>model.claim</code> 与工具回执隔离、只让 <code>task.settled</code> 点亮终态、用产物契约要求 <code>delivery.receipt</code>、让纯函数 <code>fold</code> 使绿气泡在状态空间里根本不可表示。事故不证明任何理论正确，它只负责证明某些理论一定错——而这恰恰是最值钱的一种证据。</p>
+<p>把这四股材料拧到一起的，是贯穿全书的那条主方法：从代码与事故反推通用架构。我们不从一张白纸上的理想设计出发，而是先承认那些已经在数千万次真实调用里活下来的系统形态，再追问它们为何如此、在哪里仍会崩，然后才把共性抽象成事实流、生命周期五态、能力平面、产物契约、gating 验证器、回放 fold 这一套可迁移的词汇。换句话说，本书的架构不是被发明的，是被发掘的——它早已分散地存在于各家 harness 的源码、各篇报告的脚注和各起事故的残骸里，本书只是把它们对齐到同一坐标系下。</p>
 <p>这条轨迹本身也是本书论点的一部分：写作过程就是一次被 harness 化、可恢复、可回放的工作。</p>
 
                     </main>

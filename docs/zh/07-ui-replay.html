@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-8b2e81f5.js";
+            window.path_to_searchindex_js = "searchindex-547ee9e3.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-67109edf.js"></script>
@@ -233,6 +233,22 @@ function fold(events) {
 <p>最该先写的那道门禁，正好就是 §8.1 那个场景的自动化版本。它做三件事：起一个任务，让它跑到中途某个确定的阶段（比如 <code>refactor 3/7</code>）；然后分别走两条路——一条直接读任务快照接口 <code>/api/sessions/:id/tasks</code>，一条把 SSE 流从头回放一遍 fold 出状态；最后断言这两个状态在生命周期上<strong>逐字段相等</strong>。这道断言一旦挂上 CI，§8.2 那种“两个对象模型悄悄分叉”的 bug 就再也合不进主干——因为它一分叉，这道门禁立刻红。</p>
 <p>其余的断言是它的同族，方向都一样：刷新前后、重连前后、切会话前后，用户看到的必须是同一份任务事实；历史回放绝不能把兄弟 session 的状态带进当前容器（这正是 §8.3 那道缺口的守卫）；子 agent 摘要、主产物状态、验证证据，刷新后必须依然在；流中断后用 replay 重建的状态，要和恢复直推后继续推送的状态严丝合缝。</p>
 <p>这些断言读着琐碎，却是“用户事实层到底存不存在”的试金石。一个朴素的判据：只要这些断言还没成为合并/发布的门禁，团队就还停留在“实现了一个前端”——它刷新一下就可能骗人；而一个真正可信的用户事实层，是你怎么刷、怎么断、怎么切，它都说同一句实话。区别不在画得好不好看，在敢不敢被这样反复地刷。</p>
+<h2 id="86-断线重连同一条流再求一次值"><a class="header" href="#86-断线重连同一条流再求一次值">8.6 断线重连：同一条流，再求一次值</a></h2>
+<p>§8.5 列的那串门禁里，最后一条最不像“刷新”：流中断后用 replay 重建的状态，要和恢复直推后继续推送的状态严丝合缝。刷新是用户主动按的，断线不是——它是网络抖一下、worker 滚动重启、负载均衡把长连接掐了。这一节就把这一条单拎出来，用那条贯穿全书的周报任务 <code>t_9f2</code> 演一遍，看“重连”和“刷新”凭什么是同一道题。</p>
+<p>任务跑到把 PDF 周报传去 <code>#finance</code> 这一段。<code>slack.upload</code> 是两段式的：先 <code>createUpload</code> 拿到上传槽，再 <code>completeUpload</code> 把文件落定、触发投递。事件流刚推到第一段、还没等到第二段的回执，客户端这条 SSE 长连接就断了——后端正赶上一次 worker 滚动重启，把所有 inflight 的流连接一并掐了。客户端这一侧，<code>EventSource</code> 的 <code>onerror</code> 触发，屏幕停在“正在上传周报到 #finance”，进度气泡转着圈。三十秒里，用户什么都做不了，只能盯着那个圈。</p>
+<p>断线这三十秒，后台一点没停。worker 重启后从事件日志续上，<code>completeUpload</code> 那一段超时静默失败，gating validator <code>slack.delivered</code> 拿不到 <code>delivery.receipt</code>，coordinator 据此写下终态。这一切都老老实实落进了那条只追加的事实流，每条都带着单调递增的 <code>seq</code>：</p>
+<pre><code class="language-jsonl">{ "seq": 41, "type": "tool.called",      "tool": "slack.upload",   "args_digest": "…", "stage": "createUpload" }
+{ "seq": 42, "type": "tool.returned",    "tool": "slack.upload",   "ok": true,  "stage": "createUpload", "upload_id": "U7" }
+                                                  ← 断线发生在这里，客户端最后收到的是 seq:42
+{ "seq": 43, "type": "model.claim",      "text": "已发送到 #finance" }
+{ "seq": 44, "type": "tool.called",      "tool": "slack.upload",   "stage": "completeUpload", "upload_id": "U7" }
+{ "seq": 45, "type": "tool.returned",    "tool": "slack.upload",   "ok": false, "stage": "completeUpload", "reason": "timeout" }
+{ "seq": 46, "type": "validator.result", "validator": "slack.delivered", "ok": false }
+{ "seq": 47, "type": "task.settled",     "state": "failed", "reason": "required_validator_failed:slack.delivered" }
+</code></pre>
+<p>关键在于客户端断线那一刻，它手里攥着的不是“一屏聊天”，而是一个数字：它收到的最后一条事件是 <code>seq:42</code>。这个 <code>last-seq</code> 就是它和事实流之间唯一的锚。三十秒后网络恢复，它做的不是把缓存的气泡重画一遍，而是带着 <code>last-seq=42</code> 去拉增量——<code>GET /sessions/t_9f2/events?since=42</code>——后端把 <code>seq:43</code> 到 <code>seq:47</code> 这五条一次性补齐，客户端再把它们顺着折叠进当前状态。fold 不在乎这五条是“断线期间攒下的存货”还是“此刻新鲜推来的”，它只认 <code>seq</code> 的先后；<code>seq:47</code> 那条 <code>task.settled</code> 一进去，<code>v.lifecycle</code> 就落到 <code>failed</code>，<code>terminalReason</code> 记下 <code>required_validator_failed:slack.delivered</code>，而 <code>seq:43</code> 那句“已发送”照例只进 <code>claims</code>、一个字都碰不到 <code>lifecycle</code>。那个一度转着圈的上传气泡，重连后不是“接着转”，而是直接收口成一条带原因的失败——因为 fold 求的从来不是“我上次停在哪”，而是“给定到 <code>seq:47</code> 为止的这条流，此刻该是什么值”。</p>
+<p>这里值得停一拍，把 §8.4 那个“fold 无私有记忆”的纯函数性质，对着断线场景再确认一遍。假如客户端在断线期间偷偷记过点什么——比如自作主张把那个上传气泡标成“可能已完成”，好让界面别显得卡住——那么重连后它就有两个状态源要调和：自己攒的乐观猜测，和拉回来的真实增量。这一调和，迟早调出第 5.2 节那种“UI 显示完成、事实却是失败”的假一致。而真正的 fold 没有这个烦恼：它在断线那一刻没存下任何私货，重连后也没有“旧值”要去对齐，它只是拿一条更长的流（多了 <code>43–47</code> 五条）重新求一次值。断线 30 秒和断线 0 秒，对它而言只是输入流的长度差，求值规则一字不变。</p>
+<p>于是 §8.5 那道门禁在这里被实打实地演了一遍：一条路是“从未断线、一路直推”——客户端连着收到 <code>41…47</code>，fold 一路推到 <code>failed</code>；另一条路是“断在 42、重连后补 43…47”——客户端先收到 <code>41…42</code>，停顿，再补 <code>43…47</code>，fold 同样推到 <code>failed</code>。两条路喂给 fold 的事件<strong>集合与顺序完全一致</strong>，纯函数对一致的输入只会吐出一致的输出，所以两边逐字段相等：同样的 <code>lifecycle:"failed"</code>、同样的 <code>terminalReason</code>、同样那条“模型当时是这么说的”留痕。这正是那道门禁要断言的东西——它甚至不必真的去拔网线，只要在测试里把同一串事件，一次连续喂、一次切成“前半段 + 带 <code>since</code> 的后半段”分两批喂，再断言两次 fold 出的状态逐字段相等，就把“断线重连”这道看似要靠运气复现的 bug，钉成了一条确定的、随时能跑的检查。能这样钉住，恰恰因为重连在这套架构里根本不是什么特例：它和刷新、切会话一样，不过是“拿这条流，再求一次值”。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">

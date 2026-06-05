@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-8b2e81f5.js";
+            window.path_to_searchindex_js = "searchindex-547ee9e3.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-67109edf.js"></script>
@@ -224,6 +224,21 @@ def assert_terminal_authentic(task):
   恢复       slack.upload 标了 retryable=true，可从 seq 6 重试该步
 </code></pre>
 <p>读完这张卡，他不需要推理，只需要决断——而且决断所需的每一格，都能在事实流里指回一条具体事件。最后，按 §9.5 那条回流走完闭环：这次事故进博物馆，命名为“两段式上传只确认了第一段”；它长出一个 dashboard 信号——“任意 <code>ready</code> 任务的 gating validator 不是全绿，立即标红”，让同类问题下次一冒头就可见；长出一条门禁——就是上面那段 <code>assert_terminal_authentic</code>，焊进发布前检查；再长出一条 runbook——“看到 <code>READY_OVER_FAILED_GATE</code>：先核对对应 validator 的 evidence，再决定重试该步还是整单回滚”。走完这三步，这条贯穿了五章的“假成功”，才算真正变成了系统的免疫力：它被设计挡在 <code>ready</code> 之外（第 6 章），被能力契约堵住伪造（第 7 章），被 UI 拒绝渲染成完成（第 8 章），最后被门禁兜住、被复盘回流（第 9 章）。</p>
+<h2 id="97-把那条连接池串扰逼到发布之前现身"><a class="header" href="#97-把那条连接池串扰逼到发布之前现身">9.7 把那条连接池串扰，逼到发布之前现身</a></h2>
+<p>§9.6 那条“假成功”是逻辑型的——事件齐不齐、终态对不对，单测里就能复现，fleet 门禁只是兜最后一道。可 §9.4 还埋了另一类完全不同的 bug：它逻辑上没错，只在真实并发与真实重连同时撞上时才现身。把它也走一遍完整的回流，整章关于“为什么非要 fleet”的论证才算闭合。</p>
+<p>复现条件先说清楚。两个 session <code>s_A</code> 和 <code>s_B</code> 共用同一个后台连接池——这本身是对的，连接很贵，复用很自然。<code>s_A</code> 因为网络抖动断开，正在重连：它把旧连接还回池子，准备从池里取一条新连接、再补订阅自己关心的那几个 task 的事件流。问题出在那条旧连接的“还回”和“清账”之间有个窗口：连接对象上还挂着 <code>s_A</code> 的路由标记，但池子已经把它标成“空闲可复用”。如果就在这一两百毫秒里，<code>s_B</code> 推来一条事件、池子恰好把这条还没擦干净的连接分给了投递逻辑，那么 <code>s_B</code> 的事件就会顺着残留的路由标记，被错投进 <code>s_A</code> 的事件流——这正是 §8.3 描述的那种串扰：一个 session 的事件漏到了另一个 session 的视图里。</p>
+<p>为什么单机单测永远抓不到它。要让这个 bug 现身，得三件事卡在同一瞬间：得有两个真在并发的 session（不是两个 mock，是两条各自带着真实订阅状态的连接），得有一次真实的断开与重连（不是调一下 <code>reconnect()</code> 函数，是连接真的从池里被还回又被取出），还得有那个窄到一两百毫秒、跨在“还连接”和“清路由”之间的窗口。单测里你能 mock 出前两件的样子，但你 mock 不出那个窗口——因为窗口是真实调度、真实 GC、真实 socket 关闭时序叠出来的产物，函数级的桩根本没有它。这就是 §9.4 那句“时序型、跨 session、靠真实并发与重连才复现”的具体长相：它不是难写测试，是这类 bug 在单进程的确定性世界里<strong>根本不可表示</strong>。</p>
+<p>所以 fleet 用例不去 mock 任何东西，它去<strong>摆一个真实的局</strong>。门禁在至少两台主机上拉起两个真 session，让 <code>s_B</code> 以固定节奏往自己的流里灌带序号的事件，然后对 <code>s_A</code> 触发一次真实重连——不是软重连，是把它的底层连接强制 close 掉、逼池子走完“还回—复用—取新”的全套路径。重连进行时，<code>s_B</code> 的事件流一刻不停。门禁要验的不变量很硬：<code>s_A</code> 收到的每一条事件，其 <code>actor</code> 与订阅标记都必须落在 <code>s_A</code> 自己的 scope 里；<code>s_B</code> 的事件一条都不许出现在 <code>s_A</code> 的流里。这道断言写出来就是这样：</p>
+<pre><code class="language-text">fleet-case: cross-session-reconnect-isolation   hosts=[h3, h7]
+  setup    s_A, s_B 共用 pool p1；s_B 以 ~5ms/事件 持续灌流
+  action   重连窗口内强制 close s_A 底层连接，触发 池还回→复用→取新
+  invariant  ∀ e ∈ stream(s_A):  e.scope == s_A  AND  e.actor ∈ scope(s_A)
+  observed   stream(s_A) 收到 e{seq=412, scope=s_B, actor=s_B.worker}
+  verdict    FAIL → SESSION_SCOPE_LEAK_ON_REUSE
+             (s_B 事件经复用连接的残留路由错投至 s_A，命中 §8.3 串扰)
+</code></pre>
+<p>注意它吐的不是一句 <code>failed</code>，是 <code>SESSION_SCOPE_LEAK_ON_REUSE</code>——一个有名有姓的诊断类别，把“在哪类操作上、什么机理、撞上了哪条不变量”一次说清。值班的人看到这个名字，立刻知道这不是业务逻辑错、不是某个 validator 红，而是连接复用把 session scope 漏了；它直接对应 §9.4 那条“会话 scope 不能泄漏”的不变量，也直接指回 §8.3 那种串扰。门禁在两台主机上各跑一遍，是因为这种时序窗口对调度极其敏感，单台偶尔不触发的，换台机器、换个 CPU 节拍就触发了——两台同测，等于给那个一两百毫秒的窗口多撒了一次网。</p>
+<p>最后按 §9.5 把它回流成免疫力，长出那三样东西。它先进博物馆，命名为“连接复用未清路由导致跨 session 串扰”，记下根因是“还连接”与“清路由标记”不是同一原子步。然后长出一个 dashboard 信号——正是 §9.3 说的、要在事实流里找得到出处的那种投影切面：盯住每条事件的 <code>actor</code> 与其落入的 session scope，一旦同一连接上出现 <code>actor</code> 不属于该 scope 的事件，立刻标红“同连接跨 session 事件”，让它下次一冒头就在盘上可见，而不是等用户发现自己的视图里混进了别人的任务。它再长出一条门禁——就是上面那条 <code>cross-session-reconnect-isolation</code> 用例，焊进发布前检查，从此任何改动连接池或重连路径的提交，都得先过这一关才能合并。它还长出一条 runbook：看到 <code>SESSION_SCOPE_LEAK_ON_REUSE</code> 或那条标红，先按受影响连接把池里的复用临时关掉、强制每个重连取全新连接以止血，再核对“还连接”到“清路由”这段是否被拆成了非原子的两步，确认修复后才重新放开复用。走完这三步，一条只在真实并发里偶现、连复现都难的时序 bug，就被钉死在了它最该被拦下的地方——发布之前，而不是某个高价值客户的视图里。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">

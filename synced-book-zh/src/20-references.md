@@ -1,6 +1,6 @@
 # 23. 参考文献与研究轨迹
 
-## 21.1 奠基来源
+## 23.1 奠基来源
 
 1. Birgitta Böckeler. *Harness engineering for coding agent users.* Martin Fowler, 2026-04-02. https://martinfowler.com/articles/harness-engineering.html
 2. OpenAI. *Harness Engineering: Leveraging Codex in an Agent-First World.* https://openai.com/index/harness-engineering/
@@ -54,15 +54,27 @@
 50. Chroma Research. *Context Rot: How Increasing Input Tokens Impacts LLM Performance.* 2025. https://www.trychroma.com/research/context-rot
 51. Anthropic. *Effective context engineering for AI agents.* https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
 
-## 21.2 支持性参考
+## 23.2 支持性参考
 
 - Kai Mei et al. *AIOS: LLM Agent Operating System.*
 - Bertrand Meyer. *Object-Oriented Software Construction.*
 - Dan Ariely 2013 年关于 big data 的那句话，它既是本书反复出现的玩笑，也是警告。
 - EU AI Act、SEC disclosure expectations、FDA SaMD guidance 等治理压力。
 
-## 21.3 研究轨迹
+## 23.3 研究轨迹
 
 底层研究材料位于写作本书时使用的 `ascent-research` session tree，包括 `session.md`、`session.jsonl`、`SCHEMA.md`、`wiki/`、`diagrams/`、`raw/` 和 `drafts/`。
+
+这条轨迹真正的方法学，不在于材料有多少，而在于材料之间怎么互相咬合。本书从不把任何单一来源当作权威：一份公开源码可能只是某一时刻某一团队的局部选择，一篇论文可能在受控基准上成立而在生产负载下失真，一张厂商价格页则天然带着销售口径。所以全书的每一个结论，都被要求站到三类证据的交点上才算成立——这是一种刻意的三角互证，任何一条腿单独都撑不住一张桌子。
+
+第一条腿是成熟产品的公开源码与可审读镜像。我们读的不是教程式的玩具实现，而是真在跑的东西：Claude Code 的 `Tool.ts`、`query.ts`、`StreamingToolExecutor.ts`、那一组 `compact` 服务和 `AgentTool` 子树，以及 Codex 那边 `codex-rs/cli`、`app-server`、`thread-store`、`rollout` 这些模块的体量与切分方式。源码会暴露论文不会写的东西：哪一层真的落了盘、哪一个写入只有 coordinator 有权限、两段式上传的第二段失败时事实流里到底留下了什么。t_9f2 那条"假成功"周报任务之所以能被一路追到 `completeUpload` 静默超时，正是因为我们手里有事实流的物理形状，而不是某段宣传文案里"已发送"的措辞。源码告诉你系统实际承诺了什么，而不是它声称承诺了什么。
+
+第二条腿是公开论文与技术报告，它们解释源码为什么不得不长成那样。长上下文在中段塌陷不是工程师偷懒，而是 softmax 在序列变长时把注意力稀释成一片均匀的雾（参考第 23 章参考文献 43），是 RoPE 的旋转相位让远距离 token 的点积随距离衰减（44、45），是有限残差维度下信息被反复折叠产生的 over-squashing（46）。"迷失在中段"和 NoLiMa、LongCodeBench、Context Rot 这些评测（11、16、17、50）把"容量不等于有效工作区间"从一句口号变成了可测量的曲线。各家厂商的 KV 策略——Kimi 的 QK-Clip、DeepSeek 的混合压缩与 on-disk KV cache、MiniMax 的稀疏/线性注意力（47、48、49）——则反过来印证：连模型自己都在用各种手段对抗同一组物理约束。论文给了源码一个"为什么"，源码给了论文一个"真在这么干"。
+
+第三条腿是厂商的价格页与长上下文文档，它把前两条腿换算成钱和延迟。容量上限写在文档里，有效工作区间藏在评测里，而成本三本账——prefill 的钱、KV 驻留的钱、每多塞一个 token 在每一步自回归里反复付的钱——要把定价（20）和长上下文文档（13、15、19、51）摆在一起才算得清。一个架构选择只有同时被源码证明"做得出"、被论文证明"必须做"、被价格页证明"付得起"，它才进入本书的正文。
+
+在这三条腿之外，我们还刻意叠了一组匿名的真实事故作为反证。三角互证容易让人只收集"印证假设"的证据，而事故是专门用来打脸的：它们是系统在没人看的角落里实际怎么坏掉的记录。t_9f2 就是这一类被去标识化、保留事件骨架的样本——绿色完成气泡、聊天里言之凿凿的"已发送"、底层 `tool.returned(ok:false)` 三者并存。正是这种"模型自述与工具回执物理打架"的现场，逼出了本书的核心主张：把 `model.claim` 与工具回执隔离、只让 `task.settled` 点亮终态、用产物契约要求 `delivery.receipt`、让纯函数 `fold` 使绿气泡在状态空间里根本不可表示。事故不证明任何理论正确，它只负责证明某些理论一定错——而这恰恰是最值钱的一种证据。
+
+把这四股材料拧到一起的，是贯穿全书的那条主方法：从代码与事故反推通用架构。我们不从一张白纸上的理想设计出发，而是先承认那些已经在数千万次真实调用里活下来的系统形态，再追问它们为何如此、在哪里仍会崩，然后才把共性抽象成事实流、生命周期五态、能力平面、产物契约、gating 验证器、回放 fold 这一套可迁移的词汇。换句话说，本书的架构不是被发明的，是被发掘的——它早已分散地存在于各家 harness 的源码、各篇报告的脚注和各起事故的残骸里，本书只是把它们对齐到同一坐标系下。
 
 这条轨迹本身也是本书论点的一部分：写作过程就是一次被 harness 化、可恢复、可回放的工作。

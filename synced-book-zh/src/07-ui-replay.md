@@ -95,6 +95,31 @@ function fold(events) {
 
 这些断言读着琐碎，却是“用户事实层到底存不存在”的试金石。一个朴素的判据：只要这些断言还没成为合并/发布的门禁，团队就还停留在“实现了一个前端”——它刷新一下就可能骗人；而一个真正可信的用户事实层，是你怎么刷、怎么断、怎么切，它都说同一句实话。区别不在画得好不好看，在敢不敢被这样反复地刷。
 
+## 8.6 断线重连：同一条流，再求一次值
+
+§8.5 列的那串门禁里，最后一条最不像“刷新”：流中断后用 replay 重建的状态，要和恢复直推后继续推送的状态严丝合缝。刷新是用户主动按的，断线不是——它是网络抖一下、worker 滚动重启、负载均衡把长连接掐了。这一节就把这一条单拎出来，用那条贯穿全书的周报任务 `t_9f2` 演一遍，看“重连”和“刷新”凭什么是同一道题。
+
+任务跑到把 PDF 周报传去 `#finance` 这一段。`slack.upload` 是两段式的：先 `createUpload` 拿到上传槽，再 `completeUpload` 把文件落定、触发投递。事件流刚推到第一段、还没等到第二段的回执，客户端这条 SSE 长连接就断了——后端正赶上一次 worker 滚动重启，把所有 inflight 的流连接一并掐了。客户端这一侧，`EventSource` 的 `onerror` 触发，屏幕停在“正在上传周报到 #finance”，进度气泡转着圈。三十秒里，用户什么都做不了，只能盯着那个圈。
+
+断线这三十秒，后台一点没停。worker 重启后从事件日志续上，`completeUpload` 那一段超时静默失败，gating validator `slack.delivered` 拿不到 `delivery.receipt`，coordinator 据此写下终态。这一切都老老实实落进了那条只追加的事实流，每条都带着单调递增的 `seq`：
+
+```jsonl
+{ "seq": 41, "type": "tool.called",      "tool": "slack.upload",   "args_digest": "…", "stage": "createUpload" }
+{ "seq": 42, "type": "tool.returned",    "tool": "slack.upload",   "ok": true,  "stage": "createUpload", "upload_id": "U7" }
+                                                  ← 断线发生在这里，客户端最后收到的是 seq:42
+{ "seq": 43, "type": "model.claim",      "text": "已发送到 #finance" }
+{ "seq": 44, "type": "tool.called",      "tool": "slack.upload",   "stage": "completeUpload", "upload_id": "U7" }
+{ "seq": 45, "type": "tool.returned",    "tool": "slack.upload",   "ok": false, "stage": "completeUpload", "reason": "timeout" }
+{ "seq": 46, "type": "validator.result", "validator": "slack.delivered", "ok": false }
+{ "seq": 47, "type": "task.settled",     "state": "failed", "reason": "required_validator_failed:slack.delivered" }
+```
+
+关键在于客户端断线那一刻，它手里攥着的不是“一屏聊天”，而是一个数字：它收到的最后一条事件是 `seq:42`。这个 `last-seq` 就是它和事实流之间唯一的锚。三十秒后网络恢复，它做的不是把缓存的气泡重画一遍，而是带着 `last-seq=42` 去拉增量——`GET /sessions/t_9f2/events?since=42`——后端把 `seq:43` 到 `seq:47` 这五条一次性补齐，客户端再把它们顺着折叠进当前状态。fold 不在乎这五条是“断线期间攒下的存货”还是“此刻新鲜推来的”，它只认 `seq` 的先后；`seq:47` 那条 `task.settled` 一进去，`v.lifecycle` 就落到 `failed`，`terminalReason` 记下 `required_validator_failed:slack.delivered`，而 `seq:43` 那句“已发送”照例只进 `claims`、一个字都碰不到 `lifecycle`。那个一度转着圈的上传气泡，重连后不是“接着转”，而是直接收口成一条带原因的失败——因为 fold 求的从来不是“我上次停在哪”，而是“给定到 `seq:47` 为止的这条流，此刻该是什么值”。
+
+这里值得停一拍，把 §8.4 那个“fold 无私有记忆”的纯函数性质，对着断线场景再确认一遍。假如客户端在断线期间偷偷记过点什么——比如自作主张把那个上传气泡标成“可能已完成”，好让界面别显得卡住——那么重连后它就有两个状态源要调和：自己攒的乐观猜测，和拉回来的真实增量。这一调和，迟早调出第 5.2 节那种“UI 显示完成、事实却是失败”的假一致。而真正的 fold 没有这个烦恼：它在断线那一刻没存下任何私货，重连后也没有“旧值”要去对齐，它只是拿一条更长的流（多了 `43–47` 五条）重新求一次值。断线 30 秒和断线 0 秒，对它而言只是输入流的长度差，求值规则一字不变。
+
+于是 §8.5 那道门禁在这里被实打实地演了一遍：一条路是“从未断线、一路直推”——客户端连着收到 `41…47`，fold 一路推到 `failed`；另一条路是“断在 42、重连后补 43…47”——客户端先收到 `41…42`，停顿，再补 `43…47`，fold 同样推到 `failed`。两条路喂给 fold 的事件**集合与顺序完全一致**，纯函数对一致的输入只会吐出一致的输出，所以两边逐字段相等：同样的 `lifecycle:"failed"`、同样的 `terminalReason`、同样那条“模型当时是这么说的”留痕。这正是那道门禁要断言的东西——它甚至不必真的去拔网线，只要在测试里把同一串事件，一次连续喂、一次切成“前半段 + 带 `since` 的后半段”分两批喂，再断言两次 fold 出的状态逐字段相等，就把“断线重连”这道看似要靠运气复现的 bug，钉成了一条确定的、随时能跑的检查。能这样钉住，恰恰因为重连在这套架构里根本不是什么特例：它和刷新、切会话一样，不过是“拿这条流，再求一次值”。
+
 [^replay-truth-ch8]: 本章在此处综合 Codex `app-server` 中 thread / turn / item 的统一事件流设计，以及 Claude Code transcript、resume 与 agent summary 机制，说明 UI replay 必须建立在统一的后端事实模型之上；对应第 23 章参考文献 21、24。
 
 ---

@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-8b2e81f5.js";
+            window.path_to_searchindex_js = "searchindex-547ee9e3.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-67109edf.js"></script>
@@ -176,7 +176,7 @@
                     <main>
                         <h1 id="20-附录-bharness-自查矩阵"><a class="header" href="#20-附录-bharness-自查矩阵">20. 附录 B：Harness 自查矩阵</a></h1>
 <p>使用下面的矩阵为团队或产品打分。每一行标记为 <code>❌</code>、<code>⚠️</code> 或 <code>✅</code>。</p>
-<h2 id="181-session-支柱"><a class="header" href="#181-session-支柱">18.1 Session 支柱</a></h2>
+<h2 id="201-session-支柱"><a class="header" href="#201-session-支柱">20.1 Session 支柱</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -191,7 +191,7 @@
 </tbody>
 </table>
 </div>
-<h2 id="182-harness-支柱"><a class="header" href="#182-harness-支柱">18.2 Harness 支柱</a></h2>
+<h2 id="202-harness-支柱"><a class="header" href="#202-harness-支柱">20.2 Harness 支柱</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -206,7 +206,7 @@
 </tbody>
 </table>
 </div>
-<h2 id="183-tools-支柱"><a class="header" href="#183-tools-支柱">18.3 Tools 支柱</a></h2>
+<h2 id="203-tools-支柱"><a class="header" href="#203-tools-支柱">20.3 Tools 支柱</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -221,7 +221,7 @@
 </tbody>
 </table>
 </div>
-<h2 id="184-verification-支柱"><a class="header" href="#184-verification-支柱">18.4 Verification 支柱</a></h2>
+<h2 id="204-verification-支柱"><a class="header" href="#204-verification-支柱">20.4 Verification 支柱</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -236,7 +236,7 @@
 </tbody>
 </table>
 </div>
-<h2 id="185-评分"><a class="header" href="#185-评分">18.5 评分</a></h2>
+<h2 id="205-评分"><a class="header" href="#205-评分">20.5 评分</a></h2>
 <ul>
 <li>16+ 个 <code>✅</code>：L4，强成熟度</li>
 <li>12-15 个 <code>✅</code>：L3，已有独立验证层</li>
@@ -244,6 +244,28 @@
 <li>4-7 个 <code>✅</code>：L1，session 存在但协议较弱</li>
 <li>低于 4 个 <code>✅</code>：L0，仍然以 prompt 为中心</li>
 </ul>
+<h2 id="206-九维成熟度矩阵"><a class="header" href="#206-九维成熟度矩阵">20.6 九维成熟度矩阵</a></h2>
+<p>前面四根支柱回答的是“这些器官在不在”；这一节换一个切面，把第 6 章那九个维度——事实流、生命周期、能力平面、产物与验证、回放、隔离与恢复、协作、知识分层、操作员面——每一维都摊成三档可观察判据，对应全书书名里那条主线：从“灵光一闪的天才”，经过一段“过渡”，走到“软件工厂”。判据都写成可勾选的具体征兆，而不是形容词，目的是让你在自评时不必先达成定义上的共识，只需对着自己的系统逐格打钩。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>维度</th><th>灵光一闪 ❌</th><th>过渡 ⚠️</th><th>软件工厂 ✅</th></tr>
+</thead>
+<tbody>
+<tr><td>事实流</td><td>聊天文本即状态，模型说“已发送”就当真发了</td><td>有了事件流，但 UI 仍自行推断、或允许从 <code>model.claim</code> 倒推完成</td><td><code>model.claim</code> 与带 <code>ok</code> 字段的 <code>tool.returned</code> 物理隔离，状态由纯函数 <code>fold</code> 求得；事件带 <code>seq/ts/actor/args_digest/sha256</code></td></tr>
+<tr><td>生命周期</td><td>任务只有“在跑”和“看起来好了”，终态由模型一句话宣布</td><td>有状态字段，但能被原地覆盖、或可跳过 <code>verifying</code> 直达 <code>ready</code></td><td>五态 <code>queued/running/verifying/ready/failed</code> 是单调阶梯，只有 coordinator 能写 <code>task.settled</code>，终态须经裁决</td></tr>
+<tr><td>能力平面</td><td>工具靠 prompt 临时拼，凭据随调用进沙箱</td><td>工具登记了，但成功标准是 HTTP 2xx、或职责彼此重叠</td><td>每个工具有 <code>success_means</code> 钉在可回查事实上，凭据不入沙箱，有效组合不能静默逃逸策略</td></tr>
+<tr><td>产物与验证</td><td>交付物靠文件名或最近修改时间猜，验证器给自己打分</td><td>有验证器，但 gating 与非 gating 不分、或主产物没有唯一归属</td><td><code>required_artifacts</code> + <code>owner_rule:single</code>，gating 验证器可闭合（sound/便宜/独立），失败一票否决，证据落流</td></tr>
+<tr><td>回放</td><td>刷新页面状态就丢，实时视图与历史视图各算各的</td><td>能回放历史，但实时流与刷新恢复走两套推断逻辑</td><td>实时流、历史流、刷新恢复、UI 投影共享同一 <code>fold</code>；绿气泡在投影函数里不可表示</td></tr>
+<tr><td>隔离与恢复</td><td>多任务踩同一工作区，断了就从头来</td><td>worktree/resume 存在，但是出错时的特判补丁而非常规路径</td><td>worktree、resume、background task、disk output 是一等运行时能力，可从任意 <code>seq</code> 重建状态</td></tr>
+<tr><td>协作</td><td>“多开几个窗口”，子任务结果靠人肉拼回</td><td>能 spawn 子 agent，但无角色、无权限边界、无结构化汇总</td><td>spawn 有角色/通信/权限/汇总/验证，每个子 agent 的产物经同一套契约收口</td></tr>
+<tr><td>知识分层</td><td>知识全塞进一个大 prompt，改一处牵动全身</td><td>有 <code>AGENTS.md</code>/docs/skills，但层级混在一起、无晋升或回收规则</td><td>常驻层/按需层/晋升层分治（对应缓存 L1/L2/L3），知识可检索调入、可晋升、可做 garbage collection</td></tr>
+<tr><td>操作员面</td><td>出事只能翻聊天记录，靠人复述“当时发生了什么”</td><td>有 dashboard，但它独立于事实流自行统计、与后端真相会分裂</td><td>dashboard、门禁（如 <code>assert_terminal_authentic</code>）、回滚、故障归因都建在同一条事实流上，每一格都能指回一条具体事件</td></tr>
+</tbody>
+</table>
+</div>
+<p>把贯穿全书那条假成功周报任务 <code>t_9f2</code> 套进这张表，可以当作一次标定：一个纯“灵光一闪”的系统，会让它在事实流维度落进第一档——<code>slack.upload</code> 第二段 <code>completeUpload</code> 超时静默失败，模型却在聊天里说“已发送”，而这句话就被当成了状态；UI 据此点亮绿色完成气泡，又把操作员面也钉在第一档。同一条任务搬进“软件工厂”那一列，每一维都改写了它的命运：事实流把那句话归为 <code>model.claim</code>、把超时归为 <code>tool.returned(ok:false)</code>；产物与验证维度因为契约要求 <code>delivery.receipt</code> 而让 gating 验证器 <code>slack.delivered</code> 失败；生命周期维度只允许 <code>task.settled</code> 点亮终态，于是落到 <code>failed</code>；回放维度的纯函数 <code>fold</code> 让那个绿气泡根本无法被表示；操作员面维度的 <code>assert_terminal_authentic</code> 门禁则在发布前兜住最后一种越狱可能。一条任务，在两列里走出两种结局——这正是这张矩阵想让你一眼看见的落差。</p>
+<p>怎么用它做季度自评：先各维独立打钩，别急着算总分，因为这九维不是等权的——事实流和生命周期是底座，它们若停在第一档，上面六维打再多钩也是空中楼阁，所以读表时先看这两行有没有立住。再把每一格的判据落到一份可指认的证据上：声称“事实流到了第三档”，就要能拿出一条真实事件，里面 <code>model.claim</code> 与 <code>tool.returned</code> 确实分属两种 type；声称“操作员面到了第三档”，就要能在一次真实事故里，把 dashboard 上的每一个红格指回事实流里的某条 <code>seq</code>。任何一格说得出却指不出，就降回上一档。然后选下个季度的攻坚位：通常不是去补那些已经亮起的钩，而是找“最低的那条底座维度”，把它从 ❌ 抬到 ⚠️、再从 ⚠️ 抬到 ✅，因为成熟度受制于最弱的承重维，而非最亮的展示维。最后把这张表存档、连同每格背后那条证据事件一起留痕——下个季度再评时，进步与退步就都能像回放事实流一样，被逐格 diff 出来，而不是凭印象重新争论一遍。</p>
 <hr>
                     </main>
 
