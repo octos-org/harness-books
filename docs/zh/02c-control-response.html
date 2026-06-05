@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-46551984.js";
+            window.path_to_searchindex_js = "searchindex-b9224b9f.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-cf7b5ff6.js"></script>
@@ -224,7 +224,7 @@ Harness 工程
 <tr><td>RoPE 距离衰减 / 外推退相干</td><td>远距离关联弱、超长外推失效</td><td>上下文分层加按需调入（L1 prompt / L2 <code>AGENTS.md</code>·skills·memory / L3 事实流）；把关键事实重新拉回光标附近</td><td>§3.4、第 6 章、第 8 章</td></tr>
 <tr><td>有限残差维度</td><td>长历史细节被压缩、陈旧假设增多</td><td>持久事实流：把状态移出 prompt、写回运行时，而不是让模型“记住”</td><td>第 6 章（session 支柱）、第 8 章</td></tr>
 <tr><td>over-squashing / 表示坍缩</td><td>长输入里“分不清”、计数与复制类退化</td><td>结构化证据加产物契约加独立验证：不靠模型在巨大上下文里自己看出来</td><td>第 6 章（验证支柱）、第 11 章</td></tr>
-<tr><td>非均匀 KV 分辨率</td><td>同一窗口不同位置可用性不均（U 形）</td><td>把容量上限与有效工作区间分开设计；短密近证据加检索加分层缓存，不默认塞满</td><td>§2.4–2.5、第 6 章</td></tr>
+<tr><td>非均匀 KV 分辨率</td><td>同一窗口不同位置可用性不均（U 形）</td><td>把容量上限与有效工作区间分开设计；短密近证据加检索加分层缓存，不默认塞满</td><td>§2.4–2.6、第 6 章</td></tr>
 <tr><td>记忆老化（时间⊆空间）</td><td>跨小时、跨会话目标漂移，陈旧上下文</td><td>目标保持加锁存：目标、约束、产物锁进 session 与 artifact；compaction 时保留关键决策并定期回注</td><td>第 6 章（session）、第 11 章（短回路与长回路）</td></tr>
 <tr><td>不可约误差复合</td><td>长任务越跑越偏，自信但错误累积</td><td>负反馈环：独立验证、终态裁决、回放、重试与升级、人在环上；并用子 agent 分解缩短单链 horizon</td><td>第 6 章（验证）、第 9 章（操作员面）、第 10 章（群体编排）、第 11 章</td></tr>
 </tbody>

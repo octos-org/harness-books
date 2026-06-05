@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-46551984.js";
+            window.path_to_searchindex_js = "searchindex-b9224b9f.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-cf7b5ff6.js"></script>
@@ -198,7 +198,26 @@
 <p>2024 年初有过一个短暂的乐观时刻。Google 发布 Gemini 1.5，宣布它能在百万 token 的“大海”里，以 99% 的命中率捞出那一根“针”——不少人当时以为长上下文问题就此了结。乐观没能维持多久，因为人们很快意识到，真实任务里要捞的从来不是一根针，而是一把散落各处、还彼此牵连的针。</p>
 <p>把这件事摊开看，结论相当一致。Google 自己后续的 long context 开发文档就明确提醒：一旦从“单根针”变成多个待检索的信息点，命中率不再维持那个漂亮的数字，而且会随上下文内容大幅波动。<sup class="footnote-reference" id="fr-gemini15-ch2-1"><a href="#footnote-gemini15-ch2">7</a></sup> <sup class="footnote-reference" id="fr-google-long-context-ch2-1"><a href="#footnote-google-long-context-ch2">8</a></sup> 学术界给出的信号更直接：<em>Lost in the Middle</em> 发现，放在开头或结尾的信息更容易被用上，夹在中间的则明显被冷落；<em>Found in the Middle</em> 进一步把这种现象概括成一条 <code>"U 形注意力偏置"</code>——这正是上一节那条“有效分辨率从光标附近向远处递减”的曲线，在检索任务上显出的形状。说到底，这是个很有人性的毛病：我们读一篇长文，也总是记得开头和结尾，把中间那段忘得最干净。<sup class="footnote-reference" id="fr-ltm-ch2-1"><a href="#footnote-ltm-ch2">9</a></sup> <sup class="footnote-reference" id="fr-fitm-ch2-1"><a href="#footnote-fitm-ch2">10</a></sup> 而当任务从“按字面找”升级成“跨段落推理”时，分数会塌得更厉害——NoLiMa 去掉字面匹配线索后，单是在 32K 长度上，就把 GPT-4o 从 99.3% 打到了 69.7%；LongCodeBench 把场景换成真实的代码理解与修复，长上下文能力同样明显变脆。<sup class="footnote-reference" id="fr-nolima-ch2-1"><a href="#footnote-nolima-ch2">11</a></sup> <sup class="footnote-reference" id="fr-longcodebench-ch2-1"><a href="#footnote-longcodebench-ch2">12</a></sup> 反过来，也正因为窗口不平坦，Anthropic 的长上下文文档才会给出那个很务实的经验：把长文档放在前面、把问题放在最后，复杂的多文档输入下，回答质量能提升三成左右。<sup class="footnote-reference" id="fr-anthropic-long-ch2-1"><a href="#footnote-anthropic-long-ch2">13</a></sup></p>
 <p>这些结果合起来说明同一件事：在同一个“1M context”里，不同位置、不同信息密度、不同任务形式的可用性并不均匀。上下文窗口更像一块可寻址的大内存，而不是一条任何位置都等价的理想传送带；所谓“最佳工作区间”，也不是某个固定的魔法数字（比如“128K 最好、256K 开始变差”），而是一条随任务结构变化的工作带宽——在多大范围内，模型还能稳定检索、遵循指令、保持多步推理、避免位置偏置，并让系统在成本和时延上可接受。</p>
-<h2 id="25-小结把容量上限和有效工作区间分开"><a class="header" href="#25-小结把容量上限和有效工作区间分开">2.5 小结：把容量上限和有效工作区间分开</a></h2>
+<h2 id="25-动手把窗口的不平坦量出来"><a class="header" href="#25-动手把窗口的不平坦量出来">2.5 动手把窗口的不平坦量出来</a></h2>
+<p>前面几节的机理，和别人测出的那些曲线，都还停在“读到”。要把它变成你自己的工程直觉，最划算的办法是花半天，在你真正要用的那个模型上，把窗口的不平坦亲手量一遍。下面这套探针小到一个下午能搭完，却能逼出三条对设计直接有用的读数。</p>
+<p>基本探针就是经典的“大海捞针”。造一段无关的长填充文本当“海”，在其中某个相对深度 <code>d</code> 处（<code>d=0%</code> 最靠开头、<code>d=100%</code> 最贴近问题）埋一句可验证的事实当“针”，把问题放在整段的最后，再看模型答不答得出那句事实。固定总长 <code>L</code>，让 <code>d</code> 从 0% 扫到 100%，每个 <code>d</code> 重复 <code>k</code> 次取命中率，画出来就是一条 <code>recall–depth</code> 曲线——它就是 §2.2 那句“有效分辨率从光标附近向远处递减”在你这台模型上的样子。</p>
+<pre><code class="language-python">def probe(model, L, depth, distractors=0, paraphrase=False):
+    needle = make_needle(paraphrase)        # 一句可验证的事实
+    ctx = build_filler(L)                   # 无关长文本，总长约 L 个 token
+    ctx = insert_at(ctx, needle, depth)     # 在相对深度 depth 处插入针
+    for _ in range(distractors):            # 可选：埋几条相似但错误的“近似针”
+        ctx = insert_at(ctx, near_miss(needle), rand_depth())
+    q = question_for(needle, paraphrase)    # 问题放最后
+    return verify(model(ctx + "\n\n" + q), needle)   # 命中=1 / 未命中=0
+
+for L in [4_000, 16_000, 64_000, 256_000]:           # 扫长度
+    curve = {d: mean(probe(model, L, d) for _ in range(k))
+             for d in [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]}
+</code></pre>
+<p>真正有意思的是那三个旋钮，每拧一个，都在单独点亮 §2.2 的一条机理。拧总长 <code>L</code>（从 4K 一路到 256K），你会看到整条曲线随 <code>L</code> 增大而<strong>整体下沉</strong>——这正是 softmax 稀释：窗口里 token 越多，单个远端证据能拿到的最大权重 <code>w_max</code> 越往零走。往别处埋几条“近似针”（相似但错误的干扰句），你会看到曲线的<strong>中段塌得更狠</strong>——这是 U 形偏置叠加 over-squashing：夹在中间、又被相似信息包围的证据，最难被锐利地挑出来。再把针和问题都改成语义匹配、抹掉字面线索（paraphrase），你会看到整条线<strong>再掉一截</strong>——这就是 NoLiMa 那条“从按字面找，升级成跨语义推理找”时的额外退化。三件事几乎一定会发生，而每一件都不是“模型今天状态不好”，是架构机理在你的模型上的具体读数。</p>
+<p>量到了曲线，接下来才是它真正值钱的地方——把读数翻译成设计决定。第一条最直接：找到那个“中段命中率还压得住可接受线”的最大 <code>L</code>，它就是这个模型在这类任务上的<strong>有效工作区间上界</strong>，该写进你的调度与切片策略，而不是去信规格表上那个容量上限。第二条用上 §2.3 那把判据：如果把针挪到光标附近（<code>depth → 100%</code>）命中率就回来了，那这就是个<strong>空间问题</strong>，可以靠上下文工程补偿——短而密的近端证据、检索、分层缓存，把关键事实搬回光标边。第三条是反过来的坏消息：如果针就摆在眼前、命中率却还是上不去，或者答案越长越跑偏，那你撞上的是<strong>不可约的时间核</strong>，再怎么搬运证据都没用，只能靠缩短 horizon、引入独立验证、把人留在环上来兜。</p>
+<p>得诚实补一句分寸：这套探针给你的是<strong>相对形状</strong>和<strong>你自己模型的工作带</strong>，不是论文级的绝对分数；真要做横向对标，前面引到的 NoLiMa、<em>Lost in the Middle</em>、<em>Context Rot</em> 才是系统评测。可工程上你最需要的，恰恰不是“某模型在某榜单上多少分”，而是“我这个模型、这类任务、这个长度”的那条线——而这条线，只能你自己量。量过一次，“窗口不平坦”就从一句读来的信念，变成了手边一张能拿来拍板的曲线：后面每一次“这段材料到底要不要塞进 prompt”的取舍，都有据可依。</p>
+<h2 id="26-小结把容量上限和有效工作区间分开"><a class="header" href="#26-小结把容量上限和有效工作区间分开">2.6 小结：把容量上限和有效工作区间分开</a></h2>
 <p>因此，工程上必须把两件事分开：一件是<strong>容量上限</strong>，即模型最多能接收多少 token；另一件是<strong>有效工作区间</strong>，即在当前任务形态下，模型还能稳定检索、遵循指令、维持推理链的那一段上下文。前者写在产品规格里，后者才是 harness 真正要经营的对象。结论也随之而来：最大 context 是容量上限，最佳工作区间才是设计目标。一个 agent 系统不该默认“把更多材料塞进窗口”就会更可靠，而应当反过来设计任务——让模型每次只看到更短、更密、更靠近当前决策的证据切片，把状态、历史、产物和验证证据移到运行时的事实流里，再按需调回 prompt。这条原则听起来朴素，却和大多数人对“长上下文”的第一直觉正好相反，它是本书后面所有上下文设计的出发点。</p>
 <p>到这里，问题已经摆清楚了：模型在空间和时间上都会失效，而且这是架构层面的必然。下一章回答的，就是该拿它怎么办——那个把模型拉回工作区间的“外层控制系统”，到底是什么、从哪来。</p>
 <hr>
