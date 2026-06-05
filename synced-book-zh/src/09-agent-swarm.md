@@ -43,7 +43,7 @@ UI / Operator 负责人
 
 更关键的是，哪怕总 token 真的相等，prefill 的计算量也不等。按 dense attention 做个一阶量级估算：单次 1M 上下文的 attention 规模约是 \\(1{,}000{,}000^{2} = 10^{12}\\)，而五次 200K 的总规模约是 \\(5 \times 200{,}000^{2} = 2 \times 10^{11}\\)。也就是说，在“总 token 相同”这个最有利于长上下文的理想条件下，\\(1 \times 1\text{M}\\) 的 attention 量级，仍然大约是 \\(5 \times 200\text{K}\\) 的**五倍**。所以工程上要同时翻三本账：账单、时延、可调度性——只看第一本，会做出系统性偏贵的决定。
 
-![1M 与 5×200K 的量级对比](./img/wf-context-economics.png)
+![1M 与 5×200K 的量级对比](./img/wf-context-economics.jpg)
 
 *图：把同样的总 token 放上天平——左边一个 1M 的稠密上下文（致密的大块）和右边几个 200K 的局部分片（轻盈的小块）相比，前者的 attention 计算量级要重得多。这就是为什么账单、时延、可调度性三本账，往往都偏向“拆成多个小窗口”。*
 
@@ -92,6 +92,10 @@ coordinator ──spawn_agent("verifier",         goal="按契约核对产物", 
 读懂这张表，整本书的论点在多 agent 这层闭合了。delivery-worker（w2）上传失败时，它**能**做的，是诚实地写一条 `subagent.reported: blocked`——描述“我这一步卡住了”；它**不能**做的，是写 `task.settled`——宣布“整单完成”。这一行权限，正是第 6 章那条“模型只能 `model.claim`、无权宣布终态”的规则，在 swarm 拓扑上的同构投影：worker 只能提议和汇报，verifier 只能裁定单项，唯有 coordinator 能在所有 gating 项落定之后，写下那一条 `task.settled`。
 
 反过来想就更清楚了。一个偷懒的 swarm，如果允许 delivery-worker 自己喊一句“发完了，收工”，那它不过是把第 6 章那个单 agent 的“假成功”，原样乘上了 agent 的数量——每多一个能自宣终态的 worker，就多一个能撒谎的嘴。这也正是 §10.3 那个判断的另一面：sub-agent 的价值从来不是“多开几个并行”，而是在“多嘴多手”的同时，把**裁决权死死收敛到一个角色**。手可以很多，脑可以分工，但说“这单成了”的权力，整个 swarm 里只能有一份。[^claudecode-codex-multiagent-ch10] 谁都能宣布成功的系统，等于谁都没在负责成功。
+
+![swarm 事件写入权限](./img/wf-swarm-roles.jpg)
+
+*图：swarm 的事件写入权限。worker 只能写 subagent.reported、verifier 只能写 validator.result，唯有 coordinator 能写那条 task.settled 宣布终态——把“模型无权宣布终态”这条规则，做成了多 agent 拓扑上的强制边界。*
 
 ## 10.6 一个 worker 中途崩了，群体怎么不塌
 

@@ -21,7 +21,11 @@ Session / Thread 事实流
 终态裁决（ready / failed）与可追责证据
 ```
 
-关键规则只有一句：**任何用户可见的状态，都必须能沿着这张图，一路回溯到同一条事实流。**
+关键规则只有一句：**任何用户可见的状态，都必须能沿着这张图，一路回溯到同一条事实流。
+
+![核心 harness 运行时总图](./img/wf-runtime-overview.jpg)
+
+*图：核心 harness 的运行时总图。用户任务汇入同一条 Session 事实流，再分出调度循环、能力平面、产物与验证、回放与摘要，最后收束到终态裁决与可追责证据。一条铁律贯穿全图——任何用户可见状态，都能沿它回溯到同一条事实流。***
 
 为了不让后文一会儿讲 Claude Code 的产品器官、一会儿讲 Codex 的协议骨架、到第 11 章又突然换成抽象原则，这里先把一套贯穿全书的运行时词汇钉死。后面凡是提到 `sessionStorage.ts`、`StreamingToolExecutor.ts`、`agentSummary.ts`，或 `Thread` / `Turn` / `Item`、`tools`、`thread-store`、`app-server`，都只是在下面这张表里占一个不同的位置而已。[^claudecode-codex-spine-ch6]
 
@@ -133,6 +137,10 @@ Karpathy 的 autoresearch 经验点过一个朴素却要命的事实：长期知
 
 `resume` 那条回边同样不是装饰。第 5.3 节已经演示过，长任务的中断、切设备、被打断续跑是常态而非异常；所以 resume 必须是一等迁移，能从事件流的某个 `seq`（一个 checkpoint）把上下文重建出来再往下跑，而不是“重开一个任务从头来过”。一台连自己怎么断、怎么续都说不清的状态机，是扛不住真实负载的。
 
+![生命周期状态机](./img/wf-lifecycle.jpg)
+
+*图：生命周期状态机。queued→running→verifying→ready/failed，外加任意态经 checkpoint 的 resume。最该记住的是 verifying→ready 那条边的守卫：它要求所有 gating validator 通过；模型最多把任务推进到 verifying，无权宣布 ready。*
+
 ## 6.9 产物清单与验证结果：completion 是被证据裁出来的
 
 状态机知道“该不该进 `ready`”，靠的是有人给它喂判断。这个判断不能是模型的自我感觉，得是一份产物契约和一组验证结果的比对。所谓产物契约，就是任务一开始就声明清楚：这件工作，到底要交出哪几件东西、每件由谁验。我们这条任务的契约是这样的：
@@ -159,7 +167,7 @@ PDF 那两条都过了。`slack.delivered` 这条 `gating:true`，它的 `ok:fal
 
 而这条任务里最不该被轻轻放过的细节是：那张送达回执，必须是一件 artifact，而不能只是日志里一句“发出去了”。原因很硬——只有 artifact 才进契约、才被 validator 按 `kind` 寻址、才能在终态裁决时被“点名缺席”。`slack.delivered` 之所以能斩钉截铁地说“no delivery.receipt found”，正是因为它找的是一件本该存在却不存在的具名产物，而不是去解析一段自由格式的文本日志。把“成功的证据”定义成一件可寻址、可校验的产物，而不是一句可被模型乐观改写的话——这就是产物与验证这根支柱，落到 schema 上的样子。
 
-![产物契约与 gating 门禁](./img/wf-artifact-gating.png)
+![产物契约与 gating 门禁](./img/wf-artifact-gating.jpg)
 
 *图：完成由证据裁决。任务声明的每件 required artifact 都要先过验证（左侧勾选），再汇到一道 gating 门禁：全部就绪才放行到 ready（上分支），任一缺失或验证失败就落 failed（下分支）——模型嘴上说“完成”，在这道门前不算数。*
 

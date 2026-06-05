@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-4c329400.js";
+            window.path_to_searchindex_js = "searchindex-3079e774.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-67109edf.js"></script>
@@ -192,19 +192,19 @@
 <p>这件事的推论很有分量，值得说重一点：<strong>连最有动机把“窗口能开多大”当卖点的厂商，自己都在用压缩偷偷换取那个标称的容量上限。</strong> 一家公司在规格表上写下“1M context”，却在架构里用 CSA/HCA 把远端 KV 成倍地砍掉——这本身就是一句无声的供认：那一百万格不可能处处等价，否则它根本不必、也不敢压。换句话说，<strong>所谓“1M context”从来不是一条处处等价的传送带，而是一组分辨率非均匀的滤波器：近端清晰，远端只剩轮廓。</strong> 这恰恰从厂商自己的设计选择里，反证了本章那条主线——容量上限不等于有效工作区间。</p>
 <p>也正因为远端是被这样一层层粗化掉的，§2.5 那套探针在你自己的模型上量出来才会是那个样子：当你把“针”往远端（<code>depth → 0%</code>）挪、再一路把总长 <code>L</code> 推大，你看到的 <code>recall–depth</code> 曲线远端塌陷，并不是模型“偶尔走神”，而是你正隔着这层非均匀滤波器去够一条早已被矩形窗截断、被指数核压暗、或被 CSA/HCA 平均进邻居里的证据——能量本就不够，曲线自然抬不起来。能不能直接读到某个模型用了哪种核，往往藏在闭源细节里；但探针给你的远端塌陷形状，是这层滤波器留在外部可观测面上的指纹，量一次就看得见。<sup class="footnote-reference" id="fr-nonuniform-kv-ch2-1"><a href="#footnote-nonuniform-kv-ch2">5</a></sup></p>
 <p>这里要专门强调一句，免得读者误以为“换个更强的闭源前沿模型就没事了”：<strong>闭源前沿也不例外。</strong> 第三方的系统评测（如 Chroma 对 18 个前沿模型做的 <em>Context Rot</em> 测试）显示，每一个模型都在每一个长度增量上掉点；前沿模型只是衰减得更缓，而非豁免。更说明问题的是，lost-in-the-middle 和干扰项导致的退化，在大概率使用全注意力的模型上照样出现——这说明它来自上面那几条基本面的“地板”，而不只是压缩作弊。Anthropic 自己的工程文档也直说，context rot 在远未触达容量上限时就已经开始。这是个该让团队清醒的事实：你买到的从来不是一块平坦的百万格内存，而是一段中心清晰、边缘发虚的视野。<sup class="footnote-reference" id="fr-context-rot-ch2-1"><a href="#footnote-context-rot-ch2">6</a></sup></p>
-<p><img src="./img/wf-nonuniform-window.png" alt="上下文窗口的非均匀分辨率"></p>
+<p><img src="./img/wf-nonuniform-window.jpg" alt="上下文窗口的非均匀分辨率"></p>
 <p><em>图：所谓“1M 上下文”不是一条处处等价的传送带。靠近光标的右端分辨率高、清晰可辨；越往远端越被压缩、聚合，最终只剩一道模糊轮廓——容量上限之内，有效分辨率从光标附近向远处递减。</em></p>
 <h2 id="23-时间轴时间越旧有效敏感度越低"><a class="header" href="#23-时间轴时间越旧有效敏感度越低">2.3 时间轴：时间越旧，有效敏感度越低</a></h2>
 <p>长任务的失效看起来是个“时间”问题——跑得越久越偏——但要拆成两半才讲得透：一半可以归约成空间问题，另一半不可约。</p>
 <p>先说可约的那一半，姑且叫它<strong>记忆老化</strong>。第 1 章 §1.4 交代过，模型对“过去”的唯一留存就是 KV cache，除此之外并没有别的跨步状态——所以“k 步之前的事还记不记得”，等价于“那个 token 还在不在窗口里、当前 token 还 attend 得到它吗”。随着生成一步步推进，一个旧事实与当前光标之间的相对距离单调增大，于是它就按上一节的几条空间机理被衰减，最终被窗口截断、被压缩、或被逐出。所以“随时间遗忘”在机理上就是“随相对距离衰减”——时间问题塌缩成了空间问题。开篇那个“忘掉两小时前约束”的 agent，并不是记性差，而是那条约束在它的视野里一步步退到了边缘。</p>
 <p>再说不可约的那一半，叫<strong>误差复合</strong>。还记得第 1 章 §1.5 说自回归是一个“把自己输出回灌进自己输入”的反馈回路吗？即便给它一个完美、无限、均匀的窗口（空间衰减为零），这条回路仍然会让它随任务变长而劣化。这一点最像小孩玩的传话游戏：第一个人说得清清楚楚，传到第十个人嘴里已经面目全非。区别只在于，自回归模型既是传话的人、也是听话的人——它把自己上一句可能说错的话，当成下一句必须遵从的事实。设每一步出错的概率是 \(\varepsilon\)，那么连续 \(T\) 步全对的概率大约是 \((1-\varepsilon)^{T}\)——可靠性随任务长度（horizon）几何式地衰减。再叠加一个被称作 exposure bias 的偏差：训练时模型总是被喂以正确的前缀，推理时却只能以自己越来越偏离分布的输出为条件。换句话说，错误不是被稀释，而是被供养。这一半是反馈回路自身的性质，<strong>延长上下文救不了它</strong>——只能靠降低单步 \(\varepsilon\)、缩短 horizon、引入独立验证、或重采样。</p>
-<p><img src="./img/wf-error-compounding.png" alt="误差复合"></p>
+<p><img src="./img/wf-error-compounding.jpg" alt="误差复合"></p>
 <p><em>图：误差复合。即便给一个完美无衰减的窗口，自回归也会把上一步可能的错误当成下一步的既成事实，于是“连续 T 步全对”的概率随任务长度 T 几何式下滑——链越长越难全程不出错，这一半延长上下文也救不了。</em></p>
 <p>用电路语言收个尾会很干净：一个带反馈的递归系统，有两种相互独立的退化方式——一种是它的“冲激响应”随距离衰减（对应记忆与空间衰减，可约），另一种是它把自己带噪的输出回灌后，噪声在回路里不断累积（对应误差复合，不可约）。对应的补偿，恰好也是两类互补的器件：一类像“锁存器”，把关键事实牢牢锁住、对抗记忆衰减；另一类像“负反馈环”，把错误送回去纠偏、对抗误差复合。这两类器件的电路史——Black 的负反馈放大器、SRAM 的双稳态锁存——会在第 3 章作为 harness 的血统展开；本章先把“为什么必然需要这两类器件”从机理上立住。</p>
 <p>这里顺手给出一个后文会反复用到的可操作判据：<strong>把丢失的信息重新塞回光标附近——如果失效被修复了，它就是空间问题，可由上下文工程补偿；如果模型本来就拿到了信息却仍然漂移、越错越多，它就是不可约的时间核，只能靠验证、缩短 horizon 和人在环上来兜住。</strong> 记住这条分界线，后文几乎所有 harness 设计的取舍，都能落到它的两侧。</p>
 <h2 id="24-容量上限不等于有效工作区间实测印证"><a class="header" href="#24-容量上限不等于有效工作区间实测印证">2.4 容量上限不等于有效工作区间：实测印证</a></h2>
 <p>上面的机理预测了一个直接后果：同一个上下文窗口，越往远端越不可用。这一节把它落到事实，并给出工程上该怎样对待它。</p>
-<p><img src="./img/wf-capacity-window.png" alt="容量上限与有效工作区间"></p>
+<p><img src="./img/wf-capacity-window.jpg" alt="容量上限与有效工作区间"></p>
 <p><em>图：容量上限 ≠ 有效工作区间。横轴是上下文长度，最右那条虚线是模型标称的容量上限；可“还能稳定检索、遵循指令”的有效工作区间（中间那段高原）远在它左侧就已回落。最大 context 是规格，最佳工作区间才是设计目标。</em></p>
 <p>2024 年初有过一个短暂的乐观时刻。Google 发布 Gemini 1.5，宣布它能在百万 token 的“大海”里，以 99% 的命中率捞出那一根“针”——不少人当时以为长上下文问题就此了结。乐观没能维持多久，因为人们很快意识到，真实任务里要捞的从来不是一根针，而是一把散落各处、还彼此牵连的针。</p>
 <p>把这件事摊开看，结论相当一致。Google 自己后续的 long context 开发文档就明确提醒：一旦从“单根针”变成多个待检索的信息点，命中率不再维持那个漂亮的数字，而且会随上下文内容大幅波动。<sup class="footnote-reference" id="fr-gemini15-ch2-1"><a href="#footnote-gemini15-ch2">7</a></sup> <sup class="footnote-reference" id="fr-google-long-context-ch2-1"><a href="#footnote-google-long-context-ch2">8</a></sup> 学术界给出的信号更直接：<em>Lost in the Middle</em> 发现，放在开头或结尾的信息更容易被用上，夹在中间的则明显被冷落；<em>Found in the Middle</em> 进一步把这种现象概括成一条 <code>"U 形注意力偏置"</code>——这正是上一节那条“有效分辨率从光标附近向远处递减”的曲线，在检索任务上显出的形状。说到底，这是个很有人性的毛病：我们读一篇长文，也总是记得开头和结尾，把中间那段忘得最干净。<sup class="footnote-reference" id="fr-ltm-ch2-1"><a href="#footnote-ltm-ch2">9</a></sup> <sup class="footnote-reference" id="fr-fitm-ch2-1"><a href="#footnote-fitm-ch2">10</a></sup> 而当任务从“按字面找”升级成“跨段落推理”时，分数会塌得更厉害——NoLiMa 去掉字面匹配线索后，单是在 32K 长度上，就把 GPT-4o 从 99.3% 打到了 69.7%；LongCodeBench 把场景换成真实的代码理解与修复，长上下文能力同样明显变脆。<sup class="footnote-reference" id="fr-nolima-ch2-1"><a href="#footnote-nolima-ch2">11</a></sup> <sup class="footnote-reference" id="fr-longcodebench-ch2-1"><a href="#footnote-longcodebench-ch2">12</a></sup> 反过来，也正因为窗口不平坦，Anthropic 的长上下文文档才会给出那个很务实的经验：把长文档放在前面、把问题放在最后，复杂的多文档输入下，回答质量能提升三成左右。<sup class="footnote-reference" id="fr-anthropic-long-ch2-1"><a href="#footnote-anthropic-long-ch2">13</a></sup></p>
@@ -212,7 +212,7 @@
 <h2 id="25-动手把窗口的不平坦量出来"><a class="header" href="#25-动手把窗口的不平坦量出来">2.5 动手把窗口的不平坦量出来</a></h2>
 <p>前面几节的机理，和别人测出的那些曲线，都还停在“读到”。要把它变成你自己的工程直觉，最划算的办法是花半天，在你真正要用的那个模型上，把窗口的不平坦亲手量一遍。下面这套探针小到一个下午能搭完，却能逼出三条对设计直接有用的读数。</p>
 <p>基本探针就是经典的“大海捞针”。造一段无关的长填充文本当“海”，在其中某个相对深度 <code>d</code> 处（<code>d=0%</code> 最靠开头、<code>d=100%</code> 最贴近问题）埋一句可验证的事实当“针”，把问题放在整段的最后，再看模型答不答得出那句事实。固定总长 <code>L</code>，让 <code>d</code> 从 0% 扫到 100%，每个 <code>d</code> 重复 <code>k</code> 次取命中率，画出来就是一条 <code>recall–depth</code> 曲线——它就是 §2.2 那句“有效分辨率从光标附近向远处递减”在你这台模型上的样子。</p>
-<p><img src="./img/wf-recall-ucurve.png" alt="recall–depth 的 U 形曲线"></p>
+<p><img src="./img/wf-recall-ucurve.jpg" alt="recall–depth 的 U 形曲线"></p>
 <p><em>图：把“针”埋在不同深度、扫描命中率，画出来往往是这样一条 U 形曲线——开头和结尾的信息容易被用上，夹在中间的最容易被冷落。这正是窗口不平坦在检索任务上显出的形状。</em></p>
 <pre><code class="language-python">def probe(model, L, depth, distractors=0, paraphrase=False):
     needle = make_needle(paraphrase)        # 一句可验证的事实

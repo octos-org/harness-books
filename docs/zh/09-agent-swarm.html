@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-4c329400.js";
+            window.path_to_searchindex_js = "searchindex-3079e774.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-67109edf.js"></script>
@@ -203,7 +203,7 @@ UI / Operator 负责人
 <h3 id="1032-1m-和-5-个-200k-不能只比总-token"><a class="header" href="#1032-1m-和-5-个-200k-不能只比总-token">10.3.2 “1M” 和 “5 个 200K” 不能只比总 token</a></h3>
 <p>做个极端理想化的假设：一个 1M 的请求，和五个各 200K 的请求，总输入 token 恰好相等，没有重复背景、没有协调开销、没有缓存。单看“按 token 计费”的账单，它们也许接近。但真实的 agent 系统很少这么跑——更常见的是 coordinator 持目标、计划、约束和验收，每个子 agent 只持一个 shard 的原料，公共的制度性上下文靠缓存或固定 system prompt 复用，向上交的是摘要而非整份语料。这一来，\(5 \times 200\text{K}\) 的真实总 token，常常<strong>小于</strong> \(1 \times 1\text{M}\)。</p>
 <p>更关键的是，哪怕总 token 真的相等，prefill 的计算量也不等。按 dense attention 做个一阶量级估算：单次 1M 上下文的 attention 规模约是 \(1{,}000{,}000^{2} = 10^{12}\)，而五次 200K 的总规模约是 \(5 \times 200{,}000^{2} = 2 \times 10^{11}\)。也就是说，在“总 token 相同”这个最有利于长上下文的理想条件下，\(1 \times 1\text{M}\) 的 attention 量级，仍然大约是 \(5 \times 200\text{K}\) 的<strong>五倍</strong>。所以工程上要同时翻三本账：账单、时延、可调度性——只看第一本，会做出系统性偏贵的决定。</p>
-<p><img src="./img/wf-context-economics.png" alt="1M 与 5×200K 的量级对比"></p>
+<p><img src="./img/wf-context-economics.jpg" alt="1M 与 5×200K 的量级对比"></p>
 <p><em>图：把同样的总 token 放上天平——左边一个 1M 的稠密上下文（致密的大块）和右边几个 200K 的局部分片（轻盈的小块）相比，前者的 attention 计算量级要重得多。这就是为什么账单、时延、可调度性三本账，往往都偏向“拆成多个小窗口”。</em></p>
 <h3 id="1033-sub-agent-的收益不只是省钱"><a class="header" href="#1033-sub-agent-的收益不只是省钱">10.3.3 sub-agent 的收益，不只是省钱</a></h3>
 <p>很多团队把 sub-agent 当纯吞吐工具，这低估了它——它真正带来的，是质量曲线和成本曲线<strong>同时</strong>改善。单个超长上下文的失败模式，正是第 2 章那几条机理的合演：原料过多，相关证据密度被稀释；中间状态和历史痕迹污染当前任务；query 的位置不稳，关键约束被长正文淹没；而且一次失败，就要重做整段昂贵的大 prefill。拆成 sub-agent 之后，工作形态就变了：每个 agent 看到的上下文更短、更局部，位置偏置更可控；每个 agent 的输入更单纯，更接近一个单一任务；出错只需在局部 shard 重试，不必重灌整段全局上下文；coordinator 处理的是证据摘要和冲突，而不是整片原始语料的海洋。说白了，sub-agent 不是为了炫架构，而是为了把每个 agent <strong>压回它更容易成功的工作区间</strong>，再把跨 shard 的协调，交还给 harness、session 和 verification。</p>
@@ -233,6 +233,8 @@ coordinator ──spawn_agent("verifier",         goal="按契约核对产物", 
 </code></pre>
 <p>读懂这张表，整本书的论点在多 agent 这层闭合了。delivery-worker（w2）上传失败时，它<strong>能</strong>做的，是诚实地写一条 <code>subagent.reported: blocked</code>——描述“我这一步卡住了”；它<strong>不能</strong>做的，是写 <code>task.settled</code>——宣布“整单完成”。这一行权限，正是第 6 章那条“模型只能 <code>model.claim</code>、无权宣布终态”的规则，在 swarm 拓扑上的同构投影：worker 只能提议和汇报，verifier 只能裁定单项，唯有 coordinator 能在所有 gating 项落定之后，写下那一条 <code>task.settled</code>。</p>
 <p>反过来想就更清楚了。一个偷懒的 swarm，如果允许 delivery-worker 自己喊一句“发完了，收工”，那它不过是把第 6 章那个单 agent 的“假成功”，原样乘上了 agent 的数量——每多一个能自宣终态的 worker，就多一个能撒谎的嘴。这也正是 §10.3 那个判断的另一面：sub-agent 的价值从来不是“多开几个并行”，而是在“多嘴多手”的同时，把<strong>裁决权死死收敛到一个角色</strong>。手可以很多，脑可以分工，但说“这单成了”的权力，整个 swarm 里只能有一份。<sup class="footnote-reference" id="fr-claudecode-codex-multiagent-ch10-2"><a href="#footnote-claudecode-codex-multiagent-ch10">2</a></sup> 谁都能宣布成功的系统，等于谁都没在负责成功。</p>
+<p><img src="./img/wf-swarm-roles.jpg" alt="swarm 事件写入权限"></p>
+<p><em>图：swarm 的事件写入权限。worker 只能写 subagent.reported、verifier 只能写 validator.result，唯有 coordinator 能写那条 task.settled 宣布终态——把“模型无权宣布终态”这条规则，做成了多 agent 拓扑上的强制边界。</em></p>
 <h2 id="106-一个-worker-中途崩了群体怎么不塌"><a class="header" href="#106-一个-worker-中途崩了群体怎么不塌">10.6 一个 worker 中途崩了，群体怎么不塌</a></h2>
 <p>§10.5 演的是“失败被诚实地汇报、终态被正确地裁决”，那是一条相对干净的链：每个 worker 都活到了能写下自己那条 <code>subagent.reported</code> 的时刻。但真实的 swarm 里有更难看的一种情况——某个 worker 根本没机会体面收场，它在半道上崩了。进程被 OOM 杀掉、worktree 里一个本地依赖装不上、渲染库踩到一个段错误，于是它既没产出产物，也没来得及说“我卡住了”。这种“沉默的死”，恰恰是最考验控制面纪律的地方：一个没有角色化、不能单独恢复的系统，遇到它只有两条退路，要么整局推倒重跑，要么更糟——某个还活着的 agent 看见缺了块东西，自作主张地把窟窿填上，合成出一个假成功。</p>
 <p>还是那三个 worker：data-worker <code>w1</code> 负责把 q2 数据渲染成 PDF，delivery-worker <code>w2</code> 负责把它发到 <code>#finance</code>，verifier <code>v1</code> 负责按契约核对。这次让 <code>w1</code> 在渲染到一半时崩掉。要紧的是看清，控制面是怎么把这次崩溃<strong>吸收</strong>进一条恢复链，而不是让它向上<strong>放大</strong>成一次全局重跑或一个绿色谎言。</p>

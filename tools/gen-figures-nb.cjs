@@ -16,6 +16,12 @@ fs.mkdirSync(TEST, { recursive: true });
 
 const STYLE = `A clean technical diagram in the style of a TEXTBOOK FIGURE / engineering illustration, drawn as WIREFRAME line art. PURE WHITE background (#ffffff). Thin precise BLACK outlines, lines, arrows and curves only, like a crisp vector schematic. Minimal and uncluttered, generous white space, NOT dense, calm and restrained. At most ONE muted slate-blue accent used sparingly. Flat 2D only: no shading, no gradients, no 3D, no glow, no photorealism, no texture. The figure MUST include clearly legible, neatly typeset LABELS exactly as specified below — clean sans-serif text, correctly spelled, not decorative. Publication-ready, like a figure in a well-made engineering textbook.`;
 
+// 概念可视化风格（聚光灯 / 照射点那类，深色质感 + 加标注）
+const CONCEPT = `A striking CONCEPTUAL editorial illustration for a serious engineering book, on a deep near-black ink-navy background. Luminous cyan-teal glowing line art as the primary element, with a single warm-amber highlight reserved for the one focal "signal of truth". Atmospheric, elegant, generous negative space, very high craft — like a refined data-art / generative-systems visualization, NOT a plain schematic, NOT busy. Include a few small, clean, legible Chinese sans-serif TEXT LABELS exactly as specified, placed tastefully and correctly spelled. No clutter, no neon rainbow.`;
+
+// Nature / Science 杂志级 专业科学概念图
+const NATURE = `A professional scientific concept illustration in the style of a NATURE / SCIENCE journal feature figure. Sophisticated, polished, publication-grade editorial science visualization. A refined, restrained palette — deep teal and slate with a single warm-amber accent — on a deep, subtly graded near-black background. Elegant glowing vector line-work and luminous nodes, tasteful depth and soft glow, rigorous information design, clear visual hierarchy, generous negative space. Include clean, legible, correctly-spelled Chinese sans-serif LABELS exactly as specified, set like real figure annotations. Extremely high craft, calm and authoritative, NOT cartoonish, NOT cluttered, NOT neon.`;
+
 const FIGS = {
   "wf-softmax-dilution": { ar: "4:3",
     scene: `A 2D line chart. Horizontal axis labeled "窗口 token 数 n". Vertical axis labeled "最大注意力权重 w_max". A single smooth black curve decays from high-left toward the axis on the right (inverse decay). Three open circles on the curve, labeled "0.69"、"0.17"、"0.02" from left to right, each with a dashed guide line to the x-axis tick "10"、"100"、"1000". The lowest point is the blue accent. Clean textbook chart.` },
@@ -39,11 +45,20 @@ const FIGS = {
     scene: `A balance-scale (seesaw) comparison. Left pan: one large square filled with a fine dense grid, labeled "1×1M (稠密)". Right pan: five small sparse squares labeled "5×200K (分片)". The big dense block tips the balance down (heavier). Note under it: "attention 量级 ≈ 5×". Clean textbook line art with labels.` },
   "wf-closability-curve": { ar: "4:3",
     scene: `A 2D line chart. X-axis labeled "独立采样次数 k". Y-axis labeled "至少一次通过的概率". A black curve rises and saturates toward a horizontal dashed asymptote near the top labeled "1 (近乎必成)". The curve formula noted on the chart: "1-(1-p)^k". Small open circles along the rise. Clean textbook chart.` },
+
+  // —— 概念可视化（聚光灯/照射点风格 + 标注）——
+  "nat-feedback-loop": { ar: "16:9", style: NATURE,
+    scene: `An elegant control-loop SYSTEM illustration. A luminous reference node on the LEFT labeled "参考值(目标)" sends a glowing signal rightward through a refined horizontal chain of two module blocks labeled "控制器 (harness)" and "执行器 (工具)" into a bright node labeled "环境". From the environment node, a graceful glowing arc loops back underneath, passing through a node labeled "传感器 (验证器)", returning to a summing junction at the input; the return path is labeled "误差". Sophisticated Nature-journal system schematic with soft glow and depth.` },
+  "nat-recall-ucurve": { ar: "16:9", style: NATURE,
+    scene: `A sophisticated scientific DATA figure: a smooth luminous U-shaped (bathtub) curve over a subtle coordinate grid, high and bright at both the far-left and far-right ends, dipping low through the middle. X-axis labeled "信息所在深度（近端→远端）", y-axis labeled "命中率". A scatter of refined glowing data points loosely follows the curve. The low middle region is softly highlighted and labeled "中段最易被冷落（lost in the middle）". Elegant Nature-journal data-visualization aesthetic.` },
+
+  "cc-softmax-dilution": { ar: "16:9", style: CONCEPT,
+    scene: `A bright glowing cyan focal point on the LEFT, labeled "注意力源", emits a single fixed bundle of fine glowing rays. UPPER region: the rays reach only a FEW nearby glowing nodes, each ray bright, thick and sharp — labeled "近端：注意力集中、检索锐利". LOWER region: the SAME fixed bundle must fan out across a VAST wide field of MANY faint dim nodes, so each individual ray becomes barely visible — labeled "远端：被摊薄、稀释到几乎看不见". One single faint warm-amber node far on the lower right glows weakly, labeled "真正目标(被淹没)". The clear subject: a fixed amount of attention spread ever thinner as the field of competing nodes grows.` },
 };
 
 async function genOne(id) {
   const f = FIGS[id]; if (!f) { console.error("未知 id:", id); return; }
-  const prompt = `${STYLE}\n\nFIGURE: ${f.scene}\n\nComposition: ${f.ar}, 2K, single cohesive textbook figure on pure white.`;
+  const prompt = `${f.style || STYLE}\n\nFIGURE: ${f.scene}\n\nComposition: ${f.ar}, 2K, single cohesive figure.`;
   for (let a = 1; a <= 3; a++) {
     try {
       const res = await ai.models.generateContent({

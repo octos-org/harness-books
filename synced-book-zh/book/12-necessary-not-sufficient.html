@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-4c329400.js";
+            window.path_to_searchindex_js = "searchindex-3079e774.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-67109edf.js"></script>
@@ -182,7 +182,9 @@
 <p>先看一次很典型的翻车，从用户的视角。</p>
 <p>任务是这样下的：“读 12 篇材料，生成一份 20 页汇报，并附带可演示的 slides。”系统表面上做得一板一眼——起了研究 worker，调了 web 和 MCP 搜索，写了草稿，最后回了一个 <code>ready</code>，外加一个 <code>report.pptx</code>。用户在工位上双击打开它，期待看到那 12 篇材料汇成的新汇报。然后他愣住了：打开的是上个季度的旧模板，引用残缺，而这次真正写出来的新内容，全躺在一个谁也没提过的中间 Markdown 文件里。系统从头到尾没报一个错。它只是，平静地，交付了一份错的东西，还盖了个“完成”的章。</p>
 <p>顺着这次“假成功”往回追，会发现它不是模型在某一步答错了，而是<strong>五层架构各漏了一点约束，最后在用户面前合成出来的</strong>。最底下，session 层从没把“哪个是 root task、派生了哪几个 child、哪个才是 primary artifact”钉成单一事实——交付物到底是哪个文件，系统自己都没共识。往上一层，能力平面里，研究 worker 用 Python 和 MCP 拉资料、打包 worker 用 shell 生 slides，两边却只在各自的自由文本里顺口提了一句产物路径，没有一个统一的 artifact 引用把它们对齐——于是“新内容在哪”这件事，在两个 worker 之间就已经失联了。再往上，verifier 只检查了“是不是生成了一个 <code>pptx</code>”，没去查引用够不够、主文件归不归属、内容是不是基于这次的 report——于是那个旧模板，轻松通过。再往上，operator dashboard 只看得到一句“任务 ready”，看不到是哪个 child 报了哪个产物、哪个 validator 其实压根没覆盖到关键约束。最顶上，swarm 层的 coordinator 只收到打包 worker 一句轻飘飘的“slides generated successfully”，没有附带证据的 summary，于是它信了，把这次局部的“跑完了”当成了整个系统的“做对了”。</p>
-<p>这条链的代表性就在这里：<strong><code>session → 能力平面 → verifier → dashboard → swarm</code>，五层每层只松了一扣，单独看都不致命，叠起来就合成了一次完整的谎言。</strong></p>
+<p>这条链的代表性就在这里：**<code>session → 能力平面 → verifier → dashboard → swarm</code>，五层每层只松了一扣，单独看都不致命，叠起来就合成了一次完整的谎言。</p>
+<p><img src="./img/wf-five-layer-failure.jpg" alt="“假成功”的五层断裂"></p>
+<p><em>图：“假成功”的五层断裂。session、能力平面、verifier、dashboard、swarm 每层只松一扣，单独看都不致命；可一旦缺口对齐，就在用户面前合成出一个根本没发生的“完成”。</em>**</p>
 <h2 id="132-顺着这条链看五层架构怎样真正落地"><a class="header" href="#132-顺着这条链看五层架构怎样真正落地">13.2 顺着这条链，看五层架构怎样真正落地</a></h2>
 <p>要修住它，不能在最末端补一句“更强的提示词”，得顺着这五层逐层把扣收紧。</p>
 <p><code>session</code> 层先做硬事实：root task 一创建，就把本轮交付物声明成 <code>report.md</code> 与 <code>slides.pptx</code>，并把每个 child 的 owner、role、scope、worktree、预期产物类型都写进事实流。这样 coordinator、replay、dashboard、verifier 读的才是<strong>同一份任务定义</strong>，而不是各猜各的。<code>能力平面</code> 层再做统一入口：研究 worker 无论用 Python、Node、shell 还是 MCP，结果都只能经由统一的事件和 artifact 报告面回传——脚本可以自由实现，但不能自由定义状态协议；能力可以多样，但产物引用、scope 绑定、任务归属必须一致。<code>verifier</code> 层负责终态裁决：它不只看“文件存在”，还要查这是不是被声明过的 primary artifact、引用和页数达没达标、slides 是不是基于当前这版 report 生成、证据落在哪——这些全过，root task 才配进 <code>ready</code>，否则就该停在 <code>verifying</code> 或落到 <code>failed</code>，而不是把验证的成本甩给用户去双击发现。<code>dashboard</code> 层负责把这条链摆清楚：值班的人要能一眼看到谁派了哪些 child、每个 child 最近的 summary、哪个 artifact 被报告、哪个 validator 红了、证据在哪——这样用户投诉进来，是沿着事实流定位“哪一层断了”，而不是从零开始猜。<code>swarm</code> 层最后收束成单一真相：coordinator 只管拆解、汇总、裁决，研究 worker 只管搜证，draft worker 只管生成，verifier worker 只管检查，<strong>没有任何一个 worker 能单独宣布整个系统成功</strong>。只要这条规矩还在，局部的“跑完了”就再也伪装不成系统的“做对了”。</p>
@@ -194,7 +196,7 @@
 <h2 id="134-那条线的右边还能再切一刀可闭合与补不齐"><a class="header" href="#134-那条线的右边还能再切一刀可闭合与补不齐">13.4 那条线的右边，还能再切一刀：可闭合与补不齐</a></h2>
 <p>“系统是好产品”这半边，其实还能再切一刀——而这一刀，直接决定了一个很有现实分量的问题：哪些事，能靠 harness 加一个够用的（哪怕是开源的）模型补齐；哪些事，连最强的前沿模型也补不齐。分界线只有一句话：<strong>这个领域，有没有一个可闭合的验证器。</strong></p>
 <p>先把“可闭合”说清楚。一个领域是可闭合的，前提是你能为它造出一个验证器 <code>V</code>，让 <code>V(任务, 候选产物)</code> 满足三个条件：它<strong>可靠</strong>（极少把错的当成对的，也就是假阳性低）、它<strong>便宜</strong>（验一遍的代价远小于生成一遍）、它<strong>独立</strong>（不依赖生成它的那个模型自己打分）。一旦三者齐备，第 3 章那条负反馈环就从一个比喻，变成了一笔能算的账。设单次生成通过这个可靠验证器的概率是 <code>p</code>，那么独立采样 \(k\) 次、至少有一次通过的概率大约是 \(1-(1-p)^k\)——只要 \(p\) 不是零、\(k\) 能往上加，它就指数地逼近 \(1\)。换句话说，在可闭合的领域里，“质量”不再取决于模型单次有多神，而取决于你<strong>愿不愿意多生成几次、再让一个独立验证器去裁</strong>。模型只要不太差，harness 的“生成—验证—重试”循环就能把成功率抬到生产可用——这恰恰是为什么一个开源模型加一套硬验证，能在这类领域和前沿模型掰手腕。</p>
-<p><img src="./img/wf-closability-curve.png" alt="可闭合：生成—验证—重试"></p>
+<p><img src="./img/wf-closability-curve.jpg" alt="可闭合：生成—验证—重试"></p>
 <p><em>图：可闭合领域里的那笔账。横轴是独立采样的次数 k，纵轴是“至少有一次通过独立验证”的概率；只要单次通过率不为零、各次采样足够独立，曲线就随 k 增大快速抬升、逼近上方那条“近乎必成”的虚线。前提一旦不独立，这条曲线就不再成立。</em></p>
 <p>得诚实地补一句分寸：上面这不是一个严格定理，而是一个足够硬的工程判据。它依赖三个前提都真的成立——验证器假阳性要低（不然你只是更快地通过错误答案）、各次采样要足够独立（同一个模型反复犯同一个错，<code>k</code> 加再多也没用）、<code>p</code> 不能恰好是零（模型连一次都碰不对，循环就无从收敛）。前提一松动，曲线就不再那么漂亮。但方向是确定的，而且它正好解释了一件事：为什么 coding 是可闭合领域的样板。</p>
 <p>代码这个领域，简直是为“可闭合”量身定做的——它的验证器多到奢侈，而且条条满足那三个条件。编译器和类型检查器是独立且便宜的可靠裁判；单元测试、属性测试、端到端测试把“对不对”变成可机器判定的断言；linter、静态分析、可复现的运行结果，每一样都是不依赖生成者的独立信号。所以一个 coding agent 的产出质量，根本不必押在“模型这次写得对不对”上——押在“测试过没过、类型检查过没过、复现成功没成功”上就够了，而这些恰恰是 harness 最擅长接进终态裁决的东西。这也呼应了第 16.4 节那条路由策略：把可闭合的那部分工作，大胆交给更便宜的开源模型，背后用 gating validator 兜住质量。</p>
