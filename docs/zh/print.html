@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-170025f0.js";
+            window.path_to_searchindex_js = "searchindex-bf1fddc0.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-18563b7b.js"></script>
@@ -804,20 +804,12 @@ turn/started     { turn: 58 }      ← ⌘R 发生在这里
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="10-agent-群体编排把多脑多手变成可控系统"><a class="header" href="#10-agent-群体编排把多脑多手变成可控系统">10. Agent 群体编排：把多脑多手变成可控系统</a></h1>
-<p>到这里为止，书里讨论的主要还是“单个系统如何说真话”。第 10 章再往前走一步：当系统开始扩展成多 agent、多负责人、多工作区协作时，harness 如何把复杂度吸收掉，而不是把混乱倍增。</p>
-<h2 id="101-多-agent-的本质不是并行而是角色化"><a class="header" href="#101-多-agent-的本质不是并行而是角色化">10.1 多 agent 的本质不是并行，而是角色化</a></h2>
-<p>所谓“多脑多手”，并不是多开几个 agent 并行干活，而是一种组织结构：多个“脑”分别负责规划、生成、验证、总结，多个“手”分别负责文件、shell、浏览器、API、数据库、外部系统。关键在于，这些脑和手仍然要共享同一个 session 事实流、同一组权限边界、同一套验证规则和同一个操作员视图。<sup class="footnote-reference" id="fr-many-brains-ch8-1"><a href="#footnote-many-brains-ch8">1</a></sup></p>
-<p>所以多 agent 真正需要的不是“更多模型实例”，而是至少下面这些编排原语：</p>
-<ul>
-<li>角色模板：谁是 coordinator，谁是 worker，谁是 verifier，谁可以请求人工输入；</li>
-<li>派工协议：子任务怎么启动、怎么续跑、怎么被打断；</li>
-<li>通信机制：中间结论如何回传，而不是彼此读对方全量日志；</li>
-<li>隔离机制：工作区、权限、上下文和副作用如何彼此隔开；</li>
-<li>汇总机制：父任务如何在不重读所有原始细节的前提下，拿到可信摘要和证据。</li>
-</ul>
-<p>Claude Code 的 <code>AgentTool.tsx</code>、<code>loadAgentsDir.ts</code>、<code>teammateMailbox.ts</code>、<code>worktree.ts</code>，以及 Codex 的 <code>spawn_agent</code>、<code>send_input</code>、<code>wait_agent</code>、<code>resume_agent</code>，其实都在围绕这几件事建设，只是一个更偏产品器官，一个更偏协议原语。<sup class="footnote-reference" id="fr-claudecode-codex-multiagent-ch8-1"><a href="#footnote-claudecode-codex-multiagent-ch8">2</a></sup></p>
-<h2 id="102-实战上的工作分解应该怎样落到系统里"><a class="header" href="#102-实战上的工作分解应该怎样落到系统里">10.2 实战上的工作分解应该怎样落到系统里</a></h2>
-<p>如果把第 6 章那张总图继续展开，多 agent 系统里至少会出现下面这些所有权：</p>
+<p>到这里为止，书里谈的主要还是“一个系统怎么说真话”。第 10 章往前走一步：当系统扩展成多 agent、多负责人、多工作区协作时，harness 是把复杂度<strong>吸收</strong>掉，还是把混乱<strong>倍增</strong>。这两条路的岔口，比大多数团队以为的来得早。</p>
+<h2 id="101-多-agent-的本质不是并行是角色化"><a class="header" href="#101-多-agent-的本质不是并行是角色化">10.1 多 agent 的本质不是并行，是角色化</a></h2>
+<p>“多脑多手”常被误读成“多开几个 agent 一起跑”。它其实是一种组织结构：多个“脑”分别管规划、生成、验证、总结，多个“手”分别管文件、shell、浏览器、API、数据库、外部系统。而要紧的是——这些脑和手仍然要共享同一条 session 事实流、同一组权限边界、同一套验证规则、同一个操作员视图。<sup class="footnote-reference" id="fr-many-brains-ch8-1"><a href="#footnote-many-brains-ch8">1</a></sup> 一旦它们各拿各的真相，多 agent 就只是把第 5 章那些单 agent 的事故，乘上了 agent 的数量。</p>
+<p>所以多 agent 真正缺的，从来不是“更多模型实例”，而是一小套编排原语。得有角色模板，把谁是 coordinator、谁是 worker、谁是 verifier、谁能请求人工输入分清；得有派工协议，规定子任务怎么启动、怎么续跑、怎么被打断；得有通信机制，让中间结论被回传，而不是让每个 agent 去读别人的全量日志；得有隔离机制，把工作区、权限、上下文和副作用彼此隔开；还得有汇总机制，让父任务不必重读所有原始细节，就能拿到可信的摘要和证据。Claude Code 的 <code>AgentTool.tsx</code>、<code>loadAgentsDir.ts</code>、<code>teammateMailbox.ts</code>、<code>worktree.ts</code>，和 Codex 的 <code>spawn_agent</code>、<code>send_input</code>、<code>wait_agent</code>、<code>resume_agent</code>，绕来绕去建的就是这几样，只是一个更偏产品器官、一个更偏协议原语。<sup class="footnote-reference" id="fr-claudecode-codex-multiagent-ch8-1"><a href="#footnote-claudecode-codex-multiagent-ch8">2</a></sup></p>
+<h2 id="102-工作分解怎样落到系统里的所有权"><a class="header" href="#102-工作分解怎样落到系统里的所有权">10.2 工作分解，怎样落到系统里的所有权</a></h2>
+<p>把第 6 章那张总图继续展开，多 agent 系统里会冒出一组清晰的所有权层：</p>
 <pre><code class="language-text">项目负责人
   -&gt; 定义里程碑契约和验收不变量
 Coordinator / Harness 负责人
@@ -829,53 +821,21 @@ Verifier 负责人
 UI / Operator 负责人
   -&gt; 负责把群体协作投影成可读的摘要、证据和告警
 </code></pre>
-<p>没有这种角色化拆分，团队很容易出现一种危险假象：局部 worker 都“各自成功了”，但系统级事实已经被破坏，比如主产物没有唯一归属、多个子任务修改了同一工作区、汇总结论没有经过 validator，或者父任务根本不知道哪个子任务已经失联。</p>
-<h2 id="103-为什么-sub-agent--swarm-往往比单个-1m-上下文更优"><a class="header" href="#103-为什么-sub-agent--swarm-往往比单个-1m-上下文更优">10.3 为什么 sub-agent / swarm 往往比单个 1M 上下文更优</a></h2>
-<p>第 2 章已经给出理论结论：最大上下文窗口不是平坦工作区。到了第 10 章，这个理论要落成实践判断：什么时候应该用单个超长上下文，什么时候应该拆成多个局部 agent。</p>
-<p>如果任务天然可以分块，把全部材料一次性塞进单个超长上下文，往往不是最优解。更常见的高收益结构是：</p>
-<ol>
-<li>coordinator 只持有总目标、拆解计划、共享约束和最终验收标准；</li>
-<li>每个 sub-agent 只拿自己那一块原始材料或代码域；</li>
-<li>子 agent 产出的是摘要、证据、diff、引用和待验证结论，而不是把整个大海捞针窗口一路向上传递；</li>
-<li>verifier 再把跨 shard 的冲突和遗漏拦下来。</li>
-</ol>
+<p>没有这种角色化拆分，团队就会撞上一种很危险的假象：局部 worker 一个个都“成功了”，可系统级的事实早已被破坏——主产物没有唯一归属，几个子任务改了同一个工作区，汇总结论没过 validator，或者父任务压根不知道哪个子任务已经失联。第 13 章那条“假成功”失败链，根子就在这里。</p>
+<h2 id="103-为什么-sub-agent--swarm-往往胜过一个-1m-上下文"><a class="header" href="#103-为什么-sub-agent--swarm-往往胜过一个-1m-上下文">10.3 为什么 sub-agent / swarm 往往胜过一个 1M 上下文</a></h2>
+<p>第 2 章给过理论结论：最大上下文窗口不是平坦工作区。到第 10 章，它要落成一个实践判断——什么时候该用单个超长上下文，什么时候该拆成多个局部 agent。如果任务天然可分块，把全部材料一次性塞进一个超长上下文，往往不是最优解。更常见的高收益结构是：coordinator 只攥着总目标、拆解计划、共享约束和最终验收标准；每个 sub-agent 只拿自己那一块原始材料或代码域；子 agent 往上交的是摘要、证据、diff、引用和待验证结论，而不是把整个“大海捞针”的窗口一路向上传；最后由 verifier 把跨 shard 的冲突和遗漏拦下来。</p>
 <h3 id="1031-成本不能只看-token-账单"><a class="header" href="#1031-成本不能只看-token-账单">10.3.1 成本不能只看 token 账单</a></h3>
-<p>讨论 1M context 成本时，最常见的误区是只看 token 单价。账单当然重要，但真正把系统压垮的，常常是 prefill 变慢、首 token 延迟上升、KV cache 撑大、并发吞吐下降、重试变贵，以及任务调度越来越难。</p>
-<p>OpenAI 公开价格页按百万 token 标价，但也把标准处理费率限定在 <code>under 270K</code> context lengths；Google 在 Gemini 1.5 发布时一方面宣布 128K 到 1M 的 pricing tiers，另一方面提醒早期测试者应预期更长 latency。<sup class="footnote-reference" id="fr-swarm-econ-ch8-1"><a href="#footnote-swarm-econ-ch8">3</a></sup> 这些信号说明，超长上下文不是普通请求的线性放大版。</p>
-<p>从系统计算看，痛点通常不在 output token，而在 prefill。MInference 摘要里给过一个足够刺眼的数字：8B LLM 处理 1M token prompt 可以到 30 分钟量级，并把根因指向 attention 的二次复杂度。<sup class="footnote-reference" id="fr-swarm-econ-ch8-2"><a href="#footnote-swarm-econ-ch8">3</a></sup> 这不是某家 API 的具体实现细节，而是长序列计算的基础压力。</p>
-<h3 id="1032-1m-和-5-个-200k-不能只比总-token"><a class="header" href="#1032-1m-和-5-个-200k-不能只比总-token">10.3.2 1M 和 5 个 200K 不能只比总 token</a></h3>
-<p>如果做一个极端理想化假设：一个 1M 请求，和五个各 200K 的请求，总输入 token 恰好一样，没有重复背景、没有协调 token、没有缓存，那么从“按 token 计费”的账单角度看，它们可能接近。</p>
-<p>但真实 agent 系统很少这么运行。更常见的是：coordinator 持有目标、计划、约束和最终验收；每个子 agent 只持有一个 shard 的原始材料；公共制度性上下文通过缓存或固定 system prompt 复用；向上汇报的是摘要、证据、diff、引用和中间产物，而不是整份原始语料。这时 <code>5 x 200K</code> 的真实总 token 常常小于 <code>1 x 1M</code>。</p>
-<p>即使总 token 恰好一样，prefill 计算量也不一样。若按 dense attention 做一阶量级估算：</p>
-<ul>
-<li>单次 1M 上下文的 attention 规模约为 <code>1,000,000^2 = 10^12</code>；</li>
-<li>五次 200K 的总 attention 规模约为 <code>5 * 200,000^2 = 2 * 10^11</code>。</li>
-</ul>
-<p>也就是说，在“总 token 相同”的理想化条件下，<code>1 x 1M</code> 的 attention 量级仍然大约是 <code>5 x 200K</code> 的 5 倍。工程上要同时看三本账：账单、时延、可调度性。</p>
-<h3 id="1033-sub-agent-的收益不是只省钱"><a class="header" href="#1033-sub-agent-的收益不是只省钱">10.3.3 sub-agent 的收益不是只省钱</a></h3>
-<p>很多团队把 sub-agent / swarm 只当成吞吐工具，这是低估了它。它真正带来的，是质量曲线和成本曲线的同时改善。</p>
-<p>单个超长上下文的失败模式往往是：原始材料过多，相关证据密度下降；中间状态和历史痕迹污染当前任务；query 位置不稳定，重要约束被长正文淹没；一次失败就要重做整段大 prefill。</p>
-<p>分解成 sub-agent 之后，系统得到的是另一种工作形态：每个 agent 看到的上下文更短、更局部，位置偏置更可控；每个 agent 的输入类型更单纯，更接近单一任务；错误只需在局部 shard 重试，不必重灌整段全局上下文；coordinator 处理的是证据摘要和冲突，而不是整个原始语料海洋。</p>
-<p>换句话说，sub-agent 不是为了炫耀架构复杂，而是为了把每个 agent 压回它更容易成功的工作区间，再把跨 shard 协调交给 harness、session 和 verification。</p>
-<h3 id="1034-什么时候仍然该用单个超长上下文"><a class="header" href="#1034-什么时候仍然该用单个超长上下文">10.3.4 什么时候仍然该用单个超长上下文</a></h3>
-<p>不是所有任务都该拆成 swarm。以下几类任务，单个超长上下文仍然可能是合理选择：</p>
-<ul>
-<li>必须对全局原文做一次统一排序、比对或证据归并；</li>
-<li>任务主要是全局摘要，不涉及局部修改和重复迭代；</li>
-<li>原始材料高度相关，拆分后反而破坏语义连续性；</li>
-<li>上下文可以一次缓存，多轮查询主要复用同一大语料；</li>
-<li>你更在意一次性全局理解，而不是并行吞吐。</li>
-</ul>
-<p>但这些前提只要稍微动摇，sub-agent 方案往往就开始占优。尤其当任务同时满足三条：材料天然可分 shard；子问题可以先局部求解再全局汇总；每轮失败重试代价很高，就应当优先考虑分解。</p>
+<p>聊 1M context 的成本，最常见的误区是只盯 token 单价。账单当然重要，但真正把系统压垮的，往往是 prefill 变慢、首 token 延迟上升、KV cache 撑大、并发吞吐下降、重试变贵，以及调度越来越难。这些信号在价格页上都看得到端倪：OpenAI 公开价格按百万 token 标价，却把标准处理费率限定在 <code>under 270K</code> 的上下文长度；Google 发布 Gemini 1.5 时，一边宣布 128K 到 1M 的 pricing tier，一边提醒早期测试者要预期更长的延迟。<sup class="footnote-reference" id="fr-swarm-econ-ch8-1"><a href="#footnote-swarm-econ-ch8">3</a></sup> 它们都在说同一件事：超长上下文不是普通请求的线性放大版。</p>
+<p>而从系统计算看，痛点通常不在 output token，在 prefill。MInference 的摘要给过一个够刺眼的数字——一个 8B 模型处理 1M token 的 prompt，能慢到 30 分钟量级，根因正是 attention 的二次复杂度。<sup class="footnote-reference" id="fr-swarm-econ-ch8-2"><a href="#footnote-swarm-econ-ch8">3</a></sup> 这不是哪家 API 的实现细节，而是长序列计算的基础压力。</p>
+<h3 id="1032-1m-和-5-个-200k-不能只比总-token"><a class="header" href="#1032-1m-和-5-个-200k-不能只比总-token">10.3.2 “1M” 和 “5 个 200K” 不能只比总 token</a></h3>
+<p>做个极端理想化的假设：一个 1M 的请求，和五个各 200K 的请求，总输入 token 恰好相等，没有重复背景、没有协调开销、没有缓存。单看“按 token 计费”的账单，它们也许接近。但真实的 agent 系统很少这么跑——更常见的是 coordinator 持目标、计划、约束和验收，每个子 agent 只持一个 shard 的原料，公共的制度性上下文靠缓存或固定 system prompt 复用，向上交的是摘要而非整份语料。这一来，<code>5 × 200K</code> 的真实总 token，常常<strong>小于</strong> <code>1 × 1M</code>。</p>
+<p>更关键的是，哪怕总 token 真的相等，prefill 的计算量也不等。按 dense attention 做个一阶量级估算：单次 1M 上下文的 attention 规模约是 <code>1,000,000² = 10¹²</code>，而五次 200K 的总规模约是 <code>5 × 200,000² = 2 × 10¹¹</code>。也就是说，在“总 token 相同”这个最有利于长上下文的理想条件下，<code>1 × 1M</code> 的 attention 量级，仍然大约是 <code>5 × 200K</code> 的<strong>五倍</strong>。所以工程上要同时翻三本账：账单、时延、可调度性——只看第一本，会做出系统性偏贵的决定。</p>
+<h3 id="1033-sub-agent-的收益不只是省钱"><a class="header" href="#1033-sub-agent-的收益不只是省钱">10.3.3 sub-agent 的收益，不只是省钱</a></h3>
+<p>很多团队把 sub-agent 当纯吞吐工具，这低估了它——它真正带来的，是质量曲线和成本曲线<strong>同时</strong>改善。单个超长上下文的失败模式，正是第 2 章那几条机理的合演：原料过多，相关证据密度被稀释；中间状态和历史痕迹污染当前任务；query 的位置不稳，关键约束被长正文淹没；而且一次失败，就要重做整段昂贵的大 prefill。拆成 sub-agent 之后，工作形态就变了：每个 agent 看到的上下文更短、更局部，位置偏置更可控；每个 agent 的输入更单纯，更接近一个单一任务；出错只需在局部 shard 重试，不必重灌整段全局上下文；coordinator 处理的是证据摘要和冲突，而不是整片原始语料的海洋。说白了，sub-agent 不是为了炫架构，而是为了把每个 agent <strong>压回它更容易成功的工作区间</strong>，再把跨 shard 的协调，交还给 harness、session 和 verification。</p>
+<h3 id="1034-什么时候仍该用一个超长上下文"><a class="header" href="#1034-什么时候仍该用一个超长上下文">10.3.4 什么时候仍该用一个超长上下文</a></h3>
+<p>但也别走到另一个极端，把什么都拆成 swarm。有几类任务，单个超长上下文仍然合理：要对全局原文做一次统一的排序、比对或证据归并时；任务主要是全局摘要、不涉及局部修改和反复迭代时；原料高度相关、拆开反而割裂语义连续性时；上下文能一次缓存、多轮查询主要复用同一大语料时；以及你更在意一次性的全局理解、而非并行吞吐时。只要这些前提稍一动摇，sub-agent 方案往往就开始占优——尤其当三条同时成立：材料天然可分 shard、子问题能先局部求解再全局汇总、每轮失败重试代价很高，这时就该优先考虑分解。</p>
 <h2 id="104-让-swarm-不失控的四条硬规则"><a class="header" href="#104-让-swarm-不失控的四条硬规则">10.4 让 swarm 不失控的四条硬规则</a></h2>
-<p>多 agent 一旦上线，最容易失控的不是模型质量，而是控制面纪律。因此至少要守住四条硬规则：</p>
-<ol>
-<li>子 agent 不直接宣布系统终态；只有 coordinator + verifier 能裁决 ready / failed。</li>
-<li>子 agent 之间不共享隐式上下文；共享的只有显式任务说明、事实流引用和被授权的中间产物。</li>
-<li>每个子 agent 都必须能被单独恢复、单独取消、单独审计。</li>
-<li>任何协议、生命周期、回放或 scope 语义变更，都必须同步更新 fixture、门禁、E2E 和文档。</li>
-</ol>
-<p>守不住这四条，多 agent 只会比单 agent 更快制造混乱。守住了，它才会真正变成能放大团队产能的协作系统。</p>
+<p>多 agent 一旦上线，最先失控的通常不是模型质量，是控制面纪律。至少有四条规则要焊死。第一，<strong>子 agent 不直接宣布系统终态</strong>——只有 coordinator 加 verifier 能裁决 ready / failed，这是第 13 章那条假成功链的正面解药。第二，<strong>子 agent 之间不共享隐式上下文</strong>，能共享的只有显式的任务说明、事实流引用和被授权的中间产物，否则就回到第 5.3 节那种串扰。第三，<strong>每个子 agent 都必须能被单独恢复、单独取消、单独审计</strong>——群体里一旦有谁不可单独操作，排障时就只能整片重来。第四，<strong>任何协议、生命周期、回放或 scope 语义的变更，都要同步更新 fixture、门禁、E2E 和文档</strong>，否则多 agent 的复杂度会让一处不同步迅速扩散成多处事故。守不住这四条，多 agent 只会比单 agent 更快地制造混乱；守住了，它才真正变成能放大团队产能的协作系统。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
@@ -891,48 +851,25 @@ UI / Operator 负责人
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="11-从抽象到原则harness-engineering-的设计法则"><a class="header" href="#11-从抽象到原则harness-engineering-的设计法则">11. 从抽象到原则：Harness Engineering 的设计法则</a></h1>
-<p>前面 1 到 8 章已经把根因、样本、失败、架构和协作面铺开了。第 11 章要做的不是再发明新部件，而是把这些观察压缩成一套更高层、但仍然能落地的设计法则。</p>
-<p>这里最值得借鉴的，不是某个仓库的代码排版，而是 Fowler / Thoughtworks 那条线对 harness engineering 的抽象：不要把 agent 的成功寄托在一次 prompt 奇迹上，而要把任务状态、反馈回路、工具边界和验证证据做成系统外部、可检查、可演化的控制层。<sup class="footnote-reference" id="fr-thoughtworks-principles-ch9-1"><a href="#footnote-thoughtworks-principles-ch9">1</a></sup> 也因此，这一章不会换一套新词；它只会把第 6 章那九个维度，改写成团队能拿来做设计评审、事故复盘和路线排序的九条原则。</p>
+<p>前面几章把根因、样本、失败、架构和协作面都铺开了。第 11 章不再发明新部件，而是把这些观察压成一套更高层、却仍能落地的设计法则。</p>
+<p>最值得借鉴的，不是某个仓库的代码排版，而是 Fowler / Thoughtworks 那条线对 harness engineering 的抽象：别把 agent 的成功，寄托在一次 prompt 奇迹上；而要把任务状态、反馈回路、工具边界和验证证据，做成系统外部、可检查、可演化的控制层。<sup class="footnote-reference" id="fr-thoughtworks-principles-ch9-1"><a href="#footnote-thoughtworks-principles-ch9">1</a></sup> 所以这一章不换新词，它只把第 6 章那九个维度，翻译成团队能拿去做设计评审、事故复盘和路线排序的九条原则。</p>
 <h2 id="111-第一原则把模型能力和控制系统分开"><a class="header" href="#111-第一原则把模型能力和控制系统分开">11.1 第一原则：把模型能力和控制系统分开</a></h2>
-<p>Claude Code 和 Codex 都很强，但它们真正可迁移的启发不在于“某个 prompt 怎么写”，而在于都在做同一件事：把模型生成能力与控制系统分层。</p>
-<p>模型负责提出候选动作、生成候选产物、总结局部信息；控制系统负责守住事实流、生命周期、能力平面、产物与验证、回放、隔离与恢复、协作、知识分层和操作员面。只要这两层没有被切开，团队最终一定会重新回到第 5 章那类事故里。</p>
-<h2 id="112-九条可迁移原则"><a class="header" href="#112-九条可迁移原则">11.2 九条可迁移原则</a></h2>
-<p>把第 4.8 节的九个架构维度和第 6 章的统一词汇表进一步压缩，可以得到九条可迁移原则。读者可以把它直接看成一条映射链：Claude Code 的产品器官和 Codex 的协议骨架，在原则层分别对应下面九条约束。</p>
-<ol>
-<li><code>事实流原则</code>：契约状态必须持久化在 prompt / 聊天上下文之外。</li>
-<li><code>生命周期原则</code>：生命周期必须单调、公开，并在 API / UI / operator 表面保持一致。</li>
-<li><code>能力平面原则</code>：所有外部能力都必须进入统一调度面，而不是各自维持私有状态机。</li>
-<li><code>产物与验证原则</code>：主产物必须显式归属，<code>ready</code> / <code>failed</code> 必须由验证器和证据裁决；交付不能依赖文件名、启发式猜测或生成器自报完成。</li>
-<li><code>回放原则</code>：回放、摘要和历史重建必须都从同一条事实流派生。</li>
-<li><code>隔离与恢复原则</code>：session / topic / worktree scope 必须被当成硬边界，resume / worktree / background task 必须是运行时能力，而不是异常补丁。</li>
-<li><code>协作原则</code>：sub-agent / swarm 的价值来自角色化、隔离、汇总和验证，而不是单纯并行。</li>
-<li><code>知识分层原则</code>：知识必须沿着 wiki -&gt; skill -&gt; docs / <code>AGENTS.md</code> -&gt; CI / validator 这条长循环晋升，而不是堆成一个永不清理的大 prompt。</li>
-<li><code>操作员原则</code>：dashboard、门禁、事故归因和发布声明都必须绑定同一条事实流与同一组证据。</li>
-</ol>
-<p>这九条原则的价值在于，它们不依赖 Claude Code 用 TypeScript 还是 Codex 用 Rust，也不依赖团队是否采用 MCP、worktree 或某个特定 UI。它们描述的是控制系统必须守住的结构性边界，也就是第 6 章那张总图在团队决策语言里的翻译版。</p>
-<h2 id="113-必须禁止的反模式"><a class="header" href="#113-必须禁止的反模式">11.3 必须禁止的反模式</a></h2>
-<p>与上面九条原则一一对应，下面这些反模式必须被明确禁止：</p>
-<ol>
-<li><code>事实流反模式</code>：只有 prompt 的契约，例如“agent 应该记得发送文件”。</li>
-<li><code>生命周期反模式</code>：从 UI 反推事实，例如“气泡显示 done，所以任务完成”。</li>
-<li><code>能力平面反模式</code>：用 stderr 文本、自由格式日志或缓存快照充当状态协议。</li>
-<li><code>产物与验证反模式</code>：用文件名、最近修改时间或目录启发式猜主产物，或让尽力而为式验证器不影响终态成功。</li>
-<li><code>回放反模式</code>：让 replay、summary、历史页各自维护一套“差不多”的影子状态。</li>
-<li><code>隔离与恢复反模式</code>：把 resume、scope、worktree、background task 当成边缘补丁，而不是主运行时能力。</li>
-<li><code>协作反模式</code>：让子 agent 直接宣布系统终态，或直接污染父任务事实。</li>
-<li><code>知识分层反模式</code>：把所有经验都塞进一个大 prompt，而不做 promotion / demotion。</li>
-<li><code>操作员反模式</code>：让 dashboard 指标、门禁状态和运行时事实流脱节。</li>
-</ol>
-<p>这些反模式的共同点，是把“系统说真话”退化成“系统看起来差不多在工作”。一开始它们都节省代码，后来都会以事故成本把节省加倍收回来。</p>
+<p>Claude Code 和 Codex 都很强，但它们真正可迁移的启发，不在“某个 prompt 怎么写”，而在两者都在做同一件事——把模型的生成能力，和控制系统，分成两层。模型负责提出候选动作、生成候选产物、总结局部信息；控制系统负责守住事实流、生命周期、能力平面、产物与验证、回放、隔离与恢复、协作、知识分层和操作员面。这条线一旦没被切开，团队最终一定会重新滑回第 5 章那类事故里——因为一个没有外层控制的生成器，迟早会把“概率上的连贯”当成“运行时的事实”。后面那九条原则，都是这第一条的展开。</p>
+<h2 id="112-九条原则连同它们的反面"><a class="header" href="#112-九条原则连同它们的反面">11.2 九条原则，连同它们的反面</a></h2>
+<p>把第 4.8 节的九个维度和第 6 章的统一词汇表再压一道，会得到九条原则。它们最好成对地读——每一条原则的背面，正好站着一个反模式，而那个反模式，又恰好对应着第 5 章某一类事故。</p>
+<p>先是真相的两块底座。<strong>事实流原则</strong>要求契约状态必须持久在 prompt 和聊天上下文之外；它的反面是那种“只有 prompt 的契约”——比如指望“agent 应该记得发送文件”，结果记忆一老化就忘，正是第 5.1 节那种漂移。<strong>生命周期原则</strong>要求阶段单调、公开，并在 API、UI、operator 三个表面保持一致；它的反面是“从 UI 反推事实”——气泡显示 done，就当任务完成，于是落进第 5.2 节那种假一致。</p>
+<p>再是能力与完成。<strong>能力平面原则</strong>要求所有外部能力都进入统一调度面，而不是各自攥着私有状态机；它的反面，是用 stderr 文本、自由格式日志或缓存快照来充当状态协议，也就是第 7 章那段 Python 脚本一路污染父任务的根源。<strong>产物与验证原则</strong>要求主产物显式归属、<code>ready</code> / <code>failed</code> 由验证器和证据裁决；它的反面，是用文件名、最近修改时间或目录启发式去猜主产物，或者让“尽力而为”的验证器不影响终态——第 5.4、5.5 节那两类“假成功”就是这么来的。</p>
+<p>接着是看见、隔离与协作。<strong>回放原则</strong>要求回放、摘要和历史重建都从同一条事实流派生；它的反面，是让 replay、summary、历史页各攒一套“差不多”的影子状态（第 8 章）。<strong>隔离与恢复原则</strong>要求 session / topic / worktree 的 scope 被当成硬边界，resume、worktree、background task 是一等运行时能力而非异常补丁；它的反面，是把这些当边缘补丁打，于是 scope 一断就串（第 5.3 节）。<strong>协作原则</strong>要求 sub-agent / swarm 的价值来自角色化、隔离、汇总和验证，而非单纯并行；它的反面，是让子 agent 直接宣布系统终态、或直接污染父任务事实（第 10、13 章）。</p>
+<p>最后是沉淀与监督。<strong>知识分层原则</strong>要求知识沿着 wiki → skill → docs / <code>AGENTS.md</code> → CI / validator 这条长循环晋升；它的反面，是把所有经验都堆进一个永不清理的大 prompt。<strong>操作员原则</strong>要求 dashboard、门禁、事故归因和发布声明都绑定同一条事实流与同一组证据；它的反面，是让仪表盘指标、门禁状态和运行时事实流脱节，留下第 9 章那块“事实流里无源”的影子绿。</p>
+<p>这九条的价值，在于它们不依赖 Claude Code 用 TypeScript 还是 Codex 用 Rust，也不依赖你用不用 MCP、worktree 或某个特定 UI。它们描述的是控制系统必须守住的结构性边界——正是第 6 章那张总图，在团队决策语言里的译本。</p>
+<h2 id="113-反模式的共同根"><a class="header" href="#113-反模式的共同根">11.3 反模式的共同根</a></h2>
+<p>把上面九个反面摆在一起看，会发现它们其实是同一种病的九种症状：<strong>都在把“系统说真话”，悄悄退化成“系统看起来差不多在工作”。</strong> prompt 里的契约、UI 反推的事实、stderr 充当的状态、文件名猜出的产物、各自攒的影子回放——每一种，都是在某一层用一个“看起来对”的近似，顶替了一个“可被验证为真”的事实。它们的诱惑也一模一样：一开始都更省代码、更快上线。代价则统一地推迟到后面，再以事故的形式、连本带利地收回来——而且因为它们看起来一直在工作，账单往往要到一次用户面前的“假成功”才结清。</p>
 <h2 id="114-短循环和长循环"><a class="header" href="#114-短循环和长循环">11.4 短循环和长循环</a></h2>
-<p>所有 agent 都有短循环：生成、行动、观察，再生成。驾驭工程真正关心的是长循环：事故如何进入 wiki，wiki 如何晋升成 skill，skill 如何进入 <code>AGENTS.md</code> 或 docs，docs 中的约束如何再沉成 CI、validator 和 dashboard 信号。<sup class="footnote-reference" id="fr-long-loop-ch9-1"><a href="#footnote-long-loop-ch9">2</a></sup> 如果用第 6 章那套词汇来说，这一节其实是在展开“知识分层”和“操作员面”如何反过来塑造事实流、验证器和门禁。</p>
-<p>没有长循环，agent 每次都像从零开始的实习生。长循环跑起来之后，组织会把一次失败变成长期免疫力。</p>
-<h2 id="115-知识和-skill-的晋升纪律"><a class="header" href="#115-知识和-skill-的晋升纪律">11.5 知识和 Skill 的晋升纪律</a></h2>
-<p>不是所有经验都应该写进 <code>AGENTS.md</code>。更稳妥的治理方式是 promotion / demotion：重复出现、跨任务稳定、能被验证的经验才晋升；过时、低频、无法验证或引起误导的经验要降级或删除。<sup class="footnote-reference" id="fr-promotion-discipline-ch9-1"><a href="#footnote-promotion-discipline-ch9">3</a></sup></p>
-<p>Skill 也不是 prompt 集合。一个合格 skill 至少要有触发条件、输入输出契约、执行步骤和验证方式。对这类系统来说，skill 的价值不在“让模型多知道一点”，而在“把组织经验变成可执行、可检查的流程”。</p>
-<p>Codex 的 <code>AGENTS.md</code> 文档化和分层作用域设计，说明了什么应该常驻、什么应该按需加载；Claude Code 的 <code>loadAgentsDir.ts</code>、skills、hooks、memory scope 则说明了知识成熟后怎样沉进 agent 定义、技能包和能力边界。知识治理不是单独的文档工作，它会反过来塑造能力平面、协作拓扑和验证器边界。</p>
+<p>所有 agent 都有一条短循环：生成、行动、观察，再生成。但驾驭工程真正在意的是<strong>长循环</strong>——一次事故怎样进 wiki，wiki 怎样晋升成 skill，skill 怎样进 <code>AGENTS.md</code> 或 docs，docs 里的约束又怎样再沉成 CI、validator 和 dashboard 信号。<sup class="footnote-reference" id="fr-long-loop-ch9-1"><a href="#footnote-long-loop-ch9">2</a></sup> 用第 6 章那套词汇说，这一节其实是在讲“知识分层”和“操作员面”如何反过来，去塑造事实流、验证器和门禁。差别很实在：没有长循环，agent 每一次都像个从零开始的实习生，昨天踩过的坑今天照踩；长循环一旦跑起来，组织才把一次失败，变成了一份长期的免疫力。</p>
+<h2 id="115-知识与-skill-的晋升纪律"><a class="header" href="#115-知识与-skill-的晋升纪律">11.5 知识与 skill 的晋升纪律</a></h2>
+<p>不是所有经验都配写进 <code>AGENTS.md</code>。更稳的治理是一套 promotion / demotion 纪律：重复出现、跨任务稳定、能被验证的经验，才晋升；过时、低频、无法验证或会误导的，要降级或删除——否则知识层会慢慢变成一个长期的噪声源，比没有还糟。skill 也不是一袋 prompt：一个合格的 skill，至少要有触发条件、输入输出契约、执行步骤和验证方式。<sup class="footnote-reference" id="fr-promotion-discipline-ch9-1"><a href="#footnote-promotion-discipline-ch9">3</a></sup> 对这类系统而言，skill 的价值不在“让模型多知道一点”，而在“把组织经验，变成可执行、可检查的流程”。Codex 用 <code>AGENTS.md</code> 的文档化和分层作用域，说明了什么该常驻、什么该按需加载；Claude Code 用 <code>loadAgentsDir.ts</code>、skills、hooks、memory scope，说明了知识成熟后怎样沉进 agent 定义、技能包和能力边界。知识治理从来不是单独的文档活——它会反过来塑造能力平面、协作拓扑和验证器边界。</p>
 <h2 id="116-反身-harness-的边界"><a class="header" href="#116-反身-harness-的边界">11.6 反身 harness 的边界</a></h2>
-<p>未来 harness 会越来越多地修改自己：更新文档、生成测试、补充验证器、建议 schema 迁移。这是趋势，但反身能力必须分级。低风险变更可以自动化；影响事实流 schema、权限边界、验证独立性和合规目标的变更，必须保留人工决策。不能把目标函数、权限边界和验证器独立性，也交给提案者自己定义。</p>
+<p>往后看，harness 会越来越多地修改自己：更新文档、生成测试、补验证器、建议 schema 迁移。这是趋势，但反身能力必须<strong>分级</strong>。低风险的变更可以自动化；而一旦触及事实流 schema、权限边界、验证独立性或合规目标，就必须把人留在决策里。道理很硬：不能把目标函数、权限边界和验证器的独立性，交给提案者自己去定义——那等于让被告兼任法官。一个会自我演化的 harness，恰恰最需要在这几处，保留一道人来把的关。</p>
 <hr>
 <hr>
 <ol class="footnote-definition">
