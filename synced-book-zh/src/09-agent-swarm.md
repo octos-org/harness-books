@@ -4,9 +4,9 @@
 
 ## 10.1 多 agent 的本质不是并行，是角色化
 
-“多脑多手”常被误读成“多开几个 agent 一起跑”。它其实是一种组织结构：多个“脑”分别管规划、生成、验证、总结，多个“手”分别管文件、shell、浏览器、API、数据库、外部系统。而要紧的是——这些脑和手仍然要共享同一条 session 事实流、同一组权限边界、同一套验证规则、同一个操作员视图。[^many-brains-ch8] 一旦它们各拿各的真相，多 agent 就只是把第 5 章那些单 agent 的事故，乘上了 agent 的数量。
+“多脑多手”常被误读成“多开几个 agent 一起跑”。它其实是一种组织结构：多个“脑”分别管规划、生成、验证、总结，多个“手”分别管文件、shell、浏览器、API、数据库、外部系统。而要紧的是——这些脑和手仍然要共享同一条 session 事实流、同一组权限边界、同一套验证规则、同一个操作员视图。[^many-brains-ch10] 一旦它们各拿各的真相，多 agent 就只是把第 5 章那些单 agent 的事故，乘上了 agent 的数量。
 
-所以多 agent 真正缺的，从来不是“更多模型实例”，而是一小套编排原语。得有角色模板，把谁是 coordinator、谁是 worker、谁是 verifier、谁能请求人工输入分清；得有派工协议，规定子任务怎么启动、怎么续跑、怎么被打断；得有通信机制，让中间结论被回传，而不是让每个 agent 去读别人的全量日志；得有隔离机制，把工作区、权限、上下文和副作用彼此隔开；还得有汇总机制，让父任务不必重读所有原始细节，就能拿到可信的摘要和证据。Claude Code 的 `AgentTool.tsx`、`loadAgentsDir.ts`、`teammateMailbox.ts`、`worktree.ts`，和 Codex 的 `spawn_agent`、`send_input`、`wait_agent`、`resume_agent`，绕来绕去建的就是这几样，只是一个更偏产品器官、一个更偏协议原语。[^claudecode-codex-multiagent-ch8]
+所以多 agent 真正缺的，从来不是“更多模型实例”，而是一小套编排原语。得有角色模板，把谁是 coordinator、谁是 worker、谁是 verifier、谁能请求人工输入分清；得有派工协议，规定子任务怎么启动、怎么续跑、怎么被打断；得有通信机制，让中间结论被回传，而不是让每个 agent 去读别人的全量日志；得有隔离机制，把工作区、权限、上下文和副作用彼此隔开；还得有汇总机制，让父任务不必重读所有原始细节，就能拿到可信的摘要和证据。Claude Code 的 `AgentTool.tsx`、`loadAgentsDir.ts`、`teammateMailbox.ts`、`worktree.ts`，和 Codex 的 `spawn_agent`、`send_input`、`wait_agent`、`resume_agent`，绕来绕去建的就是这几样，只是一个更偏产品器官、一个更偏协议原语。[^claudecode-codex-multiagent-ch10]
 
 ## 10.2 工作分解，怎样落到系统里的所有权
 
@@ -33,9 +33,9 @@ UI / Operator 负责人
 
 ### 10.3.1 成本不能只看 token 账单
 
-聊 1M context 的成本，最常见的误区是只盯 token 单价。账单当然重要，但真正把系统压垮的，往往是 prefill 变慢、首 token 延迟上升、KV cache 撑大、并发吞吐下降、重试变贵，以及调度越来越难。这些信号在价格页上都看得到端倪：OpenAI 公开价格按百万 token 标价，却把标准处理费率限定在 `under 270K` 的上下文长度；Google 发布 Gemini 1.5 时，一边宣布 128K 到 1M 的 pricing tier，一边提醒早期测试者要预期更长的延迟。[^swarm-econ-ch8] 它们都在说同一件事：超长上下文不是普通请求的线性放大版。
+聊 1M context 的成本，最常见的误区是只盯 token 单价。账单当然重要，但真正把系统压垮的，往往是 prefill 变慢、首 token 延迟上升、KV cache 撑大、并发吞吐下降、重试变贵，以及调度越来越难。这些信号在价格页上都看得到端倪：OpenAI 公开价格按百万 token 标价，却把标准处理费率限定在 `under 270K` 的上下文长度；Google 发布 Gemini 1.5 时，一边宣布 128K 到 1M 的 pricing tier，一边提醒早期测试者要预期更长的延迟。[^swarm-econ-ch10] 它们都在说同一件事：超长上下文不是普通请求的线性放大版。
 
-而从系统计算看，痛点通常不在 output token，在 prefill。MInference 的摘要给过一个够刺眼的数字——一个 8B 模型处理 1M token 的 prompt，能慢到 30 分钟量级，根因正是 attention 的二次复杂度。[^swarm-econ-ch8] 这不是哪家 API 的实现细节，而是长序列计算的基础压力。
+而从系统计算看，痛点通常不在 output token，在 prefill。MInference 的摘要给过一个够刺眼的数字——一个 8B 模型处理 1M token 的 prompt，能慢到 30 分钟量级，根因正是 attention 的二次复杂度。[^swarm-econ-ch10] 这不是哪家 API 的实现细节，而是长序列计算的基础压力。
 
 ### 10.3.2 “1M” 和 “5 个 200K” 不能只比总 token
 
@@ -55,8 +55,8 @@ UI / Operator 负责人
 
 多 agent 一旦上线，最先失控的通常不是模型质量，是控制面纪律。至少有四条规则要焊死。第一，**子 agent 不直接宣布系统终态**——只有 coordinator 加 verifier 能裁决 ready / failed，这是第 13 章那条假成功链的正面解药。第二，**子 agent 之间不共享隐式上下文**，能共享的只有显式的任务说明、事实流引用和被授权的中间产物，否则就回到第 5.3 节那种串扰。第三，**每个子 agent 都必须能被单独恢复、单独取消、单独审计**——群体里一旦有谁不可单独操作，排障时就只能整片重来。第四，**任何协议、生命周期、回放或 scope 语义的变更，都要同步更新 fixture、门禁、E2E 和文档**，否则多 agent 的复杂度会让一处不同步迅速扩散成多处事故。守不住这四条，多 agent 只会比单 agent 更快地制造混乱；守住了，它才真正变成能放大团队产能的协作系统。
 
-[^many-brains-ch8]: Anthropic, *Scaling Managed Agents: Decoupling the brain from the hands.* 本章在此处使用其 many brains / many hands 的组织视角，说明 coordinator、worker 与 verifier 的分工；对应第 21 章参考文献 3。
-[^claudecode-codex-multiagent-ch8]: 本章在此处综合 Claude Code 的 `AgentTool.tsx`、`loadAgentsDir.ts`、`teammateMailbox.ts`、`worktree.ts` 等实现，以及 Codex `spawn_agent` / `send_input` / `wait_agent` / `resume_agent` 等工具原语，用来说明多 agent 需要角色、通信、隔离、汇总与恢复这些一等能力；对应第 21 章参考文献 21、24。
-[^swarm-econ-ch8]: 本章在此处综合 Anthropic 的 managed agents 视角、OpenAI API Pricing 关于 `under 270K` 标准费率的限定、Google Gemini 1.5 关于 1M context pricing tiers 与 latency 的说明、Google long context 文档关于 retrieval-cost tradeoff 与 caching 的说明、LongLLMLingua 关于 higher computational cost / performance reduction / position bias 的概括，以及 MInference 关于 1M token prefill 代价的摘要数字，用于说明 sub-agent / swarm 在质量、成本与时延上的优势；对应第 21 章参考文献 3、14、15、18、19、20。
+[^many-brains-ch10]: Anthropic, *Scaling Managed Agents: Decoupling the brain from the hands.* 本章在此处使用其 many brains / many hands 的组织视角，说明 coordinator、worker 与 verifier 的分工；对应第 21 章参考文献 3。
+[^claudecode-codex-multiagent-ch10]: 本章在此处综合 Claude Code 的 `AgentTool.tsx`、`loadAgentsDir.ts`、`teammateMailbox.ts`、`worktree.ts` 等实现，以及 Codex `spawn_agent` / `send_input` / `wait_agent` / `resume_agent` 等工具原语，用来说明多 agent 需要角色、通信、隔离、汇总与恢复这些一等能力；对应第 21 章参考文献 21、24。
+[^swarm-econ-ch10]: 本章在此处综合 Anthropic 的 managed agents 视角、OpenAI API Pricing 关于 `under 270K` 标准费率的限定、Google Gemini 1.5 关于 1M context pricing tiers 与 latency 的说明、Google long context 文档关于 retrieval-cost tradeoff 与 caching 的说明、LongLLMLingua 关于 higher computational cost / performance reduction / position bias 的概括，以及 MInference 关于 1M token prefill 代价的摘要数字，用于说明 sub-agent / swarm 在质量、成本与时延上的优势；对应第 21 章参考文献 3、14、15、18、19、20。
 
 ---
