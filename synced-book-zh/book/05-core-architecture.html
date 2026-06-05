@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-0df5ccf7.js";
+            window.path_to_searchindex_js = "searchindex-4c329400.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-67109edf.js"></script>
@@ -291,6 +291,8 @@ Session / Thread 事实流
 </code></pre>
 <p>PDF 那两条都过了。<code>slack.delivered</code> 这条 <code>gating:true</code>，它的 <code>ok:false</code> 一票否决，直接把终态钉死成 <code>failed</code>。这里有两个设计选择值得停下来看清楚。其一是 <code>owner_rule:"single"</code>——主产物必须显式、唯一地归属，从根上堵死第 5.4 节那种“靠文件名或最近修改时间去猜哪个才是交付物”的事故。其二是 <code>gating</code> 这个开关：验证器分阻断与不阻断两种，只有 <code>gating:true</code> 的失败能否决终态，那些“尽力而为”的检查（拼写、风格、体例建议）照样记录在案，却不该把一个本质完成的任务拖死——这正是为了避开第 5.5 节那种“验证器过严、误伤正常交付”的反向事故。</p>
 <p>而这条任务里最不该被轻轻放过的细节是：那张送达回执，必须是一件 artifact，而不能只是日志里一句“发出去了”。原因很硬——只有 artifact 才进契约、才被 validator 按 <code>kind</code> 寻址、才能在终态裁决时被“点名缺席”。<code>slack.delivered</code> 之所以能斩钉截铁地说“no delivery.receipt found”，正是因为它找的是一件本该存在却不存在的具名产物，而不是去解析一段自由格式的文本日志。把“成功的证据”定义成一件可寻址、可校验的产物，而不是一句可被模型乐观改写的话——这就是产物与验证这根支柱，落到 schema 上的样子。</p>
+<p><img src="./img/wf-artifact-gating.png" alt="产物契约与 gating 门禁"></p>
+<p><em>图：完成由证据裁决。任务声明的每件 required artifact 都要先过验证（左侧勾选），再汇到一道 gating 门禁：全部就绪才放行到 ready（上分支），任一缺失或验证失败就落 failed（下分支）——模型嘴上说“完成”，在这道门前不算数。</em></p>
 <h2 id="610-一条最小-api-面怎样去问它真的完成了吗"><a class="header" href="#610-一条最小-api-面怎样去问它真的完成了吗">6.10 一条最小 API 面：怎样去问“它真的完成了吗”</a></h2>
 <p>事实流、状态机、产物契约都就位之后，还差最后一环：让外面的世界——UI、operator、上游编排器——能问到这台机器的判断，而且只能问到它的判断。这套 API 面可以小到只有几条，但它有一个刻意为之的缺口：</p>
 <pre><code class="language-text">POST /tasks                       创建任务，携带 artifact 契约
