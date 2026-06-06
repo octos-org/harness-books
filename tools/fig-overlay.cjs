@@ -64,6 +64,48 @@ const FIGS = {
       { t: "P = 1 − (1 − p)ᵏ", xp: 0.62, yp: 0.6, anchor: "middle", color: "#0f3a4a", size: 32, weight: 700 },
     ],
   },
+
+  // ===== 批2：概念图 =====
+  "wf-softmax-dilution": {
+    style: true,
+    art: `A professional scientific concept illustration of Nature/Quanta caliber on a PURE WHITE background. Refined flat vector, deep-teal lines with a single warm coral accent, subtle soft shadows, NO dark background, NO glow. SUBJECT: one teal source node at LEFT-CENTER (~12% width, 50% height) emits a fixed bundle of fine rays. The rays split: UPPER-RIGHT a tight cluster of a FEW bright teal nodes (~68% width, 22% height) with dense sharp lines; and LOWER-RIGHT a VAST field of MANY faint pale dots (spread across 35–95% width, 60–95% height) with thin faint lines. One small coral node sits ALONE at the far lower-right (~80% width, 82% height). Generous white space. ABSOLUTELY NO text, letters, numbers or labels anywhere. 16:9.`,
+    labels: [
+      { t: "注意力源", xp: 0.10, yp: 0.44, anchor: "middle", size: 30 },
+      { t: "近端：注意力集中、检索锐利", xp: 0.50, yp: 0.12, anchor: "start", size: 30 },
+      { t: "远端：被摊薄、稀释到几乎看不见", xp: 0.34, yp: 0.78, anchor: "start", color: "#5a6b78", size: 30 },
+      { t: "真正目标（被淹没）", xp: 0.80, yp: 0.90, anchor: "middle", color: "#b5532a", size: 30, weight: 700 },
+    ],
+  },
+  "wf-attention-mixing": {
+    style: true,
+    art: `Nature/Quanta caliber scientific diagram on PURE WHITE. Refined flat vector, deep-teal with one coral accent, NO dark background, NO glow. SUBJECT: on the LEFT (~15% width, 50% height) one rounded square node. From it, thin lines fan to FOUR small circle nodes stacked in a vertical column at the CENTER (~48% width, between 25% and 75% height); the four lines have clearly DIFFERENT thickness (one much thicker). The four circles then send lines that converge into ONE rounded square node on the RIGHT (~82% width, 50% height), drawn in coral. Airy, generous white space. ABSOLUTELY NO text, letters, numbers, labels. 16:9.`,
+    labels: [
+      { t: "查询向量", xp: 0.15, yp: 0.70, anchor: "middle", size: 28 },
+      { t: "键向量（多个）", xp: 0.48, yp: 0.96, anchor: "middle", size: 28 },
+      { t: "权重（连线越粗越大）", xp: 0.20, yp: 0.24, anchor: "start", color: "#2a6f8a", size: 28 },
+      { t: "加权输出", xp: 0.82, yp: 0.70, anchor: "middle", color: "#b5532a", size: 28, weight: 700 },
+      { t: "注意力：软查找后按权重混合", xp: 0.5, yp: 0.06, anchor: "middle", size: 32, weight: 700 },
+    ],
+  },
+  "wf-nonuniform-window": {
+    style: true,
+    art: `Nature/Quanta caliber scientific diagram on PURE WHITE. Refined flat vector, deep-teal with one coral accent, NO dark background, NO glow. SUBJECT: one long horizontal rectangular band spanning the middle (from 8% to 92% width, centered vertically). The band is divided into cells: at the RIGHT end small, many, sharp fine cells (high resolution); moving LEFT the cells progressively grow larger, fewer and coarser; the far-LEFT portion dissolves into a faint dashed outline. A small coral triangle marker sits just outside the RIGHT end. Generous white space above and below. ABSOLUTELY NO text, letters, numbers, labels. 16:9.`,
+    labels: [
+      { t: "上下文窗口", xp: 0.5, yp: 0.16, anchor: "middle", size: 32, weight: 700 },
+      { t: "近端 · 高分辨率", xp: 0.82, yp: 0.80, anchor: "middle", color: "#2a6f8a", size: 28 },
+      { t: "远端 · 被压缩成轮廓", xp: 0.20, yp: 0.80, anchor: "middle", color: "#5a6b78", size: 28 },
+      { t: "光标", xp: 0.95, yp: 0.40, anchor: "middle", color: "#b5532a", size: 26 },
+    ],
+  },
+  "wf-context-economics": {
+    style: true,
+    art: `Nature/Quanta caliber scientific diagram on PURE WHITE. Refined flat vector, deep-teal with one coral accent, NO dark background, NO glow. SUBJECT: a balance scale / seesaw with a central triangular fulcrum at the bottom-center. The LEFT pan (tipped DOWN, heavy) holds ONE large square filled with a very fine dense grid. The RIGHT pan (tipped UP, light) holds FIVE small separate squares in a row, each with only a few sparse cells. A small down-arrow over the left, a small up-arrow over the right. Generous white space. ABSOLUTELY NO text, letters, numbers, labels. 16:9.`,
+    labels: [
+      { t: "单条 100万（稠密）", xp: 0.22, yp: 0.86, anchor: "middle", size: 30, weight: 700 },
+      { t: "五段 20万（分片）", xp: 0.76, yp: 0.62, anchor: "middle", size: 30, weight: 700 },
+      { t: "注意力量级 ≈ 5×", xp: 0.5, yp: 0.96, anchor: "middle", color: "#b5532a", size: 30 },
+    ],
+  },
 };
 
 async function genArt(id, prompt) {
