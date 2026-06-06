@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-f0a6676b.js";
+            window.path_to_searchindex_js = "searchindex-fa9f19da.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-67109edf.js"></script>
@@ -177,6 +177,7 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="4-成熟度鸿沟灵光一闪-vs-工厂化输出"><a class="header" href="#4-成熟度鸿沟灵光一闪-vs-工厂化输出">4. 成熟度鸿沟：灵光一闪 vs 工厂化输出</a></h1>
+<p>周五下午的演示里，那个 agent 像被点了将：一句话的需求，它当场写出带测试的完整功能，连边角情形都堵上了，会议室里响起掌声。三周后，同一个 agent 被挂上流水线，一天跑五百遍——没人再盯着屏幕了。它依旧每次都回一句“已完成”，可那一周里，有三个“已完成”其实是坏的：一个把配置写进了错误的环境，一个悄悄吞掉了异常，还有一个改完压根没跑通。没人能第一时间说出是哪三个。同一个模型、同样的聪明，演示台上的灵光一闪和流水线上的稳定产出，中间隔着的那道沟，正是这一卷要丈量的东西。</p>
 <p>上一章回答的是“为什么必须有 harness”；这一章回答的是“成熟系统究竟在建设什么，才能从 demo 式聪明跨到工厂化输出”。这里会按重要性看四类样本：Claude Code 作为主分析对象，Codex 作为公开的开源结构样本，OpenClaw/Hermes 作为更广义 agent product 对照，而 OpenAI 1M LOC 案例则提供组织生产层的极端样本。那组内部失败案例不在这一章里做主角，它在下一章只作为反证样本出现。</p>
 <h2 id="41-两层驾驭工程先把实践对象分清"><a class="header" href="#41-两层驾驭工程先把实践对象分清">4.1 两层驾驭工程：先把实践对象分清</a></h2>
 <p>进入样本之前，必须先把“驾驭工程”分成两层，否则读者会把 OpenAI 1M LOC、Claude Code、Codex、OpenClaw、Hermes 和失败案例混成一类东西。</p>
