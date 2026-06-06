@@ -8,19 +8,19 @@
 
 任务是这样下的：“读 12 篇材料，生成一份 20 页汇报，并附带可演示的 slides。”系统表面上做得一板一眼——起了研究 worker，调了 web 和 MCP 搜索，写了草稿，最后回了一个 `ready`，外加一个 `report.pptx`。用户在工位上双击打开它，期待看到那 12 篇材料汇成的新汇报。然后他愣住了：打开的是上个季度的旧模板，引用残缺，而这次真正写出来的新内容，全躺在一个谁也没提过的中间 Markdown 文件里。系统从头到尾没报一个错。它只是，平静地，交付了一份错的东西，还盖了个“完成”的章。
 
-顺着这次“假成功”往回追，会发现它不是模型在某一步答错了，而是**五层架构各漏了一点约束，最后在用户面前合成出来的**。最底下，session 层从没把“哪个是 root task、派生了哪几个 child、哪个才是 primary artifact”钉成单一事实——交付物到底是哪个文件，系统自己都没共识。往上一层，能力平面里，研究 worker 用 Python 和 MCP 拉资料、打包 worker 用 shell 生 slides，两边却只在各自的自由文本里顺口提了一句产物路径，没有一个统一的 artifact 引用把它们对齐——于是“新内容在哪”这件事，在两个 worker 之间就已经失联了。再往上，verifier 只检查了“是不是生成了一个 `pptx`”，没去查引用够不够、主文件归不归属、内容是不是基于这次的 report——于是那个旧模板，轻松通过。再往上，operator dashboard 只看得到一句“任务 ready”，看不到是哪个 child 报了哪个产物、哪个 validator 其实压根没覆盖到关键约束。最顶上，swarm 层的 coordinator 只收到打包 worker 一句轻飘飘的“slides generated successfully”，没有附带证据的 summary，于是它信了，把这次局部的“跑完了”当成了整个系统的“做对了”。
+顺着这次“假成功”往回追，会发现它不是模型在某一步答错了，而是**五层架构各漏了一点约束，最后在用户面前合成出来的**。最底下，session 层从没把“哪个是 root task、派生了哪几个 child、哪个才是 primary artifact”钉成单一事实——交付物到底是哪个文件，系统自己都没共识。往上一层，能力平面里，研究 worker 用 Python 和 MCP 拉资料、打包 worker 用 shell 生 slides，两边却只在各自的自由文本里顺口提了一句产物路径，没有一个统一的 artifact 引用把它们对齐——于是“新内容在哪”这件事，在两个 worker 之间就已经失联了。再往上，verifier 只检查了“是不是生成了一个 `pptx`”，没去查引用够不够、主文件归不归属、内容是不是基于这次的 report——于是那个旧模板，轻松通过。再往上，操作员仪表盘只看得到一句“任务 ready”，看不到是哪个 child 报了哪个产物、哪个 validator 其实压根没覆盖到关键约束。最顶上，swarm 层的 coordinator 只收到打包 worker 一句轻飘飘的“slides generated successfully”，没有附带证据的 summary，于是它信了，把这次局部的“跑完了”当成了整个系统的“做对了”。
 
 这条链的代表性就在这里：**`session → 能力平面 → verifier → dashboard → swarm`，五层每层只松了一扣，单独看都不致命，叠起来就合成了一次完整的谎言。
 
 ![“假成功”的五层断裂](./img/wf-five-layer-failure.jpg)
 
-*图：“假成功”的五层断裂。session、能力平面、verifier、dashboard、swarm 每层只松一扣，单独看都不致命；可一旦缺口对齐，就在用户面前合成出一个根本没发生的“完成”。***
+*图：“假成功”的五层断裂。session、能力平面、verifier、仪表盘、swarm 每层只松一扣，单独看都不致命；可一旦缺口对齐，就在用户面前合成出一个根本没发生的“完成”。***
 
 ## 13.2 顺着这条链，看五层架构怎样真正落地
 
 要修住它，不能在最末端补一句“更强的提示词”，得顺着这五层逐层把扣收紧。
 
-`session` 层先做硬事实：root task 一创建，就把本轮交付物声明成 `report.md` 与 `slides.pptx`，并把每个 child 的 owner、role、scope、worktree、预期产物类型都写进事实流。这样 coordinator、replay、dashboard、verifier 读的才是**同一份任务定义**，而不是各猜各的。`能力平面` 层再做统一入口：研究 worker 无论用 Python、Node、shell 还是 MCP，结果都只能经由统一的事件和 artifact 报告面回传——脚本可以自由实现，但不能自由定义状态协议；能力可以多样，但产物引用、scope 绑定、任务归属必须一致。`verifier` 层负责终态裁决：它不只看“文件存在”，还要查这是不是被声明过的 primary artifact、引用和页数达没达标、slides 是不是基于当前这版 report 生成、证据落在哪——这些全过，root task 才配进 `ready`，否则就该停在 `verifying` 或落到 `failed`，而不是把验证的成本甩给用户去双击发现。`dashboard` 层负责把这条链摆清楚：值班的人要能一眼看到谁派了哪些 child、每个 child 最近的 summary、哪个 artifact 被报告、哪个 validator 红了、证据在哪——这样用户投诉进来，是沿着事实流定位“哪一层断了”，而不是从零开始猜。`swarm` 层最后收束成单一真相：coordinator 只管拆解、汇总、裁决，研究 worker 只管搜证，draft worker 只管生成，verifier worker 只管检查，**没有任何一个 worker 能单独宣布整个系统成功**。只要这条规矩还在，局部的“跑完了”就再也伪装不成系统的“做对了”。
+`session` 层先做硬事实：root task 一创建，就把本轮交付物声明成 `report.md` 与 `slides.pptx`，并把每个 child 的 owner、role、scope、worktree、预期产物类型都写进事实流。这样 coordinator、replay、仪表盘、verifier 读的才是**同一份任务定义**，而不是各猜各的。`能力平面` 层再做统一入口：研究 worker 无论用 Python、Node、shell 还是 MCP，结果都只能经由统一的事件和 artifact 报告面回传——脚本可以自由实现，但不能自由定义状态协议；能力可以多样，但产物引用、scope 绑定、任务归属必须一致。`verifier` 层负责终态裁决：它不只看“文件存在”，还要查这是不是被声明过的 primary artifact、引用和页数达没达标、slides 是不是基于当前这版 report 生成、证据落在哪——这些全过，root task 才配进 `ready`，否则就该停在 `verifying` 或落到 `failed`，而不是把验证的成本甩给用户去双击发现。`dashboard` 层负责把这条链摆清楚：值班的人要能一眼看到谁派了哪些 child、每个 child 最近的 summary、哪个 artifact 被报告、哪个 validator 红了、证据在哪——这样用户投诉进来，是沿着事实流定位“哪一层断了”，而不是从零开始猜。`swarm` 层最后收束成单一真相：coordinator 只管拆解、汇总、裁决，研究 worker 只管搜证，draft worker 只管生成，verifier worker 只管检查，**没有任何一个 worker 能单独宣布整个系统成功**。只要这条规矩还在，局部的“跑完了”就再也伪装不成系统的“做对了”。
 
 ## 13.3 它修到哪为止，哪里就不再是它的职责
 

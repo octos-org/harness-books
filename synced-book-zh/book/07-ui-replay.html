@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-3079e774.js";
+            window.path_to_searchindex_js = "searchindex-af8374e6.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-67109edf.js"></script>
+        <script src="toc-819c48d9.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -231,7 +231,7 @@ function fold(events) {
 <p>把第 6 章那条任务的事件流喂进去，结论冷得发硬。<code>seq:8</code> 那句“已发送到 #finance”落进 <code>v.claims</code>，会作为一条聊天气泡显示出来；但 <code>v.lifecycle</code> 自始至终只听 <code>task.settled</code> 的——而那条 <code>task.settled</code> 是第 6.8 节那台状态机在 gating validator 失败后写下的 <code>{state:"failed", reason:"required_validator_failed:slack.delivered"}</code>。于是 fold 吐出的是 <code>lifecycle:"failed"</code>，外加一条人能读懂的原因，和一句“模型当时是这么说的”。那个绿色完成气泡，在这个函数里压根<strong>不可表示</strong>——不是因为前端工程师足够小心，而是因为 fold 的类型纪律让“从 model.claim 推出 done”这条路根本不存在。第 5.2 节那种“从 UI 反推事实”的假一致，到这里被釜底抽薪：UI 没有自己的薪可烧了，它能显示的每一个生命周期值，都只能由 <code>task.settled</code> 这一种事件点着。</p>
 <p>这也顺手解释了为什么 §8.1 那次刷新能平静收场。刷新清空的是浏览器内存，可 <code>fold</code> 没有内存可清——它的“当前状态”是事实流的纯函数，刷新只是拿同一条流再求一次值。前端可以缓存这条流、可以只折叠增量、可以给状态变化加动画，但它求值的唯一依据，永远是那串它无权改写的事件。</p>
 <p><img src="./img/wf-factstream-fold.jpg" alt="事实流折叠成多个投影"></p>
-<p><em>图：一条只追加的事实流，被折叠（fold）成多个投影。UI、API、operator dashboard 都从同一条事件流派生，而不是各攒一份“差不多”的影子状态——这正是刷新、重连、切会话之后大家仍看到同一份事实的根本原因。</em></p>
+<p><em>图：一条只追加的事实流，被折叠（fold）成多个投影。UI、API、操作员仪表盘都从同一条事件流派生，而不是各攒一份“差不多”的影子状态——这正是刷新、重连、切会话之后大家仍看到同一份事实的根本原因。</em></p>
 <h2 id="85-把回放写成一道门禁"><a class="header" href="#85-把回放写成一道门禁">8.5 把回放写成一道门禁</a></h2>
 <p>这类问题最阴的地方在于，单元测试照不到它们——它们只在“刷新、重连、切会话”这些动作发生的那一瞬现形。所以测试得换个写法：与其断言某个函数的返回值，不如断言<strong>两条路径给出的世界是不是同一个</strong>。</p>
 <p>最该先写的那道门禁，正好就是 §8.1 那个场景的自动化版本。它做三件事：起一个任务，让它跑到中途某个确定的阶段（比如 <code>refactor 3/7</code>）；然后分别走两条路——一条直接读任务快照接口 <code>/api/sessions/:id/tasks</code>，一条把 SSE 流从头回放一遍 fold 出状态；最后断言这两个状态在生命周期上<strong>逐字段相等</strong>。这道断言一旦挂上 CI，§8.2 那种“两个对象模型悄悄分叉”的 bug 就再也合不进主干——因为它一分叉，这道门禁立刻红。</p>
@@ -269,7 +269,7 @@ function fold(events) {
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="08-dashboard-mini-fleet.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="08-仪表盘-mini-fleet.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -283,7 +283,7 @@ function fold(events) {
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="08-dashboard-mini-fleet.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="08-仪表盘-mini-fleet.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

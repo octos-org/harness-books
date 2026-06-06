@@ -31,21 +31,21 @@ UI / Operator 负责人
 
 第 2 章给过理论结论：最大上下文窗口不是平坦工作区。到第 10 章，它要落成一个实践判断——什么时候该用单个超长上下文，什么时候该拆成多个局部 agent。如果任务天然可分块，把全部材料一次性塞进一个超长上下文，往往不是最优解。更常见的高收益结构是：coordinator 只攥着总目标、拆解计划、共享约束和最终验收标准；每个 sub-agent 只拿自己那一块原始材料或代码域；子 agent 往上交的是摘要、证据、diff、引用和待验证结论，而不是把整个“大海捞针”的窗口一路向上传；最后由 verifier 把跨 shard 的冲突和遗漏拦下来。
 
-### 10.3.1 成本不能只看 token 账单
+### 10.3.1 成本不能只看词元账单
 
-聊 1M context 的成本，最常见的误区是只盯 token 单价。账单当然重要，但真正把系统压垮的，往往是 prefill 变慢、首 token 延迟上升、KV cache 撑大、并发吞吐下降、重试变贵，以及调度越来越难。这些信号在价格页上都看得到端倪：OpenAI 公开价格按百万 token 标价，却把标准处理费率限定在 `under 270K` 的上下文长度；Google 发布 Gemini 1.5 时，一边宣布 128K 到 1M 的 pricing tier，一边提醒早期测试者要预期更长的延迟。[^swarm-econ-ch10] 它们都在说同一件事：超长上下文不是普通请求的线性放大版。
+聊 1M context 的成本，最常见的误区是只盯词元单价。账单当然重要，但真正把系统压垮的，往往是 prefill 变慢、首词元延迟上升、键值缓存撑大、并发吞吐下降、重试变贵，以及调度越来越难。这些信号在价格页上都看得到端倪：OpenAI 公开价格按百万词元标价，却把标准处理费率限定在 `under 270K` 的上下文长度；Google 发布 Gemini 1.5 时，一边宣布 128K 到 1M 的 pricing tier，一边提醒早期测试者要预期更长的延迟。[^swarm-econ-ch10] 它们都在说同一件事：超长上下文不是普通请求的线性放大版。
 
-而从系统计算看，痛点通常不在 output token，在 prefill。MInference 的摘要给过一个够刺眼的数字——一个 8B 模型处理 1M token 的 prompt，能慢到 30 分钟量级，根因正是 attention 的二次复杂度。[^swarm-econ-ch10] 这不是哪家 API 的实现细节，而是长序列计算的基础压力。
+而从系统计算看，痛点通常不在 output 词元，在 prefill。MInference 的摘要给过一个够刺眼的数字——一个 8B 模型处理 1M 词元的提示词，能慢到 30 分钟量级，根因正是 attention 的二次复杂度。[^swarm-econ-ch10] 这不是哪家 API 的实现细节，而是长序列计算的基础压力。
 
-### 10.3.2 “1M” 和 “5 个 200K” 不能只比总 token
+### 10.3.2 “1M” 和 “5 个 200K” 不能只比总词元
 
-做个极端理想化的假设：一个 1M 的请求，和五个各 200K 的请求，总输入 token 恰好相等，没有重复背景、没有协调开销、没有缓存。单看“按 token 计费”的账单，它们也许接近。但真实的 agent 系统很少这么跑——更常见的是 coordinator 持目标、计划、约束和验收，每个子 agent 只持一个 shard 的原料，公共的制度性上下文靠缓存或固定 system prompt 复用，向上交的是摘要而非整份语料。这一来，\\(5 \times 200\text{K}\\) 的真实总 token，常常**小于** \\(1 \times 1\text{M}\\)。
+做个极端理想化的假设：一个 1M 的请求，和五个各 200K 的请求，总输入词元恰好相等，没有重复背景、没有协调开销、没有缓存。单看“按词元计费”的账单，它们也许接近。但真实的 agent 系统很少这么跑——更常见的是 coordinator 持目标、计划、约束和验收，每个子 agent 只持一个 shard 的原料，公共的制度性上下文靠缓存或固定系统提示词复用，向上交的是摘要而非整份语料。这一来，\\(5 \times 200\text{K}\\) 的真实总词元，常常**小于** \\(1 \times 1\text{M}\\)。
 
-更关键的是，哪怕总 token 真的相等，prefill 的计算量也不等。按 dense attention 做个一阶量级估算：单次 1M 上下文的 attention 规模约是 \\(1{,}000{,}000^{2} = 10^{12}\\)，而五次 200K 的总规模约是 \\(5 \times 200{,}000^{2} = 2 \times 10^{11}\\)。也就是说，在“总 token 相同”这个最有利于长上下文的理想条件下，\\(1 \times 1\text{M}\\) 的 attention 量级，仍然大约是 \\(5 \times 200\text{K}\\) 的**五倍**。所以工程上要同时翻三本账：账单、时延、可调度性——只看第一本，会做出系统性偏贵的决定。
+更关键的是，哪怕总词元真的相等，prefill 的计算量也不等。按 dense attention 做个一阶量级估算：单次 1M 上下文的 attention 规模约是 \\(1{,}000{,}000^{2} = 10^{12}\\)，而五次 200K 的总规模约是 \\(5 \times 200{,}000^{2} = 2 \times 10^{11}\\)。也就是说，在“总词元相同”这个最有利于长上下文的理想条件下，\\(1 \times 1\text{M}\\) 的 attention 量级，仍然大约是 \\(5 \times 200\text{K}\\) 的**五倍**。所以工程上要同时翻三本账：账单、时延、可调度性——只看第一本，会做出系统性偏贵的决定。
 
 ![1M 与 5×200K 的量级对比](./img/wf-context-economics.jpg)
 
-*图：把同样的总 token 放上天平——左边一个 1M 的稠密上下文（致密的大块）和右边几个 200K 的局部分片（轻盈的小块）相比，前者的 attention 计算量级要重得多。这就是为什么账单、时延、可调度性三本账，往往都偏向“拆成多个小窗口”。*
+*图：把同样的总词元放上天平——左边一个 1M 的稠密上下文（致密的大块）和右边几个 200K 的局部分片（轻盈的小块）相比，前者的 attention 计算量级要重得多。这就是为什么账单、时延、可调度性三本账，往往都偏向“拆成多个小窗口”。*
 
 ### 10.3.3 sub-agent 的收益，不只是省钱
 
@@ -128,6 +128,6 @@ coordinator ──spawn_agent("verifier",         goal="按契约核对产物", 
 
 [^many-brains-ch10]: Anthropic, *Scaling Managed Agents: Decoupling the brain from the hands.* 本章在此处使用其 many brains / many hands 的组织视角，说明 coordinator、worker 与 verifier 的分工；对应第 23 章参考文献 3。
 [^claudecode-codex-multiagent-ch10]: 本章在此处综合 Claude Code 的 `AgentTool.tsx`、`loadAgentsDir.ts`、`teammateMailbox.ts`、`worktree.ts` 等实现，以及 Codex `spawn_agent` / `send_input` / `wait_agent` / `resume_agent` 等工具原语，用来说明多 agent 需要角色、通信、隔离、汇总与恢复这些一等能力；对应第 23 章参考文献 21、24。
-[^swarm-econ-ch10]: 本章在此处综合 Anthropic 的 managed agents 视角、OpenAI API Pricing 关于 `under 270K` 标准费率的限定、Google Gemini 1.5 关于 1M context pricing tiers 与 latency 的说明、Google long context 文档关于 retrieval-cost tradeoff 与 caching 的说明、LongLLMLingua 关于 higher computational cost / performance reduction / position bias 的概括，以及 MInference 关于 1M token prefill 代价的摘要数字，用于说明 sub-agent / swarm 在质量、成本与时延上的优势；对应第 23 章参考文献 3、14、15、18、19、20。
+[^swarm-econ-ch10]: 本章在此处综合 Anthropic 的 managed agents 视角、OpenAI API Pricing 关于 `under 270K` 标准费率的限定、Google Gemini 1.5 关于 1M context pricing tiers 与 latency 的说明、Google long context 文档关于 retrieval-cost tradeoff 与 caching 的说明、LongLLMLingua 关于 higher computational cost / performance reduction / position bias 的概括，以及 MInference 关于 1M 词元 prefill 代价的摘要数字，用于说明 sub-agent / swarm 在质量、成本与时延上的优势；对应第 23 章参考文献 3、14、15、18、19、20。
 
 ---

@@ -80,7 +80,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 - `tool.called` 说明 capability plane 实际调了什么能力；
 - `artifact.reported` 说明谁声称自己产出了什么；
 - `validator.failed` 说明为什么不能进入 `ready`；
-- `summary.updated` / `operator.alerted` 说明 dashboard 该怎样说人话；
+- `summary.updated` / `operator.alerted` 说明仪表盘该怎样说人话；
 - `task.failed` 则把系统终态固定下来。
 
 没有这类最小事件序列，很多系统也能“看起来运行”。但只要出一次事故，团队就会发现自己没有真正的运行时事实，只剩聊天记录和猜测。
@@ -236,7 +236,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 - [ ] 复盘已归档到 failure museum
 ```
 
-这个模板最重要的价值，不是让复盘文档更整齐，而是避免团队把 harness 事故再次写成“一个人记得的故事”。只要每次都沿着这份模板写，事故就会持续沉进 session 模型、能力平面、validator、dashboard 和 swarm 纪律里。
+这个模板最重要的价值，不是让复盘文档更整齐，而是避免团队把 harness 事故再次写成“一个人记得的故事”。只要每次都沿着这份模板写，事故就会持续沉进 session 模型、能力平面、validator、仪表盘和 swarm 纪律里。
 
 ## 15.7 一份填好的复盘：周报投递的“假成功”
 

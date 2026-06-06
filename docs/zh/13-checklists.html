@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-3079e774.js";
+            window.path_to_searchindex_js = "searchindex-af8374e6.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-67109edf.js"></script>
+        <script src="toc-819c48d9.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -215,7 +215,7 @@
 <li><input disabled="" type="checkbox"> 修复后重新运行小型 fleet 门禁；不要接受仅本地验证。</li>
 </ul>
 <h2 id="144-匿名失败链的逐层落地检查"><a class="header" href="#144-匿名失败链的逐层落地检查">14.4 匿名失败链的逐层落地检查</a></h2>
-<p>如果你正在修第 13.1 节那类“看似完成、实际交错文件”的事故，可以直接按下面这条链检查，不要一上来就改 prompt。</p>
+<p>如果你正在修第 13.1 节那类“看似完成、实际交错文件”的事故，可以直接按下面这条链检查，不要一上来就改提示词。</p>
 <ul>
 <li><input disabled="" type="checkbox"> <code>session</code>：root task 是否显式声明 primary artifact、child task、owner、role 和 worktree。</li>
 <li><input disabled="" type="checkbox"> <code>session</code>：artifact 报告是否带 task id / session id，而不是只有自由文本路径。</li>
@@ -224,11 +224,11 @@
 <li><input disabled="" type="checkbox"> <code>verifier</code>：是否同时验证“文件存在”“文件归属正确”“内容足够新”“关键业务约束达标”。</li>
 <li><input disabled="" type="checkbox"> <code>verifier</code>：失败时是否留下了 validator 名称、失败类别、证据路径和持续时间。</li>
 <li><input disabled="" type="checkbox"> <code>operator dashboard</code>：是否能直接看到 root / child task 关系、最近 summary、最近 artifact、最近 validator 结果。</li>
-<li><input disabled="" type="checkbox"> <code>operator dashboard</code>：是否存在只在 dashboard 里出现、却无法回指事实流的影子状态。</li>
+<li><input disabled="" type="checkbox"> <code>operator dashboard</code>：是否存在只在仪表盘里出现、却无法回指事实流的影子状态。</li>
 <li><input disabled="" type="checkbox"> <code>swarm</code>：coordinator 是否只做拆解与裁决，而不是自己悄悄替 child task 兜底宣布成功。</li>
 <li><input disabled="" type="checkbox"> <code>swarm</code>：child agent 的 summary 是否包含可验证产物引用，而不是一句模糊的 “done”。</li>
 </ul>
-<p>这组检查项的目的，是把“问题出在 session、能力平面、validator、dashboard 还是 swarm”快速切开。只要团队还在把这五层混成一个“agent 没做好”，修复成本就会始终过高。</p>
+<p>这组检查项的目的，是把“问题出在 session、能力平面、validator、仪表盘还是 swarm”快速切开。只要团队还在把这五层混成一个“agent 没做好”，修复成本就会始终过高。</p>
 <h2 id="145-参考架构落地自检卷三的具体工件是否到位"><a class="header" href="#145-参考架构落地自检卷三的具体工件是否到位">14.5 参考架构落地自检（卷三的具体工件是否到位）</a></h2>
 <p>前一组清单切的是“事故出在哪一层”，这一组切的是更早的问题：你照着卷三搭出来的那套参考架构，关键工件到底有没有真正落地。它逐条对应第 6 到 10 章那条“假成功”任务被堵死的每一道缝——任何一条还打着叉，那道缝就还开着。</p>
 <ul>

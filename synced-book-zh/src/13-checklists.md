@@ -40,7 +40,7 @@
 
 ## 14.4 匿名失败链的逐层落地检查
 
-如果你正在修第 13.1 节那类“看似完成、实际交错文件”的事故，可以直接按下面这条链检查，不要一上来就改 prompt。
+如果你正在修第 13.1 节那类“看似完成、实际交错文件”的事故，可以直接按下面这条链检查，不要一上来就改提示词。
 
 - [ ] `session`：root task 是否显式声明 primary artifact、child task、owner、role 和 worktree。
 - [ ] `session`：artifact 报告是否带 task id / session id，而不是只有自由文本路径。
@@ -49,11 +49,11 @@
 - [ ] `verifier`：是否同时验证“文件存在”“文件归属正确”“内容足够新”“关键业务约束达标”。
 - [ ] `verifier`：失败时是否留下了 validator 名称、失败类别、证据路径和持续时间。
 - [ ] `operator dashboard`：是否能直接看到 root / child task 关系、最近 summary、最近 artifact、最近 validator 结果。
-- [ ] `operator dashboard`：是否存在只在 dashboard 里出现、却无法回指事实流的影子状态。
+- [ ] `operator dashboard`：是否存在只在仪表盘里出现、却无法回指事实流的影子状态。
 - [ ] `swarm`：coordinator 是否只做拆解与裁决，而不是自己悄悄替 child task 兜底宣布成功。
 - [ ] `swarm`：child agent 的 summary 是否包含可验证产物引用，而不是一句模糊的 “done”。
 
-这组检查项的目的，是把“问题出在 session、能力平面、validator、dashboard 还是 swarm”快速切开。只要团队还在把这五层混成一个“agent 没做好”，修复成本就会始终过高。
+这组检查项的目的，是把“问题出在 session、能力平面、validator、仪表盘还是 swarm”快速切开。只要团队还在把这五层混成一个“agent 没做好”，修复成本就会始终过高。
 
 ## 14.5 参考架构落地自检（卷三的具体工件是否到位）
 

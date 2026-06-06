@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-3079e774.js";
+            window.path_to_searchindex_js = "searchindex-af8374e6.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-67109edf.js"></script>
+        <script src="toc-819c48d9.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -197,14 +197,14 @@ UI / Operator 负责人
 <p>没有这种角色化拆分，团队就会撞上一种很危险的假象：局部 worker 一个个都“成功了”，可系统级的事实早已被破坏——主产物没有唯一归属，几个子任务改了同一个工作区，汇总结论没过 validator，或者父任务压根不知道哪个子任务已经失联。第 13 章那条“假成功”失败链，根子就在这里。</p>
 <h2 id="103-为什么-sub-agent--swarm-往往胜过一个-1m-上下文"><a class="header" href="#103-为什么-sub-agent--swarm-往往胜过一个-1m-上下文">10.3 为什么 sub-agent / swarm 往往胜过一个 1M 上下文</a></h2>
 <p>第 2 章给过理论结论：最大上下文窗口不是平坦工作区。到第 10 章，它要落成一个实践判断——什么时候该用单个超长上下文，什么时候该拆成多个局部 agent。如果任务天然可分块，把全部材料一次性塞进一个超长上下文，往往不是最优解。更常见的高收益结构是：coordinator 只攥着总目标、拆解计划、共享约束和最终验收标准；每个 sub-agent 只拿自己那一块原始材料或代码域；子 agent 往上交的是摘要、证据、diff、引用和待验证结论，而不是把整个“大海捞针”的窗口一路向上传；最后由 verifier 把跨 shard 的冲突和遗漏拦下来。</p>
-<h3 id="1031-成本不能只看-token-账单"><a class="header" href="#1031-成本不能只看-token-账单">10.3.1 成本不能只看 token 账单</a></h3>
-<p>聊 1M context 的成本，最常见的误区是只盯 token 单价。账单当然重要，但真正把系统压垮的，往往是 prefill 变慢、首 token 延迟上升、KV cache 撑大、并发吞吐下降、重试变贵，以及调度越来越难。这些信号在价格页上都看得到端倪：OpenAI 公开价格按百万 token 标价，却把标准处理费率限定在 <code>under 270K</code> 的上下文长度；Google 发布 Gemini 1.5 时，一边宣布 128K 到 1M 的 pricing tier，一边提醒早期测试者要预期更长的延迟。<sup class="footnote-reference" id="fr-swarm-econ-ch10-1"><a href="#footnote-swarm-econ-ch10">3</a></sup> 它们都在说同一件事：超长上下文不是普通请求的线性放大版。</p>
-<p>而从系统计算看，痛点通常不在 output token，在 prefill。MInference 的摘要给过一个够刺眼的数字——一个 8B 模型处理 1M token 的 prompt，能慢到 30 分钟量级，根因正是 attention 的二次复杂度。<sup class="footnote-reference" id="fr-swarm-econ-ch10-2"><a href="#footnote-swarm-econ-ch10">3</a></sup> 这不是哪家 API 的实现细节，而是长序列计算的基础压力。</p>
-<h3 id="1032-1m-和-5-个-200k-不能只比总-token"><a class="header" href="#1032-1m-和-5-个-200k-不能只比总-token">10.3.2 “1M” 和 “5 个 200K” 不能只比总 token</a></h3>
-<p>做个极端理想化的假设：一个 1M 的请求，和五个各 200K 的请求，总输入 token 恰好相等，没有重复背景、没有协调开销、没有缓存。单看“按 token 计费”的账单，它们也许接近。但真实的 agent 系统很少这么跑——更常见的是 coordinator 持目标、计划、约束和验收，每个子 agent 只持一个 shard 的原料，公共的制度性上下文靠缓存或固定 system prompt 复用，向上交的是摘要而非整份语料。这一来，\(5 \times 200\text{K}\) 的真实总 token，常常<strong>小于</strong> \(1 \times 1\text{M}\)。</p>
-<p>更关键的是，哪怕总 token 真的相等，prefill 的计算量也不等。按 dense attention 做个一阶量级估算：单次 1M 上下文的 attention 规模约是 \(1{,}000{,}000^{2} = 10^{12}\)，而五次 200K 的总规模约是 \(5 \times 200{,}000^{2} = 2 \times 10^{11}\)。也就是说，在“总 token 相同”这个最有利于长上下文的理想条件下，\(1 \times 1\text{M}\) 的 attention 量级，仍然大约是 \(5 \times 200\text{K}\) 的<strong>五倍</strong>。所以工程上要同时翻三本账：账单、时延、可调度性——只看第一本，会做出系统性偏贵的决定。</p>
+<h3 id="1031-成本不能只看词元账单"><a class="header" href="#1031-成本不能只看词元账单">10.3.1 成本不能只看词元账单</a></h3>
+<p>聊 1M context 的成本，最常见的误区是只盯词元单价。账单当然重要，但真正把系统压垮的，往往是 prefill 变慢、首词元延迟上升、键值缓存撑大、并发吞吐下降、重试变贵，以及调度越来越难。这些信号在价格页上都看得到端倪：OpenAI 公开价格按百万词元标价，却把标准处理费率限定在 <code>under 270K</code> 的上下文长度；Google 发布 Gemini 1.5 时，一边宣布 128K 到 1M 的 pricing tier，一边提醒早期测试者要预期更长的延迟。<sup class="footnote-reference" id="fr-swarm-econ-ch10-1"><a href="#footnote-swarm-econ-ch10">3</a></sup> 它们都在说同一件事：超长上下文不是普通请求的线性放大版。</p>
+<p>而从系统计算看，痛点通常不在 output 词元，在 prefill。MInference 的摘要给过一个够刺眼的数字——一个 8B 模型处理 1M 词元的提示词，能慢到 30 分钟量级，根因正是 attention 的二次复杂度。<sup class="footnote-reference" id="fr-swarm-econ-ch10-2"><a href="#footnote-swarm-econ-ch10">3</a></sup> 这不是哪家 API 的实现细节，而是长序列计算的基础压力。</p>
+<h3 id="1032-1m-和-5-个-200k-不能只比总词元"><a class="header" href="#1032-1m-和-5-个-200k-不能只比总词元">10.3.2 “1M” 和 “5 个 200K” 不能只比总词元</a></h3>
+<p>做个极端理想化的假设：一个 1M 的请求，和五个各 200K 的请求，总输入词元恰好相等，没有重复背景、没有协调开销、没有缓存。单看“按词元计费”的账单，它们也许接近。但真实的 agent 系统很少这么跑——更常见的是 coordinator 持目标、计划、约束和验收，每个子 agent 只持一个 shard 的原料，公共的制度性上下文靠缓存或固定系统提示词复用，向上交的是摘要而非整份语料。这一来，\(5 \times 200\text{K}\) 的真实总词元，常常<strong>小于</strong> \(1 \times 1\text{M}\)。</p>
+<p>更关键的是，哪怕总词元真的相等，prefill 的计算量也不等。按 dense attention 做个一阶量级估算：单次 1M 上下文的 attention 规模约是 \(1{,}000{,}000^{2} = 10^{12}\)，而五次 200K 的总规模约是 \(5 \times 200{,}000^{2} = 2 \times 10^{11}\)。也就是说，在“总词元相同”这个最有利于长上下文的理想条件下，\(1 \times 1\text{M}\) 的 attention 量级，仍然大约是 \(5 \times 200\text{K}\) 的<strong>五倍</strong>。所以工程上要同时翻三本账：账单、时延、可调度性——只看第一本，会做出系统性偏贵的决定。</p>
 <p><img src="./img/wf-context-economics.jpg" alt="1M 与 5×200K 的量级对比"></p>
-<p><em>图：把同样的总 token 放上天平——左边一个 1M 的稠密上下文（致密的大块）和右边几个 200K 的局部分片（轻盈的小块）相比，前者的 attention 计算量级要重得多。这就是为什么账单、时延、可调度性三本账，往往都偏向“拆成多个小窗口”。</em></p>
+<p><em>图：把同样的总词元放上天平——左边一个 1M 的稠密上下文（致密的大块）和右边几个 200K 的局部分片（轻盈的小块）相比，前者的 attention 计算量级要重得多。这就是为什么账单、时延、可调度性三本账，往往都偏向“拆成多个小窗口”。</em></p>
 <h3 id="1033-sub-agent-的收益不只是省钱"><a class="header" href="#1033-sub-agent-的收益不只是省钱">10.3.3 sub-agent 的收益，不只是省钱</a></h3>
 <p>很多团队把 sub-agent 当纯吞吐工具，这低估了它——它真正带来的，是质量曲线和成本曲线<strong>同时</strong>改善。单个超长上下文的失败模式，正是第 2 章那几条机理的合演：原料过多，相关证据密度被稀释；中间状态和历史痕迹污染当前任务；query 的位置不稳，关键约束被长正文淹没；而且一次失败，就要重做整段昂贵的大 prefill。拆成 sub-agent 之后，工作形态就变了：每个 agent 看到的上下文更短、更局部，位置偏置更可控；每个 agent 的输入更单纯，更接近一个单一任务；出错只需在局部 shard 重试，不必重灌整段全局上下文；coordinator 处理的是证据摘要和冲突，而不是整片原始语料的海洋。说白了，sub-agent 不是为了炫架构，而是为了把每个 agent <strong>压回它更容易成功的工作区间</strong>，再把跨 shard 的协调，交还给 harness、session 和 verification。</p>
 <h3 id="1034-什么时候仍该用一个超长上下文"><a class="header" href="#1034-什么时候仍该用一个超长上下文">10.3.4 什么时候仍该用一个超长上下文</a></h3>
@@ -264,7 +264,7 @@ coordinator ──spawn_agent("verifier",         goal="按契约核对产物", 
 <p>本章在此处综合 Claude Code 的 <code>AgentTool.tsx</code>、<code>loadAgentsDir.ts</code>、<code>teammateMailbox.ts</code>、<code>worktree.ts</code> 等实现，以及 Codex <code>spawn_agent</code> / <code>send_input</code> / <code>wait_agent</code> / <code>resume_agent</code> 等工具原语，用来说明多 agent 需要角色、通信、隔离、汇总与恢复这些一等能力；对应第 23 章参考文献 21、24。 <a href="#fr-claudecode-codex-multiagent-ch10-1">↩</a> <a href="#fr-claudecode-codex-multiagent-ch10-2">↩2</a></p>
 </li>
 <li id="footnote-swarm-econ-ch10">
-<p>本章在此处综合 Anthropic 的 managed agents 视角、OpenAI API Pricing 关于 <code>under 270K</code> 标准费率的限定、Google Gemini 1.5 关于 1M context pricing tiers 与 latency 的说明、Google long context 文档关于 retrieval-cost tradeoff 与 caching 的说明、LongLLMLingua 关于 higher computational cost / performance reduction / position bias 的概括，以及 MInference 关于 1M token prefill 代价的摘要数字，用于说明 sub-agent / swarm 在质量、成本与时延上的优势；对应第 23 章参考文献 3、14、15、18、19、20。 <a href="#fr-swarm-econ-ch10-1">↩</a> <a href="#fr-swarm-econ-ch10-2">↩2</a></p>
+<p>本章在此处综合 Anthropic 的 managed agents 视角、OpenAI API Pricing 关于 <code>under 270K</code> 标准费率的限定、Google Gemini 1.5 关于 1M context pricing tiers 与 latency 的说明、Google long context 文档关于 retrieval-cost tradeoff 与 caching 的说明、LongLLMLingua 关于 higher computational cost / performance reduction / position bias 的概括，以及 MInference 关于 1M 词元 prefill 代价的摘要数字，用于说明 sub-agent / swarm 在质量、成本与时延上的优势；对应第 23 章参考文献 3、14、15、18、19、20。 <a href="#fr-swarm-econ-ch10-1">↩</a> <a href="#fr-swarm-econ-ch10-2">↩2</a></p>
 </li>
 </ol>
 
@@ -272,7 +272,7 @@ coordinator ──spawn_agent("verifier",         goal="按契约核对产物", 
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="08-dashboard-mini-fleet.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="08-仪表盘-mini-fleet.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
@@ -286,7 +286,7 @@ coordinator ──spawn_agent("verifier",         goal="按契约核对产物", 
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="08-dashboard-mini-fleet.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="08-仪表盘-mini-fleet.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 

@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-3079e774.js";
+            window.path_to_searchindex_js = "searchindex-af8374e6.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-67109edf.js"></script>
+        <script src="toc-819c48d9.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -235,7 +235,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 <li><code>tool.called</code> 说明 capability plane 实际调了什么能力；</li>
 <li><code>artifact.reported</code> 说明谁声称自己产出了什么；</li>
 <li><code>validator.failed</code> 说明为什么不能进入 <code>ready</code>；</li>
-<li><code>summary.updated</code> / <code>operator.alerted</code> 说明 dashboard 该怎样说人话；</li>
+<li><code>summary.updated</code> / <code>operator.alerted</code> 说明仪表盘该怎样说人话；</li>
 <li><code>task.failed</code> 则把系统终态固定下来。</li>
 </ul>
 <p>没有这类最小事件序列，很多系统也能“看起来运行”。但只要出一次事故，团队就会发现自己没有真正的运行时事实，只剩聊天记录和猜测。</p>
@@ -386,7 +386,7 @@ task.failed          task=root-17 category=artifact_contract_violation
 - [ ] mini-fleet 已复现并验证通过
 - [ ] 复盘已归档到 failure museum
 </code></pre>
-<p>这个模板最重要的价值，不是让复盘文档更整齐，而是避免团队把 harness 事故再次写成“一个人记得的故事”。只要每次都沿着这份模板写，事故就会持续沉进 session 模型、能力平面、validator、dashboard 和 swarm 纪律里。</p>
+<p>这个模板最重要的价值，不是让复盘文档更整齐，而是避免团队把 harness 事故再次写成“一个人记得的故事”。只要每次都沿着这份模板写，事故就会持续沉进 session 模型、能力平面、validator、仪表盘和 swarm 纪律里。</p>
 <h2 id="157-一份填好的复盘周报投递的假成功"><a class="header" href="#157-一份填好的复盘周报投递的假成功">15.7 一份填好的复盘：周报投递的“假成功”</a></h2>
 <p>空模板再清楚，也不如填好的一份有说服力。第 6 章那条贯穿全卷的任务——把 <code>q2-weekly.pdf</code> 发到 <code>#finance</code>、却在两段式上传的第二段悄悄失败——我们一路追到了第 10 章。现在把它按上面的模板填一遍，但只填操作员真正会在三十秒里扫过的那几格。它该长这样：</p>
 <pre><code class="language-md"># 事故：周报“已发送”，但 #finance 从未收到

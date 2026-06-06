@@ -14,7 +14,7 @@
 10. Stanford IRIS Lab. *Meta-Harness: End-to-End Optimization of Model Harnesses.* https://arxiv.org/abs/2603.28052
 11. Nelson F. Liu et al. *Lost in the Middle: How Language Models Use Long Contexts.* TACL 2024. https://direct.mit.edu/tacl/article/doi/10.1162/tacl_a_00638/119630/Lost-in-the-Middle-How-Language-Models-Use-Long
 12. Cheng-Yu Hsieh et al. *Found in the Middle: Calibrating Positional Attention Bias Improves Long Context Utilization.* ACL Findings 2024. https://aclanthology.org/2024.findings-acl.890/
-13. Anthropic. *Prompting best practices: Long context prompting.* https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#long-context-prompting
+13. Anthropic. *Prompting best practices: Long context prompting.* https://platform.claude.com/docs/en/build-with-claude/提示词-engineering/claude-prompting-best-practices#long-context-prompting
 14. Google. *Introducing Gemini 1.5, Google's next-generation AI model.* 2024-02-15. https://blog.google/innovation-and-ai/products/google-gemini-next-generation-model-february-2024/
 15. Google AI for Developers. *Long context.* https://ai.google.dev/gemini-api/docs/long-context
 16. Ali Modarressi et al. *NoLiMa: Long-Context Evaluation Beyond Literal Matching.* ICML 2025. https://proceedings.mlr.press/v267/modarressi25a.html
@@ -49,8 +49,8 @@
 45. Federico Barbero et al. *Round and Round We Go! What makes Rotary Positional Encodings useful?* arXiv:2410.06205. https://arxiv.org/abs/2410.06205
 46. Federico Barbero et al. *Transformers need glasses! Information over-squashing in language tasks.* NeurIPS 2024 / arXiv:2406.04267. https://arxiv.org/abs/2406.04267
 47. Kimi Team. *Kimi K2 Technical Report.*（QK-Clip 与 attention-logit explosion；本书写作期审读其报告 PDF。）https://github.com/MoonshotAI/Kimi-K2
-48. DeepSeek-AI. *DeepSeek-V4 Technical Report.*（CSA/HCA 混合压缩注意力；异构与 on-disk KV cache；本书写作期审读其报告 PDF。）https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro
-49. MiniMax. *MiniMax M3.*（MiniMax Sparse Attention / 线性注意力，面向 1M token 上下文。）https://www.minimax.io/blog/minimax-m3
+48. DeepSeek-AI. *DeepSeek-V4 Technical Report.*（CSA/HCA 混合压缩注意力；异构与 on-disk 键值缓存；本书写作期审读其报告 PDF。）https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro
+49. MiniMax. *MiniMax M3.*（MiniMax Sparse Attention / 线性注意力，面向 1M 词元上下文。）https://www.minimax.io/blog/minimax-m3
 50. Chroma Research. *Context Rot: How Increasing Input Tokens Impacts LLM Performance.* 2025. https://www.trychroma.com/research/context-rot
 51. Anthropic. *Effective context engineering for AI agents.* https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
 
@@ -69,9 +69,9 @@
 
 第一条腿是成熟产品的公开源码与可审读镜像。我们读的不是教程式的玩具实现，而是真在跑的东西：Claude Code 的 `Tool.ts`、`query.ts`、`StreamingToolExecutor.ts`、那一组 `compact` 服务和 `AgentTool` 子树，以及 Codex 那边 `codex-rs/cli`、`app-server`、`thread-store`、`rollout` 这些模块的体量与切分方式。源码会暴露论文不会写的东西：哪一层真的落了盘、哪一个写入只有 coordinator 有权限、两段式上传的第二段失败时事实流里到底留下了什么。t_9f2 那条"假成功"周报任务之所以能被一路追到 `completeUpload` 静默超时，正是因为我们手里有事实流的物理形状，而不是某段宣传文案里"已发送"的措辞。源码告诉你系统实际承诺了什么，而不是它声称承诺了什么。
 
-第二条腿是公开论文与技术报告，它们解释源码为什么不得不长成那样。长上下文在中段塌陷不是工程师偷懒，而是 softmax 在序列变长时把注意力稀释成一片均匀的雾（参考第 23 章参考文献 43），是 RoPE 的旋转相位让远距离 token 的点积随距离衰减（44、45），是有限残差维度下信息被反复折叠产生的 over-squashing（46）。"迷失在中段"和 NoLiMa、LongCodeBench、Context Rot 这些评测（11、16、17、50）把"容量不等于有效工作区间"从一句口号变成了可测量的曲线。各家厂商的 KV 策略——Kimi 的 QK-Clip、DeepSeek 的混合压缩与 on-disk KV cache、MiniMax 的稀疏/线性注意力（47、48、49）——则反过来印证：连模型自己都在用各种手段对抗同一组物理约束。论文给了源码一个"为什么"，源码给了论文一个"真在这么干"。
+第二条腿是公开论文与技术报告，它们解释源码为什么不得不长成那样。长上下文在中段塌陷不是工程师偷懒，而是 softmax 在序列变长时把注意力稀释成一片均匀的雾（参考第 23 章参考文献 43），是 RoPE 的旋转相位让远距离词元的点积随距离衰减（44、45），是有限残差维度下信息被反复折叠产生的 over-squashing（46）。"迷失在中段"和 NoLiMa、LongCodeBench、Context Rot 这些评测（11、16、17、50）把"容量不等于有效工作区间"从一句口号变成了可测量的曲线。各家厂商的 KV 策略——Kimi 的 QK-Clip、DeepSeek 的混合压缩与 on-disk 键值缓存、MiniMax 的稀疏/线性注意力（47、48、49）——则反过来印证：连模型自己都在用各种手段对抗同一组物理约束。论文给了源码一个"为什么"，源码给了论文一个"真在这么干"。
 
-第三条腿是厂商的价格页与长上下文文档，它把前两条腿换算成钱和延迟。容量上限写在文档里，有效工作区间藏在评测里，而成本三本账——prefill 的钱、KV 驻留的钱、每多塞一个 token 在每一步自回归里反复付的钱——要把定价（20）和长上下文文档（13、15、19、51）摆在一起才算得清。一个架构选择只有同时被源码证明"做得出"、被论文证明"必须做"、被价格页证明"付得起"，它才进入本书的正文。
+第三条腿是厂商的价格页与长上下文文档，它把前两条腿换算成钱和延迟。容量上限写在文档里，有效工作区间藏在评测里，而成本三本账——prefill 的钱、KV 驻留的钱、每多塞一个词元在每一步自回归里反复付的钱——要把定价（20）和长上下文文档（13、15、19、51）摆在一起才算得清。一个架构选择只有同时被源码证明"做得出"、被论文证明"必须做"、被价格页证明"付得起"，它才进入本书的正文。
 
 在这三条腿之外，我们还刻意叠了一组匿名的真实事故作为反证。三角互证容易让人只收集"印证假设"的证据，而事故是专门用来打脸的：它们是系统在没人看的角落里实际怎么坏掉的记录。t_9f2 就是这一类被去标识化、保留事件骨架的样本——绿色完成气泡、聊天里言之凿凿的"已发送"、底层 `tool.returned(ok:false)` 三者并存。正是这种"模型自述与工具回执物理打架"的现场，逼出了本书的核心主张：把 `model.claim` 与工具回执隔离、只让 `task.settled` 点亮终态、用产物契约要求 `delivery.receipt`、让纯函数 `fold` 使绿气泡在状态空间里根本不可表示。事故不证明任何理论正确，它只负责证明某些理论一定错——而这恰恰是最值钱的一种证据。
 
