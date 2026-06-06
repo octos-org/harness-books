@@ -199,6 +199,59 @@ const FIGS = {
       { t: "全部就绪才放行", xp: 0.5, yp: 0.93, anchor: "middle", size: 26 },
     ],
   },
+
+  // ===== 批5：流程图（续，最复杂）=====
+  "wf-factstream-fold": {
+    style: true,
+    art: `Nature/Quanta caliber scientific diagram on PURE WHITE. Refined flat vector, deep-teal with one coral accent, NO dark background, NO glow. SUBJECT: on the LEFT, a vertical stack of FIVE identical thin horizontal bars at x ≈ 14% (evenly between y 32% and 68%). Thin arrows go RIGHT from the stack converging into a CORAL funnel / triangle shape pointing right at the CENTER (~50% width, 50% height). From the funnel tip, THREE thin arrows fan out to THREE small empty rounded-rectangles on the RIGHT at x ≈ 86% (y ≈ 34%, 50%, 66%). Generous white space. ABSOLUTELY NO text, letters, numbers, labels. 16:9.`,
+    labels: [
+      { t: "同一条事实流 → 多个投影", xp: 0.5, yp: 0.10, anchor: "middle", size: 30, weight: 700 },
+      { t: "事实流（只追加事件）", xp: 0.14, yp: 0.80, anchor: "middle", size: 26 },
+      { t: "折叠", xp: 0.50, yp: 0.82, anchor: "middle", size: 26, color: "#b5532a", weight: 700 },
+      { t: "界面", xp: 0.84, yp: 0.33, anchor: "middle", size: 24 },
+      { t: "接口", xp: 0.84, yp: 0.52, anchor: "middle", size: 24 },
+      { t: "仪表盘", xp: 0.84, yp: 0.71, anchor: "middle", size: 24 },
+    ],
+  },
+  "wf-lifecycle": {
+    style: true,
+    art: `Nature/Quanta caliber scientific diagram on PURE WHITE. Refined flat vector, deep-teal with one coral accent, NO dark background, NO glow. SUBJECT: a state machine. THREE empty circles in a row at (15% width,50% height), (35%,50%), (55%,50%), connected left-to-right by thin arrows. From the third circle, TWO arrows split to a circle at (80%,30%) and a circle at (80%,72%). The arrow to the upper circle is CORAL. A long thin curved arrow runs along the BOTTOM from the right side back to the first circle (a return loop). All circles are EMPTY. Generous white space. ABSOLUTELY NO text, letters, numbers, labels. 16:9.`,
+    labels: [
+      { t: "排队", xp: 0.15, yp: 0.50, anchor: "middle", size: 24 },
+      { t: "运行中", xp: 0.35, yp: 0.50, anchor: "middle", size: 24 },
+      { t: "验证中", xp: 0.62, yp: 0.50, anchor: "middle", size: 24 },
+      { t: "就绪", xp: 0.85, yp: 0.24, anchor: "middle", size: 24 },
+      { t: "失败", xp: 0.85, yp: 0.66, anchor: "middle", size: 24 },
+      { t: "需所有验证器通过", xp: 0.69, yp: 0.34, anchor: "middle", size: 22, color: "#b5532a" },
+      { t: "续跑", xp: 0.45, yp: 0.90, anchor: "middle", size: 22, color: "#5a6b78" },
+      { t: "模型只能推进到「验证中」，无权宣布「就绪」", xp: 0.5, yp: 0.07, anchor: "middle", size: 26, weight: 700 },
+    ],
+  },
+  "wf-runtime-overview": {
+    style: true,
+    art: `Nature/Quanta caliber scientific diagram on PURE WHITE. Refined flat vector, deep-teal with one coral accent, NO dark background, NO glow. SUBJECT: a vertical central spine — a thick CORAL vertical line running from a node at the TOP-CENTER (~50% width, 12% height) straight down to a node at the BOTTOM-CENTER (~50% width, 88% height). FOUR empty rounded-rectangle module boxes branch off the spine with thin connectors: left-upper at (24% width, 38% height), right-upper at (76%, 38%), left-lower at (24%, 62%), right-lower at (76%, 62%). Generous white space. ABSOLUTELY NO text, letters, numbers, labels. 16:9.`,
+    labels: [
+      { t: "用户任务 / 外部触发", xp: 0.5, yp: 0.07, anchor: "middle", size: 26, weight: 700 },
+      { t: "会话事实流", xp: 0.56, yp: 0.50, anchor: "start", size: 26, color: "#b5532a", weight: 700 },
+      { t: "调度循环", xp: 0.24, yp: 0.38, anchor: "middle", size: 24 },
+      { t: "能力平面", xp: 0.76, yp: 0.38, anchor: "middle", size: 24 },
+      { t: "产物与验证", xp: 0.24, yp: 0.62, anchor: "middle", size: 24 },
+      { t: "回放与摘要", xp: 0.76, yp: 0.62, anchor: "middle", size: 24 },
+      { t: "终态裁决（就绪 / 失败）", xp: 0.5, yp: 0.95, anchor: "middle", size: 26, weight: 700 },
+    ],
+  },
+  "wf-swarm-roles": {
+    style: true,
+    art: `Nature/Quanta caliber scientific diagram on PURE WHITE. Refined flat vector, deep-teal with one coral accent, NO dark background, NO glow. SUBJECT: THREE vertical lanes separated by thin light vertical divider lines, centered at x ≈ 22%, 50%, 78%. Each lane has a vertical sequence of small empty nodes connected top-to-bottom. A few thin horizontal dashed arrows cross between lanes. In the LEFT lane (~22% width, ~50% height) one node is filled CORAL (emphasized). Generous white space at the top of each lane for a header. ABSOLUTELY NO text, letters, numbers, labels. 16:9.`,
+    labels: [
+      { t: "协调者", xp: 0.22, yp: 0.10, anchor: "middle", size: 28, weight: 700 },
+      { t: "工作者", xp: 0.50, yp: 0.10, anchor: "middle", size: 28, weight: 700 },
+      { t: "验证者", xp: 0.78, yp: 0.10, anchor: "middle", size: 28, weight: 700 },
+      { t: "唯有协调者能写「终态」", xp: 0.22, yp: 0.62, anchor: "middle", size: 22, color: "#b5532a" },
+      { t: "只写「子任务汇报」", xp: 0.50, yp: 0.90, anchor: "middle", size: 22, color: "#5a6b78" },
+      { t: "只写「验证结果」", xp: 0.78, yp: 0.90, anchor: "middle", size: 22, color: "#5a6b78" },
+    ],
+  },
 };
 
 async function genArt(id, prompt) {
