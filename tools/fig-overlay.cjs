@@ -152,6 +152,53 @@ const FIGS = {
       { t: "用户面前的「假成功」", xp: 0.62, yp: 0.10, anchor: "middle", size: 28, color: "#b5532a", weight: 700 },
     ],
   },
+
+  // ===== 批4：流程图 =====
+  "wf-feedback-loop": {
+    style: true,
+    art: `Nature/Quanta caliber scientific diagram on PURE WHITE. Refined flat vector, deep-teal with one coral accent, NO dark background, NO glow. SUBJECT: a horizontal control loop. A small teal filled dot at (~10% width, 42% height); a small empty circle (summing junction) at (~22% width, 42% height); then TWO identical empty rounded-rectangle blocks centered at (~40% width, 42% height) and (~58% width, 42% height); then a larger empty circle node at (~80% width, 42% height). From that right node a smooth CORAL curved arrow loops DOWN and back LEFT, passing through a small empty circle at (~50% width, 72% height), and returns to the summing junction. Thin arrows connect left-to-right along the top row. The two rectangle blocks are EMPTY (no icons). Generous white space. ABSOLUTELY NO text, letters, numbers, labels. 16:9.`,
+    labels: [
+      { t: "参考值（目标）", xp: 0.10, yp: 0.30, anchor: "middle", size: 26 },
+      { t: "控制器（驾驭层）", xp: 0.40, yp: 0.50, anchor: "middle", size: 26 },
+      { t: "执行器（工具）", xp: 0.61, yp: 0.50, anchor: "middle", size: 26 },
+      { t: "环境", xp: 0.80, yp: 0.29, anchor: "middle", size: 26 },
+      { t: "传感器（验证器）", xp: 0.50, yp: 0.88, anchor: "middle", size: 26 },
+      { t: "误差", xp: 0.29, yp: 0.66, anchor: "middle", size: 26, color: "#b5532a" },
+    ],
+  },
+  "wf-three-layer-stack": {
+    style: true,
+    art: `Nature/Quanta caliber scientific diagram on PURE WHITE. Refined flat vector, deep-teal with one coral accent, NO dark background, NO glow. SUBJECT: THREE identical wide horizontal rounded-rectangle slab layers stacked vertically, each spanning ~22% to ~72% width, centered at ~30% (top), ~50% (middle) and ~70% (bottom) height, with a small gap between them. The TOP slab is outlined in CORAL; the other two in teal. On the far RIGHT a thin vertical bracket spans all three slabs. The slabs are EMPTY. Generous white space. ABSOLUTELY NO text, letters, numbers, labels. 16:9.`,
+    labels: [
+      { t: "驾驭工程：确定性控制循环", xp: 0.47, yp: 0.31, anchor: "middle", size: 26, color: "#b5532a", weight: 700 },
+      { t: "上下文工程：稳住多轮", xp: 0.47, yp: 0.51, anchor: "middle", size: 26 },
+      { t: "提示词工程：稳住单轮", xp: 0.47, yp: 0.71, anchor: "middle", size: 26 },
+      { t: "能力递进，逐层叠加而非替代", xp: 0.86, yp: 0.5, anchor: "middle", size: 24, color: "#5a6b78", rot: -90 },
+    ],
+  },
+  "wf-governance-lenses": {
+    style: true,
+    art: `Nature/Quanta caliber scientific diagram on PURE WHITE. Refined flat vector, deep-teal with one coral accent, NO dark background, NO glow. SUBJECT: one central horizontal "stream" lane (a long thin pill-shaped track with small branching nodes inside it) at ~64% height, spanning 10% to 90% width. ABOVE it, FOUR identical lens / ring shapes at x ≈ 22%, 42%, 58%, 78% (y ≈ 32%), each casting a soft light cone downward onto the stream. The lenses are EMPTY rings. Generous white space. ABSOLUTELY NO text, letters, numbers, labels. 16:9.`,
+    labels: [
+      { t: "安全", xp: 0.25, yp: 0.24, anchor: "middle", size: 26, weight: 700 },
+      { t: "合规", xp: 0.42, yp: 0.24, anchor: "middle", size: 26, weight: 700 },
+      { t: "成本", xp: 0.57, yp: 0.24, anchor: "middle", size: 26, weight: 700 },
+      { t: "路由", xp: 0.74, yp: 0.24, anchor: "middle", size: 26, weight: 700 },
+      { t: "同一条事实流", xp: 0.5, yp: 0.78, anchor: "middle", size: 26, color: "#5a6b78" },
+      { t: "治理不是第五层，是同一条事实流被多读四遍", xp: 0.5, yp: 0.93, anchor: "middle", size: 28, weight: 700 },
+    ],
+  },
+  "wf-artifact-gating": {
+    style: true,
+    art: `Nature/Quanta caliber scientific diagram on PURE WHITE. Refined flat vector, deep-teal with one coral accent, NO dark background, NO glow. SUBJECT: on the LEFT, THREE small empty squares each containing a small check-mark, stacked vertically at x ≈ 18% (y ≈ 30%, 50%, 70%). Thin arrows go RIGHT from each to a single vertical CORAL bar (a gate) at x ≈ 52% (spanning the middle height). After the gate the path splits: an UPPER thin arrow to a small empty circle at (~80% width, 35% height); a LOWER thin arrow that is crossed by a short perpendicular stroke (✗) ending near (~80% width, 68% height). Generous white space. ABSOLUTELY NO text, letters, numbers, labels. 16:9.`,
+    labels: [
+      { t: "必需产物", xp: 0.18, yp: 0.86, anchor: "middle", size: 26 },
+      { t: "门禁", xp: 0.52, yp: 0.16, anchor: "middle", size: 26, color: "#b5532a", weight: 700 },
+      { t: "就绪", xp: 0.82, yp: 0.35, anchor: "middle", size: 26 },
+      { t: "失败", xp: 0.82, yp: 0.68, anchor: "middle", size: 26, color: "#b5532a" },
+      { t: "全部就绪才放行", xp: 0.5, yp: 0.93, anchor: "middle", size: 26 },
+    ],
+  },
 };
 
 async function genArt(id, prompt) {
