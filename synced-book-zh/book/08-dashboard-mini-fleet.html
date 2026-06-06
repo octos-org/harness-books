@@ -1,0 +1,308 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>9. 操作员控制面与发布真实性 - 驾驭工程</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-d3fec222.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-67109edf.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">驾驭工程</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="9-操作员控制面与发布真实性"><a class="header" href="#9-操作员控制面与发布真实性">9. 操作员控制面与发布真实性</a></h1>
+<p>凌晨两点，值班的人盯着一屏仪表盘：错误率平稳，延迟正常，吞吐没掉，一片祥和的绿。与此同时，一个高价值客户的任务已经卡死四十分钟——它停在某个阶段，既不报错，也不超时，只是不再往前。聚合指标永远不会替它报警，因为单独一个任务卡住，撼不动任何平均值。</p>
+<p>到第 8 章为止，我们回答的是“用户怎么看到真相”；第 9 章回答另一半：“操作员怎么足够快地理解真相，并据此做发布决策”。很多团队栽在一个误判上——系统里已经攒了一堆事件和日志，于是以为“可观测性差不多有了”。这里要把两个东西掰开：<code>可观测性</code>回答的是“系统整体健不健康”，靠的是指标和日志的聚合；而 harness 要的是<code>控制面</code>，它回答的是“这一个任务此刻卡在哪、为什么、我下一步该按哪个键”。前者是一排仪表，后者是一个驾驶舱。日志堆得再高，也堆不出一个驾驶舱。</p>
+<h2 id="91-凌晨两点操作员到底在找什么"><a class="header" href="#91-凌晨两点操作员到底在找什么">9.1 凌晨两点，操作员到底在找什么</a></h2>
+<p>接着把那次卡死追下去，看值班的人实际经历了什么。</p>
+<p>他先扫一眼那排绿灯——没用，绿灯只说明“大多数任务没事”，不说明“这一单出事”。于是他去翻日志，<code>grep</code> 那个 task id，滚出来三千行：模型的思考、工具的入参出参、一堆 <code>DEBUG</code>。他往下翻了两屏，看到最后一条是某个工具调用发出去了、但没有对应的返回。然后呢？这条信息答不出他真正要决断的事——这究竟是任务自己的逻辑死循环，还是某个子 agent 卡住了，还是那个外部 API 在限流？该重试，还是会把已经写了一半的产物搞坏？主产物现在到底在哪条路径上、是个什么状态？四十分钟过去，他手里只有“某个工具没返回”，而他需要的是一个<strong>决定</strong>。</p>
+<p>他缺的从来不是数据，是数据的<strong>形状</strong>。计数器告诉他“最近很忙”“失败率升高”，却答不出“这一次具体为什么错”。三千行 transcript 里其实什么都有，可它没有被加工成“一个任务的来龙去脉”——没有阶段、没有归属、没有“最近一个有意义的动作”、没有“哪个 validator 红了”、没有恢复入口。盲区不是信息太少，是信息停在了“聚合统计”和“原始流水”这两个极端，<strong>唯独缺了中间那层给人看的叙事</strong>。这，就是第 5.6 节那种操作员盲区的真正成因。</p>
+<h2 id="92-别逼操作员去读原始-transcript"><a class="header" href="#92-别逼操作员去读原始-transcript">9.2 别逼操作员去读原始 transcript</a></h2>
+<p>凌晨两点读三千行日志，是设计的失败，不是操作员不够努力。Claude Code 的 <code>agentSummary.ts</code>、<code>diskOutput.ts</code> 和 resume 机制，透露的正是相反的取向：把那三千行<strong>预先折叠</strong>成人在十几秒里能用的东西——一段摘要、一个“最近做了什么”、产物落在哪条路径、这活归谁、以及一个“从这儿接着跑”的入口。同样是面对那次卡死，有了这层，值班的人看到的不再是工具调用的残片，而是一张卡片：“任务 #4127，阶段=验证，卡 40 分钟；最近动作=调用外部 lint 服务未返回；主产物 <code>report.md</code> 已生成未验证；归属 session B；可从 turn 58 resume。”——读完他就知道该按哪个键了。</p>
+<p>Codex 给的是同一件事的另一半：地基。它用 <code>Thread</code> / <code>Turn</code> / <code>Item</code> 把“历史”“正在执行的一步”“产生的副作用”分到不同的层上，于是这些东西天然就能被重组成上面那张卡片，而不必从一锅糊在一起的文本里硬抠。<sup class="footnote-reference" id="fr-操作员-plane-ch9-1"><a href="#footnote-操作员-plane-ch9">1</a></sup> 把两者合起来是一条很稳的经验：<strong>操作员视图不该只消费 metrics，它必须消费从事实流派生出来的叙事结构。</strong> 指标是给系统做体检的，叙事才是给人做决断的——而控制面的本职，就是把第 8 章那条只追加的事实流，按“一个任务的视角”折叠成人能读懂的故事。</p>
+<h2 id="93-仪表盘上每一个状态都得在事实流里找得到出处"><a class="header" href="#93-仪表盘上每一个状态都得在事实流里找得到出处">9.3 仪表盘上每一个状态，都得在事实流里找得到出处</a></h2>
+<p>控制面有一种很隐蔽的失败方式，比“没有控制面”更危险，因为它看起来像有。</p>
+<p>假设仪表盘上有个醒目的绿色徽章：“验证通过率 99.2%”。它从哪来？某个图表服务，每分钟自己去数据库跑一条聚合 SQL 算出来的。某天有人改了产物写入的时机，验证事件偶尔会迟到，那条 SQL 因此把“还没验证”误统计成了“已通过”。于是徽章稳稳显示 99.2%，而真实的验证其实在大面积超时。这块绿，是仪表盘 <strong>自己算出来的</strong>，在那条权威事实流里根本找不到对应的事件——它是一条影子真相，和第 8 章前端“发明阶段”是同一种病，只不过这次的发明者换成了监控层，而且因为它顶着“监控”的名头，没人会怀疑它在撒谎。</p>
+<p>所以一个靠谱的仪表盘，展示的不该是它自己攒出来的好看数字，而该是从事实流里<strong>投影</strong>出来的几个固定切面，且每个切面都能在流里指出出处：现在在哪个阶段、什么时候进的、有没有违反单调（阶段不该倒退却倒退）；最近调了什么工具、派了什么子任务；主产物在哪条路径、过没过验证；哪个 validator 红了、证据落在哪、错误归哪一类；这事属于哪个 session / worktree、归谁；以及重试了几次、有没有孤儿任务、要不要人工介入。这么排不是为了好看，是为了让它和第 6 章那张运行时总图<strong>一一对齐</strong>——图上有的维度盘上就该有，盘上有的状态流里就该找得到源。一旦盘上出现一个“只在图表里有、流里却无源”的数，系统就又多了一条没人会怀疑的影子真相。</p>
+<h2 id="94-小型-fleet发布真实性的最低证明面"><a class="header" href="#94-小型-fleet发布真实性的最低证明面">9.4 小型 fleet：发布真实性的最低证明面</a></h2>
+<p>为什么这些问题非要到真实环境才暴露？因为第 2 章其实早就埋了伏笔：最难缠的错误是<strong>时序型、多表面、跨 session</strong> 的，它们依赖真实的并发和真实的重连，而这恰恰是单机单元测试构造不出来的。</p>
+<p>举个具体的。两个 session 共用一个后台连接池，平时相安无事。可当 A 在刷新、B 恰好在那一两百毫秒内推送一条事件时，连接的复用逻辑会把 B 的那条事件错投给正在重连的 A——就是第 8 章 §8.3 那种串扰。这个 bug 单元测试里永远复现不了：它要两个并发 session、一次真实重连、外加一个窄到一两百毫秒的时间窗，三者同时撞上。它只在真实主机、真实 worker、真实重连路径上，偶尔现身一次。</p>
+<p>这就是为什么要养一支<code>小型 fleet</code>——把它理解成一支袖珍的“金丝雀”机群：正式放量前，先用一小撮真实主机、真实流量，把该有的不变量跑一遍。它得被当成<strong>发布真实性的最低证明面</strong>，而不是可选的加分项。具体说，它至少在两台以上主机上跑脚本化门禁，至少覆盖两个 session、一次重载、一次重连、一次子任务或外部能力调用；它必须吐出<strong>显式的诊断类别</strong>而不是笼统一句 <code>failed</code>（“失败了”帮不了任何人）；而且不变量一旦被破，它要能直接挡住合并或发布，而不是记条告警了事。最值得门禁化的那些不变量，几乎原样来自第 5 章那座事故博物馆——必需阶段不能缺、阶段序列不能倒退、终态不能在验证前就被宣布成功、会话 scope 不能泄漏、research/background 不能被重复触发、子 agent 摘要不能和主任务事实失联。它们都是用真实事故换来的边界；写成门禁，等于让系统替你记住这些教训。</p>
+<h2 id="95-让每一次翻车回流成控制面的免疫力"><a class="header" href="#95-让每一次翻车回流成控制面的免疫力">9.5 让每一次翻车，回流成控制面的免疫力</a></h2>
+<p>第 5.7 节讲“失败模式博物馆”，重点是<strong>归档</strong>——把每次有价值的翻车连同根因存成可查的记录。到第 9 章，重点要从归档变成<strong>回流</strong>：归档只是把教训写下来，回流是把教训接回系统。</p>
+<p>拿刚才那次连接池串扰走完整条回流。它先进博物馆，有了名字和根因。然后它要长出三样东西：一个仪表盘信号——“同一连接上出现跨 session 事件”立刻标红，让它下次一冒头就可见；一段门禁脚本——就是 §9.4 里那条两 session、强制重连的 fleet 用例，把它焊进发布前的检查；以及一条 runbook（写明“看到这个标红，先按这几步隔离、再这样恢复”的操作手册），让凌晨两点接班的人不必从零推理。只有走完这三步，一个事故才真正变成了控制面的免疫力——同类问题再来，要么被门禁挡在合并前，要么在盘上一眼可见、还配着现成处置。</p>
+<p>这一步最常被省掉，写完一份漂亮复盘就归档了事；可它恰恰是复盘有没有白做的分水岭。某种意义上，一套控制面的成熟度，就等于“有多少条事故，已经回流成了免疫力”。</p>
+<h2 id="96-把那条假成功丢进-fleet-门禁"><a class="header" href="#96-把那条假成功丢进-fleet-门禁">9.6 把那条“假成功”，丢进 fleet 门禁</a></h2>
+<p>把“归档 → 门禁 → runbook”这套回流，套到那条贯穿全卷的周报任务上，整章的抽象就落地了。先问一个最朴素的问题：第 6 章那台状态机已经把 <code>t_9f2</code> 判成了 <code>failed</code>，可万一某条 buggy 的代码路径——或者一个图省事的旧前端——硬把它写成了 <code>ready</code>，谁来兜底？这正是 fleet 门禁该站的位置。它不重算业务逻辑，它只对“终态”做一次真实性体检：</p>
+<pre><code class="language-python"># fleet 门禁：终态真实性。凡是进入 ready 的任务，证据必须齐备。
+def assert_terminal_authentic(task):
+    if task.state != "ready":
+        return Ok()                              # 只管 ready，不为难还在跑的任务
+    for v in task.required_validators:           # required_validators 来自 artifact 契约
+        r = task.validators.get(v)
+        if r is None:
+            return Fail("MISSING_VALIDATOR",     f"{task.id}: ready 但 {v} 从未运行")
+        if not r.ok:
+            return Fail("READY_OVER_FAILED_GATE", f"{task.id}: ready 但 {v} 为 ok=false")
+    for a in task.required_artifacts:            # 主产物必须显式归属、且已校验
+        if a.kind not in task.artifacts:
+            return Fail("MISSING_ARTIFACT",      f"{task.id}: ready 但缺产物 {a.kind}")
+    return Ok()
+</code></pre>
+<p>拿它去验那条任务：契约要的 <code>delivery.receipt</code> 从没被写进流，<code>slack.delivered</code> 这条 gating validator 是 <code>ok=false</code>。于是只要有谁试图把 <code>t_9f2</code> 标成 <code>ready</code>，门禁立刻在 <code>READY_OVER_FAILED_GATE</code> 上炸开——而且它吐的是一个<strong>有名有姓的诊断类别</strong>，不是笼统一句 <code>failed</code>。这就是 §9.4 那条“终态不能在验证前就被宣布成功”从口号变成代码的样子：第 6 章把终态裁决权从模型手里拿走，第 9 章再用门禁兜住“万一裁决被绕过”的最后一种可能。两道关一前一后，“假成功”连越狱的缝都没有。</p>
+<p>而当值班的人凌晨被这条门禁叫醒，他该看到的不是三千行 transcript，是 §9.2 那种折叠好的卡片：</p>
+<pre><code class="language-text">任务 t_9f2 · 季度周报投递              状态  verifying → failed
+  最近动作   slack.upload   FAILED (upload_incomplete: completeUpload 超时)
+  产物       report.pdf      ✓ 已校验 (sha256 9c0b…)
+             delivery.receipt ✗ 缺失
+  门禁       slack.delivered  ✗   →  READY_OVER_FAILED_GATE
+  归属       session u_12 / task t_9f2
+  恢复       slack.upload 标了 retryable=true，可从 seq 6 重试该步
+</code></pre>
+<p>读完这张卡，他不需要推理，只需要决断——而且决断所需的每一格，都能在事实流里指回一条具体事件。最后，按 §9.5 那条回流走完闭环：这次事故进博物馆，命名为“两段式上传只确认了第一段”；它长出一个仪表盘信号——“任意 <code>ready</code> 任务的 gating validator 不是全绿，立即标红”，让同类问题下次一冒头就可见；长出一条门禁——就是上面那段 <code>assert_terminal_authentic</code>，焊进发布前检查；再长出一条 runbook——“看到 <code>READY_OVER_FAILED_GATE</code>：先核对对应 validator 的 evidence，再决定重试该步还是整单回滚”。走完这三步，这条贯穿了五章的“假成功”，才算真正变成了系统的免疫力：它被设计挡在 <code>ready</code> 之外（第 6 章），被能力契约堵住伪造（第 7 章），被 UI 拒绝渲染成完成（第 8 章），最后被门禁兜住、被复盘回流（第 9 章）。</p>
+<h2 id="97-把那条连接池串扰逼到发布之前现身"><a class="header" href="#97-把那条连接池串扰逼到发布之前现身">9.7 把那条连接池串扰，逼到发布之前现身</a></h2>
+<p>§9.6 那条“假成功”是逻辑型的——事件齐不齐、终态对不对，单测里就能复现，fleet 门禁只是兜最后一道。可 §9.4 还埋了另一类完全不同的 bug：它逻辑上没错，只在真实并发与真实重连同时撞上时才现身。把它也走一遍完整的回流，整章关于“为什么非要 fleet”的论证才算闭合。</p>
+<p>复现条件先说清楚。两个 session <code>s_A</code> 和 <code>s_B</code> 共用同一个后台连接池——这本身是对的，连接很贵，复用很自然。<code>s_A</code> 因为网络抖动断开，正在重连：它把旧连接还回池子，准备从池里取一条新连接、再补订阅自己关心的那几个 task 的事件流。问题出在那条旧连接的“还回”和“清账”之间有个窗口：连接对象上还挂着 <code>s_A</code> 的路由标记，但池子已经把它标成“空闲可复用”。如果就在这一两百毫秒里，<code>s_B</code> 推来一条事件、池子恰好把这条还没擦干净的连接分给了投递逻辑，那么 <code>s_B</code> 的事件就会顺着残留的路由标记，被错投进 <code>s_A</code> 的事件流——这正是 §8.3 描述的那种串扰：一个 session 的事件漏到了另一个 session 的视图里。</p>
+<p>为什么单机单测永远抓不到它。要让这个 bug 现身，得三件事卡在同一瞬间：得有两个真在并发的 session（不是两个 mock，是两条各自带着真实订阅状态的连接），得有一次真实的断开与重连（不是调一下 <code>reconnect()</code> 函数，是连接真的从池里被还回又被取出），还得有那个窄到一两百毫秒、跨在“还连接”和“清路由”之间的窗口。单测里你能 mock 出前两件的样子，但你 mock 不出那个窗口——因为窗口是真实调度、真实 GC、真实 socket 关闭时序叠出来的产物，函数级的桩根本没有它。这就是 §9.4 那句“时序型、跨 session、靠真实并发与重连才复现”的具体长相：它不是难写测试，是这类 bug 在单进程的确定性世界里<strong>根本不可表示</strong>。</p>
+<p>所以 fleet 用例不去 mock 任何东西，它去<strong>摆一个真实的局</strong>。门禁在至少两台主机上拉起两个真 session，让 <code>s_B</code> 以固定节奏往自己的流里灌带序号的事件，然后对 <code>s_A</code> 触发一次真实重连——不是软重连，是把它的底层连接强制 close 掉、逼池子走完“还回—复用—取新”的全套路径。重连进行时，<code>s_B</code> 的事件流一刻不停。门禁要验的不变量很硬：<code>s_A</code> 收到的每一条事件，其 <code>actor</code> 与订阅标记都必须落在 <code>s_A</code> 自己的 scope 里；<code>s_B</code> 的事件一条都不许出现在 <code>s_A</code> 的流里。这道断言写出来就是这样：</p>
+<pre><code class="language-text">fleet-case: cross-session-reconnect-isolation   hosts=[h3, h7]
+  setup    s_A, s_B 共用 pool p1；s_B 以 ~5ms/事件 持续灌流
+  action   重连窗口内强制 close s_A 底层连接，触发 池还回→复用→取新
+  invariant  ∀ e ∈ stream(s_A):  e.scope == s_A  AND  e.actor ∈ scope(s_A)
+  observed   stream(s_A) 收到 e{seq=412, scope=s_B, actor=s_B.worker}
+  verdict    FAIL → SESSION_SCOPE_LEAK_ON_REUSE
+             (s_B 事件经复用连接的残留路由错投至 s_A，命中 §8.3 串扰)
+</code></pre>
+<p>注意它吐的不是一句 <code>failed</code>，是 <code>SESSION_SCOPE_LEAK_ON_REUSE</code>——一个有名有姓的诊断类别，把“在哪类操作上、什么机理、撞上了哪条不变量”一次说清。值班的人看到这个名字，立刻知道这不是业务逻辑错、不是某个 validator 红，而是连接复用把 session scope 漏了；它直接对应 §9.4 那条“会话 scope 不能泄漏”的不变量，也直接指回 §8.3 那种串扰。门禁在两台主机上各跑一遍，是因为这种时序窗口对调度极其敏感，单台偶尔不触发的，换台机器、换个 CPU 节拍就触发了——两台同测，等于给那个一两百毫秒的窗口多撒了一次网。</p>
+<p>最后按 §9.5 把它回流成免疫力，长出那三样东西。它先进博物馆，命名为“连接复用未清路由导致跨 session 串扰”，记下根因是“还连接”与“清路由标记”不是同一原子步。然后长出一个仪表盘信号——正是 §9.3 说的、要在事实流里找得到出处的那种投影切面：盯住每条事件的 <code>actor</code> 与其落入的 session scope，一旦同一连接上出现 <code>actor</code> 不属于该 scope 的事件，立刻标红“同连接跨 session 事件”，让它下次一冒头就在盘上可见，而不是等用户发现自己的视图里混进了别人的任务。它再长出一条门禁——就是上面那条 <code>cross-session-reconnect-isolation</code> 用例，焊进发布前检查，从此任何改动连接池或重连路径的提交，都得先过这一关才能合并。它还长出一条 runbook：看到 <code>SESSION_SCOPE_LEAK_ON_REUSE</code> 或那条标红，先按受影响连接把池里的复用临时关掉、强制每个重连取全新连接以止血，再核对“还连接”到“清路由”这段是否被拆成了非原子的两步，确认修复后才重新放开复用。走完这三步，一条只在真实并发里偶现、连复现都难的时序 bug，就被钉死在了它最该被拦下的地方——发布之前，而不是某个高价值客户的视图里。</p>
+<hr>
+<hr>
+<ol class="footnote-definition">
+<li id="footnote-操作员-plane-ch9">
+<p>本章在此处综合 Claude Code <code>agentSummary.ts</code>、<code>diskOutput.ts</code>、resume 相关实现，以及 Codex <code>Thread</code> / <code>Turn</code> / <code>Item</code> 的对象分层，用来说明操作员控制面应如何建立在统一事实流之上；对应第 23 章参考文献 21、24。 <a href="#fr-操作员-plane-ch9-1">↩</a></p>
+</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="07-ui-replay.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="09-agent-swarm.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="07-ui-replay.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="09-agent-swarm.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
