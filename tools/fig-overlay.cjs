@@ -106,6 +106,52 @@ const FIGS = {
       { t: "注意力量级 ≈ 5×", xp: 0.5, yp: 0.96, anchor: "middle", color: "#b5532a", size: 30 },
     ],
   },
+
+  // ===== 批3：概念图（续）=====
+  "wf-residual-stream": {
+    style: true,
+    art: `Nature/Quanta caliber scientific diagram on PURE WHITE. Refined flat vector, deep-teal with one coral accent, NO dark background, NO glow. SUBJECT: one horizontal lane (a flat rounded bar of CONSTANT height) running left-to-right across the middle, passing THROUGH four identical thin-outlined square layer-blocks evenly spaced at about 22%, 42%, 62% and 82% width. At each block a small coral "+" increment merges onto the lane. The lane's height never changes from left to right. Generous white space. ABSOLUTELY NO text, letters, numbers, labels. 16:9.`,
+    labels: [
+      { t: "定宽工作记忆（宽度始终固定）", xp: 0.5, yp: 0.18, anchor: "middle", size: 30, weight: 700 },
+      { t: "第 1 层", xp: 0.22, yp: 0.74, anchor: "middle", size: 26, color: "#5a6b78" },
+      { t: "第 2 层", xp: 0.42, yp: 0.74, anchor: "middle", size: 26, color: "#5a6b78" },
+      { t: "第 3 层", xp: 0.62, yp: 0.74, anchor: "middle", size: 26, color: "#5a6b78" },
+      { t: "第 N 层", xp: 0.82, yp: 0.74, anchor: "middle", size: 26, color: "#5a6b78" },
+      { t: "每层只叠加一点贡献", xp: 0.5, yp: 0.90, anchor: "middle", size: 28, color: "#b5532a" },
+    ],
+  },
+  "wf-kv-cache": {
+    style: true,
+    art: `Nature/Quanta caliber scientific diagram on PURE WHITE. Refined flat vector, deep-teal with one coral accent, NO dark background, NO glow. SUBJECT: on the LEFT and center, a long rounded rectangle CONTAINER spanning ~10% to ~70% width (vertically centered) that holds a horizontal row of SIX small identical node cells inside it. On the RIGHT (~84% width, 50% height) one coral node. From the coral node, several thin lines reach back leftward to each of the six cached cells inside the container. Generous white space. ABSOLUTELY NO text, letters, numbers, labels. 16:9.`,
+    labels: [
+      { t: "键值缓存（对过去的唯一留存）", xp: 0.40, yp: 0.22, anchor: "middle", size: 30, weight: 700 },
+      { t: "已算好的「键、值」", xp: 0.40, yp: 0.78, anchor: "middle", size: 28, color: "#5a6b78" },
+      { t: "新词元", xp: 0.84, yp: 0.70, anchor: "middle", size: 28, color: "#b5532a", weight: 700 },
+      { t: "随上下文线性增长", xp: 0.40, yp: 0.90, anchor: "middle", size: 26, color: "#5a6b78" },
+    ],
+  },
+  "wf-autoregressive": {
+    style: true,
+    art: `Nature/Quanta caliber scientific diagram on PURE WHITE. Refined flat vector, deep-teal with one coral accent, NO dark background, NO glow. SUBJECT: a rounded rectangle block at center-left (~30% width, 42% height). An arrow exits its right side to a node on the RIGHT (~78% width, 42% height). From that right node, a graceful curved arrow loops DOWN and back LEFT to re-enter the left side of the block (a feedback loop), the curved return path drawn in coral. Generous white space. ABSOLUTELY NO text, letters, numbers, labels. 16:9.`,
+    labels: [
+      { t: "模型", xp: 0.30, yp: 0.44, anchor: "middle", size: 30, weight: 700 },
+      { t: "输出词元", xp: 0.78, yp: 0.34, anchor: "middle", size: 28 },
+      { t: "回灌为下一步输入", xp: 0.5, yp: 0.82, anchor: "middle", size: 28, color: "#b5532a" },
+      { t: "把自己的输出当成既成事实", xp: 0.5, yp: 0.12, anchor: "middle", size: 28, color: "#5a6b78" },
+    ],
+  },
+  "wf-five-layer-failure": {
+    style: true,
+    art: `Nature/Quanta caliber scientific concept illustration on PURE WHITE. Refined flat vector, deep-teal slabs with one coral accent, NO dark background, NO glow. SUBJECT: FIVE thin horizontal slab panels stacked with gaps between them, centered, at about 78%, 64%, 50%, 36% and 22% height (bottom to top). A jagged CORAL crack runs vertically upward through a small gap in each slab, the gaps roughly aligned. At the very TOP (~12% height) the crack ends in a small rounded speech-bubble outline. Generous white space on the left for labels. ABSOLUTELY NO text, letters, numbers, labels. 16:9.`,
+    labels: [
+      { t: "会话层", xp: 0.15, yp: 0.88, anchor: "middle", size: 26 },
+      { t: "能力平面", xp: 0.15, yp: 0.72, anchor: "middle", size: 26 },
+      { t: "验证器", xp: 0.15, yp: 0.58, anchor: "middle", size: 26 },
+      { t: "仪表盘", xp: 0.15, yp: 0.46, anchor: "middle", size: 26 },
+      { t: "群体编排", xp: 0.15, yp: 0.30, anchor: "middle", size: 26 },
+      { t: "用户面前的「假成功」", xp: 0.62, yp: 0.10, anchor: "middle", size: 28, color: "#b5532a", weight: 700 },
+    ],
+  },
 };
 
 async function genArt(id, prompt) {
